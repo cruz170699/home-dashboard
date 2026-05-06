@@ -34,9 +34,7 @@
   html, body {
     font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
     background: var(--bg);
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -619,7 +617,7 @@
   </div>
 
   <!-- Bottom Grid - Apple Home Style -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;overflow:hidden;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;height:220px;">
 
     <!-- To-dos -->
     <div class="card">
