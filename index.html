@@ -1523,7 +1523,6 @@ async function showNearbyStations(which) {
       const nearbySection = document.getElementById(`nearbySection_${which}`);
       if (nearbySection) nearbySection.style.display = 'none';
     });
-  }
 }
   html += QUICK_STATIONS.map(s => `
     <div onclick="selectStation('${which}','${s}');event.stopPropagation();" style="padding:8px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.04);" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='white'">
