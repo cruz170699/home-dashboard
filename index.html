@@ -615,37 +615,49 @@
 
   <!-- Meal Planner -->
   <div style="margin-top:14px;">
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:20px;">🍽</span>
-          <div style="font-size:14px;font-weight:600;color:#1a1a1a;">Meal Planner</div>
+    <div class="card" style="padding:0;overflow:hidden;">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 16px;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#FF6B35,#e85a22);display:flex;align-items:center;justify-content:center;font-size:18px;">🍽</div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:var(--text-primary);">Meal Planner</div>
+            <div style="font-size:11px;color:var(--text-tertiary);" id="mealWeekLabel">Diese Woche</div>
+          </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <button onclick="suggestMeals()" style="padding:7px 14px;border-radius:10px;border:none;background:#FF6B35;color:white;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;">🤖 Vorschläge</button>
-          <button onclick="saveMealPlan()" id="saveMealBtn" style="padding:7px 14px;border-radius:10px;border:none;background:#1D9E75;color:white;font-size:12px;font-weight:600;cursor:pointer;">💾 Speichern</button>
-          <span onclick="loadMealPlan()" style="font-size:14px;color:#aaa;cursor:pointer;padding:4px;">↻</span>
+          <button onclick="suggestMeals()" style="display:flex;align-items:center;gap:5px;padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#FF6B35,#e85a22);color:white;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(255,107,53,0.3);">
+            <span style="font-size:14px;">🤖</span> Vorschläge
+          </button>
+          <button onclick="saveMealPlan()" id="saveMealBtn" style="display:flex;align-items:center;gap:5px;padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#1D9E75,#17856a);color:white;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(29,158,117,0.3);">
+            <span style="font-size:14px;">💾</span> Speichern
+          </button>
+          <button onclick="loadMealPlan()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-tertiary);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">↻</button>
         </div>
       </div>
 
-      <!-- Day headers -->
-      <div style="display:grid;grid-template-columns:80px repeat(7, 1fr);gap:6px;margin-bottom:6px;">
-        <div></div>
-        <div id="mealDayHeaders"></div>
-      </div>
+      <!-- Grid -->
+      <div style="padding:0;">
 
-      <!-- Meal rows -->
-      <div id="mealGrid" style="display:flex;flex-direction:column;gap:6px;"></div>
+        <!-- Day headers -->
+        <div id="mealDayHeadersNew" style="display:grid;grid-template-columns:100px repeat(7,1fr);border-bottom:1px solid var(--border);"></div>
+
+        <!-- Meal rows -->
+        <div id="mealGridNew"></div>
+
+      </div>
 
       <!-- Claude suggestions -->
-      <div id="mealSuggestions" style="display:none;margin-top:14px;padding:14px;background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-radius:12px;border:1px solid #FFD4B8;">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-          <span style="font-size:16px;">🤖</span>
-          <div style="font-size:12px;font-weight:600;color:#FF6B35;">Claude Vorschläge</div>
-          <span onclick="document.getElementById('mealSuggestions').style.display='none'" style="margin-left:auto;font-size:16px;color:#aaa;cursor:pointer;">×</span>
+      <div id="mealSuggestions" style="display:none;margin:0;padding:16px 20px;background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(232,90,34,0.03));border-top:1px solid rgba(255,107,53,0.15);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#FF6B35,#e85a22);display:flex;align-items:center;justify-content:center;font-size:14px;">🤖</div>
+          <div style="font-size:13px;font-weight:600;color:#FF6B35;">Claude Vorschläge</div>
+          <span onclick="document.getElementById('mealSuggestions').style.display='none'" style="margin-left:auto;width:24px;height:24px;border-radius:6px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-tertiary);cursor:pointer;">×</span>
         </div>
-        <div id="mealSuggestionsContent" style="font-size:13px;color:#1a1a1a;line-height:1.7;white-space:pre-wrap;"></div>
+        <div id="mealSuggestionsContent" style="font-size:13px;color:var(--text-primary);line-height:1.8;white-space:pre-wrap;"></div>
       </div>
+
     </div>
   </div>
 
@@ -1294,51 +1306,50 @@ function renderMealGrid() {
   const today = new Date().getDay();
   const todayIndex = today === 0 ? 6 : today - 1;
   const mealIcons = { 'Mittagessen': '☀️', 'Abendessen': '🌙' };
+  const mealColors = { 'Mittagessen': '#FF9500', 'Abendessen': '#5856D6' };
+
+  // Week label
+  const now = new Date();
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - todayIndex);
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+  const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  const weekLabel = document.getElementById('mealWeekLabel');
+  if (weekLabel) weekLabel.textContent = weekStart.getDate()+'. '+months[weekStart.getMonth()]+' – '+weekEnd.getDate()+'. '+months[weekEnd.getMonth()];
 
   // Day headers
-  const headersContainer = document.getElementById('mealDayHeaders');
+  const headersContainer = document.getElementById('mealDayHeadersNew');
   if (headersContainer) {
-    headersContainer.style.display = 'contents';
-    headersContainer.innerHTML = DAYS.map((day, di) => `
-      <div style="text-align:center;padding:6px 4px;border-radius:8px;background:${di===todayIndex?'#185FA5':'transparent'};">
-        <div style="font-size:11px;font-weight:600;color:${di===todayIndex?'white':'#aaa'};">${day.slice(0,2).toUpperCase()}</div>
-        ${di===todayIndex?`<div style="font-size:9px;color:rgba(255,255,255,0.7);">Heute</div>`:''}
-      </div>`).join('');
+    headersContainer.innerHTML = `<div style="padding:12px 16px;"></div>` + DAYS.map((day, di) => {
+      const isToday = di === todayIndex;
+      return `<div style="padding:12px 8px;text-align:center;background:${isToday?'rgba(0,122,255,0.06)':''};border-left:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:600;color:${isToday?'var(--accent)':'var(--text-tertiary)'};text-transform:uppercase;letter-spacing:0.5px;">${day.slice(0,2)}</div>
+        ${isToday?`<div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:4px auto 0;"></div>`:''}
+      </div>`;
+    }).join('');
   }
 
   // Meal rows
-  const grid = document.getElementById('mealGrid');
-  grid.innerHTML = MEALS.map(meal => `
-    <div style="display:grid;grid-template-columns:80px repeat(7,1fr);gap:6px;align-items:center;">
-      <div style="display:flex;align-items:center;gap:5px;">
-        <span style="font-size:14px;">${mealIcons[meal]}</span>
-        <span style="font-size:11px;font-weight:500;color:#888;">${meal === 'Mittagessen' ? 'Mittag' : 'Abend'}</span>
+  const grid = document.getElementById('mealGridNew');
+  grid.innerHTML = MEALS.map((meal, mi) => `
+    <div style="display:grid;grid-template-columns:100px repeat(7,1fr);border-top:1px solid var(--border);">
+      <div style="padding:16px;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.01);">
+        <span style="font-size:16px;">${mealIcons[meal]}</span>
+        <div style="font-size:11px;font-weight:600;color:${mealColors[meal]};">${meal === 'Mittagessen' ? 'MITTAG' : 'ABEND'}</div>
       </div>
-      ${DAYS.map((day, di) => `
-        <div style="position:relative;">
+      ${DAYS.map((day, di) => {
+        const isToday = di === todayIndex;
+        const val = (mealData[day]?.[meal] || '').replace(/"/g,'&quot;');
+        return `<div style="border-left:1px solid var(--border);padding:10px 8px;background:${isToday?'rgba(0,122,255,0.03)':''};">
           <input
-            value="${(mealData[day]?.[meal] || '').replace(/"/g,'&quot;')}"
-            placeholder="—"
+            value="${val}"
+            placeholder="${isToday?'Was heute?':'—'}"
             onchange="mealData['${day}']['${meal}']=this.value"
-            title="${day} ${meal}"
-            style="
-              width:100%;
-              font-size:12px;
-              padding:8px 6px;
-              border-radius:8px;
-              border:1.5px solid ${di===todayIndex?'#185FA5':'#f0f0f0'};
-              background:${di===todayIndex?'#EEF5FF':mealData[day]?.[meal]?'#f8f9fa':'white'};
-              color:#1a1a1a;
-              outline:none;
-              font-family:inherit;
-              text-align:center;
-              transition:all 0.15s;
-              cursor:text;
-            "
-            onfocus="this.style.borderColor='#185FA5';this.style.background='white';"
-            onblur="this.style.borderColor='${di===todayIndex?'#185FA5':'#f0f0f0'}';this.style.background='${di===todayIndex?'#EEF5FF':this.value?'#f8f9fa':'white'}';"
+            style="width:100%;border:none;background:transparent;font-size:12px;${val?'font-weight:500;color:var(--text-primary);':'color:var(--text-tertiary);'}font-family:inherit;outline:none;padding:4px 6px;border-radius:6px;transition:all 0.15s;"
+            onfocus="this.style.background='white';this.style.boxShadow='0 0 0 2px rgba(0,122,255,0.2)';this.style.color='var(--text-primary)';"
+            onblur="this.style.background='transparent';this.style.boxShadow='none';"
           />
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
     </div>`).join('');
 }
 
