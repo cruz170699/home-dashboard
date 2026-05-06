@@ -34,20 +34,15 @@
   html, body {
     font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
     background: var(--bg);
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    padding: 0;
+    min-height: 100vh;
+    padding: 8px;
     margin: 0;
+    box-sizing: border-box;
   }
 
   .dashboard-wrapper {
-    height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 8px;
-    box-sizing: border-box;
-    overflow: hidden;
     gap: 8px;
   }
 
@@ -602,12 +597,12 @@
       </div>
 
       <!-- Month Grid -->
-      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);flex:1;align-content:start;overflow:hidden;"></div>
+      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);"></div>
     </div>
   </div>
 
   <!-- Bottom Grid - Apple Home Style -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;height:220px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;">
 
     <!-- To-dos -->
     <div class="card">
@@ -1750,7 +1745,7 @@ async function loadTransport() {
   } catch(e) { list.innerHTML = '<div class="no-events">Fehler beim Laden</div>'; console.error(e); }
 }
 
-const IKEA_API = 'http://192.168.1.11:5000';
+const IKEA_API = 'http://pavia-cruz-dashboard.local:5000';
 
 async function loadLights() {
   try {
