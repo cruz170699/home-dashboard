@@ -262,6 +262,33 @@
   .auth-btn:hover { background: #0066d6; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,122,255,0.35); }
   .loading-txt { font-size: 13px; color: var(--text-tertiary); margin-top: 14px; }
 
+  /* APPLE HOME TILES */
+  .home-tile {
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100px;
+  }
+  .home-tile:hover { box-shadow: var(--shadow-md); transform: scale(1.01); }
+  .home-tile:active { transform: scale(0.98); }
+  .home-tile.on { background: linear-gradient(135deg, #fffbf0, #fff8e6) !important; border-color: rgba(255,179,0,0.25) !important; }
+  .tile-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tile-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .tile-status { font-size: 12px; color: var(--text-tertiary); }
+
   /* Touch-friendly overrides */
   * { -webkit-tap-highlight-color: rgba(0,122,255,0.1); }
   
@@ -448,36 +475,115 @@
     </div>
   </div>
 
-  <div class="bottom-grid">
-    <div class="card">
-      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#4285F4"/><path d="M6 8h12M6 12h8M6 16h6" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="16" r="3" fill="#34A853"/><path d="M16.5 16l1 1 2-2" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        To-dos
+  <!-- Apple Home Style Tiles -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+
+    <!-- To-dos tile -->
+    <div class="home-tile" onclick="openTodoModal()" style="grid-column:span 1;">
+      <div class="tile-icon" style="background:linear-gradient(135deg,#4285F4,#1a73e8);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 8h12M6 12h8M6 16h6" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="16" r="3" fill="white" fill-opacity="0.9"/><path d="M16.5 16l1 1 2-2" stroke="#4285F4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="tile-label">To-dos</div>
+      <div class="tile-status" id="todoTileStatus">Laden...</div>
+    </div>
+
+    <!-- Bring tile -->
+    <div class="home-tile" onclick="openBringModal()" style="grid-column:span 1;">
+      <div class="tile-icon" style="background:linear-gradient(135deg,#FF6B35,#e85a22);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7 8h10l-1.5 8H8.5L7 8z" fill="white"/><path d="M5 8h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="6" r="1.2" fill="white"/><circle cx="14" cy="6" r="1.2" fill="white"/></svg>
+      </div>
+      <div class="tile-label">Bring!</div>
+      <div class="tile-status" id="bringTileStatus">Laden...</div>
+    </div>
+
+    <!-- Spotify tile -->
+    <div class="home-tile" style="grid-column:span 2;cursor:default;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div class="tile-icon" style="background:linear-gradient(135deg,#1DB954,#17a846);width:36px;height:36px;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="none"/><path d="M17.9 10.9C14.7 9 9.35 8.8 6.3 9.75c-.5.15-1-.15-1.15-.6-.15-.5.15-1 .6-1.15 3.55-1.05 9.4-.85 13.1 1.35.45.25.6.85.35 1.3-.25.35-.85.5-1.3.25zm-.1 2.8c-.25.4-.75.5-1.1.25-2.7-1.65-6.8-2.15-9.95-1.15-.4.1-.85-.1-.95-.5-.1-.4.1-.85.5-.95 3.65-1.1 8.15-.55 11.25 1.35.35.15.45.65.25 1zm-1.25 2.7c-.2.3-.6.4-.9.2-2.35-1.45-5.3-1.75-8.8-.95-.35.1-.65-.15-.75-.45-.1-.35.15-.65.45-.75 3.8-.85 7.1-.5 9.7 1.1.3.15.4.55.3.85z" fill="white"/></svg>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="spTrackMini">Nicht verbunden</div>
+          <div style="font-size:11px;color:var(--text-tertiary);" id="spArtistMini"></div>
+        </div>
+      </div>
+      <div id="spotifyMiniContent">
+        <button class="sp-connect-btn" onclick="spotifyLogin()" style="padding:8px;font-size:12px;">Mit Spotify verbinden</button>
+      </div>
+    </div>
+
+    <!-- IKEA Lights tiles -->
+    <div class="home-tile light-item on" onclick="toggleLight(this)" style="grid-column:span 1;" data-name="Wohnzimmer">
+      <div class="tile-icon" style="background:linear-gradient(135deg,#FFB300,#FF8F00);">
+        <span style="font-size:20px;">💡</span>
+      </div>
+      <div class="tile-label">Wohnzimmer</div>
+      <div class="tile-status light-status on">An</div>
+    </div>
+
+    <div class="home-tile light-item off" onclick="toggleLight(this)" style="grid-column:span 1;" data-name="Küche">
+      <div class="tile-icon" style="background:rgba(0,0,0,0.08);">
+        <span style="font-size:20px;opacity:0.4;">💡</span>
+      </div>
+      <div class="tile-label">Küche</div>
+      <div class="tile-status light-status off">Aus</div>
+    </div>
+
+  </div>
+
+  <!-- Second row of tiles -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+
+    <!-- SBB Transport -->
+    <div class="card" style="grid-column:span 3;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="28" height="18" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
+          <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Verbindungen</span>
+        </div>
+        <span onclick="loadTransport()" style="font-size:13px;color:#e30613;cursor:pointer;">↻</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;position:relative;">
+        <div style="position:relative;">
+          <input id="transportFrom" type="text" value="Dietlikon" placeholder="Von..." style="width:100%;font-size:12px;padding:7px 10px;border-radius:8px;border:1px solid var(--border-strong);background:rgba(0,0,0,0.02);color:var(--text-primary);outline:none;" oninput="searchStation('from',this.value)" onfocus="showNearbyStations('from')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
+          <div id="suggestFrom" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:150px;overflow-y:auto;"></div>
+        </div>
+        <div style="position:relative;">
+          <input id="transportTo" type="text" value="Zürich HB" placeholder="Nach..." style="width:100%;font-size:12px;padding:7px 10px;border-radius:8px;border:1px solid var(--border-strong);background:rgba(0,0,0,0.02);color:var(--text-primary);outline:none;" oninput="searchStation('to',this.value)" onfocus="showNearbyStations('to')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
+          <div id="suggestTo" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:150px;overflow-y:auto;"></div>
+        </div>
+      </div>
+      <div id="transportList"><div class="no-events">Laden...</div></div>
+    </div>
+
+    <!-- To-do list expanded -->
+    <div class="card" style="grid-column:span 3;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Aufgaben</span>
+        <button class="add-btn" onclick="openTodoModal()" style="padding:5px 10px;font-size:11px;">+ Neu</button>
       </div>
       <div id="todoList"></div>
-      <div class="add-row">
-        <button class="add-btn" style="width:100%" onclick="openTodoModal()">+ Neue Aufgabe</button>
-      </div>
     </div>
 
-    <div class="card">
-      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="12" fill="#FF6B35"/><path d="M7 8h10l-1.5 8H8.5L7 8z" fill="white"/><path d="M5 8h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="6" r="1" fill="white"/><circle cx="14" cy="6" r="1" fill="white"/></svg>
-        Bring!
+  </div>
+
+  <!-- Third row: Bring + more lights -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+
+    <!-- Bring expanded -->
+    <div class="card" style="grid-column:span 3;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">🛒 Bring! Einkaufsliste</span>
       </div>
       <div id="bringList"></div>
-      <div class="add-row">
-        <input class="add-input" id="newBring" placeholder="Artikel hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()" />
+      <div class="add-row" style="margin-top:8px;">
+        <input class="add-input" id="newBring" placeholder="Artikel hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()" style="font-size:13px;padding:8px 12px;" />
         <button class="add-btn" onclick="addBringItem()">+ Add</button>
       </div>
-      <div style="font-size:10px;color:#ccc;margin-top:6px;text-align:center;">Lokal gespeichert</div>
     </div>
 
-    <div class="card">
-      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#1DB954"/><path d="M17.9 10.9C14.7 9 9.35 8.8 6.3 9.75c-.5.15-1-.15-1.15-.6-.15-.5.15-1 .6-1.15 3.55-1.05 9.4-.85 13.1 1.35.45.25.6.85.35 1.3-.25.35-.85.5-1.3.25zm-.1 2.8c-.25.4-.75.5-1.1.25-2.7-1.65-6.8-2.15-9.95-1.15-.4.1-.85-.1-.95-.5-.1-.4.1-.85.5-.95 3.65-1.1 8.15-.55 11.25 1.35.35.15.45.65.25 1zm-1.25 2.7c-.2.3-.6.4-.9.2-2.35-1.45-5.3-1.75-8.8-.95-.35.1-.65-.15-.75-.45-.1-.35.15-.65.45-.75 3.8-.85 7.1-.5 9.7 1.1.3.15.4.55.3.85z" fill="white"/></svg>
-        Spotify
-      </div>
+    <!-- Spotify full -->
+    <div class="card" style="grid-column:span 2;">
       <div id="spotifyContent">
         <div style="text-align:center;padding:8px 0;">
           <div style="font-size:32px;margin-bottom:8px;">🎵</div>
@@ -487,60 +593,58 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="3" fill="#0058A3"/><text x="12" y="16" font-size="8" font-weight="900" fill="#FFDA1A" text-anchor="middle" font-family="sans-serif">IKEA</text></svg>
-        Lichter
+    <!-- More lights -->
+    <div class="card" style="grid-column:span 1;">
+      <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">💡 Lichter</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="home-tile light-item on" onclick="toggleLight(this)" data-name="Schlafzimmer" style="flex-direction:row;padding:8px 10px;align-items:center;gap:8px;">
+          <span style="font-size:16px;">💡</span>
+          <span class="tile-label" style="flex:1;font-size:12px;">Schlafzimmer</span>
+          <span class="tile-status light-status on" style="font-size:11px;">An</span>
+        </div>
+        <div class="home-tile light-item off" onclick="toggleLight(this)" data-name="Bad" style="flex-direction:row;padding:8px 10px;align-items:center;gap:8px;">
+          <span style="font-size:16px;opacity:0.4;">💡</span>
+          <span class="tile-label" style="flex:1;font-size:12px;">Bad</span>
+          <span class="tile-status light-status off" style="font-size:11px;">Aus</span>
+        </div>
       </div>
-      <div class="lights-grid">
-        <div class="light-item on" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Wohnzimmer</div><div class="light-status on">An</div></div>
-        <div class="light-item off" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Küche</div><div class="light-status off">Aus</div></div>
-        <div class="light-item on" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Schlafzimmer</div><div class="light-status on">An</div></div>
-        <div class="light-item off" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Bad</div><div class="light-status off">Aus</div></div>
-      </div>
-      <div style="font-size:10px;color:#ccc;margin-top:8px;text-align:center;">IKEA Dirigera · Lokales Netzwerk</div>
     </div>
 
-    <div class="card">
-      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <svg width="24" height="16" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" rx="3" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
-          Verbindungen
-        </div>
-        <span onclick="loadTransport()" style="font-size:11px;color:#e30613;cursor:pointer;font-weight:600;">↻</span>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;position:relative;">
-        <div style="position:relative;">
-          <input id="transportFrom" type="text" value="Dietlikon" placeholder="Von..." style="width:100%;font-size:11px;padding:5px 8px;border-radius:8px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;" oninput="searchStation('from',this.value)" onfocus="showNearbyStations('from')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
-          <div id="suggestFrom" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ddd;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:100;max-height:150px;overflow-y:auto;"></div>
-        </div>
-        <div style="position:relative;">
-          <input id="transportTo" type="text" value="Zürich HB" placeholder="Nach..." style="width:100%;font-size:11px;padding:5px 8px;border-radius:8px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;" oninput="searchStation('to',this.value)" onfocus="showNearbyStations('to')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
-          <div id="suggestTo" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ddd;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:100;max-height:150px;overflow-y:auto;"></div>
-        </div>
-      </div>
-      <div id="transportList"><div class="no-events">Laden...</div></div>
-    </div>
   </div>
+
 
   <!-- Meal Planner -->
   <div style="margin-top:14px;">
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-size:20px;">🍽</span>
           <div style="font-size:14px;font-weight:600;color:#1a1a1a;">Meal Planner</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <button onclick="suggestMeals()" style="padding:6px 12px;border-radius:8px;border:none;background:#FF6B35;color:white;font-size:12px;font-weight:600;cursor:pointer;">🤖 Claude vorschläge</button>
-          <button onclick="saveMealPlan()" style="padding:6px 12px;border-radius:8px;border:none;background:#1D9E75;color:white;font-size:12px;font-weight:600;cursor:pointer;">💾 Speichern</button>
-          <span onclick="loadMealPlan()" style="font-size:11px;color:#aaa;cursor:pointer;">↻</span>
+          <button onclick="suggestMeals()" style="padding:7px 14px;border-radius:10px;border:none;background:#FF6B35;color:white;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;">🤖 Vorschläge</button>
+          <button onclick="saveMealPlan()" id="saveMealBtn" style="padding:7px 14px;border-radius:10px;border:none;background:#1D9E75;color:white;font-size:12px;font-weight:600;cursor:pointer;">💾 Speichern</button>
+          <span onclick="loadMealPlan()" style="font-size:14px;color:#aaa;cursor:pointer;padding:4px;">↻</span>
         </div>
       </div>
-      <div class="meal-grid" id="mealGrid"></div>
-      <div id="mealSuggestions" style="display:none;margin-top:12px;padding:12px;background:#FFF8F0;border-radius:12px;border:1px solid #FFD4B8;">
-        <div style="font-size:12px;font-weight:600;color:#FF6B35;margin-bottom:8px;">🤖 Claude Vorschläge</div>
-        <div id="mealSuggestionsContent" style="font-size:13px;color:#1a1a1a;line-height:1.6;"></div>
+
+      <!-- Day headers -->
+      <div style="display:grid;grid-template-columns:80px repeat(7, 1fr);gap:6px;margin-bottom:6px;">
+        <div></div>
+        <div id="mealDayHeaders"></div>
+      </div>
+
+      <!-- Meal rows -->
+      <div id="mealGrid" style="display:flex;flex-direction:column;gap:6px;"></div>
+
+      <!-- Claude suggestions -->
+      <div id="mealSuggestions" style="display:none;margin-top:14px;padding:14px;background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-radius:12px;border:1px solid #FFD4B8;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+          <span style="font-size:16px;">🤖</span>
+          <div style="font-size:12px;font-weight:600;color:#FF6B35;">Claude Vorschläge</div>
+          <span onclick="document.getElementById('mealSuggestions').style.display='none'" style="margin-left:auto;font-size:16px;color:#aaa;cursor:pointer;">×</span>
+        </div>
+        <div id="mealSuggestionsContent" style="font-size:13px;color:#1a1a1a;line-height:1.7;white-space:pre-wrap;"></div>
       </div>
     </div>
   </div>
@@ -1098,6 +1202,9 @@ async function loadTasks() {
 
 function renderTodos() {
   const list=document.getElementById('todoList');
+  const pending = todos.filter(t => !t.done).length;
+  const tileStatus = document.getElementById('todoTileStatus');
+  if (tileStatus) tileStatus.textContent = pending > 0 ? `${pending} offen` : 'Alles erledigt';
   if(!todos.length){list.innerHTML='<div class="no-events">Keine Aufgaben</div>';return;}
   list.innerHTML=todos.map((t,i)=>{
     const due = t.due ? `<span style="font-size:10px;color:#aaa;margin-left:4px;">· ${new Date(t.due).toLocaleDateString('de-CH',{day:'numeric',month:'short'})}</span>` : '';
@@ -1148,6 +1255,8 @@ document.getElementById('todoModal').addEventListener('click',function(e){if(e.t
 
 function renderBring(){
   const list=document.getElementById('bringList');
+  const tileStatus = document.getElementById('bringTileStatus');
+  if (tileStatus) tileStatus.textContent = bringItems.length > 0 ? `${bringItems.length} Artikel` : 'Leer';
   if(!bringItems.length){list.innerHTML='<div class="no-events">Liste ist leer</div>';return;}
   list.innerHTML=bringItems.map((item,i)=>`<div class="bring-item"><span class="bring-label">${item}</span><span class="bring-delete" onclick="deleteBring(${i})">×</span></div>`).join('');
 }
@@ -1182,28 +1291,55 @@ async function loadMealPlan() {
 }
 
 function renderMealGrid() {
-  const grid = document.getElementById('mealGrid');
   const today = new Date().getDay();
   const todayIndex = today === 0 ? 6 : today - 1;
-  
-  let html = DAYS.map((day, di) => `
-    <div style="min-width:0;">
-      <div style="font-size:11px;font-weight:600;color:${di===todayIndex?'#185FA5':'#aaa'};text-align:center;margin-bottom:6px;${di===todayIndex?'text-decoration:underline;':''}">${day.slice(0,2)}</div>
-      ${MEALS.map(meal => `
-        <div style="margin-bottom:4px;">
-          <div style="font-size:9px;color:#ccc;margin-bottom:2px;">${meal.slice(0,5)}</div>
-          <input 
-            value="${mealData[day]?.[meal] || ''}"
-            placeholder="..."
+  const mealIcons = { 'Mittagessen': '☀️', 'Abendessen': '🌙' };
+
+  // Day headers
+  const headersContainer = document.getElementById('mealDayHeaders');
+  if (headersContainer) {
+    headersContainer.style.display = 'contents';
+    headersContainer.innerHTML = DAYS.map((day, di) => `
+      <div style="text-align:center;padding:6px 4px;border-radius:8px;background:${di===todayIndex?'#185FA5':'transparent'};">
+        <div style="font-size:11px;font-weight:600;color:${di===todayIndex?'white':'#aaa'};">${day.slice(0,2).toUpperCase()}</div>
+        ${di===todayIndex?`<div style="font-size:9px;color:rgba(255,255,255,0.7);">Heute</div>`:''}
+      </div>`).join('');
+  }
+
+  // Meal rows
+  const grid = document.getElementById('mealGrid');
+  grid.innerHTML = MEALS.map(meal => `
+    <div style="display:grid;grid-template-columns:80px repeat(7,1fr);gap:6px;align-items:center;">
+      <div style="display:flex;align-items:center;gap:5px;">
+        <span style="font-size:14px;">${mealIcons[meal]}</span>
+        <span style="font-size:11px;font-weight:500;color:#888;">${meal === 'Mittagessen' ? 'Mittag' : 'Abend'}</span>
+      </div>
+      ${DAYS.map((day, di) => `
+        <div style="position:relative;">
+          <input
+            value="${(mealData[day]?.[meal] || '').replace(/"/g,'&quot;')}"
+            placeholder="—"
             onchange="mealData['${day}']['${meal}']=this.value"
-            style="width:100%;font-size:11px;padding:5px 6px;border-radius:6px;border:0.5px solid ${di===todayIndex?'#185FA5':'#e0e0e0'};background:${di===todayIndex?'#EEF5FF':'#f8f9fa'};color:#1a1a1a;outline:none;font-family:inherit;"
+            title="${day} ${meal}"
+            style="
+              width:100%;
+              font-size:12px;
+              padding:8px 6px;
+              border-radius:8px;
+              border:1.5px solid ${di===todayIndex?'#185FA5':'#f0f0f0'};
+              background:${di===todayIndex?'#EEF5FF':mealData[day]?.[meal]?'#f8f9fa':'white'};
+              color:#1a1a1a;
+              outline:none;
+              font-family:inherit;
+              text-align:center;
+              transition:all 0.15s;
+              cursor:text;
+            "
+            onfocus="this.style.borderColor='#185FA5';this.style.background='white';"
+            onblur="this.style.borderColor='${di===todayIndex?'#185FA5':'#f0f0f0'}';this.style.background='${di===todayIndex?'#EEF5FF':this.value?'#f8f9fa':'white'}';"
           />
-        </div>
-      `).join('')}
-    </div>
-  `).join('');
-  
-  grid.innerHTML = html;
+        </div>`).join('')}
+    </div>`).join('');
 }
 
 async function saveMealPlan() {
@@ -1224,7 +1360,7 @@ async function saveMealPlan() {
     });
     
     // Show saved confirmation
-    const btn = document.querySelector('button[onclick="saveMealPlan()"]');
+    const btn = document.getElementById('saveMealBtn');
     btn.textContent = '✅ Gespeichert!';
     setTimeout(() => btn.textContent = '💾 Speichern', 2000);
   } catch(e) { console.error('Meal save:', e); alert('Fehler beim Speichern: ' + e.message); }
@@ -1375,15 +1511,24 @@ async function loadTransport() {
   } catch(e) { list.innerHTML = '<div class="no-events">Fehler beim Laden</div>'; console.error(e); }
 }
 
-function toggleLight(el){
-  const isOn=el.classList.contains('on');
-  el.classList.toggle('on',!isOn);el.classList.toggle('off',isOn);
-  const s=el.querySelector('.light-status');s.textContent=isOn?'Aus':'An';s.className='light-status '+(isOn?'off':'on');
+function toggleLight(el) {
+  const isOn = el.classList.contains('on');
+  el.classList.toggle('on', !isOn);
+  el.classList.toggle('off', isOn);
+  // Update status text
+  const status = el.querySelector('.light-status, .tile-status');
+  if (status) { status.textContent = isOn ? 'Aus' : 'An'; status.className = (status.className.includes('tile-status') ? 'tile-status ' : 'light-status ') + (isOn ? 'off' : 'on'); }
+  // Update icon opacity for off state
+  const icon = el.querySelector('.tile-icon span');
+  if (icon) icon.style.opacity = isOn ? '0.4' : '1';
+  // Update tile icon background
+  const tileIcon = el.querySelector('.tile-icon');
+  if (tileIcon) tileIcon.style.background = isOn ? 'rgba(0,0,0,0.08)' : 'linear-gradient(135deg,#FFB300,#FF8F00)';
 }
 
 // Spotify PKCE Auth
 const SPOTIFY_CLIENT_ID = 'ecfa6e034adc402cb72789d0f2f7e9d2';
-const SPOTIFY_REDIRECT = 'https://subtle-daffodil-a75d92.netlify.app';
+const SPOTIFY_REDIRECT = 'https://cruz170699.github.io/home-dashboard';
 const SPOTIFY_SCOPES = 'user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative';
 
 function generateVerifier(len) {
@@ -1577,6 +1722,11 @@ async function fetchSpotifyState() {
     isPlaying=d.is_playing; currentProgress=d.progress_ms; currentDuration=d.item.duration_ms;
     document.getElementById('spTrack').textContent=d.item.name;
     document.getElementById('spArtist').textContent=d.item.artists.map(a=>a.name).join(', ');
+    // Update mini tile
+    const miniTrack = document.getElementById('spTrackMini');
+    const miniArtist = document.getElementById('spArtistMini');
+    if (miniTrack) miniTrack.textContent = d.item.name;
+    if (miniArtist) miniArtist.textContent = d.item.artists.map(a=>a.name).join(', ');
     document.getElementById('spProgress').style.width=Math.round((currentProgress/currentDuration)*100)+'%';
     document.getElementById('spCurrent').textContent=fmtTime(currentProgress);
     document.getElementById('spTotal').textContent=fmtTime(currentDuration);
