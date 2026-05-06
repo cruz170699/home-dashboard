@@ -736,6 +736,8 @@ let calendars = { sergio: null, miriam: null };
 let todos = JSON.parse(localStorage.getItem('dash_todos') || '[]');
 let bringItems = JSON.parse(localStorage.getItem('dash_bring') || '["Milch","Brot","Tomaten"]');
 let spotifyToken = localStorage.getItem('spotify_token') || null;
+let spotifyExpiry = parseInt(localStorage.getItem('spotify_expiry') || '0');
+let spotifyReauthing = false;
 let isPlaying = false;
 let currentProgress = 0;
 let currentDuration = 1;
@@ -1525,7 +1527,16 @@ async function spotifyLogin() {
 }
 async function handleSpotifyCallback() {
   const code = new URLSearchParams(window.location.search).get('code');
-  if (!code) { if (spotifyToken) initSpotifyPlayer(); return; }
+  if (!code) {
+    // Check if token is expired or missing
+    if (spotifyToken && Date.now() < spotifyExpiry - 60000) {
+      initSpotifyPlayer();
+    } else if (spotifyToken) {
+      // Token expired - silently re-auth
+      silentSpotifyReauth();
+    }
+    return;
+  }
   const verifier = sessionStorage.getItem('sp_verifier');
   window.history.replaceState({}, '', window.location.pathname);
   const resp = await fetch('https://accounts.spotify.com/api/token', {
@@ -1536,8 +1547,36 @@ async function handleSpotifyCallback() {
   const data = await resp.json();
   if (data.access_token) {
     spotifyToken = data.access_token;
+    spotifyExpiry = Date.now() + (data.expires_in || 3600) * 1000;
     localStorage.setItem('spotify_token', spotifyToken);
+    localStorage.setItem('spotify_expiry', spotifyExpiry.toString());
     initSpotifyPlayer();
+    // Schedule proactive reauth 5 min before expiry
+    const msUntilExpiry = spotifyExpiry - Date.now() - 5 * 60 * 1000;
+    if (msUntilExpiry > 0) setTimeout(silentSpotifyReauth, msUntilExpiry);
+}
+
+async function silentSpotifyReauth() {
+  if (spotifyReauthing) return;
+  spotifyReauthing = true;
+  console.log('Spotify token expired, re-authenticating silently...');
+  try {
+    const verifier = generateVerifier(128);
+    sessionStorage.setItem('sp_verifier', verifier);
+    const challenge = await generateChallenge(verifier);
+    // Store that we need to reauth after redirect
+    sessionStorage.setItem('spotify_reauth', '1');
+    window.location.href = 'https://accounts.spotify.com/authorize?' + new URLSearchParams({
+      response_type: 'code',
+      client_id: SPOTIFY_CLIENT_ID,
+      scope: SPOTIFY_SCOPES,
+      redirect_uri: SPOTIFY_REDIRECT,
+      code_challenge_method: 'S256',
+      code_challenge: challenge
+    });
+  } catch(e) {
+    spotifyReauthing = false;
+    console.error('Spotify reauth failed:', e);
   }
 }
 function setSpotifyToken() {
@@ -1687,7 +1726,14 @@ async function fetchSpotifyState() {
   try {
     const r = await fetch('https://api.spotify.com/v1/me/player', {headers:{'Authorization':'Bearer '+spotifyToken}});
     if (r.status===204){document.getElementById('spTrack').textContent='Nichts wird abgespielt';return;}
-    if (r.status===401){document.getElementById('spTrack').textContent='Token abgelaufen – neu eingeben';localStorage.removeItem('spotify_token');return;}
+    if (r.status===401){
+      console.log('Spotify 401 - token expired, re-authing...');
+      localStorage.removeItem('spotify_token');
+      localStorage.removeItem('spotify_expiry');
+      spotifyToken = null;
+      silentSpotifyReauth();
+      return;
+    }
     if (!r.ok) return;
     const d = await r.json();
     if (!d||!d.item) return;
