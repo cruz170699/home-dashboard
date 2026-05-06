@@ -1074,6 +1074,7 @@ function gisLoaded() {
       setInterval(loadTransport, 60000);
       loadPhotos();
       loadMealPlan();
+      setTimeout(initSwipes, 1000);
     }
   });
 }
@@ -1480,34 +1481,50 @@ Antworte kurz und direkt mit den Vorschlägen. Für jeden Vorschlag: Name des Ge
     console.error('Suggest meals:', e);
   }
 }
+const QUICK_STATIONS = ['Dietlikon', 'Zürich HB', 'Winterthur', 'Zürich Stadelhofen', 'Zürich Oerlikon', 'Zürich Flughafen'];
+
 async function showNearbyStations(which) {
   const inputId = which === 'from' ? 'transportFrom' : 'transportTo';
   const dropdownId = which === 'from' ? 'suggestFrom' : 'suggestTo';
   const dropdown = document.getElementById(dropdownId);
   const currentVal = document.getElementById(inputId).value.trim();
-  if (currentVal.length >= 2) return; // Already typing, let searchStation handle it
-  dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">📍 Standort wird ermittelt...</div>';
+  if (currentVal.length >= 2) return;
+
+  let html = `<div style="padding:6px 10px 4px;font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;">⭐ Schnellauswahl</div>`;
+  html += QUICK_STATIONS.map(s => `
+    <div onclick="selectStation('${which}','${s}');event.stopPropagation();" style="padding:8px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.04);" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='white'">
+      <span style="font-size:14px;">🚉</span>${s}
+    </div>`).join('');
+
+  html += `<div id="nearbySection_${which}" style="border-top:1px solid var(--border);">
+    <div style="padding:6px 10px 4px;font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;">📍 In der Nähe</div>
+    <div style="padding:8px 12px;font-size:12px;color:var(--text-tertiary);">Standort wird ermittelt...</div>
+  </div>`;
+
+  dropdown.innerHTML = html;
   dropdown.style.display = 'block';
-  if (!navigator.geolocation) {
-    dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Standort nicht verfügbar</div>';
-    return;
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      try {
+        const r = await fetch(`https://transport.opendata.ch/v1/locations?x=${pos.coords.longitude}&y=${pos.coords.latitude}&type=station`);
+        const d = await r.json();
+        const nearby = (d.stations || []).filter(s => s.name && !QUICK_STATIONS.includes(s.name)).slice(0, 4);
+        const nearbySection = document.getElementById(`nearbySection_${which}`);
+        if (!nearbySection) return;
+        if (!nearby.length) { nearbySection.style.display = 'none'; return; }
+        nearbySection.innerHTML = `
+          <div style="padding:6px 10px 4px;font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;">📍 In der Nähe</div>
+          ${nearby.map(s => `
+            <div onclick="selectStation('${which}','${s.name.replace(/'/g,"\'")}');event.stopPropagation();" style="padding:8px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.04);" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='white'">
+              <span style="font-size:14px;">📍</span>${s.name}
+            </div>`).join('')}`;
+      } catch(e) {}
+    }, () => {
+      const nearbySection = document.getElementById(`nearbySection_${which}`);
+      if (nearbySection) nearbySection.style.display = 'none';
+    });
   }
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    try {
-      const { latitude, longitude } = pos.coords;
-      const r = await fetch(`https://transport.opendata.ch/v1/locations?x=${longitude}&y=${latitude}&type=station`);
-      const d = await r.json();
-      const stations = (d.stations || []).filter(s => s.name).slice(0, 6);
-      if (!stations.length) { dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Keine Stationen gefunden</div>'; return; }
-      dropdown.innerHTML = '<div style="padding:5px 10px;font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">📍 In der Nähe</div>' +
-        stations.map(s => `
-          <div onclick="selectStation('${which}','${s.name.replace(/'/g,"\\'")}');event.stopPropagation();" style="padding:7px 10px;font-size:12px;color:#1a1a1a;cursor:pointer;border-bottom:0.5px solid #f0f0f0;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">
-            ${s.name}
-          </div>`).join('');
-    } catch(e) { dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Fehler beim Laden</div>'; }
-  }, () => {
-    dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Standort verweigert</div>';
-  });
 }
 
 let stationSearchTimer = null;
@@ -1964,8 +1981,94 @@ async function spotifyVolume(val){
   }, 300);
 }
 
-// Event Modal
-let modalWho = null;
+// ── SWIPE GESTURES ───────────────────────────────────────
+function addSwipe(elementId, onLeft, onRight, onUp, onDown) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  let startX = 0, startY = 0, startTime = 0;
+  el.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    startTime = Date.now();
+  }, { passive: true });
+  el.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    const dt = Date.now() - startTime;
+    if (dt > 500) return; // too slow
+    const absDx = Math.abs(dx), absDy = Math.abs(dy);
+    if (absDx < 30 && absDy < 30) return; // too short
+    if (absDx > absDy) {
+      if (dx < 0 && onLeft) onLeft();
+      else if (dx > 0 && onRight) onRight();
+    } else {
+      if (dy < 0 && onUp) onUp();
+      else if (dy > 0 && onDown) onDown();
+    }
+  }, { passive: true });
+}
+
+// Calendar swipe - change month
+function initCalendarSwipe() {
+  const card = document.querySelector('#calMonthGrid')?.closest('.card');
+  if (!card) return;
+  let startX = 0, startTime = 0;
+  card.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startTime = Date.now();
+  }, { passive: true });
+  card.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dt = Date.now() - startTime;
+    if (dt > 600 || Math.abs(dx) < 50) return;
+    if (dx < 0) changeMonth(1);  // swipe left = next month
+    else changeMonth(-1);         // swipe right = prev month
+  }, { passive: true });
+}
+
+// Spotify swipe - switch tabs
+const SP_TABS = ['player', 'playlists', 'devices', 'search'];
+let currentSpTab = 0;
+
+function initSpotifySwipe() {
+  const content = document.getElementById('spotifyContent');
+  if (!content) return;
+  let startX = 0, startTime = 0;
+  content.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startTime = Date.now();
+  }, { passive: true });
+  content.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dt = Date.now() - startTime;
+    if (dt > 600 || Math.abs(dx) < 50) return;
+    if (dx < 0) currentSpTab = Math.min(currentSpTab + 1, SP_TABS.length - 1);
+    else currentSpTab = Math.max(currentSpTab - 1, 0);
+    spSwitchTab(SP_TABS[currentSpTab]);
+  }, { passive: true });
+}
+
+// Override spSwitchTab to track current tab
+const _origSpSwitchTab = spSwitchTab;
+function spSwitchTab(tab) {
+  currentSpTab = SP_TABS.indexOf(tab);
+  if (currentSpTab === -1) currentSpTab = 0;
+  _origSpSwitchTab(tab);
+}
+
+// Init swipes after dashboard loads
+function initSwipes() {
+  initCalendarSwipe();
+  initSpotifySwipe();
+}
+
+// Reinit Spotify swipe after player is initialized (since content changes)
+const _origInitSpotifyPlayer = initSpotifyPlayer;
+function initSpotifyPlayer() {
+  _origInitSpotifyPlayer();
+  setTimeout(initSpotifySwipe, 500);
+}
+
 function openEventModal(who, date) {
   modalWho = who;
   const names = {sergio:'Sérgio', miriam:'Miriam', family:'Familie'};
