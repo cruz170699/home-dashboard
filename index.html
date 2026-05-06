@@ -35,7 +35,7 @@
     font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
     background: var(--bg);
     min-height: 100vh;
-    padding: 16px;
+    padding: 12px;
   }
 
   /* Subtle mesh background */
@@ -61,7 +61,7 @@
     border-radius: var(--radius-xl);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-md);
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
   .time { font-size: 34px; font-weight: 300; color: var(--text-primary); letter-spacing: -1.5px; }
   .date { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; letter-spacing: 0.2px; }
@@ -86,7 +86,7 @@
   .signout-btn:hover { background: white; }
 
   /* GRID */
-  .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 8px; }
   .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 14px; }
   .meal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 12px; }
 
@@ -105,11 +105,11 @@
 
   .card-title {
     font-size: 11px; font-weight: 600; color: var(--text-tertiary);
-    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
   }
 
   /* CALENDAR */
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; margin-bottom: 14px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; margin-bottom: 8px; }
   .cal-day-label { font-size: 10px; color: var(--text-tertiary); padding: 3px 0; font-weight: 500; }
   .cal-day {
     font-size: 12px; padding: 6px 2px; border-radius: 8px;
@@ -410,9 +410,9 @@
   </div>
 
   <!-- Weather Expanded Panel -->
-  <div id="weatherPanel" style="display:none;margin-bottom:14px;">
+  <div id="weatherPanel" style="display:none;margin-bottom:8px;">
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <div style="font-size:14px;font-weight:600;color:var(--text-primary);">🌤 Wetter · Dietlikon</div>
         <span onclick="toggleWeatherExpand()" style="font-size:12px;color:var(--accent);cursor:pointer;">Schliessen</span>
       </div>
@@ -482,7 +482,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);">
         <div style="display:flex;align-items:center;gap:10px;">
           <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#fff"/><rect x="3" y="3" width="18" height="18" rx="3" fill="#fff" stroke="#dadce0" stroke-width="1"/><rect x="3" y="3" width="18" height="5" rx="3" fill="#4285F4"/><rect x="3" y="5" width="18" height="3" fill="#4285F4"/><text x="12" y="19" font-size="8" font-weight="700" fill="#4285F4" text-anchor="middle" font-family="sans-serif">31</text></svg>
-          <div style="font-size:15px;font-weight:600;color:var(--text-primary);" id="calMonthLabel">Kalender</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);" id="calMonthLabel">Kalender</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center;">
           <div id="calLegend" style="display:flex;gap:10px;align-items:center;margin-right:8px;"></div>
@@ -504,12 +504,12 @@
       </div>
 
       <!-- Month Grid -->
-      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);"></div>
+      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);flex:1;"></div>
     </div>
   </div>
 
   <!-- Bottom Grid - Apple Home Style -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;">
 
     <!-- To-dos -->
     <div class="card">
@@ -586,8 +586,8 @@
   </div>
 
   <!-- SBB - Full width -->
-  <div class="card" style="margin-bottom:14px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+  <div class="card" style="margin-bottom:8px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <svg width="32" height="20" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
         <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Verbindungen</span>
@@ -608,7 +608,7 @@
   </div>
 
   <!-- Meal Planner -->
-  <div style="margin-top:14px;">
+  <div style="margin-top:8px;">
     <div class="card" style="padding:0;overflow:hidden;">
 
       <!-- Header -->
@@ -616,7 +616,7 @@
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#FF6B35,#e85a22);display:flex;align-items:center;justify-content:center;font-size:18px;">🍽</div>
           <div>
-            <div style="font-size:15px;font-weight:600;color:var(--text-primary);">Meal Planner</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">Meal Planner</div>
             <div style="font-size:11px;color:var(--text-tertiary);" id="mealWeekLabel">Diese Woche</div>
           </div>
         </div>
@@ -644,7 +644,7 @@
 
       <!-- Claude suggestions -->
       <div id="mealSuggestions" style="display:none;margin:0;padding:16px 20px;background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(232,90,34,0.03));border-top:1px solid rgba(255,107,53,0.15);">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
           <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#FF6B35,#e85a22);display:flex;align-items:center;justify-content:center;font-size:14px;">🤖</div>
           <div style="font-size:13px;font-weight:600;color:#FF6B35;">Claude Vorschläge</div>
           <span onclick="document.getElementById('mealSuggestions').style.display='none'" style="margin-left:auto;width:24px;height:24px;border-radius:6px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-tertiary);cursor:pointer;">×</span>
@@ -1122,7 +1122,7 @@ function renderMonthView() {
   let html = '';
   // Empty cells before first day
   for (let i = 0; i < firstDayOfWeek; i++) {
-    html += '<div style="min-height:90px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+    html += '<div style="min-height:68px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
@@ -1782,7 +1782,7 @@ function initSpotifyPlayer() {
       </div>
     </div>
     <div id="spViewSearch" style="display:none;">
-      <div style="display:flex;gap:6px;margin-bottom:10px;">
+      <div style="display:flex;gap:6px;margin-bottom:6px;">
         <input id="spSearchInput" type="text" placeholder="Songs, Artists, Alben..."
           style="flex:1;font-size:13px;padding:8px 12px;border-radius:10px;border:1px solid var(--border-strong);background:rgba(0,0,0,0.02);color:var(--text-primary);outline:none;font-family:inherit;"
           onkeydown="if(event.key==='Enter')searchSpotify(this.value)" />
@@ -1901,7 +1901,7 @@ async function playTrack(uri) {
 async function openPlaylist(playlistId, playlistName) {
   const container = document.getElementById('spPlaylists');
   container.innerHTML = `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
       <button onclick="loadPlaylists()" style="padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:white;font-size:12px;cursor:pointer;color:var(--text-secondary);">← Zurück</button>
       <div style="font-size:12px;font-weight:600;color:var(--text-primary);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${playlistName}</div>
       <button onclick="playPlaylist('spotify:playlist:${playlistId}')" style="padding:4px 10px;border-radius:8px;border:none;background:#1DB954;color:white;font-size:12px;font-weight:600;cursor:pointer;">▶ Alle</button>
