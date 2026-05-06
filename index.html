@@ -1800,21 +1800,6 @@ function initSpotifyPlayer() {
   loadPlaylists();
 }
 
-function spSwitchTab(tab) {
-  ['player','playlists','devices','search'].forEach(t => {
-    const view = document.getElementById('spView'+t.charAt(0).toUpperCase()+t.slice(1));
-    const btn = document.getElementById('spTab'+t.charAt(0).toUpperCase()+t.slice(1));
-    if (view) view.style.display = t === tab ? 'block' : 'none';
-    if (btn) {
-      btn.style.background = t === tab ? 'white' : 'none';
-      btn.style.color = t === tab ? 'var(--text-primary)' : 'var(--text-tertiary)';
-      btn.style.fontWeight = t === tab ? '600' : '500';
-      btn.style.boxShadow = t === tab ? '0 1px 3px rgba(0,0,0,0.1)' : 'none';
-    }
-  });
-  if (tab === 'devices') loadDevices();
-  if (tab === 'search') setTimeout(() => document.getElementById('spSearchInput')?.focus(), 100);
-}
 
 async function loadDevices() {
   if (!spotifyToken) return;
@@ -2085,12 +2070,25 @@ function initSpotifySwipe() {
   }, { passive: true });
 }
 
-// Override spSwitchTab to track current tab
-const _origSpSwitchTab = spSwitchTab;
+// Override spSwitchTab to track current tab for swipe
+const _origSpSwitchTab = typeof spSwitchTab !== 'undefined' ? spSwitchTab : null;
 function spSwitchTab(tab) {
   currentSpTab = SP_TABS.indexOf(tab);
   if (currentSpTab === -1) currentSpTab = 0;
-  _origSpSwitchTab(tab);
+  // Call the real implementation inline
+  ['player','playlists','devices','search'].forEach(t => {
+    const view = document.getElementById('spView'+t.charAt(0).toUpperCase()+t.slice(1));
+    const btn = document.getElementById('spTab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if (view) view.style.display = t === tab ? 'block' : 'none';
+    if (btn) {
+      btn.style.background = t === tab ? 'white' : 'none';
+      btn.style.color = t === tab ? 'var(--text-primary)' : 'var(--text-tertiary)';
+      btn.style.fontWeight = t === tab ? '600' : '500';
+      btn.style.boxShadow = t === tab ? '0 1px 3px rgba(0,0,0,0.1)' : 'none';
+    }
+  });
+  if (tab === 'devices') loadDevices();
+  if (tab === 'search') setTimeout(() => document.getElementById('spSearchInput')?.focus(), 100);
 }
 
 // Init swipes after dashboard loads
@@ -2099,10 +2097,8 @@ function initSwipes() {
   initSpotifySwipe();
 }
 
-// Reinit Spotify swipe after player is initialized (since content changes)
-const _origInitSpotifyPlayer = initSpotifyPlayer;
-function initSpotifyPlayer() {
-  _origInitSpotifyPlayer();
+// Reinit Spotify swipe after player loads
+function reinitSpotifySwipe() {
   setTimeout(initSpotifySwipe, 500);
 }
 
