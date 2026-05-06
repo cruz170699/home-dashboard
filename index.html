@@ -405,6 +405,14 @@
         <span style="font-size:16px;">🍽</span>
         <div id="mealTopbarPreview" style="display:flex;gap:12px;"></div>
       </div>
+
+      <!-- SBB Preview -->
+      <div onclick="openSBBPopup()" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 12px;border-radius:10px;background:rgba(227,6,19,0.06);border:1px solid rgba(227,6,19,0.15);transition:all 0.15s;" onmouseover="this.style.background='rgba(227,6,19,0.12)'" onmouseout="this.style.background='rgba(227,6,19,0.06)'">
+        <svg width="28" height="18" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
+        <div id="sbbTopbarPreview" style="display:flex;gap:12px;">
+          <div style="font-size:12px;color:rgba(227,6,19,0.6);">Laden...</div>
+        </div>
+      </div>
     </div>
     <div class="avatars">
       <div class="status-dot" id="statusDot"></div>
@@ -451,6 +459,35 @@
         <div id="mealSuggestionsContent" style="font-size:13px;color:var(--text-primary);line-height:1.8;white-space:pre-wrap;"></div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- SBB Popup -->
+  <div id="sbbPopup" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeSBBPopup()">
+    <div style="background:white;border-radius:20px;width:80%;max-width:800px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <svg width="36" height="24" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
+          <div style="font-size:15px;font-weight:600;color:var(--text-primary);">Verbindungen</div>
+        </div>
+        <button onclick="closeSBBPopup()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:white;font-size:18px;cursor:pointer;color:var(--text-tertiary);display:flex;align-items:center;justify-content:center;">×</button>
+      </div>
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;">
+          <div style="position:relative;">
+            <input id="sbbPopupFrom" type="text" value="Dietlikon" placeholder="Von..." style="width:100%;font-size:13px;padding:10px 14px;border-radius:10px;border:1px solid var(--border-strong);color:var(--text-primary);outline:none;" oninput="searchStation('from',this.value)" onfocus="showNearbyStations('from')" onkeydown="if(event.key==='Enter')loadSBBPopup()" autocomplete="off"/>
+            <div id="suggestFrom" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:200px;overflow-y:auto;"></div>
+          </div>
+          <div style="position:relative;">
+            <input id="sbbPopupTo" type="text" value="Zürich HB" placeholder="Nach..." style="width:100%;font-size:13px;padding:10px 14px;border-radius:10px;border:1px solid var(--border-strong);color:var(--text-primary);outline:none;" oninput="searchStation('to',this.value)" onfocus="showNearbyStations('to')" onkeydown="if(event.key==='Enter')loadSBBPopup()" autocomplete="off"/>
+            <div id="suggestTo" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:200px;overflow-y:auto;"></div>
+          </div>
+          <button onclick="loadSBBPopup()" style="padding:10px 20px;border-radius:10px;border:none;background:#e30613;color:white;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Suchen</button>
+        </div>
+      </div>
+      <div id="sbbPopupList" style="padding:16px 20px;overflow-y:auto;flex:1;">
+        <div style="font-size:13px;color:var(--text-tertiary);text-align:center;padding:20px;">Laden...</div>
+      </div>
     </div>
   </div>
 
@@ -598,33 +635,17 @@
 
     <!-- IKEA Lights -->
     <div class="card">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <div class="tile-icon" style="background:#0058A3;width:32px;height:32px;">
-          <span style="font-size:12px;font-weight:900;color:#FFDA1A;">IKEA</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="tile-icon" style="background:#0058A3;width:32px;height:32px;">
+            <span style="font-size:12px;font-weight:900;color:#FFDA1A;">IKEA</span>
+          </div>
+          <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Lichter</span>
         </div>
-        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Lichter</span>
+        <span onclick="loadLights()" style="font-size:13px;color:#aaa;cursor:pointer;">↻</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-        <div class="home-tile light-item on" onclick="toggleLight(this)" style="min-height:70px;padding:10px;">
-          <div class="tile-icon" style="background:linear-gradient(135deg,#FFB300,#FF8F00);width:28px;height:28px;"><span style="font-size:14px;">💡</span></div>
-          <div class="tile-label" style="font-size:10px;">Wohnzimmer</div>
-          <div class="tile-status light-status on" style="font-size:10px;">An</div>
-        </div>
-        <div class="home-tile light-item off" onclick="toggleLight(this)" style="min-height:70px;padding:10px;">
-          <div class="tile-icon" style="background:rgba(0,0,0,0.08);width:28px;height:28px;"><span style="font-size:14px;opacity:0.4;">💡</span></div>
-          <div class="tile-label" style="font-size:10px;">Küche</div>
-          <div class="tile-status light-status off" style="font-size:10px;">Aus</div>
-        </div>
-        <div class="home-tile light-item on" onclick="toggleLight(this)" style="min-height:70px;padding:10px;">
-          <div class="tile-icon" style="background:linear-gradient(135deg,#FFB300,#FF8F00);width:28px;height:28px;"><span style="font-size:14px;">💡</span></div>
-          <div class="tile-label" style="font-size:10px;">Schlafzimmer</div>
-          <div class="tile-status light-status on" style="font-size:10px;">An</div>
-        </div>
-        <div class="home-tile light-item off" onclick="toggleLight(this)" style="min-height:70px;padding:10px;">
-          <div class="tile-icon" style="background:rgba(0,0,0,0.08);width:28px;height:28px;"><span style="font-size:14px;opacity:0.4;">💡</span></div>
-          <div class="tile-label" style="font-size:10px;">Bad</div>
-          <div class="tile-status light-status off" style="font-size:10px;">Aus</div>
-        </div>
+      <div id="lightsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <div style="font-size:12px;color:var(--text-tertiary);text-align:center;padding:8px;grid-column:span 2;">Laden...</div>
       </div>
     </div>
 
@@ -855,15 +876,8 @@ async function loadWeatherFull() {
 loadWeather();
 
 // Night Mode
-function checkNightMode() {
-  const h = new Date().getHours();
-  const m = new Date().getMinutes();
-  const isNight = (h > 22 || (h === 22 && m >= 30)) || h < 6;
-  const overlay = document.getElementById('nightOverlay');
-  overlay.style.display = isNight ? 'block' : 'none';
-}
-checkNightMode();
-setInterval(checkNightMode, 60000);
+function checkNightMode() {}
+// Night mode disabled
 
 // Sleep Mode
 let sleepTimer = null;
@@ -1073,6 +1087,19 @@ function gisLoaded() {
       loadPhotos();
       loadMealPlan();
       setTimeout(initSwipes, 1000);
+      loadLights();
+      setInterval(loadLights, 30000);
+      // Load SBB topbar preview
+      setTimeout(async () => {
+        const r = await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=3').catch(()=>null);
+        if (r) { const d = await r.json(); updateSBBTopbarPreview(d.connections||[]); }
+      }, 2000);
+      setInterval(async () => {
+        const from = document.getElementById('transportFrom')?.value || 'Dietlikon';
+        const to = document.getElementById('transportTo')?.value || 'Zürich HB';
+        const r = await fetch(`https://transport.opendata.ch/v1/connections?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&limit=3`).catch(()=>null);
+        if (r) { const d = await r.json(); updateSBBTopbarPreview(d.connections||[]); }
+      }, 60000);
     }
   });
 }
@@ -1331,6 +1358,66 @@ function renderBring(){
 function deleteBring(i){bringItems.splice(i,1);localStorage.setItem('dash_bring',JSON.stringify(bringItems));renderBring();}
 function addBringItem(){const input=document.getElementById('newBring'),val=input.value.trim();if(!val)return;bringItems.push(val);input.value='';localStorage.setItem('dash_bring',JSON.stringify(bringItems));renderBring();}
 
+function openSBBPopup() {
+  const popup = document.getElementById('sbbPopup');
+  popup.style.display = 'flex';
+  loadSBBPopup();
+}
+
+function closeSBBPopup() {
+  document.getElementById('sbbPopup').style.display = 'none';
+}
+
+async function loadSBBPopup() {
+  const from = document.getElementById('sbbPopupFrom')?.value || document.getElementById('transportFrom')?.value || 'Dietlikon';
+  const to = document.getElementById('sbbPopupTo')?.value || document.getElementById('transportTo')?.value || 'Zürich HB';
+  const list = document.getElementById('sbbPopupList');
+  if (list) list.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);text-align:center;padding:20px;">Laden...</div>';
+  try {
+    const r = await fetch(`https://transport.opendata.ch/v1/connections?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&limit=8`);
+    const d = await r.json();
+    const conns = d.connections || [];
+    if (!conns.length) { if (list) list.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);text-align:center;padding:20px;">Keine Verbindungen</div>'; return; }
+    if (list) list.innerHTML = conns.map(c => {
+      const dep = new Date(c.from.departure);
+      const arr = new Date(c.to.arrival);
+      const depStr = String(dep.getHours()).padStart(2,'0')+':'+String(dep.getMinutes()).padStart(2,'0');
+      const arrStr = String(arr.getHours()).padStart(2,'0')+':'+String(arr.getMinutes()).padStart(2,'0');
+      const dur = Math.round((arr-dep)/60000);
+      const mins = Math.round((dep-new Date())/60000);
+      const urgency = mins < 5 ? '#e30613' : mins < 15 ? '#FF9500' : '#1D9E75';
+      const cat = c.sections?.[0]?.journey?.category || '';
+      const num = c.sections?.[0]?.journey?.number || '';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;">
+        <div style="background:${urgency};color:white;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700;flex-shrink:0;min-width:40px;text-align:center;">${cat}${num}</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);">${depStr} → ${arrStr}</div>
+          <div style="font-size:12px;color:var(--text-tertiary);">${dur} min · Gleis ${c.from.platform||'?'}</div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:${urgency};">${mins < 1 ? 'Jetzt' : mins+'m'}</div>
+      </div>`;
+    }).join('');
+
+    // Update topbar preview with next 3 trains
+    updateSBBTopbarPreview(conns);
+  } catch(e) { console.error('SBB popup:', e); }
+}
+
+function updateSBBTopbarPreview(conns) {
+  const preview = document.getElementById('sbbTopbarPreview');
+  if (!preview || !conns?.length) return;
+  preview.innerHTML = conns.slice(0,3).map(c => {
+    const dep = new Date(c.from.departure);
+    const depStr = String(dep.getHours()).padStart(2,'0')+':'+String(dep.getMinutes()).padStart(2,'0');
+    const mins = Math.round((dep-new Date())/60000);
+    const color = mins < 5 ? '#e30613' : mins < 15 ? '#FF9500' : 'var(--text-primary)';
+    return `<div style="text-align:center;border-left:2px solid rgba(227,6,19,0.2);padding-left:8px;">
+      <div style="font-size:11px;font-weight:600;color:${color};">${depStr}</div>
+      <div style="font-size:10px;color:var(--text-tertiary);">${mins < 1 ? 'Jetzt' : 'in '+mins+'m'}</div>
+    </div>`;
+  }).join('');
+}
+
 function openMealPopup() {
   const popup = document.getElementById('mealPopup');
   popup.style.display = 'flex';
@@ -1346,21 +1433,21 @@ function updateMealTopbarPreview() {
   if (!preview) return;
   const today = new Date();
   const days = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+  const shortDays = ['Mo','Di','Mi','Do','Fr','Sa','So'];
   const todayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
   let html = '';
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 7; i++) {
     const dayIndex = (todayIndex + i) % 7;
     const day = days[dayIndex];
-    const label = i === 0 ? 'Heute' : i === 1 ? 'Morgen' : days[dayIndex].slice(0,2);
+    const label = i === 0 ? 'Heute' : i === 1 ? 'Morgen' : shortDays[dayIndex];
     const mittag = mealData[day]?.['Mittagessen'] || '';
     const abend = mealData[day]?.['Abendessen'] || '';
-    if (mittag || abend) {
-      html += `<div style="text-align:left;border-left:2px solid rgba(255,107,53,0.3);padding-left:8px;">
-        <div style="font-size:9px;font-weight:600;color:rgba(255,107,53,0.7);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">${label}</div>
-        ${mittag ? `<div style="font-size:11px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;"><span style="opacity:0.6;">☀️</span> ${mittag}</div>` : ''}
-        ${abend ? `<div style="font-size:11px;color:var(--text-primary);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;"><span style="opacity:0.6;">🌙</span> ${abend}</div>` : ''}
-      </div>`;
-    }
+    const isToday = i === 0;
+    html += `<div style="text-align:left;border-left:2px solid ${isToday?'#FF6B35':'rgba(255,107,53,0.2)'};padding-left:8px;min-width:100px;">
+      <div style="font-size:9px;font-weight:600;color:${isToday?'#FF6B35':'rgba(255,107,53,0.6)'};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">${label}</div>
+      ${mittag ? `<div style="font-size:11px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;"><span style="color:#FF9500;font-weight:700;font-size:10px;">M</span> ${mittag}</div>` : '<div style="font-size:11px;color:var(--text-tertiary);">☀️ —</div>'}
+      ${abend ? `<div style="font-size:11px;color:var(--text-primary);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;"><span style="color:#5856D6;font-weight:700;font-size:10px;">A</span> ${abend}</div>` : '<div style="font-size:11px;color:var(--text-tertiary);">🌙 —</div>'}
+    </div>`;
   }
   preview.innerHTML = html || '<div style="font-size:12px;color:rgba(255,107,53,0.6);">Keine Mahlzeiten geplant</div>';
 }
@@ -1665,19 +1752,51 @@ async function loadTransport() {
   } catch(e) { list.innerHTML = '<div class="no-events">Fehler beim Laden</div>'; console.error(e); }
 }
 
+const IKEA_API = 'http://192.168.1.11:5000';
+
+async function loadLights() {
+  try {
+    const r = await fetch(`${IKEA_API}/lights`);
+    const lights = await r.json();
+    const grid = document.getElementById('lightsGrid');
+    if (!grid) return;
+    grid.innerHTML = lights.map(light => `
+      <div class="home-tile light-item ${light.on ? 'on' : 'off'}" 
+           onclick="toggleLightById('${light.id}', this)" 
+           style="min-height:70px;padding:10px;" 
+           data-id="${light.id}">
+        <div class="tile-icon" style="background:${light.on ? 'linear-gradient(135deg,#FFB300,#FF8F00)' : 'rgba(0,0,0,0.08)'};width:28px;height:28px;">
+          <span style="font-size:14px;${light.on ? '' : 'opacity:0.4;'}">💡</span>
+        </div>
+        <div class="tile-label" style="font-size:10px;">${light.name}</div>
+        <div class="tile-status light-status ${light.on ? 'on' : 'off'}" style="font-size:10px;">${light.on ? 'An' : 'Aus'}</div>
+      </div>`).join('');
+  } catch(e) {
+    console.error('Lights:', e);
+    document.getElementById('lightsGrid').innerHTML = '<div style="font-size:11px;color:#aaa;text-align:center;padding:8px;grid-column:span 2;">IKEA Server nicht erreichbar</div>';
+  }
+}
+
+async function toggleLightById(id, el) {
+  try {
+    const isOn = el.classList.contains('on');
+    // Optimistic UI update
+    el.classList.toggle('on', !isOn);
+    el.classList.toggle('off', isOn);
+    const status = el.querySelector('.light-status');
+    if (status) { status.textContent = isOn ? 'Aus' : 'An'; status.className = `tile-status light-status ${isOn ? 'off' : 'on'}`; }
+    const icon = el.querySelector('.tile-icon');
+    if (icon) icon.style.background = isOn ? 'rgba(0,0,0,0.08)' : 'linear-gradient(135deg,#FFB300,#FF8F00)';
+    const bulb = el.querySelector('span');
+    if (bulb) bulb.style.opacity = isOn ? '0.4' : '1';
+    // Real API call
+    await fetch(`${IKEA_API}/lights/${id}/toggle`, { method: 'POST' });
+  } catch(e) { console.error('Toggle:', e); loadLights(); }
+}
+
 function toggleLight(el) {
-  const isOn = el.classList.contains('on');
-  el.classList.toggle('on', !isOn);
-  el.classList.toggle('off', isOn);
-  // Update status text
-  const status = el.querySelector('.light-status, .tile-status');
-  if (status) { status.textContent = isOn ? 'Aus' : 'An'; status.className = (status.className.includes('tile-status') ? 'tile-status ' : 'light-status ') + (isOn ? 'off' : 'on'); }
-  // Update icon opacity for off state
-  const icon = el.querySelector('.tile-icon span');
-  if (icon) icon.style.opacity = isOn ? '0.4' : '1';
-  // Update tile icon background
-  const tileIcon = el.querySelector('.tile-icon');
-  if (tileIcon) tileIcon.style.background = isOn ? 'rgba(0,0,0,0.08)' : 'linear-gradient(135deg,#FFB300,#FF8F00)';
+  const id = el.dataset.id;
+  if (id) toggleLightById(id, el);
 }
 
 // Spotify PKCE Auth
