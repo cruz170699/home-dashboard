@@ -34,16 +34,23 @@
   html, body {
     font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
     background: var(--bg);
-    min-height: 100vh;
-    padding: 8px;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 0;
     margin: 0;
     box-sizing: border-box;
   }
 
   .dashboard-wrapper {
-    display: flex;
-    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    display: grid;
+    grid-template-rows: 58px 1fr 220px 82px;
     gap: 8px;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   /* 1920x1080 optimized */
@@ -386,6 +393,11 @@
   }
   .modal-submit:hover { background: #0066d6; }
   .modal-error { font-size: 12px; color: var(--red); margin-top: 8px; text-align: center; display: none; }
+
+  * { box-sizing: border-box; }
+  html, body { overflow: hidden !important; height: 100vh !important; max-height: 100vh !important; }
+  .dashboard-wrapper { overflow: hidden !important; }
+  #calMonthGrid { overflow: hidden !important; }
 </style>
 
 <body>
@@ -602,12 +614,12 @@
       </div>
 
       <!-- Month Grid -->
-      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);"></div>
+      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;flex:1;overflow:hidden;"></div>
     </div>
   </div>
 
   <!-- Bottom Grid - Apple Home Style -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;min-height:260px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;overflow:hidden;">
 
     <!-- To-dos -->
     <div class="card">
@@ -667,7 +679,7 @@
 
 
   <!-- Sports Scores -->
-  <div class="card" style="margin-top:8px;padding:12px 16px;">
+  <div class="card" style="padding:10px 16px;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-size:18px;">🏆</span>
@@ -1155,7 +1167,7 @@ function renderMonthView() {
   let html = '';
   // Empty cells before first day
   for (let i = 0; i < firstDayOfWeek; i++) {
-    html += '<div style="min-height:125px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+    html += '<div style="min-height:0;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
@@ -1166,7 +1178,7 @@ function renderMonthView() {
     const isLastCol = col === 6;
 
     html += `<div class="month-day-cell" id="cell_${dateStr}" data-date="${dateStr}"
-      style="min-height:125px;border-right:${isLastCol?'none':'1px solid var(--border)'};border-bottom:1px solid var(--border);padding:4px;cursor:pointer;vertical-align:top;"
+      style="min-height:0;border-right:${isLastCol?'none':'1px solid var(--border)'};border-bottom:1px solid var(--border);padding:4px;cursor:pointer;vertical-align:top;"
       onclick="openEventModalWithDate('${dateStr}')"
       onmouseover="this.style.background='rgba(0,122,255,0.02)'"
       onmouseout="this.style.background='white'">
@@ -1181,7 +1193,7 @@ function renderMonthView() {
   const totalCells = firstDayOfWeek + daysInMonth;
   const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
   for (let i = 0; i < remaining; i++) {
-    html += '<div style="min-height:125px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+    html += '<div style="min-height:0;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
   grid.innerHTML = html;
