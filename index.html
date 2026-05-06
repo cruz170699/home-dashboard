@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=1920, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pavia_Cruz Home Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -44,6 +44,11 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+  }
+
+  /* 1920x1080 optimized */
+  @media screen and (min-width: 1900px) {
+    .month-day-cell { min-height: 125px !important; }
   }
 
   /* Subtle mesh background */
@@ -602,7 +607,7 @@
   </div>
 
   <!-- Bottom Grid - Apple Home Style -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;min-height:220px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;min-height:260px;">
 
     <!-- To-dos -->
     <div class="card">
@@ -660,6 +665,20 @@
 
 
 
+
+  <!-- Sports Scores -->
+  <div class="card" style="margin-top:8px;padding:12px 16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">🏆</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Live Scores</span>
+      </div>
+      <span onclick="loadSportsScores()" style="font-size:13px;color:#aaa;cursor:pointer;">↻</span>
+    </div>
+    <div id="sportsGrid" style="display:flex;gap:10px;overflow-x:auto;flex-wrap:nowrap;">
+      <div style="font-size:12px;color:var(--text-tertiary);">Laden...</div>
+    </div>
+  </div>
 
 </div>
 
@@ -1076,6 +1095,8 @@ function gisLoaded() {
       setTimeout(initSwipes, 1000);
       loadLights();
       setInterval(loadLights, 30000);
+      loadSportsScores();
+      setInterval(loadSportsScores, 120000);
       // Load SBB topbar preview
       setTimeout(async () => {
         const r = await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=3').catch(()=>null);
@@ -1134,7 +1155,7 @@ function renderMonthView() {
   let html = '';
   // Empty cells before first day
   for (let i = 0; i < firstDayOfWeek; i++) {
-    html += '<div style="min-height:95px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+    html += '<div style="min-height:125px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
@@ -1145,7 +1166,7 @@ function renderMonthView() {
     const isLastCol = col === 6;
 
     html += `<div class="month-day-cell" id="cell_${dateStr}" data-date="${dateStr}"
-      style="min-height:95px;border-right:${isLastCol?'none':'1px solid var(--border)'};border-bottom:1px solid var(--border);padding:4px;cursor:pointer;vertical-align:top;"
+      style="min-height:125px;border-right:${isLastCol?'none':'1px solid var(--border)'};border-bottom:1px solid var(--border);padding:4px;cursor:pointer;vertical-align:top;"
       onclick="openEventModalWithDate('${dateStr}')"
       onmouseover="this.style.background='rgba(0,122,255,0.02)'"
       onmouseout="this.style.background='white'">
@@ -1160,7 +1181,7 @@ function renderMonthView() {
   const totalCells = firstDayOfWeek + daysInMonth;
   const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
   for (let i = 0; i < remaining; i++) {
-    html += '<div style="min-height:95px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+    html += '<div style="min-height:125px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
   grid.innerHTML = html;
@@ -2347,6 +2368,95 @@ async function submitEvent() {
   }
 }
 // Close modal on backdrop click
+// Sports Scores
+async function loadSportsScores() {
+  const grid = document.getElementById('sportsGrid');
+  if (!grid) return;
+  try {
+    const [portRes, eplRes, uclRes, nbaRes] = await Promise.allSettled([
+      fetchESPN('soccer', 'PRT.1'),
+      fetchESPN('soccer', 'ENG.1'),
+      fetchESPN('soccer', 'UEFA.CHAMPIONS'),
+      fetchESPN('basketball', 'nba'),
+    ]);
+
+    let cards = [];
+
+    const teamMap = [
+      { events: portRes, name: 'Sporting', label: 'Sporting CP', emoji: '🟢', color: '#2E7D32' },
+      { events: eplRes, name: 'Manchester United', label: 'Man Utd', emoji: '🔴', color: '#C62828' },
+    ];
+    teamMap.forEach(({ events, name, label, emoji, color }) => {
+      if (events.status === 'fulfilled') {
+        const match = findTeamMatch(events.value, name);
+        if (match) cards.push(buildSportsCard(match, emoji, color, label));
+      }
+    });
+
+    // UCL - show any live/recent match
+    if (uclRes.status === 'fulfilled' && uclRes.value?.length > 0) {
+      const live = uclRes.value.find(e => e.competitions?.[0]?.status?.type?.state === 'in') || uclRes.value[0];
+      if (live) cards.push(buildSportsCard(live, '⭐', '#1565C0', 'UCL'));
+    }
+
+    // NBA teams
+    const nbaTeams = [
+      { name: 'Boston', label: 'Celtics', emoji: '🍀', color: '#1B5E20' },
+      { name: 'New York', label: 'Knicks', emoji: '🗽', color: '#1565C0' },
+      { name: 'Lakers', label: 'Lakers', emoji: '💜', color: '#4A148C' },
+      { name: 'Oklahoma', label: 'OKC', emoji: '⚡', color: '#E65100' },
+    ];
+    if (nbaRes.status === 'fulfilled') {
+      nbaTeams.forEach(({ name, label, emoji, color }) => {
+        const match = findTeamMatch(nbaRes.value, name);
+        if (match) cards.push(buildSportsCard(match, emoji, color, label));
+      });
+    }
+
+    grid.innerHTML = cards.length ? cards.join('') : '<div style="font-size:12px;color:var(--text-tertiary);padding:8px;">Keine aktuellen Spiele</div>';
+  } catch(e) {
+    console.error('Sports:', e);
+    grid.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);">Scores nicht verfügbar</div>';
+  }
+}
+
+async function fetchESPN(sport, league) {
+  const r = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`);
+  const d = await r.json();
+  return d.events || [];
+}
+
+function findTeamMatch(events, teamName) {
+  if (!events) return null;
+  return events.find(e =>
+    e.competitions?.[0]?.competitors?.some(c =>
+      c.team?.displayName?.includes(teamName) || c.team?.shortDisplayName?.includes(teamName) || c.team?.name?.includes(teamName)
+    )
+  );
+}
+
+function buildSportsCard(event, emoji, color, label) {
+  const comp = event.competitions?.[0];
+  const home = comp?.competitors?.find(c => c.homeAway === 'home');
+  const away = comp?.competitors?.find(c => c.homeAway === 'away');
+  const status = comp?.status?.type?.shortDetail || '';
+  const isLive = comp?.status?.type?.state === 'in';
+  const homeName = home?.team?.shortDisplayName || home?.team?.abbreviation || '?';
+  const awayName = away?.team?.shortDisplayName || away?.team?.abbreviation || '?';
+  const homeScore = home?.score ?? '-';
+  const awayScore = away?.score ?? '-';
+
+  return `<div style="flex-shrink:0;background:white;border:1px solid var(--border);border-radius:12px;padding:10px 14px;min-width:170px;border-top:3px solid ${color};">
+    <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">
+      <span style="font-size:11px;">${emoji}</span>
+      <span style="font-size:10px;font-weight:600;color:${color};text-transform:uppercase;letter-spacing:0.5px;">${label}</span>
+      ${isLive ? '<span style="margin-left:auto;background:#e30613;color:white;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;">LIVE</span>' : ''}
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${awayName} ${awayScore} - ${homeScore} ${homeName}</div>
+    <div style="font-size:10px;color:var(--text-tertiary);margin-top:3px;">${status}</div>
+  </div>`;
+}
+
 document.getElementById('eventModal').addEventListener('click', function(e) { if(e.target===this) closeEventModal(); });
 document.getElementById('todoModal').addEventListener('click', function(e){ if(e.target===this) closeTodoModal(); });
 </script>
