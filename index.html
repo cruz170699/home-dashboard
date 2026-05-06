@@ -31,11 +31,24 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
 
-  body {
+  html, body {
     font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
     background: var(--bg);
-    min-height: 100vh;
-    padding: 12px;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dashboard-wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+    gap: 8px;
   }
 
   /* Subtle mesh background */
@@ -54,14 +67,14 @@
   /* TOPBAR */
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 22px;
+    padding: 8px 16px;
     background: var(--surface);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: var(--radius-xl);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-md);
-    margin-bottom: 8px;
+    flex-shrink: 0;
   }
   .time { font-size: 34px; font-weight: 300; color: var(--text-primary); letter-spacing: -1.5px; }
   .date { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; letter-spacing: 0.2px; }
@@ -388,7 +401,7 @@
   </div>
 </div>
 
-<div id="dashboard" style="display:none">
+<div id="dashboard" style="display:none" class="dashboard-wrapper">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:20px;">
       <div>
@@ -407,10 +420,13 @@
       </div>
 
       <!-- SBB Preview -->
-      <div onclick="openSBBPopup()" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 12px;border-radius:10px;background:rgba(227,6,19,0.06);border:1px solid rgba(227,6,19,0.15);transition:all 0.15s;" onmouseover="this.style.background='rgba(227,6,19,0.12)'" onmouseout="this.style.background='rgba(227,6,19,0.06)'">
-        <svg width="28" height="18" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
-        <div id="sbbTopbarPreview" style="display:flex;gap:12px;">
-          <div style="font-size:12px;color:rgba(227,6,19,0.6);">Laden...</div>
+      <div onclick="openSBBPopup()" style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:6px 14px;border-radius:10px;background:rgba(227,6,19,0.06);border:1px solid rgba(227,6,19,0.15);transition:all 0.15s;" onmouseover="this.style.background='rgba(227,6,19,0.12)'" onmouseout="this.style.background='rgba(227,6,19,0.06)'">
+        <svg width="32" height="20" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:rgba(227,6,19,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Dietlikon → Zürich HB</div>
+          <div id="sbbTopbarPreview" style="display:flex;gap:14px;">
+            <div style="font-size:12px;color:rgba(227,6,19,0.6);">Laden...</div>
+          </div>
         </div>
       </div>
     </div>
@@ -586,12 +602,12 @@
       </div>
 
       <!-- Month Grid -->
-      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);flex:1;"></div>
+      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);flex:1;align-content:start;"></div>
     </div>
   </div>
 
   <!-- Bottom Grid - Apple Home Style -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;">
 
     <!-- To-dos -->
     <div class="card">
@@ -1386,13 +1402,15 @@ async function loadSBBPopup() {
 function updateSBBTopbarPreview(conns) {
   const preview = document.getElementById('sbbTopbarPreview');
   if (!preview || !conns?.length) return;
-  preview.innerHTML = conns.slice(0,3).map(c => {
+  preview.innerHTML = conns.slice(0,5).map(c => {
     const dep = new Date(c.from.departure);
     const depStr = String(dep.getHours()).padStart(2,'0')+':'+String(dep.getMinutes()).padStart(2,'0');
     const mins = Math.round((dep-new Date())/60000);
     const color = mins < 5 ? '#e30613' : mins < 15 ? '#FF9500' : 'var(--text-primary)';
-    return `<div style="text-align:center;border-left:2px solid rgba(227,6,19,0.2);padding-left:8px;">
-      <div style="font-size:11px;font-weight:600;color:${color};">${depStr}</div>
+    const cat = c.sections?.[0]?.journey?.category || '';
+    const num = c.sections?.[0]?.journey?.number || '';
+    return `<div style="text-align:center;border-left:2px solid rgba(227,6,19,0.2);padding-left:10px;">
+      <div style="font-size:14px;font-weight:700;color:${color};">${depStr}</div>
       <div style="font-size:10px;color:var(--text-tertiary);">${mins < 1 ? 'Jetzt' : 'in '+mins+'m'}</div>
     </div>`;
   }).join('');
