@@ -475,11 +475,11 @@
     </div>
   </div>
 
-  <!-- Apple Home Style Tiles -->
+  <!-- Row 1: Quick Tiles -->
   <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
 
     <!-- To-dos tile -->
-    <div class="home-tile" onclick="openTodoModal()" style="grid-column:span 1;">
+    <div class="home-tile" onclick="openTodoModal()">
       <div class="tile-icon" style="background:linear-gradient(135deg,#4285F4,#1a73e8);">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 8h12M6 12h8M6 16h6" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="16" r="3" fill="white" fill-opacity="0.9"/><path d="M16.5 16l1 1 2-2" stroke="#4285F4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
@@ -488,7 +488,7 @@
     </div>
 
     <!-- Bring tile -->
-    <div class="home-tile" onclick="openBringModal()" style="grid-column:span 1;">
+    <div class="home-tile" onclick="document.getElementById('newBring').focus()">
       <div class="tile-icon" style="background:linear-gradient(135deg,#FF6B35,#e85a22);">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7 8h10l-1.5 8H8.5L7 8z" fill="white"/><path d="M5 8h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="6" r="1.2" fill="white"/><circle cx="14" cy="6" r="1.2" fill="white"/></svg>
       </div>
@@ -496,24 +496,21 @@
       <div class="tile-status" id="bringTileStatus">Laden...</div>
     </div>
 
-    <!-- Spotify tile -->
+    <!-- Spotify mini tile -->
     <div class="home-tile" style="grid-column:span 2;cursor:default;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
         <div class="tile-icon" style="background:linear-gradient(135deg,#1DB954,#17a846);width:36px;height:36px;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="none"/><path d="M17.9 10.9C14.7 9 9.35 8.8 6.3 9.75c-.5.15-1-.15-1.15-.6-.15-.5.15-1 .6-1.15 3.55-1.05 9.4-.85 13.1 1.35.45.25.6.85.35 1.3-.25.35-.85.5-1.3.25zm-.1 2.8c-.25.4-.75.5-1.1.25-2.7-1.65-6.8-2.15-9.95-1.15-.4.1-.85-.1-.95-.5-.1-.4.1-.85.5-.95 3.65-1.1 8.15-.55 11.25 1.35.35.15.45.65.25 1zm-1.25 2.7c-.2.3-.6.4-.9.2-2.35-1.45-5.3-1.75-8.8-.95-.35.1-.65-.15-.75-.45-.1-.35.15-.65.45-.75 3.8-.85 7.1-.5 9.7 1.1.3.15.4.55.3.85z" fill="white"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M17.9 10.9C14.7 9 9.35 8.8 6.3 9.75c-.5.15-1-.15-1.15-.6-.15-.5.15-1 .6-1.15 3.55-1.05 9.4-.85 13.1 1.35.45.25.6.85.35 1.3-.25.35-.85.5-1.3.25zm-.1 2.8c-.25.4-.75.5-1.1.25-2.7-1.65-6.8-2.15-9.95-1.15-.4.1-.85-.1-.95-.5-.1-.4.1-.85.5-.95 3.65-1.1 8.15-.55 11.25 1.35.35.15.45.65.25 1zm-1.25 2.7c-.2.3-.6.4-.9.2-2.35-1.45-5.3-1.75-8.8-.95-.35.1-.65-.15-.75-.45-.1-.35.15-.65.45-.75 3.8-.85 7.1-.5 9.7 1.1.3.15.4.55.3.85z" fill="white"/></svg>
         </div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:12px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="spTrackMini">Nicht verbunden</div>
           <div style="font-size:11px;color:var(--text-tertiary);" id="spArtistMini"></div>
         </div>
       </div>
-      <div id="spotifyMiniContent">
-        <button class="sp-connect-btn" onclick="spotifyLogin()" style="padding:8px;font-size:12px;">Mit Spotify verbinden</button>
-      </div>
     </div>
 
-    <!-- IKEA Lights tiles -->
-    <div class="home-tile light-item on" onclick="toggleLight(this)" style="grid-column:span 1;" data-name="Wohnzimmer">
+    <!-- IKEA Light 1 -->
+    <div class="home-tile light-item on" onclick="toggleLight(this)" data-name="Wohnzimmer">
       <div class="tile-icon" style="background:linear-gradient(135deg,#FFB300,#FF8F00);">
         <span style="font-size:20px;">💡</span>
       </div>
@@ -521,7 +518,8 @@
       <div class="tile-status light-status on">An</div>
     </div>
 
-    <div class="home-tile light-item off" onclick="toggleLight(this)" style="grid-column:span 1;" data-name="Küche">
+    <!-- IKEA Light 2 -->
+    <div class="home-tile light-item off" onclick="toggleLight(this)" data-name="Küche">
       <div class="tile-icon" style="background:rgba(0,0,0,0.08);">
         <span style="font-size:20px;opacity:0.4;">💡</span>
       </div>
@@ -531,14 +529,14 @@
 
   </div>
 
-  <!-- Second row of tiles -->
+  <!-- Row 2: SBB + Todos + Bring + Spotify + Lights -->
   <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
 
-    <!-- SBB Transport -->
-    <div class="card" style="grid-column:span 3;">
+    <!-- SBB -->
+    <div class="card" style="grid-column:span 2;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <svg width="28" height="18" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
+          <svg width="28" height="18" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
           <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Verbindungen</span>
         </div>
         <span onclick="loadTransport()" style="font-size:13px;color:#e30613;cursor:pointer;">↻</span>
@@ -556,8 +554,8 @@
       <div id="transportList"><div class="no-events">Laden...</div></div>
     </div>
 
-    <!-- To-do list expanded -->
-    <div class="card" style="grid-column:span 3;">
+    <!-- To-dos expanded -->
+    <div class="card" style="grid-column:span 2;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Aufgaben</span>
         <button class="add-btn" onclick="openTodoModal()" style="padding:5px 10px;font-size:11px;">+ Neu</button>
@@ -565,53 +563,65 @@
       <div id="todoList"></div>
     </div>
 
-  </div>
-
-  <!-- Third row: Bring + more lights -->
-  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
-
     <!-- Bring expanded -->
-    <div class="card" style="grid-column:span 3;">
+    <div class="card" style="grid-column:span 2;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">🛒 Bring! Einkaufsliste</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">🛒 Bring!</span>
       </div>
       <div id="bringList"></div>
       <div class="add-row" style="margin-top:8px;">
         <input class="add-input" id="newBring" placeholder="Artikel hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()" style="font-size:13px;padding:8px 12px;" />
-        <button class="add-btn" onclick="addBringItem()">+ Add</button>
+        <button class="add-btn" onclick="addBringItem()">+</button>
       </div>
     </div>
 
+  </div>
+
+  <!-- Row 3: Spotify + Lights -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;">
+
     <!-- Spotify full -->
-    <div class="card" style="grid-column:span 2;">
+    <div class="card" style="grid-column:span 3;">
       <div id="spotifyContent">
         <div style="text-align:center;padding:8px 0;">
           <div style="font-size:32px;margin-bottom:8px;">🎵</div>
-          <div style="font-size:12px;color:#aaa;margin-bottom:12px;">Verbinde deinen Spotify Account</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:12px;">Verbinde deinen Spotify Account</div>
           <button class="sp-connect-btn" onclick="spotifyLogin()">Mit Spotify verbinden</button>
         </div>
       </div>
     </div>
 
-    <!-- More lights -->
-    <div class="card" style="grid-column:span 1;">
-      <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">💡 Lichter</div>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <div class="home-tile light-item on" onclick="toggleLight(this)" data-name="Schlafzimmer" style="flex-direction:row;padding:8px 10px;align-items:center;gap:8px;">
-          <span style="font-size:16px;">💡</span>
-          <span class="tile-label" style="flex:1;font-size:12px;">Schlafzimmer</span>
-          <span class="tile-status light-status on" style="font-size:11px;">An</span>
+    <!-- Lights expanded -->
+    <div class="card" style="grid-column:span 3;">
+      <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:6px;"><rect width="24" height="24" rx="3" fill="#0058A3"/><text x="12" y="16" font-size="8" font-weight="900" fill="#FFDA1A" text-anchor="middle" font-family="sans-serif">IKEA</text></svg>
+        Lichter
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+        <div class="home-tile light-item on" onclick="toggleLight(this)" data-name="Wohnzimmer" style="min-height:80px;">
+          <div class="tile-icon" style="background:linear-gradient(135deg,#FFB300,#FF8F00);width:32px;height:32px;"><span style="font-size:16px;">💡</span></div>
+          <div class="tile-label" style="font-size:11px;">Wohnzimmer</div>
+          <div class="tile-status light-status on" style="font-size:10px;">An</div>
         </div>
-        <div class="home-tile light-item off" onclick="toggleLight(this)" data-name="Bad" style="flex-direction:row;padding:8px 10px;align-items:center;gap:8px;">
-          <span style="font-size:16px;opacity:0.4;">💡</span>
-          <span class="tile-label" style="flex:1;font-size:12px;">Bad</span>
-          <span class="tile-status light-status off" style="font-size:11px;">Aus</span>
+        <div class="home-tile light-item off" onclick="toggleLight(this)" data-name="Küche" style="min-height:80px;">
+          <div class="tile-icon" style="background:rgba(0,0,0,0.08);width:32px;height:32px;"><span style="font-size:16px;opacity:0.4;">💡</span></div>
+          <div class="tile-label" style="font-size:11px;">Küche</div>
+          <div class="tile-status light-status off" style="font-size:10px;">Aus</div>
+        </div>
+        <div class="home-tile light-item on" onclick="toggleLight(this)" data-name="Schlafzimmer" style="min-height:80px;">
+          <div class="tile-icon" style="background:linear-gradient(135deg,#FFB300,#FF8F00);width:32px;height:32px;"><span style="font-size:16px;">💡</span></div>
+          <div class="tile-label" style="font-size:11px;">Schlafzimmer</div>
+          <div class="tile-status light-status on" style="font-size:10px;">An</div>
+        </div>
+        <div class="home-tile light-item off" onclick="toggleLight(this)" data-name="Bad" style="min-height:80px;">
+          <div class="tile-icon" style="background:rgba(0,0,0,0.08);width:32px;height:32px;"><span style="font-size:16px;opacity:0.4;">💡</span></div>
+          <div class="tile-label" style="font-size:11px;">Bad</div>
+          <div class="tile-status light-status off" style="font-size:10px;">Aus</div>
         </div>
       </div>
     </div>
 
   </div>
-
 
   <!-- Meal Planner -->
   <div style="margin-top:14px;">
