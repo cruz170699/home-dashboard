@@ -464,7 +464,7 @@
 
   <!-- SBB Popup -->
   <div id="sbbPopup" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeSBBPopup()">
-    <div style="background:white;border-radius:20px;width:80%;max-width:800px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="background:white;border-radius:20px;width:92%;max-width:1100px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
         <div style="display:flex;align-items:center;gap:10px;">
           <svg width="36" height="24" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
@@ -475,11 +475,11 @@
       <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
         <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;">
           <div style="position:relative;">
-            <input id="sbbPopupFrom" type="text" value="Dietlikon" placeholder="Von..." style="width:100%;font-size:13px;padding:10px 14px;border-radius:10px;border:1px solid var(--border-strong);color:var(--text-primary);outline:none;" oninput="searchStation('from',this.value)" onfocus="showNearbyStations('from')" onkeydown="if(event.key==='Enter')loadSBBPopup()" autocomplete="off"/>
+            <input id="transportFrom" type="text" value="Dietlikon" placeholder="Von..." style="width:100%;font-size:13px;padding:10px 14px;border-radius:10px;border:1px solid var(--border-strong);color:var(--text-primary);outline:none;" oninput="searchStation('from',this.value)" onfocus="showNearbyStations('from')" onkeydown="if(event.key==='Enter')loadSBBPopup()" autocomplete="off"/>
             <div id="suggestFrom" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:200px;overflow-y:auto;"></div>
           </div>
           <div style="position:relative;">
-            <input id="sbbPopupTo" type="text" value="Zürich HB" placeholder="Nach..." style="width:100%;font-size:13px;padding:10px 14px;border-radius:10px;border:1px solid var(--border-strong);color:var(--text-primary);outline:none;" oninput="searchStation('to',this.value)" onfocus="showNearbyStations('to')" onkeydown="if(event.key==='Enter')loadSBBPopup()" autocomplete="off"/>
+            <input id="transportTo" type="text" value="Zürich HB" placeholder="Nach..." style="width:100%;font-size:13px;padding:10px 14px;border-radius:10px;border:1px solid var(--border-strong);color:var(--text-primary);outline:none;" oninput="searchStation('to',this.value)" onfocus="showNearbyStations('to')" onkeydown="if(event.key==='Enter')loadSBBPopup()" autocomplete="off"/>
             <div id="suggestTo" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:200px;overflow-y:auto;"></div>
           </div>
           <button onclick="loadSBBPopup()" style="padding:10px 20px;border-radius:10px;border:none;background:#e30613;color:white;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Suchen</button>
@@ -651,27 +651,7 @@
 
   </div>
 
-  <!-- SBB - Full width -->
-  <div class="card" style="margin-bottom:8px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <svg width="32" height="20" viewBox="0 0 60 40"><rect width="60" height="40" rx="4" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
-        <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Verbindungen</span>
-      </div>
-      <span onclick="loadTransport()" style="font-size:13px;color:#e30613;cursor:pointer;font-weight:600;">↻</span>
-    </div>
-    <div style="display:grid;grid-template-columns:200px 200px 1fr;gap:10px;align-items:start;">
-      <div style="position:relative;">
-        <input id="transportFrom" type="text" value="Dietlikon" placeholder="Von..." style="width:100%;font-size:12px;padding:8px 12px;border-radius:8px;border:1px solid var(--border-strong);background:rgba(0,0,0,0.02);color:var(--text-primary);outline:none;" oninput="searchStation('from',this.value)" onfocus="showNearbyStations('from')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
-        <div id="suggestFrom" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:150px;overflow-y:auto;"></div>
-      </div>
-      <div style="position:relative;">
-        <input id="transportTo" type="text" value="Zürich HB" placeholder="Nach..." style="width:100%;font-size:12px;padding:8px 12px;border-radius:8px;border:1px solid var(--border-strong);background:rgba(0,0,0,0.02);color:var(--text-primary);outline:none;" oninput="searchStation('to',this.value)" onfocus="showNearbyStations('to')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
-        <div id="suggestTo" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:100;max-height:150px;overflow-y:auto;"></div>
-      </div>
-      <div id="transportList"><div class="no-events">Laden...</div></div>
-    </div>
-  </div>
+
 
 
 </div>
@@ -1374,7 +1354,7 @@ async function loadSBBPopup() {
   const list = document.getElementById('sbbPopupList');
   if (list) list.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);text-align:center;padding:20px;">Laden...</div>';
   try {
-    const r = await fetch(`https://transport.opendata.ch/v1/connections?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&limit=8`);
+    const r = await fetch(`https://transport.opendata.ch/v1/connections?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&limit=12`);
     const d = await r.json();
     const conns = d.connections || [];
     if (!conns.length) { if (list) list.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);text-align:center;padding:20px;">Keine Verbindungen</div>'; return; }
