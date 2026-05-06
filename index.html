@@ -456,34 +456,34 @@
   </style>
 
 
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div class="card" style="padding:0;overflow:hidden;">
+      <!-- Calendar Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);">
         <div style="display:flex;align-items:center;gap:10px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#fff"/><rect x="3" y="3" width="18" height="18" rx="3" fill="#fff" stroke="#dadce0" stroke-width="1"/><rect x="3" y="3" width="18" height="5" rx="3" fill="#4285F4"/><rect x="3" y="5" width="18" height="3" fill="#4285F4"/><text x="12" y="19" font-size="8" font-weight="700" fill="#4285F4" text-anchor="middle" font-family="sans-serif">31</text><line x1="8" y1="3" x2="8" y2="6" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="3" x2="16" y2="6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <div style="font-size:14px;font-weight:600;color:#1a1a1a;" id="calWeekLabel">Kalender</div>
+          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#fff"/><rect x="3" y="3" width="18" height="18" rx="3" fill="#fff" stroke="#dadce0" stroke-width="1"/><rect x="3" y="3" width="18" height="5" rx="3" fill="#4285F4"/><rect x="3" y="5" width="18" height="3" fill="#4285F4"/><text x="12" y="19" font-size="8" font-weight="700" fill="#4285F4" text-anchor="middle" font-family="sans-serif">31</text></svg>
+          <div style="font-size:15px;font-weight:600;color:var(--text-primary);" id="calMonthLabel">Kalender</div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button onclick="changeWeek(-1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
-          <button onclick="changeWeek(0)" style="padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:white;font-size:12px;cursor:pointer;font-weight:500;">Heute</button>
-          <button onclick="changeWeek(1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">›</button>
-          <div id="calLegend" style="display:flex;gap:8px;align-items:center;margin-left:8px;"></div>
-        </div>
-      </div>
-
-      <!-- Week View -->
-      <div style="overflow-x:auto;">
-        <div id="weekView" style="min-width:600px;">
-
-          <!-- Day headers -->
-          <div id="calDayHeaders" style="display:grid;grid-template-columns:48px repeat(7,1fr);border-bottom:1px solid var(--border);margin-bottom:0;"></div>
-
-          <!-- Time grid -->
-          <div style="position:relative;overflow-y:auto;max-height:500px;" id="calScrollArea">
-            <div id="calTimeGrid" style="display:grid;grid-template-columns:48px repeat(7,1fr);position:relative;"></div>
-          </div>
-
+        <div style="display:flex;gap:6px;align-items:center;">
+          <div id="calLegend" style="display:flex;gap:10px;align-items:center;margin-right:8px;"></div>
+          <button onclick="changeMonth(-1)" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:white;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);">‹</button>
+          <button onclick="changeMonth(0)" style="padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:white;font-size:12px;cursor:pointer;font-weight:500;color:var(--text-primary);">Heute</button>
+          <button onclick="changeMonth(1)" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:white;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);">›</button>
         </div>
       </div>
+
+      <!-- Day name headers -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);">
+        <div style="text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:var(--text-tertiary);">Mo</div>
+        <div style="text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:var(--text-tertiary);">Di</div>
+        <div style="text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:var(--text-tertiary);">Mi</div>
+        <div style="text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:var(--text-tertiary);">Do</div>
+        <div style="text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:var(--text-tertiary);">Fr</div>
+        <div style="text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:var(--text-tertiary);">Sa</div>
+        <div style="text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:var(--text-tertiary);">So</div>
+      </div>
+
+      <!-- Month Grid -->
+      <div id="calMonthGrid" style="display:grid;grid-template-columns:repeat(7,1fr);"></div>
     </div>
   </div>
 
@@ -1024,91 +1024,66 @@ async function loadAllData() {
   await loadCalendars(); await loadTasks(); renderTodos(); renderBring();
 }
 
-let currentWeekOffset = 0;
+let currentMonthOffset = 0;
 
-function changeWeek(offset) {
-  if (offset === 0) currentWeekOffset = 0;
-  else currentWeekOffset += offset;
-  renderWeekView();
+function changeMonth(offset) {
+  if (offset === 0) currentMonthOffset = 0;
+  else currentMonthOffset += offset;
+  renderMonthView();
   loadAllEvents();
 }
 
-function getWeekDays() {
+function getCurrentMonth() {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - dayOfWeek + (currentWeekOffset * 7));
-  return Array.from({length: 7}, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return d;
-  });
+  return new Date(now.getFullYear(), now.getMonth() + currentMonthOffset, 1);
 }
 
-function renderWeekView() {
-  const days = getWeekDays();
+function renderMonthView() {
+  const first = getCurrentMonth();
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  const label = document.getElementById('calMonthLabel');
+  if (label) label.textContent = months[first.getMonth()] + ' ' + first.getFullYear();
+
+  const daysInMonth = new Date(first.getFullYear(), first.getMonth()+1, 0).getDate();
+  const firstDayOfWeek = (first.getDay() + 6) % 7; // Monday=0
   const today = new Date();
-  const dayNames = ['Mo','Di','Mi','Do','Fr','Sa','So'];
-  const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-  const HOUR_HEIGHT = 56;
 
-  const weekLabel = document.getElementById('calWeekLabel');
-  if (weekLabel) weekLabel.textContent = days[0].getDate()+'. '+months[days[0].getMonth()]+' – '+days[6].getDate()+'. '+months[days[6].getMonth()]+' '+days[0].getFullYear();
+  const grid = document.getElementById('calMonthGrid');
+  if (!grid) return;
 
-  const headers = document.getElementById('calDayHeaders');
-  if (headers) {
-    headers.innerHTML = '<div style="padding:8px 4px;width:48px;"></div>' + days.map((d, i) => {
-      const isToday = d.toDateString() === today.toDateString();
-      return `<div style="text-align:center;padding:8px 4px;cursor:pointer;" onclick="openEventModalWithDate('${d.toISOString().split('T')[0]}')">
-        <div style="font-size:11px;font-weight:500;color:${isToday?'var(--accent)':'var(--text-tertiary)'};">${dayNames[i]}</div>
-        <div style="width:32px;height:32px;border-radius:50%;background:${isToday?'var(--accent)':'transparent'};color:${isToday?'white':'var(--text-primary)'};display:flex;align-items:center;justify-content:center;margin:2px auto 0;font-size:14px;font-weight:${isToday?'700':'400'};">${d.getDate()}</div>
-      </div>`;
-    }).join('');
+  let html = '';
+  // Empty cells before first day
+  for (let i = 0; i < firstDayOfWeek; i++) {
+    html += '<div style="min-height:90px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
-  const grid = document.getElementById('calTimeGrid');
-  if (!grid) return;
-  const hours = Array.from({length: 17}, (_, i) => i + 7);
-  let html = '';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(first.getFullYear(), first.getMonth(), d);
+    const dateStr = date.toISOString().split('T')[0];
+    const isToday = date.toDateString() === today.toDateString();
+    const col = (firstDayOfWeek + d - 1) % 7;
+    const isLastCol = col === 6;
 
-  html += '<div style="position:relative;width:48px;">';
-  hours.forEach(h => {
-    html += `<div style="height:${HOUR_HEIGHT}px;display:flex;align-items:flex-start;justify-content:flex-end;padding-right:6px;padding-top:2px;"><span style="font-size:10px;color:var(--text-tertiary);">${String(h).padStart(2,'0')}:00</span></div>`;
-  });
-  html += '</div>';
+    html += `<div class="month-day-cell" id="cell_${dateStr}" data-date="${dateStr}"
+      style="min-height:90px;border-right:${isLastCol?'none':'1px solid var(--border)'};border-bottom:1px solid var(--border);padding:4px;cursor:pointer;vertical-align:top;"
+      onclick="openEventModalWithDate('${dateStr}')"
+      onmouseover="this.style.background='rgba(0,122,255,0.02)'"
+      onmouseout="this.style.background='white'">
+      <div style="display:flex;justify-content:center;margin-bottom:4px;">
+        <div style="width:26px;height:26px;border-radius:50%;background:${isToday?'var(--accent)':'transparent'};color:${isToday?'white':'var(--text-primary)'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:${isToday?'700':'400'};">${d}</div>
+      </div>
+      <div id="events_${dateStr}" style="display:flex;flex-direction:column;gap:2px;"></div>
+    </div>`;
+  }
 
-  days.forEach((d, di) => {
-    const dateStr = d.toISOString().split('T')[0];
-    const isToday = d.toDateString() === today.toDateString();
-    html += `<div style="position:relative;border-left:1px solid var(--border);background:${isToday?'rgba(0,122,255,0.02)':'white'};" id="dayCol_${dateStr}">`;
-    hours.forEach(h => {
-      html += `<div style="height:${HOUR_HEIGHT}px;border-top:1px solid rgba(0,0,0,0.05);cursor:pointer;" onclick="openEventModalWithDateAndTime('${dateStr}','${String(h).padStart(2,'0')}:00')" onmouseover="this.style.background='rgba(0,0,0,0.02)'" onmouseout="this.style.background='transparent'"></div>`;
-    });
-    html += '</div>';
-  });
+  // Fill remaining cells
+  const totalCells = firstDayOfWeek + daysInMonth;
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i = 0; i < remaining; i++) {
+    html += '<div style="min-height:90px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+  }
 
   grid.innerHTML = html;
-
-  if (currentWeekOffset === 0) {
-    const now = new Date();
-    const h = now.getHours(), m = now.getMinutes();
-    if (h >= 7 && h <= 23) {
-      const top = (h - 7) * HOUR_HEIGHT + (m / 60) * HOUR_HEIGHT;
-      const todayCol = document.getElementById('dayCol_' + today.toISOString().split('T')[0]);
-      if (todayCol) {
-        const ind = document.createElement('div');
-        ind.style.cssText = `position:absolute;left:0;right:0;top:${top}px;height:2px;background:var(--accent);z-index:5;pointer-events:none;`;
-        ind.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:-3px;margin-left:-4px;"></div>';
-        todayCol.appendChild(ind);
-      }
-    }
-  }
-
-  setTimeout(() => {
-    const scroll = document.getElementById('calScrollArea');
-    if (scroll) scroll.scrollTop = HOUR_HEIGHT;
-  }, 100);
 }
 
 function openEventModalWithDate(dateStr) {
@@ -1170,18 +1145,22 @@ async function loadCalendars() {
         family ? {name:'Familie', color:calendars.familyColor} : null
       ].filter(Boolean).map(l => `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#888;"><span style="width:8px;height:8px;border-radius:50%;background:${l.color};display:inline-block;"></span>${l.name}</span>`).join('');
     }
-    renderWeekView();
+    renderMonthView();
     loadAllEvents();
   } catch(e) { console.error(e); }
 }
 
 function renderCalGridMain() {}
+// Keep old functions for compatibility
+function changeWeek(o) { changeMonth(o); }
+function getWeekDays() { return []; }
+function renderWeekView() {}
 
 async function loadAllEvents() {
   try {
-    const days = getWeekDays();
-    const timeMin = new Date(days[0]); timeMin.setHours(0,0,0,0);
-    const timeMax = new Date(days[6]); timeMax.setHours(23,59,59,999);
+    const first = getCurrentMonth();
+    const timeMin = new Date(first.getFullYear(), first.getMonth(), 1);
+    const timeMax = new Date(first.getFullYear(), first.getMonth()+1, 0, 23, 59, 59);
     let allEvents = [];
     const calEntries = [
       {id: calendars.sergio, color: calendars.sergioColor, who: 'sergio'},
@@ -1190,7 +1169,7 @@ async function loadAllEvents() {
     ].filter(Boolean);
     for (const cal of calEntries) {
       try {
-        const resp = await gapi.client.calendar.events.list({calendarId:cal.id, timeMin:timeMin.toISOString(), timeMax:timeMax.toISOString(), singleEvents:true, orderBy:'startTime', maxResults:50});
+        const resp = await gapi.client.calendar.events.list({calendarId:cal.id, timeMin:timeMin.toISOString(), timeMax:timeMax.toISOString(), singleEvents:true, orderBy:'startTime', maxResults:100});
         const evs = (resp.result.items||[]).map(e=>({...e, _color:cal.color, _calId:cal.id, _who:cal.who}));
         allEvents = [...allEvents, ...evs];
       } catch(e) {}
@@ -1199,118 +1178,46 @@ async function loadAllEvents() {
     allEvents = allEvents.filter(ev => { if(seen.has(ev.id)) return false; seen.add(ev.id); return true; });
     window._allEventsCache = allEvents;
     allEvents.forEach(ev => { ev._reminder = localStorage.getItem('reminder_' + ev.id) || '0'; });
-    renderWeekEvents(allEvents);
+    renderMonthEvents(allEvents);
   } catch(e) { console.error(e); }
 }
 
-function renderWeekEvents(events) {
-  const HOUR_HEIGHT = 56;
-  document.querySelectorAll('.cal-event-block').forEach(el => el.remove());
+function renderMonthEvents(events) {
+  // Clear all event containers
+  document.querySelectorAll('[id^="events_"]').forEach(el => el.innerHTML = '');
+
   events.forEach(ev => {
-    if (!ev.start.dateTime) return;
-    const start = new Date(ev.start.dateTime);
-    const end = new Date(ev.end.dateTime);
-    const startH = start.getHours() + start.getMinutes() / 60;
-    const endH = end.getHours() + end.getMinutes() / 60;
-    if (startH < 7 || startH > 23) return;
-    const top = (startH - 7) * HOUR_HEIGHT;
-    const height = Math.max((endH - startH) * HOUR_HEIGHT, 22);
-    const dateStr = start.toISOString().split('T')[0];
-    const col = document.getElementById('dayCol_' + dateStr);
-    if (!col) return;
-    const evData = encodeURIComponent(JSON.stringify({id:ev.id, calId:ev._calId, who:ev._who, summary:ev.summary||'', start:ev.start.dateTime, duration:Math.round((end-start)/60000), description:ev.description||''}));
-    const block = document.createElement('div');
-    block.className = 'cal-event-block';
-    block.style.cssText = `position:absolute;left:2px;right:2px;top:${top}px;height:${height}px;background:${ev._color};border-radius:4px;padding:3px 5px;cursor:pointer;z-index:3;overflow:hidden;`;
-    block.innerHTML = `<div style="font-size:11px;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ev.summary||'(kein Titel)'}</div>${height>28?`<div style="font-size:10px;color:rgba(255,255,255,0.85);">${String(start.getHours()).padStart(2,'0')}:${String(start.getMinutes()).padStart(2,'0')}</div>`:''}`;
-    block.onclick = (e) => { e.stopPropagation(); editEvent(evData); };
-    col.appendChild(block);
+    const isAllDay = !ev.start.dateTime;
+    const startDate = isAllDay ? new Date(ev.start.date) : new Date(ev.start.dateTime);
+    const dateStr = startDate.toISOString().split('T')[0];
+    const container = document.getElementById('events_' + dateStr);
+    if (!container) return;
+
+    const evData = encodeURIComponent(JSON.stringify({
+      id:ev.id, calId:ev._calId, who:ev._who, summary:ev.summary||'',
+      start: ev.start.dateTime || ev.start.date,
+      duration: ev.end?.dateTime ? Math.round((new Date(ev.end.dateTime)-new Date(ev.start.dateTime))/60000) : 60,
+      description: ev.description||''
+    }));
+
+    const pill = document.createElement('div');
+    pill.onclick = (e) => { e.stopPropagation(); editEvent(evData); };
+
+    if (isAllDay) {
+      pill.style.cssText = `background:${ev._color};color:white;font-size:10px;font-weight:500;padding:2px 6px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;`;
+      pill.textContent = ev.summary || '(kein Titel)';
+    } else {
+      const h = String(startDate.getHours()).padStart(2,'0');
+      const m = String(startDate.getMinutes()).padStart(2,'0');
+      pill.style.cssText = `display:flex;align-items:center;gap:3px;font-size:10px;cursor:pointer;padding:1px 2px;border-radius:3px;overflow:hidden;`;
+      pill.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${ev._color};flex-shrink:0;"></span><span style="color:var(--text-secondary);flex-shrink:0;">${h}:${m}</span><span style="color:var(--text-primary);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ev.summary||'(kein Titel)'}</span>`;
+      pill.onmouseover = () => pill.style.background = 'rgba(0,0,0,0.05)';
+      pill.onmouseout = () => pill.style.background = 'transparent';
+    }
+    container.appendChild(pill);
   });
 }
 
-
-async function loadEvents(who, calId, familyCalId) {
-  if(!calId) return;
-  try {
-    const now=new Date();
-    const timeMin=now.toISOString(), timeMax=new Date(now.getTime()+14*864e5).toISOString();
-    const params = {calendarId:calId,timeMin,timeMax,singleEvents:true,orderBy:'startTime',maxResults:10};
-    const resp=await gapi.client.calendar.events.list(params);
-    let events=resp.result.items||[];
-
-    // Also load family calendar events
-    if (familyCalId) {
-      try {
-        const fResp=await gapi.client.calendar.events.list({...params, calendarId:familyCalId});
-        const fEvents=(fResp.result.items||[]).map(e=>({...e, isFamily:true}));
-        events=[...events, ...fEvents];
-        events.sort((a,b)=>{
-          const da=a.start.dateTime?new Date(a.start.dateTime):new Date(a.start.date);
-          const db=b.start.dateTime?new Date(b.start.dateTime):new Date(b.start.date);
-          return da-db;
-        });
-        events=events.slice(0,6);
-      } catch(e){}
-    }
-
-    const listId='eventList'+(who==='sergio'?'Sergio':'Miriam');
-    const dotColor=who==='sergio'?'#378ADD':'#D4537E';
-    const months=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-    if(!events.length){document.getElementById(listId).innerHTML='<div class="no-events">Keine Termine in 2 Wochen</div>';return;}
-    document.getElementById(listId).innerHTML=events.map(ev=>{
-      const s=ev.start.dateTime?new Date(ev.start.dateTime):new Date(ev.start.date);
-      const t=ev.start.dateTime?s.getDate()+'. '+months[s.getMonth()]+' · '+String(s.getHours()).padStart(2,'0')+':'+String(s.getMinutes()).padStart(2,'0'):s.getDate()+'. '+months[s.getMonth()];
-      const color=ev.isFamily?'#1D9E75':dotColor;
-      const delCalId = ev.isFamily ? calendars.family : (who==='sergio'?calendars.sergio:calendars.miriam);
-      const startISO = ev.start.dateTime || ev.start.date;
-      const evData = encodeURIComponent(JSON.stringify({id:ev.id, calId:delCalId, who, summary:ev.summary||'', start:startISO, duration: ev.end?.dateTime ? Math.round((new Date(ev.end.dateTime)-new Date(ev.start.dateTime))/60000) : 60, description:ev.description||''}));
-      return`<div class="event-item" onclick="editEvent('${evData}')" style="cursor:pointer;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='#f8f9fa'"><div class="event-dot" style="background:${color}"></div><div style="flex:1"><div class="event-title-text">${ev.summary||'(kein Titel)'}</div><div class="event-time-text">${t}${ev.isFamily?' · 👨‍👩‍👦':''}</div></div><span onclick="event.stopPropagation();deleteEvent('${delCalId}','${ev.id}','${who}')" style="font-size:16px;color:#ddd;cursor:pointer;line-height:1;flex-shrink:0;" title="Löschen">×</span></div>`;
-    }).join('');
-    events.forEach(ev=>{
-      const s=ev.start.dateTime?new Date(ev.start.dateTime):new Date(ev.start.date), n=new Date();
-      if(s.getMonth()===n.getMonth()&&s.getFullYear()===n.getFullYear()){
-        const el=document.querySelector('#calGrid'+(who==='sergio'?'Sergio':'Miriam')+' [data-day="'+s.getDate()+'"]');
-        if(el) el.classList.add('has-event');
-      }
-    });
-  } catch(e){console.error(e);}
-}
-
-async function addEvent(who) {
-  const input=document.getElementById('newEvent'+(who==='sergio'?'Sergio':'Miriam'));
-  const val=input.value.trim(); if(!val) return;
-  const calId=calendars[who]; if(!calId){alert('Kalender nicht verbunden');return;}
-  try {
-    const t=new Date(); t.setDate(t.getDate()+1); t.setHours(10,0,0,0);
-    await gapi.client.calendar.events.insert({calendarId:calId,resource:{summary:val,start:{dateTime:t.toISOString(),timeZone:'Europe/Zurich'},end:{dateTime:new Date(t.getTime()+36e5).toISOString(),timeZone:'Europe/Zurich'}}});
-    input.value=''; loadEvents(who,calId);
-  } catch(e){alert('Fehler: '+(e.result?.error?.message||e));}
-}
-
-async function loadTasks() {
-  try {
-    const lists=await gapi.client.tasks.tasklists.list(), def=lists.result.items[0]; if(!def) return;
-    const tasks=await gapi.client.tasks.tasks.list({tasklist:def.id,showCompleted:false,maxResults:20});
-    todos=(tasks.result.items||[]).map(t=>({id:t.id,listId:def.id,text:t.title,done:false}));
-    localStorage.setItem('dash_todos',JSON.stringify(todos)); renderTodos();
-  } catch(e){console.error(e);}
-}
-
-function renderTodos() {
-  const list=document.getElementById('todoList');
-  const pending = todos.filter(t => !t.done).length;
-  const tileStatus = document.getElementById('todoTileStatus');
-  if (tileStatus) tileStatus.textContent = pending > 0 ? `${pending} offen` : 'Alles erledigt';
-  if(!todos.length){list.innerHTML='<div class="no-events">Keine Aufgaben</div>';return;}
-  list.innerHTML=todos.map((t,i)=>{
-    const due = t.due ? `<span style="font-size:10px;color:#aaa;margin-left:4px;">· ${new Date(t.due).toLocaleDateString('de-CH',{day:'numeric',month:'short'})}</span>` : '';
-    const note = t.note ? `<div style="font-size:11px;color:#aaa;margin-top:1px;">${t.note}</div>` : '';
-    let badge = '';
-    if (t.assign==='sergio') badge=`<span style="font-size:10px;background:#E6F1FB;color:#185FA5;padding:1px 6px;border-radius:6px;margin-left:4px;">SÉ</span>`;
-    else if (t.assign==='miriam') badge=`<span style="font-size:10px;background:#FBEAF0;color:#993556;padding:1px 6px;border-radius:6px;margin-left:4px;">MI</span>`;
-    return`<div class="todo-item"><div class="todo-check ${t.done?'done':''}" onclick="toggleTodo(${i})">${t.done?'✓':''}</div><div style="flex:1"><span class="todo-label ${t.done?'done':''}">${t.text}</span>${badge}${due}${note}</div><span class="todo-delete" onclick="deleteTodo(${i})">×</span></div>`;
-  }).join('');
-}
 function toggleTodo(i){todos[i].done=!todos[i].done;localStorage.setItem('dash_todos',JSON.stringify(todos));renderTodos();}
 function deleteTodo(i){todos.splice(i,1);localStorage.setItem('dash_todos',JSON.stringify(todos));renderTodos();}
 function openTodoModal(){
