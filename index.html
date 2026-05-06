@@ -1487,10 +1487,44 @@ async function showNearbyStations(which) {
   const inputId = which === 'from' ? 'transportFrom' : 'transportTo';
   const dropdownId = which === 'from' ? 'suggestFrom' : 'suggestTo';
   const dropdown = document.getElementById(dropdownId);
-  const currentVal = document.getElementById(inputId).value.trim();
-  if (currentVal.length >= 2) return;
 
+  // Always show quick picks on focus regardless of current value
   let html = `<div style="padding:6px 10px 4px;font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;">⭐ Schnellauswahl</div>`;
+  html += QUICK_STATIONS.map(s => `
+    <div onclick="selectStation('${which}','${s}');event.stopPropagation();" style="padding:8px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.04);" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='white'">
+      <span style="font-size:14px;">🚉</span>${s}
+    </div>`).join('');
+
+  html += `<div id="nearbySection_${which}" style="border-top:1px solid var(--border);">
+    <div style="padding:6px 10px 4px;font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;">📍 In der Nähe</div>
+    <div style="padding:8px 12px;font-size:12px;color:var(--text-tertiary);">Standort wird ermittelt...</div>
+  </div>`;
+
+  dropdown.innerHTML = html;
+  dropdown.style.display = 'block';
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      try {
+        const r = await fetch(`https://transport.opendata.ch/v1/locations?x=${pos.coords.longitude}&y=${pos.coords.latitude}&type=station`);
+        const d = await r.json();
+        const nearby = (d.stations || []).filter(s => s.name && !QUICK_STATIONS.includes(s.name)).slice(0, 4);
+        const nearbySection = document.getElementById(`nearbySection_${which}`);
+        if (!nearbySection) return;
+        if (!nearby.length) { nearbySection.style.display = 'none'; return; }
+        nearbySection.innerHTML = `
+          <div style="padding:6px 10px 4px;font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;">📍 In der Nähe</div>
+          ${nearby.map(s => `
+            <div onclick="selectStation('${which}','${s.name.replace(/'/g,"\\'")}');event.stopPropagation();" style="padding:8px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.04);" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='white'">
+              <span style="font-size:14px;">📍</span>${s.name}
+            </div>`).join('')}`;
+      } catch(e) {}
+    }, () => {
+      const nearbySection = document.getElementById(`nearbySection_${which}`);
+      if (nearbySection) nearbySection.style.display = 'none';
+    });
+  }
+}
   html += QUICK_STATIONS.map(s => `
     <div onclick="selectStation('${which}','${s}');event.stopPropagation();" style="padding:8px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(0,0,0,0.04);" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='white'">
       <span style="font-size:14px;">🚉</span>${s}
@@ -1532,7 +1566,11 @@ async function searchStation(which, query) {
   clearTimeout(stationSearchTimer);
   const dropdownId = which === 'from' ? 'suggestFrom' : 'suggestTo';
   const dropdown = document.getElementById(dropdownId);
-  if (query.length < 2) { dropdown.style.display = 'none'; return; }
+  if (query.length < 2) { 
+    if (query.length === 0) showNearbyStations(which);
+    else dropdown.style.display = 'none'; 
+    return; 
+  }
   stationSearchTimer = setTimeout(async () => {
     try {
       const r = await fetch(`https://transport.opendata.ch/v1/locations?query=${encodeURIComponent(query)}&type=station`);
