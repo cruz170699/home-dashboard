@@ -1878,6 +1878,8 @@ async function submitEvent() {
 }
 // Close modal on backdrop click
 document.getElementById('eventModal').addEventListener('click', function(e) { if(e.target===this) closeEventModal(); });
+document.getElementById('todoModal').addEventListener('click', function(e){ if(e.target===this) closeTodoModal(); });
+}
 </script>
 
 <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
