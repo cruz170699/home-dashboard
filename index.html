@@ -1352,11 +1352,13 @@ function updateMealTopbarPreview() {
     const dayIndex = (todayIndex + i) % 7;
     const day = days[dayIndex];
     const label = i === 0 ? 'Heute' : i === 1 ? 'Morgen' : days[dayIndex].slice(0,2);
+    const mittag = mealData[day]?.['Mittagessen'] || '';
     const abend = mealData[day]?.['Abendessen'] || '';
-    if (abend) {
-      html += `<div style="text-align:center;">
-        <div style="font-size:9px;font-weight:600;color:rgba(255,107,53,0.7);text-transform:uppercase;letter-spacing:0.5px;">${label}</div>
-        <div style="font-size:12px;font-weight:500;color:var(--text-primary);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;">${abend}</div>
+    if (mittag || abend) {
+      html += `<div style="text-align:left;border-left:2px solid rgba(255,107,53,0.3);padding-left:8px;">
+        <div style="font-size:9px;font-weight:600;color:rgba(255,107,53,0.7);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">${label}</div>
+        ${mittag ? `<div style="font-size:11px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;"><span style="opacity:0.6;">☀️</span> ${mittag}</div>` : ''}
+        ${abend ? `<div style="font-size:11px;color:var(--text-primary);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;"><span style="opacity:0.6;">🌙</span> ${abend}</div>` : ''}
       </div>`;
     }
   }
