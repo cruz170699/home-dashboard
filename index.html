@@ -1554,6 +1554,7 @@ async function handleSpotifyCallback() {
     // Schedule proactive reauth 5 min before expiry
     const msUntilExpiry = spotifyExpiry - Date.now() - 5 * 60 * 1000;
     if (msUntilExpiry > 0) setTimeout(silentSpotifyReauth, msUntilExpiry);
+  }
 }
 
 async function silentSpotifyReauth() {
@@ -1879,7 +1880,6 @@ async function submitEvent() {
 // Close modal on backdrop click
 document.getElementById('eventModal').addEventListener('click', function(e) { if(e.target===this) closeEventModal(); });
 document.getElementById('todoModal').addEventListener('click', function(e){ if(e.target===this) closeTodoModal(); });
-}
 </script>
 
 <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
