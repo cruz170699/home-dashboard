@@ -602,7 +602,7 @@
   </div>
 
   <!-- Bottom Grid - Apple Home Style -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;min-height:220px;">
 
     <!-- To-dos -->
     <div class="card">
@@ -1134,7 +1134,7 @@ function renderMonthView() {
   let html = '';
   // Empty cells before first day
   for (let i = 0; i < firstDayOfWeek; i++) {
-    html += '<div style="min-height:82px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+    html += '<div style="min-height:95px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
@@ -1145,7 +1145,7 @@ function renderMonthView() {
     const isLastCol = col === 6;
 
     html += `<div class="month-day-cell" id="cell_${dateStr}" data-date="${dateStr}"
-      style="min-height:82px;border-right:${isLastCol?'none':'1px solid var(--border)'};border-bottom:1px solid var(--border);padding:4px;cursor:pointer;vertical-align:top;"
+      style="min-height:95px;border-right:${isLastCol?'none':'1px solid var(--border)'};border-bottom:1px solid var(--border);padding:4px;cursor:pointer;vertical-align:top;"
       onclick="openEventModalWithDate('${dateStr}')"
       onmouseover="this.style.background='rgba(0,122,255,0.02)'"
       onmouseout="this.style.background='white'">
@@ -1160,7 +1160,7 @@ function renderMonthView() {
   const totalCells = firstDayOfWeek + daysInMonth;
   const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
   for (let i = 0; i < remaining; i++) {
-    html += '<div style="min-height:82px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
+    html += '<div style="min-height:95px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);"></div>';
   }
 
   grid.innerHTML = html;
