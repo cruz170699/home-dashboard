@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pavia_Cruz Home Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --surface: rgba(255,255,255,0.85);
+    --surface-2: rgba(255,255,255,0.6);
+    --border: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.1);
+    --text-primary: #1c1c1e;
+    --text-secondary: #6e6e73;
+    --text-tertiary: #aeaeb2;
+    --accent: #007aff;
+    --accent-light: rgba(0,122,255,0.1);
+    --green: #34c759;
+    --red: #ff3b30;
+    --orange: #ff9500;
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  /* Subtle mesh background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(0,122,255,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(52,199,89,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #dashboard { position: relative; z-index: 1; }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 22px;
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 14px;
+  }
+  .time { font-size: 34px; font-weight: 300; color: var(--text-primary); letter-spacing: -1.5px; }
+  .date { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; letter-spacing: 0.2px; }
+  .weather-box { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-secondary); font-weight: 400; }
+  .avatars { display: flex; gap: 8px; align-items: center; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    box-shadow: var(--shadow-sm);
+  }
+  .av-s { background: #ddeeff; color: #007aff; }
+  .av-m { background: #fde8f0; color: #ff2d55; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; transition: background 0.3s; }
+  .signout-btn {
+    font-size: 11px; color: var(--text-tertiary);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-2);
+    padding: 5px 10px; border-radius: 8px; cursor: pointer;
+    font-weight: 500; transition: all 0.15s;
+  }
+  .signout-btn:hover { background: white; }
+
+  /* GRID */
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 14px; }
+  .meal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 12px; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    padding: 18px;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+
+  .card-title {
+    font-size: 11px; font-weight: 600; color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;
+  }
+
+  /* CALENDAR */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; margin-bottom: 14px; }
+  .cal-day-label { font-size: 10px; color: var(--text-tertiary); padding: 3px 0; font-weight: 500; }
+  .cal-day {
+    font-size: 12px; padding: 6px 2px; border-radius: 8px;
+    color: var(--text-secondary); cursor: pointer; position: relative;
+    transition: all 0.15s; font-weight: 400;
+  }
+  .cal-day:hover { background: rgba(0,122,255,0.08); color: var(--accent); }
+  .cal-day.today { background: var(--accent); color: white; font-weight: 600; box-shadow: 0 2px 8px rgba(0,122,255,0.3); }
+  .cal-day.has-event::after {
+    content: ''; position: absolute; bottom: 2px; left: 50%;
+    transform: translateX(-50%); width: 4px; height: 4px;
+    border-radius: 50%; background: var(--accent);
+  }
+  .cal-day.today.has-event::after { background: rgba(255,255,255,0.8); }
+  .cal-day.other-month { color: var(--text-tertiary); opacity: 0.4; }
+
+  /* EVENTS */
+  .event-list { display: flex; flex-direction: column; gap: 4px; }
+  .event-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 10px; border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.02);
+    border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .event-item:hover { background: rgba(0,122,255,0.04); border-color: rgba(0,122,255,0.15); }
+  .event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .event-title-text { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+  .event-time-text { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+  .no-events { font-size: 12px; color: var(--text-tertiary); padding: 10px 0; text-align: center; }
+
+  /* BUTTONS */
+  .add-row { display: flex; gap: 6px; margin-top: 12px; }
+  .add-input {
+    flex: 1; font-size: 13px; padding: 8px 12px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border-strong);
+    background: rgba(0,0,0,0.03); color: var(--text-primary); outline: none;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .add-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+  .add-btn {
+    font-size: 12px; padding: 8px 14px; border-radius: var(--radius-sm);
+    border: none; background: var(--accent); color: white;
+    cursor: pointer; font-weight: 600; white-space: nowrap;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .add-btn:hover { background: #0066d6; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,122,255,0.25); }
+  .add-btn:active { transform: translateY(0); }
+
+  /* TODO */
+  .todo-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .todo-item:last-of-type { border-bottom: none; }
+  .todo-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1.5px solid var(--border-strong); flex-shrink: 0;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .todo-check:hover { border-color: var(--green); }
+  .todo-check.done { background: var(--green); border-color: var(--green); color: white; font-size: 10px; box-shadow: 0 2px 6px rgba(52,199,89,0.3); }
+  .todo-label { font-size: 13px; color: var(--text-primary); flex: 1; font-weight: 400; }
+  .todo-label.done { text-decoration: line-through; color: var(--text-tertiary); }
+  .todo-delete { font-size: 16px; color: var(--text-tertiary); cursor: pointer; transition: color 0.15s; opacity: 0; }
+  .todo-item:hover .todo-delete { opacity: 1; }
+  .todo-delete:hover { color: var(--red); }
+
+  /* BRING */
+  .bring-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .bring-item:last-of-type { border-bottom: none; }
+  .bring-label { font-size: 13px; color: var(--text-primary); }
+  .bring-delete { font-size: 16px; color: var(--text-tertiary); cursor: pointer; opacity: 0; transition: all 0.15s; }
+  .bring-item:hover .bring-delete { opacity: 1; }
+  .bring-delete:hover { color: var(--red); }
+
+  /* SPOTIFY */
+  .sp-connect-btn {
+    width: 100%; padding: 11px; background: #1DB954; color: white;
+    border: none; border-radius: 22px; font-size: 13px; font-weight: 700;
+    cursor: pointer; margin-top: 4px; transition: all 0.15s; font-family: inherit;
+    box-shadow: 0 4px 12px rgba(29,185,84,0.3);
+  }
+  .sp-connect-btn:hover { background: #17a846; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(29,185,84,0.35); }
+  .sp-art { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; box-shadow: var(--shadow-md); }
+  .sp-art-placeholder { width: 52px; height: 52px; border-radius: 10px; background: #191414; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .sp-track { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sp-artist { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .sp-progress-bar { margin: 10px 0 3px; height: 3px; background: rgba(0,0,0,0.08); border-radius: 2px; cursor: pointer; }
+  .sp-progress-fill { height: 100%; background: #1DB954; border-radius: 2px; transition: width 0.5s linear; }
+  .sp-times { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-tertiary); }
+  .sp-controls { display: flex; justify-content: center; gap: 12px; margin-top: 12px; align-items: center; }
+  .sp-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: rgba(0,0,0,0.03);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 13px; transition: all 0.15s;
+  }
+  .sp-btn:hover { background: rgba(0,0,0,0.06); transform: scale(1.05); }
+  .sp-btn.play {
+    background: #1DB954; border-color: #1DB954; color: white;
+    font-size: 15px; width: 38px; height: 38px;
+    box-shadow: 0 4px 12px rgba(29,185,84,0.3);
+  }
+  .sp-btn.play:hover { background: #17a846; box-shadow: 0 6px 16px rgba(29,185,84,0.35); }
+  .sp-volume { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .sp-tab-bar { display: flex; background: rgba(0,0,0,0.04); border-radius: 10px; padding: 2px; margin-bottom: 12px; }
+  .sp-tab {
+    flex: 1; padding: 6px; border: none; background: none;
+    font-size: 12px; font-weight: 500; color: var(--text-tertiary);
+    cursor: pointer; border-radius: 8px; transition: all 0.2s; font-family: inherit;
+  }
+  .sp-tab.active { background: white; color: var(--text-primary); box-shadow: var(--shadow-sm); font-weight: 600; }
+
+  /* LIGHTS */
+  .lights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .light-item {
+    padding: 12px 8px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); text-align: center;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .light-item.on { background: linear-gradient(135deg, #fffbf0, #fff8e6); border-color: rgba(255,179,0,0.3); box-shadow: 0 2px 8px rgba(255,179,0,0.1); }
+  .light-item.off { background: rgba(0,0,0,0.02); }
+  .light-item:hover { transform: scale(1.02); }
+  .light-icon { font-size: 20px; margin-bottom: 4px; }
+  .light-name { font-size: 10px; color: var(--text-tertiary); margin-bottom: 2px; font-weight: 500; }
+  .light-status { font-size: 11px; font-weight: 600; }
+  .light-status.on { color: #bf8700; }
+  .light-status.off { color: var(--text-tertiary); }
+
+  .section-divider {
+    font-size: 10px; color: var(--text-tertiary); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 0 10px;
+  }
+
+  /* AUTH */
+  .auth-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg); display: flex; align-items: center;
+    justify-content: center; z-index: 1000;
+  }
+  .auth-box { text-align: center; max-width: 360px; padding: 40px 32px; }
+  .auth-title { font-size: 26px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.5px; }
+  .auth-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; line-height: 1.6; }
+  .auth-btn {
+    padding: 14px 32px; background: var(--accent); color: white;
+    border: none; border-radius: 14px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+    box-shadow: 0 4px 16px rgba(0,122,255,0.3);
+  }
+  .auth-btn:hover { background: #0066d6; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,122,255,0.35); }
+  .loading-txt { font-size: 13px; color: var(--text-tertiary); margin-top: 14px; }
+
+  /* Touch-friendly overrides */
+  * { -webkit-tap-highlight-color: rgba(0,122,255,0.1); }
+  
+  .cal-day {
+    font-size: 13px; padding: 8px 2px; border-radius: 8px;
+    color: var(--text-secondary); cursor: pointer; position: relative;
+    transition: all 0.15s; font-weight: 400; min-height: 36px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .add-btn {
+    font-size: 14px; padding: 12px 16px; border-radius: var(--radius-sm);
+    border: none; background: var(--accent); color: white;
+    cursor: pointer; font-weight: 600; white-space: nowrap;
+    transition: all 0.15s; font-family: inherit; min-height: 44px;
+  }
+  .add-input {
+    flex: 1; font-size: 14px; padding: 12px 14px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border-strong);
+    background: rgba(0,0,0,0.03); color: var(--text-primary); outline: none;
+    font-family: inherit; transition: all 0.15s; min-height: 44px;
+  }
+  .todo-check {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1.5px solid var(--border-strong); flex-shrink: 0;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .todo-item { padding: 10px 0; }
+  .bring-item { padding: 10px 0; }
+  .todo-delete, .bring-delete { 
+    font-size: 20px; padding: 4px 8px; opacity: 1 !important;
+    color: var(--text-tertiary);
+  }
+  .event-item { padding: 10px 12px; min-height: 52px; }
+  .sp-btn { width: 44px; height: 44px; font-size: 16px; }
+  .sp-btn.play { width: 52px; height: 52px; font-size: 20px; }
+  .light-item { padding: 16px 8px; }
+  .light-icon { font-size: 24px; }
+  .signout-btn { padding: 8px 14px; font-size: 12px; }
+  input[type="range"] { height: 6px !important; cursor: pointer; }
+  .modal-cancel, .modal-submit { min-height: 48px; font-size: 15px; }
+  .field-input { min-height: 48px; font-size: 15px; padding: 12px 14px; }
+  select.field-input { min-height: 48px; }
+
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+    z-index: 2000; align-items: center; justify-content: center;
+  }
+  .modal-box {
+    background: white; border-radius: var(--radius-xl);
+    padding: 26px; width: 360px; max-width: 92vw;
+    box-shadow: var(--shadow-lg); animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn { from { opacity:0; transform: scale(0.96) translateY(8px); } to { opacity:1; transform: scale(1) translateY(0); } }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .modal-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+  .modal-close { font-size: 22px; color: var(--text-tertiary); cursor: pointer; line-height: 1; transition: color 0.15s; }
+  .modal-close:hover { color: var(--text-primary); }
+  .modal-fields { display: flex; flex-direction: column; gap: 14px; }
+  .field-label { font-size: 11px; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
+  .field-input {
+    width: 100%; font-size: 14px; padding: 10px 13px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border-strong);
+    background: rgba(0,0,0,0.02); color: var(--text-primary);
+    outline: none; font-family: inherit; transition: all 0.15s;
+  }
+  .field-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+  .modal-actions { display: flex; gap: 8px; margin-top: 22px; }
+  .modal-cancel {
+    flex: 1; padding: 11px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong); background: rgba(0,0,0,0.02);
+    color: var(--text-secondary); font-size: 14px; cursor: pointer; font-family: inherit;
+    transition: all 0.15s;
+  }
+  .modal-cancel:hover { background: rgba(0,0,0,0.05); }
+  .modal-submit {
+    flex: 2; padding: 11px; border-radius: var(--radius-sm);
+    border: none; background: var(--accent); color: white;
+    font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,122,255,0.25);
+  }
+  .modal-submit:hover { background: #0066d6; }
+  .modal-error { font-size: 12px; color: var(--red); margin-top: 8px; text-align: center; display: none; }
+</style>
+
+<body>
+
+<div id="authOverlay" class="auth-overlay">
+  <div class="auth-box">
+    <div style="font-size:48px;margin-bottom:16px;">🏠</div>
+    <div class="auth-title" style="font-size:20px;color:#aaa;font-weight:700;letter-spacing:1px;">Pavia_Cruz</div>
+    <div class="auth-title">Home Dashboard</div>
+    <div class="auth-sub">Melde dich mit deinem Google-Konto an.</div>
+    <button class="auth-btn" onclick="signIn()">Mit Google anmelden</button>
+    <div class="loading-txt" id="authStatus"></div>
+  </div>
+</div>
+
+<div id="dashboard" style="display:none">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:20px;">
+      <div>
+        <div class="time" id="clock">--:--</div>
+        <div class="date" id="dateStr">Laden...</div>
+      </div>
+      <div class="weather-box" id="weatherBox" style="cursor:pointer;" onclick="toggleWeatherExpand()">
+        <span style="font-size:20px" id="weatherIcon">🌤</span>
+        <span id="weatherText">Dietlikon</span>
+        <span style="font-size:10px;color:var(--text-tertiary);margin-left:4px;">▼</span>
+      </div>
+    </div>
+    <div class="avatars">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="avatar av-s">SÉ</div>
+      <div class="avatar av-m">MI</div>
+      <button onclick="signOut()" style="font-size:11px;color:#aaa;border:0.5px solid #e0e0e0;background:white;padding:4px 8px;border-radius:8px;cursor:pointer;">Abmelden</button>
+    </div>
+  </div>
+
+  <!-- Weather Expanded Panel -->
+  <div id="weatherPanel" style="display:none;margin-bottom:14px;">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-primary);">🌤 Wetter · Dietlikon</div>
+        <span onclick="toggleWeatherExpand()" style="font-size:12px;color:var(--accent);cursor:pointer;">Schliessen</span>
+      </div>
+      <!-- Hourly today -->
+      <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;">Heute</div>
+      <div id="weatherHourly" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;"></div>
+      <!-- 3 day forecast -->
+      <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 8px;">Nächste 3 Tage</div>
+      <div id="weatherDays" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+  </div>
+
+  <!-- Sleep Mode Overlay -->
+  <div id="sleepOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:9000;cursor:pointer;" onclick="wakeUp()">
+    <div id="sleepBg" style="position:absolute;top:0;left:0;right:0;bottom:0;background-size:cover;background-position:center;transition:opacity 1.5s;"></div>
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);"></div>
+    <div style="position:absolute;bottom:60px;left:0;right:0;text-align:center;">
+      <div id="sleepClock" style="font-size:96px;font-weight:200;color:white;letter-spacing:-4px;text-shadow:0 4px 20px rgba(0,0,0,0.5);"></div>
+      <div id="sleepDate" style="font-size:22px;color:rgba(255,255,255,0.8);margin-top:8px;text-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>
+    </div>
+    <div style="position:absolute;bottom:20px;left:0;right:0;text-align:center;font-size:13px;color:rgba(255,255,255,0.3);">Tippen zum Aufwecken</div>
+  </div>
+
+  <!-- Night Mode Overlay -->
+  <div id="nightOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:500;pointer-events:none;transition:opacity 1s;"></div>
+
+  <!-- Sleep Button -->
+  <button onclick="activateSleep()" style="position:fixed;bottom:20px;right:20px;z-index:1000;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.15);transition:all 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.3)'" onmouseout="this.style.background='rgba(0,0,0,0.15)'" title="Bildschirmschoner">🌙</button>
+  <div id="reminderPopup" style="display:none;position:fixed;top:20px;right:20px;z-index:8000;background:white;border-radius:16px;padding:16px 20px;box-shadow:0 8px 32px rgba(0,0,0,0.15);border:1px solid rgba(0,0,0,0.06);max-width:300px;animation:slideIn 0.3s ease;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="font-size:28px;">🔔</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:#1a1a1a;" id="reminderTitle">Termin bald</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;" id="reminderTime"></div>
+      </div>
+      <span onclick="closeReminder()" style="font-size:20px;color:#aaa;cursor:pointer;">×</span>
+    </div>
+  </div>
+  <style>
+    @keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+  </style>
+
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#fff"/><rect x="3" y="3" width="18" height="18" rx="3" fill="#fff" stroke="#dadce0" stroke-width="1"/><rect x="3" y="8" width="18" height="2" fill="#4285F4"/><rect x="3" y="3" width="18" height="5" rx="3" fill="#4285F4"/><rect x="3" y="5" width="18" height="3" fill="#4285F4"/><text x="12" y="19" font-size="8" font-weight="700" fill="#4285F4" text-anchor="middle" font-family="sans-serif">31</text><line x1="8" y1="3" x2="8" y2="6" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="3" x2="16" y2="6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div style="font-size:14px;font-weight:600;color:#1a1a1a;">Kalender</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;" id="calLegend"></div>
+      </div>
+      <div class="cal-grid" id="calGridMain"></div>
+      <div class="section-divider">Nächste Termine</div>
+      <div class="event-list" id="eventListMain"><div class="no-events">Laden...</div></div>
+      <div class="add-row" style="gap:8px;">
+        <button class="add-btn" style="flex:1" onclick="openEventModal('sergio')">+ Sérgio</button>
+        <button class="add-btn" style="flex:1;background:#993556;" onclick="openEventModal('miriam')">+ Miriam</button>
+        <button class="add-btn" style="flex:1;background:#1D9E75;" onclick="openEventModal('family')">+ Familie</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#4285F4"/><path d="M6 8h12M6 12h8M6 16h6" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="16" r="3" fill="#34A853"/><path d="M16.5 16l1 1 2-2" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        To-dos
+      </div>
+      <div id="todoList"></div>
+      <div class="add-row">
+        <button class="add-btn" style="width:100%" onclick="openTodoModal()">+ Neue Aufgabe</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="12" fill="#FF6B35"/><path d="M7 8h10l-1.5 8H8.5L7 8z" fill="white"/><path d="M5 8h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="6" r="1" fill="white"/><circle cx="14" cy="6" r="1" fill="white"/></svg>
+        Bring!
+      </div>
+      <div id="bringList"></div>
+      <div class="add-row">
+        <input class="add-input" id="newBring" placeholder="Artikel hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()" />
+        <button class="add-btn" onclick="addBringItem()">+ Add</button>
+      </div>
+      <div style="font-size:10px;color:#ccc;margin-top:6px;text-align:center;">Lokal gespeichert</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#1DB954"/><path d="M17.9 10.9C14.7 9 9.35 8.8 6.3 9.75c-.5.15-1-.15-1.15-.6-.15-.5.15-1 .6-1.15 3.55-1.05 9.4-.85 13.1 1.35.45.25.6.85.35 1.3-.25.35-.85.5-1.3.25zm-.1 2.8c-.25.4-.75.5-1.1.25-2.7-1.65-6.8-2.15-9.95-1.15-.4.1-.85-.1-.95-.5-.1-.4.1-.85.5-.95 3.65-1.1 8.15-.55 11.25 1.35.35.15.45.65.25 1zm-1.25 2.7c-.2.3-.6.4-.9.2-2.35-1.45-5.3-1.75-8.8-.95-.35.1-.65-.15-.75-.45-.1-.35.15-.65.45-.75 3.8-.85 7.1-.5 9.7 1.1.3.15.4.55.3.85z" fill="white"/></svg>
+        Spotify
+      </div>
+      <div id="spotifyContent">
+        <div style="text-align:center;padding:8px 0;">
+          <div style="font-size:32px;margin-bottom:8px;">🎵</div>
+          <div style="font-size:12px;color:#aaa;margin-bottom:12px;">Verbinde deinen Spotify Account</div>
+          <button class="sp-connect-btn" onclick="spotifyLogin()">Mit Spotify verbinden</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="3" fill="#0058A3"/><text x="12" y="16" font-size="8" font-weight="900" fill="#FFDA1A" text-anchor="middle" font-family="sans-serif">IKEA</text></svg>
+        Lichter
+      </div>
+      <div class="lights-grid">
+        <div class="light-item on" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Wohnzimmer</div><div class="light-status on">An</div></div>
+        <div class="light-item off" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Küche</div><div class="light-status off">Aus</div></div>
+        <div class="light-item on" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Schlafzimmer</div><div class="light-status on">An</div></div>
+        <div class="light-item off" onclick="toggleLight(this)"><div class="light-icon">💡</div><div class="light-name">Bad</div><div class="light-status off">Aus</div></div>
+      </div>
+      <div style="font-size:10px;color:#ccc;margin-top:8px;text-align:center;">IKEA Dirigera · Lokales Netzwerk</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="24" height="16" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" rx="3" fill="#e30613"/><polygon points="8,20 18,8 22,8 14,20 22,32 18,32" fill="white"/><rect x="18" y="16" width="24" height="8" fill="white"/><polygon points="52,20 42,8 38,8 46,20 38,32 42,32" fill="white"/></svg>
+          Verbindungen
+        </div>
+        <span onclick="loadTransport()" style="font-size:11px;color:#e30613;cursor:pointer;font-weight:600;">↻</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;position:relative;">
+        <div style="position:relative;">
+          <input id="transportFrom" type="text" value="Dietlikon" placeholder="Von..." style="width:100%;font-size:11px;padding:5px 8px;border-radius:8px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;" oninput="searchStation('from',this.value)" onfocus="showNearbyStations('from')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
+          <div id="suggestFrom" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ddd;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:100;max-height:150px;overflow-y:auto;"></div>
+        </div>
+        <div style="position:relative;">
+          <input id="transportTo" type="text" value="Zürich HB" placeholder="Nach..." style="width:100%;font-size:11px;padding:5px 8px;border-radius:8px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;" oninput="searchStation('to',this.value)" onfocus="showNearbyStations('to')" onkeydown="if(event.key==='Enter')loadTransport()" autocomplete="off" />
+          <div id="suggestTo" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:0.5px solid #ddd;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:100;max-height:150px;overflow-y:auto;"></div>
+        </div>
+      </div>
+      <div id="transportList"><div class="no-events">Laden...</div></div>
+    </div>
+  </div>
+
+  <!-- Meal Planner -->
+  <div style="margin-top:14px;">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:20px;">🍽</span>
+          <div style="font-size:14px;font-weight:600;color:#1a1a1a;">Meal Planner</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="suggestMeals()" style="padding:6px 12px;border-radius:8px;border:none;background:#FF6B35;color:white;font-size:12px;font-weight:600;cursor:pointer;">🤖 Claude vorschläge</button>
+          <button onclick="saveMealPlan()" style="padding:6px 12px;border-radius:8px;border:none;background:#1D9E75;color:white;font-size:12px;font-weight:600;cursor:pointer;">💾 Speichern</button>
+          <span onclick="loadMealPlan()" style="font-size:11px;color:#aaa;cursor:pointer;">↻</span>
+        </div>
+      </div>
+      <div class="meal-grid" id="mealGrid"></div>
+      <div id="mealSuggestions" style="display:none;margin-top:12px;padding:12px;background:#FFF8F0;border-radius:12px;border:1px solid #FFD4B8;">
+        <div style="font-size:12px;font-weight:600;color:#FF6B35;margin-bottom:8px;">🤖 Claude Vorschläge</div>
+        <div id="mealSuggestionsContent" style="font-size:13px;color:#1a1a1a;line-height:1.6;"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Todo Modal -->
+<div id="todoModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:20px;padding:24px;width:340px;max-width:90vw;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:16px;font-weight:600;color:#1a1a1a;">Neue Aufgabe</div>
+      <span onclick="closeTodoModal()" style="font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Titel</label>
+        <input id="todoTitle" type="text" placeholder="z.B. Wäsche machen..." style="width:100%;margin-top:4px;font-size:14px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" />
+      </div>
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Zuweisen an</label>
+        <select id="todoAssign" style="width:100%;margin-top:4px;font-size:13px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;">
+          <option value="both">Beide</option>
+          <option value="sergio">Sérgio</option>
+          <option value="miriam">Miriam</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Fälligkeitsdatum (optional)</label>
+        <input id="todoDue" type="date" style="width:100%;margin-top:4px;font-size:13px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" />
+      </div>
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Notiz (optional)</label>
+        <textarea id="todoNote" placeholder="Zusätzliche Info..." rows="3" style="width:100%;margin-top:4px;font-size:14px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;resize:none;font-family:inherit;"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button onclick="closeTodoModal()" style="flex:1;padding:10px;border-radius:10px;border:0.5px solid #ddd;background:white;color:#666;font-size:13px;cursor:pointer;">Abbrechen</button>
+      <button onclick="submitTodo()" style="flex:2;padding:10px;border-radius:10px;border:none;background:#1D9E75;color:white;font-size:13px;font-weight:600;cursor:pointer;" id="todoSubmitBtn">Aufgabe erstellen</button>
+    </div>
+    <div id="todoError" style="font-size:12px;color:#e24b4a;margin-top:8px;text-align:center;display:none;"></div>
+  </div>
+</div>
+<div id="eventModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:20px;padding:24px;width:340px;max-width:90vw;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:16px;font-weight:600;color:#1a1a1a;" id="modalTitle">Neuer Termin</div>
+      <span onclick="closeEventModal()" style="font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Titel</label>
+        <input id="modalTitle_input" type="text" placeholder="z.B. Meeting, Arzt..." style="width:100%;margin-top:4px;font-size:14px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Datum</label>
+          <input id="modalDate" type="date" style="width:100%;margin-top:4px;font-size:13px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" />
+        </div>
+        <div>
+          <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Uhrzeit</label>
+          <input id="modalTime" type="time" style="width:100%;margin-top:4px;font-size:13px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" />
+        </div>
+      </div>
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Dauer</label>
+        <select id="modalDuration" style="width:100%;margin-top:4px;font-size:13px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;">
+          <option value="30">30 Minuten</option>
+          <option value="60" selected>1 Stunde</option>
+          <option value="90">1.5 Stunden</option>
+          <option value="120">2 Stunden</option>
+          <option value="180">3 Stunden</option>
+          <option value="480">Ganzer Tag</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Wiederholen</label>
+        <select id="modalRepeat" style="width:100%;margin-top:4px;font-size:13px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" onchange="toggleRepeatCount()">
+          <option value="NONE">Nicht wiederholen</option>
+          <option value="DAILY">Täglich</option>
+          <option value="WEEKLY">Wöchentlich</option>
+          <option value="MONTHLY">Monatlich</option>
+          <option value="YEARLY">Jährlich</option>
+        </select>
+      </div>
+      <div id="repeatCountRow" style="display:none;">
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">Anzahl Wiederholungen</label>
+        <input id="modalRepeatCount" type="number" min="1" max="365" value="5" style="width:100%;margin-top:4px;font-size:14px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" />
+      </div>
+      <div>
+        <label style="font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;">🔔 Erinnerung</label>
+        <select id="modalReminder" style="width:100%;margin-top:4px;font-size:15px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;min-height:48px;">
+          <option value="0">Keine Erinnerung</option>
+          <option value="5">5 Minuten vorher</option>
+          <option value="10">10 Minuten vorher</option>
+          <option value="15" selected>15 Minuten vorher</option>
+          <option value="30">30 Minuten vorher</option>
+          <option value="60">1 Stunde vorher</option>
+        </select>
+      </div>
+        <input id="modalNote" type="text" placeholder="Zusätzliche Info..." style="width:100%;margin-top:4px;font-size:14px;padding:12px 14px;border-radius:10px;border:0.5px solid #ddd;background:#f8f9fa;color:#1a1a1a;outline:none;font-size:15px;min-height:48px;" />
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button onclick="closeEventModal()" style="flex:1;padding:10px;border-radius:10px;border:0.5px solid #ddd;background:white;color:#666;font-size:13px;cursor:pointer;">Abbrechen</button>
+      <button onclick="submitEvent()" style="flex:2;padding:10px;border-radius:10px;border:none;background:#185FA5;color:white;font-size:13px;font-weight:600;cursor:pointer;" id="modalSubmitBtn">Termin erstellen</button>
+    </div>
+    <div id="modalError" style="font-size:12px;color:#e24b4a;margin-top:8px;text-align:center;display:none;"></div>
+  </div>
+</div>
+
+<script>
+const GOOGLE_CLIENT_ID = '1062117239956-u92k3utt5rutcro23e7bdv8j2o9r2hc3.apps.googleusercontent.com';
+const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/spreadsheets';
+
+let calendars = { sergio: null, miriam: null };
+let todos = JSON.parse(localStorage.getItem('dash_todos') || '[]');
+let bringItems = JSON.parse(localStorage.getItem('dash_bring') || '["Milch","Brot","Tomaten"]');
+let spotifyToken = localStorage.getItem('spotify_token') || null;
+let isPlaying = false;
+let currentProgress = 0;
+let currentDuration = 1;
+let spotifyInterval = null;
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const days=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const months=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('dateStr').textContent = days[now.getDay()]+', '+now.getDate()+'. '+months[now.getMonth()]+' '+now.getFullYear();
+}
+updateClock(); setInterval(updateClock, 30000);
+
+// Weather
+let weatherExpanded = false;
+function toggleWeatherExpand() {
+  weatherExpanded = !weatherExpanded;
+  document.getElementById('weatherPanel').style.display = weatherExpanded ? 'block' : 'none';
+  if (weatherExpanded) loadWeatherFull();
+}
+
+async function loadWeather() {
+  try {
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=47.407&longitude=8.602&current_weather=true&timezone=Europe/Zurich');
+    const d = await r.json();
+    const codes={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',51:'🌦',61:'🌧',71:'❄️',80:'🌦',95:'⛈'};
+    document.getElementById('weatherIcon').textContent = codes[d.current_weather.weathercode]||'🌤';
+    document.getElementById('weatherText').textContent = Math.round(d.current_weather.temperature)+'°C · Dietlikon';
+  } catch(e) {}
+}
+
+async function loadWeatherFull() {
+  try {
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=47.407&longitude=8.602&hourly=temperature_2m,weathercode,precipitation_probability&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe/Zurich&forecast_days=4');
+    const d = await r.json();
+    const codes={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',51:'🌦',61:'🌧',71:'❄️',80:'🌦',95:'⛈'};
+    const days=['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const months=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+    // Hourly - show next 12 hours
+    const now = new Date();
+    const hourlyHtml = d.hourly.time.map((t,i) => {
+      const dt = new Date(t);
+      if (dt < now || dt > new Date(now.getTime() + 12*3600*1000)) return '';
+      const h = String(dt.getHours()).padStart(2,'0')+':00';
+      const icon = codes[d.hourly.weathercode[i]]||'🌤';
+      const temp = Math.round(d.hourly.temperature_2m[i]);
+      const rain = d.hourly.precipitation_probability[i];
+      return `<div style="flex-shrink:0;text-align:center;padding:8px 10px;background:rgba(0,0,0,0.03);border-radius:10px;min-width:56px;">
+        <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:4px;">${h}</div>
+        <div style="font-size:18px;margin-bottom:4px;">${icon}</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text-primary);">${temp}°</div>
+        ${rain > 20 ? `<div style="font-size:10px;color:#007aff;">${rain}%</div>` : ''}
+      </div>`;
+    }).join('');
+    document.getElementById('weatherHourly').innerHTML = hourlyHtml || '<div style="font-size:12px;color:var(--text-tertiary);">Keine Daten</div>';
+
+    // Daily - skip today (index 0), show next 3 days
+    const dailyHtml = d.daily.time.slice(1,4).map((t,i) => {
+      const dt = new Date(t);
+      const dayName = days[dt.getDay()];
+      const dateStr = dt.getDate()+'. '+months[dt.getMonth()];
+      const icon = codes[d.daily.weathercode[i+1]]||'🌤';
+      const max = Math.round(d.daily.temperature_2m_max[i+1]);
+      const min = Math.round(d.daily.temperature_2m_min[i+1]);
+      const rain = d.daily.precipitation_probability_max[i+1];
+      return `<div style="display:flex;align-items:center;gap:12px;padding:8px 10px;background:rgba(0,0,0,0.02);border-radius:10px;">
+        <div style="font-size:22px;">${icon}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:var(--text-primary);">${dayName}, ${dateStr}</div>
+          ${rain > 20 ? `<div style="font-size:11px;color:#007aff;">🌧 ${rain}% Regen</div>` : ''}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);">${max}°</div>
+          <div style="font-size:12px;color:var(--text-tertiary);">${min}°</div>
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('weatherDays').innerHTML = dailyHtml;
+  } catch(e) { console.error('Weather full:', e); }
+}
+loadWeather();
+
+// Night Mode
+function checkNightMode() {
+  const h = new Date().getHours();
+  const m = new Date().getMinutes();
+  const isNight = (h > 22 || (h === 22 && m >= 30)) || h < 6;
+  const overlay = document.getElementById('nightOverlay');
+  overlay.style.display = isNight ? 'block' : 'none';
+}
+checkNightMode();
+setInterval(checkNightMode, 60000);
+
+// Sleep Mode
+let sleepTimer = null;
+let isSleeping = false;
+let photoUrls = [];
+let currentPhotoIndex = 0;
+let photoSlideTimer = null;
+const SLEEP_TIMEOUT = 5 * 60 * 1000;
+
+async function loadPhotos() {
+  try {
+    const token = gapi.client.getToken();
+    if (!token) { loadUnsplashPhotos(); return; }
+    const r = await fetch('https://photoslibrary.googleapis.com/v1/mediaItems?pageSize=50', {
+      headers: { 'Authorization': 'Bearer ' + token.access_token }
+    });
+    const d = await r.json();
+    if (d.mediaItems && d.mediaItems.length > 0) {
+      photoUrls = d.mediaItems
+        .filter(item => item.mimeType?.startsWith('image/'))
+        .map(item => item.baseUrl + '=w1920-h1080-c')
+        .sort(() => Math.random() - 0.5);
+      console.log('Google Photos loaded:', photoUrls.length);
+    } else {
+      console.log('Google Photos not available, using Unsplash');
+      loadUnsplashPhotos();
+    }
+  } catch(e) { 
+    console.error('Photos error:', e);
+    loadUnsplashPhotos();
+  }
+}
+
+function loadUnsplashPhotos() {
+  const topics = ['nature','architecture','travel','mountains','city','minimal','abstract','Switzerland'];
+  photoUrls = topics.map(t => 
+    `https://source.unsplash.com/1920x1080/?${t}&sig=${Math.random()}`
+  );
+  console.log('Unsplash photos loaded:', photoUrls.length);
+}
+
+function activateSleep() {
+  isSleeping = true;
+  const overlay = document.getElementById('sleepOverlay');
+  overlay.style.display = 'block';
+  updateSleepClock();
+  if (photoUrls.length > 0) {
+    showPhoto(currentPhotoIndex);
+    photoSlideTimer = setInterval(() => {
+      currentPhotoIndex = (currentPhotoIndex + 1) % photoUrls.length;
+      showPhoto(currentPhotoIndex);
+    }, 15000);
+  }
+}
+
+function showPhoto(index) {
+  if (!photoUrls[index]) return;
+  const bg = document.getElementById('sleepBg');
+  bg.style.opacity = '0';
+  setTimeout(() => {
+    bg.style.backgroundImage = `url(${photoUrls[index]})`;
+    bg.style.opacity = '1';
+  }, 800);
+}
+
+function updateSleepClock() {
+  if (!isSleeping) return;
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  document.getElementById('sleepClock').textContent = h + ':' + m;
+  document.getElementById('sleepDate').textContent = days[now.getDay()] + ', ' + now.getDate() + '. ' + months[now.getMonth()];
+  setTimeout(updateSleepClock, 30000);
+}
+
+function wakeUp() {
+  isSleeping = false;
+  document.getElementById('sleepOverlay').style.display = 'none';
+  clearInterval(photoSlideTimer);
+  resetSleepTimer();
+}
+
+function resetSleepTimer() {
+  if (isSleeping) return;
+  clearTimeout(sleepTimer);
+  sleepTimer = setTimeout(activateSleep, SLEEP_TIMEOUT);
+}
+
+resetSleepTimer();
+['click','touchstart','mousemove','keydown','scroll'].forEach(evt => {
+  document.addEventListener(evt, resetSleepTimer, { passive: true });
+});
+
+// Event Reminders
+let remindedEvents = new Set();
+function checkReminders() {
+  if (!window._allEventsCache) return;
+  const now = new Date();
+  window._allEventsCache.forEach(ev => {
+    if (!ev.start.dateTime || !ev._reminder || ev._reminder === '0') return;
+    const start = new Date(ev.start.dateTime);
+    const minsUntil = Math.round((start - now) / 60000);
+    const reminderMins = parseInt(ev._reminder);
+    const key = ev.id + '_' + reminderMins;
+    if (minsUntil <= reminderMins && minsUntil > 0 && !remindedEvents.has(key)) {
+      remindedEvents.add(key);
+      showReminder(ev.summary || 'Termin', minsUntil, start);
+    }
+  });
+}
+
+function showReminder(title, minsUntil, startTime) {
+  const h = String(startTime.getHours()).padStart(2,'0');
+  const m = String(startTime.getMinutes()).padStart(2,'0');
+  document.getElementById('reminderTitle').textContent = title;
+  document.getElementById('reminderTime').textContent = `Beginnt in ${minsUntil} Minuten · ${h}:${m} Uhr`;
+  const popup = document.getElementById('reminderPopup');
+  popup.style.display = 'block';
+  // Auto close after 30 seconds
+  setTimeout(closeReminder, 30000);
+  // Play a beep if possible
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 880; gain.gain.value = 0.3;
+    osc.start(); osc.stop(ctx.currentTime + 0.3);
+  } catch(e) {}
+}
+
+function closeReminder() {
+  document.getElementById('reminderPopup').style.display = 'none';
+}
+
+setInterval(checkReminders, 30000);
+
+// Google Auth
+let tokenClient;
+function gapiLoaded() { gapi.load('client', initGapi); }
+async function initGapi() {
+  await gapi.client.init({ discoveryDocs: [
+    'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+    'https://www.googleapis.com/discovery/v1/apis/tasks/v1/rest'
+  ]});
+}
+function gisLoaded() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID, scope: GOOGLE_SCOPES,
+    callback: (resp) => {
+      if (resp.error) { document.getElementById('authStatus').textContent='Fehler: '+resp.error; return; }
+      document.getElementById('authOverlay').style.display='none';
+      document.getElementById('dashboard').style.display='block';
+      document.getElementById('statusDot').style.background='#1D9E75';
+      loadAllData();
+      handleSpotifyCallback();
+      loadTransport();
+      setInterval(loadTransport, 60000);
+      loadPhotos();
+      loadMealPlan();
+    }
+  });
+}
+function signIn() { document.getElementById('authStatus').textContent='Laden...'; tokenClient.requestAccessToken({prompt:'consent'}); }
+function signOut() {
+  const t = gapi.client.getToken();
+  if (t) google.accounts.oauth2.revoke(t.access_token);
+  gapi.client.setToken('');
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('authOverlay').style.display='flex';
+}
+
+// Data
+async function loadAllData() {
+  await loadCalendars(); await loadTasks(); renderTodos(); renderBring();
+}
+
+async function loadCalendars() {
+  try {
+    const calList = await gapi.client.calendar.calendarList.list();
+    const items = calList.result.items;
+    // Find each calendar and store with its color
+    const sergio = items.find(c => c.id === 'homecruz.pavia@gmail.com') || items.find(c => c.summary?.toLowerCase().includes('sergio') || c.summary?.toLowerCase().includes('sérgio'));
+    const miriam = items.find(c => c.summary?.toLowerCase().includes('miriam'));
+    const family = items.find(c => c.summary?.toLowerCase().includes('family') || c.summary?.toLowerCase().includes('pavia') || c.summary?.toLowerCase().includes('familie'));
+    calendars.sergio = sergio?.id || 'homecruz.pavia@gmail.com';
+    calendars.miriam = miriam?.id || null;
+    calendars.family = family?.id || null;
+    // Store colors from Google Calendar
+    calendars.sergioColor = sergio?.backgroundColor || '#378ADD';
+    calendars.miriamColor = miriam?.backgroundColor || '#D4537E';
+    calendars.familyColor = family?.backgroundColor || '#1D9E75';
+    // Build legend
+    const legend = document.getElementById('calLegend');
+    legend.innerHTML = [
+      {name:'Sérgio', color:calendars.sergioColor},
+      miriam ? {name:'Miriam', color:calendars.miriamColor} : null,
+      family ? {name:'Familie', color:calendars.familyColor} : null
+    ].filter(Boolean).map(l => `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#888;"><span style="width:8px;height:8px;border-radius:50%;background:${l.color};display:inline-block;"></span>${l.name}</span>`).join('');
+    renderCalGridMain();
+    loadAllEvents();
+  } catch(e) { console.error(e); }
+}
+
+function renderCalGridMain() {
+  const now=new Date(), first=new Date(now.getFullYear(),now.getMonth(),1).getDay(), days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(), offset=(first+6)%7;
+  let html=['Mo','Di','Mi','Do','Fr','Sa','So'].map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+  for(let i=0;i<offset;i++) html+='<div class="cal-day other-month"></div>';
+  const year=now.getFullYear(), month=String(now.getMonth()+1).padStart(2,'0');
+  for(let d=1;d<=days;d++) {
+    const dateStr=year+'-'+month+'-'+String(d).padStart(2,'0');
+    html+=`<div class="cal-day${d===now.getDate()?' today':''}" data-day="${d}" onclick="openEventModal('sergio','${dateStr}')">${d}</div>`;
+  }
+  document.getElementById('calGridMain').innerHTML=html;
+}
+
+async function loadAllEvents() {
+  try {
+    const now=new Date();
+    const timeMin=now.toISOString(), timeMax=new Date(now.getTime()+14*864e5).toISOString();
+    let allEvents = [];
+    // Load from all calendars
+    const calEntries = [
+      {id: calendars.sergio, color: calendars.sergioColor, who: 'sergio'},
+      calendars.miriam ? {id: calendars.miriam, color: calendars.miriamColor, who: 'miriam'} : null,
+      calendars.family ? {id: calendars.family, color: calendars.familyColor, who: 'family'} : null,
+    ].filter(Boolean);
+    for (const cal of calEntries) {
+      try {
+        const resp = await gapi.client.calendar.events.list({calendarId:cal.id, timeMin, timeMax, singleEvents:true, orderBy:'startTime', maxResults:10});
+        const evs = (resp.result.items||[]).map(e=>({...e, _color:cal.color, _calId:cal.id, _who:cal.who}));
+        allEvents = [...allEvents, ...evs];
+      } catch(e) {}
+    }
+    // Deduplicate by event ID - keep first occurrence
+    const seen = new Set();
+    allEvents = allEvents.filter(ev => {
+      if (seen.has(ev.id)) return false;
+      seen.add(ev.id);
+      return true;
+    });
+    // Sort by start time
+    allEvents.sort((a,b)=>{
+      const da=a.start.dateTime?new Date(a.start.dateTime):new Date(a.start.date);
+      const db=b.start.dateTime?new Date(b.start.dateTime):new Date(b.start.date);
+      return da-db;
+    });
+    allEvents = allEvents.slice(0,10);
+    // Cache for reminders
+    window._allEventsCache = allEvents;
+    // Load reminder preferences from localStorage
+    window._allEventsCache.forEach(ev => {
+      ev._reminder = localStorage.getItem('reminder_' + ev.id) || '0';
+    });
+    // Mark days on calendar
+    allEvents.forEach(ev=>{
+      const s=ev.start.dateTime?new Date(ev.start.dateTime):new Date(ev.start.date), n=new Date();
+      if(s.getMonth()===n.getMonth()&&s.getFullYear()===n.getFullYear()){
+        const el=document.querySelector('#calGridMain [data-day="'+s.getDate()+'"]');
+        if(el) { el.classList.add('has-event'); el.style.setProperty('--dot-color', ev._color); }
+      }
+    });
+    const months=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+    if(!allEvents.length){document.getElementById('eventListMain').innerHTML='<div class="no-events">Keine Termine in 2 Wochen</div>';return;}
+    document.getElementById('eventListMain').innerHTML=allEvents.map(ev=>{
+      const s=ev.start.dateTime?new Date(ev.start.dateTime):new Date(ev.start.date);
+      const t=ev.start.dateTime?s.getDate()+'. '+months[s.getMonth()]+' · '+String(s.getHours()).padStart(2,'0')+':'+String(s.getMinutes()).padStart(2,'0'):s.getDate()+'. '+months[s.getMonth()];
+      const evData=encodeURIComponent(JSON.stringify({id:ev.id,calId:ev._calId,who:ev._who,summary:ev.summary||'',start:ev.start.dateTime||ev.start.date,duration:ev.end?.dateTime?Math.round((new Date(ev.end.dateTime)-new Date(ev.start.dateTime))/60000):60,description:ev.description||''}));
+      return`<div class="event-item" onclick="editEvent('${evData}')" style="cursor:pointer;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='#f8f9fa'"><div class="event-dot" style="background:${ev._color}"></div><div style="flex:1"><div class="event-title-text">${ev.summary||'(kein Titel)'}</div><div class="event-time-text">${t}</div></div><span onclick="event.stopPropagation();deleteEvent('${ev._calId}','${ev.id}','${ev._who}')" style="font-size:16px;color:#ddd;cursor:pointer;line-height:1;flex-shrink:0;">×</span></div>`;
+    }).join('');
+  } catch(e){console.error(e);}
+}
+
+async function loadEvents(who, calId, familyCalId) {
+  if(!calId) return;
+  try {
+    const now=new Date();
+    const timeMin=now.toISOString(), timeMax=new Date(now.getTime()+14*864e5).toISOString();
+    const params = {calendarId:calId,timeMin,timeMax,singleEvents:true,orderBy:'startTime',maxResults:10};
+    const resp=await gapi.client.calendar.events.list(params);
+    let events=resp.result.items||[];
+
+    // Also load family calendar events
+    if (familyCalId) {
+      try {
+        const fResp=await gapi.client.calendar.events.list({...params, calendarId:familyCalId});
+        const fEvents=(fResp.result.items||[]).map(e=>({...e, isFamily:true}));
+        events=[...events, ...fEvents];
+        events.sort((a,b)=>{
+          const da=a.start.dateTime?new Date(a.start.dateTime):new Date(a.start.date);
+          const db=b.start.dateTime?new Date(b.start.dateTime):new Date(b.start.date);
+          return da-db;
+        });
+        events=events.slice(0,6);
+      } catch(e){}
+    }
+
+    const listId='eventList'+(who==='sergio'?'Sergio':'Miriam');
+    const dotColor=who==='sergio'?'#378ADD':'#D4537E';
+    const months=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+    if(!events.length){document.getElementById(listId).innerHTML='<div class="no-events">Keine Termine in 2 Wochen</div>';return;}
+    document.getElementById(listId).innerHTML=events.map(ev=>{
+      const s=ev.start.dateTime?new Date(ev.start.dateTime):new Date(ev.start.date);
+      const t=ev.start.dateTime?s.getDate()+'. '+months[s.getMonth()]+' · '+String(s.getHours()).padStart(2,'0')+':'+String(s.getMinutes()).padStart(2,'0'):s.getDate()+'. '+months[s.getMonth()];
+      const color=ev.isFamily?'#1D9E75':dotColor;
+      const delCalId = ev.isFamily ? calendars.family : (who==='sergio'?calendars.sergio:calendars.miriam);
+      const startISO = ev.start.dateTime || ev.start.date;
+      const evData = encodeURIComponent(JSON.stringify({id:ev.id, calId:delCalId, who, summary:ev.summary||'', start:startISO, duration: ev.end?.dateTime ? Math.round((new Date(ev.end.dateTime)-new Date(ev.start.dateTime))/60000) : 60, description:ev.description||''}));
+      return`<div class="event-item" onclick="editEvent('${evData}')" style="cursor:pointer;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='#f8f9fa'"><div class="event-dot" style="background:${color}"></div><div style="flex:1"><div class="event-title-text">${ev.summary||'(kein Titel)'}</div><div class="event-time-text">${t}${ev.isFamily?' · 👨‍👩‍👦':''}</div></div><span onclick="event.stopPropagation();deleteEvent('${delCalId}','${ev.id}','${who}')" style="font-size:16px;color:#ddd;cursor:pointer;line-height:1;flex-shrink:0;" title="Löschen">×</span></div>`;
+    }).join('');
+    events.forEach(ev=>{
+      const s=ev.start.dateTime?new Date(ev.start.dateTime):new Date(ev.start.date), n=new Date();
+      if(s.getMonth()===n.getMonth()&&s.getFullYear()===n.getFullYear()){
+        const el=document.querySelector('#calGrid'+(who==='sergio'?'Sergio':'Miriam')+' [data-day="'+s.getDate()+'"]');
+        if(el) el.classList.add('has-event');
+      }
+    });
+  } catch(e){console.error(e);}
+}
+
+async function addEvent(who) {
+  const input=document.getElementById('newEvent'+(who==='sergio'?'Sergio':'Miriam'));
+  const val=input.value.trim(); if(!val) return;
+  const calId=calendars[who]; if(!calId){alert('Kalender nicht verbunden');return;}
+  try {
+    const t=new Date(); t.setDate(t.getDate()+1); t.setHours(10,0,0,0);
+    await gapi.client.calendar.events.insert({calendarId:calId,resource:{summary:val,start:{dateTime:t.toISOString(),timeZone:'Europe/Zurich'},end:{dateTime:new Date(t.getTime()+36e5).toISOString(),timeZone:'Europe/Zurich'}}});
+    input.value=''; loadEvents(who,calId);
+  } catch(e){alert('Fehler: '+(e.result?.error?.message||e));}
+}
+
+async function loadTasks() {
+  try {
+    const lists=await gapi.client.tasks.tasklists.list(), def=lists.result.items[0]; if(!def) return;
+    const tasks=await gapi.client.tasks.tasks.list({tasklist:def.id,showCompleted:false,maxResults:20});
+    todos=(tasks.result.items||[]).map(t=>({id:t.id,listId:def.id,text:t.title,done:false}));
+    localStorage.setItem('dash_todos',JSON.stringify(todos)); renderTodos();
+  } catch(e){console.error(e);}
+}
+
+function renderTodos() {
+  const list=document.getElementById('todoList');
+  if(!todos.length){list.innerHTML='<div class="no-events">Keine Aufgaben</div>';return;}
+  list.innerHTML=todos.map((t,i)=>{
+    const due = t.due ? `<span style="font-size:10px;color:#aaa;margin-left:4px;">· ${new Date(t.due).toLocaleDateString('de-CH',{day:'numeric',month:'short'})}</span>` : '';
+    const note = t.note ? `<div style="font-size:11px;color:#aaa;margin-top:1px;">${t.note}</div>` : '';
+    let badge = '';
+    if (t.assign==='sergio') badge=`<span style="font-size:10px;background:#E6F1FB;color:#185FA5;padding:1px 6px;border-radius:6px;margin-left:4px;">SÉ</span>`;
+    else if (t.assign==='miriam') badge=`<span style="font-size:10px;background:#FBEAF0;color:#993556;padding:1px 6px;border-radius:6px;margin-left:4px;">MI</span>`;
+    return`<div class="todo-item"><div class="todo-check ${t.done?'done':''}" onclick="toggleTodo(${i})">${t.done?'✓':''}</div><div style="flex:1"><span class="todo-label ${t.done?'done':''}">${t.text}</span>${badge}${due}${note}</div><span class="todo-delete" onclick="deleteTodo(${i})">×</span></div>`;
+  }).join('');
+}
+function toggleTodo(i){todos[i].done=!todos[i].done;localStorage.setItem('dash_todos',JSON.stringify(todos));renderTodos();}
+function deleteTodo(i){todos.splice(i,1);localStorage.setItem('dash_todos',JSON.stringify(todos));renderTodos();}
+function openTodoModal(){
+  document.getElementById('todoTitle').value='';
+  document.getElementById('todoDue').value='';
+  document.getElementById('todoNote').value='';
+  document.getElementById('todoAssign').value='both';
+  document.getElementById('todoError').style.display='none';
+  document.getElementById('todoSubmitBtn').textContent='Aufgabe erstellen';
+  document.getElementById('todoModal').style.display='flex';
+}
+function closeTodoModal(){document.getElementById('todoModal').style.display='none';}
+async function submitTodo(){
+  const title=document.getElementById('todoTitle').value.trim();
+  const due=document.getElementById('todoDue').value;
+  const note=document.getElementById('todoNote').value.trim();
+  const assign=document.getElementById('todoAssign').value;
+  if(!title){document.getElementById('todoError').textContent='Bitte einen Titel eingeben!';document.getElementById('todoError').style.display='block';return;}
+  document.getElementById('todoSubmitBtn').textContent='Wird gespeichert...';
+  try {
+    const lists=await gapi.client.tasks.tasklists.list();
+    const def=lists.result.items[0];
+    const assignLabel=assign==='sergio'?' [SÉ]':assign==='miriam'?' [MI]':'';
+    const task={title:title+assignLabel,notes:note||undefined};
+    if(due) task.due=new Date(due+'T00:00:00').toISOString();
+    await gapi.client.tasks.tasks.insert({tasklist:def.id,resource:task});
+    todos.unshift({text:title,done:false,due:due||null,note:note||null,assign});
+    localStorage.setItem('dash_todos',JSON.stringify(todos));
+    closeTodoModal();
+    renderTodos();
+  } catch(e){
+    document.getElementById('todoError').textContent='Fehler: '+(e.result?.error?.message||e);
+    document.getElementById('todoError').style.display='block';
+    document.getElementById('todoSubmitBtn').textContent='Aufgabe erstellen';
+  }
+}
+document.getElementById('todoModal').addEventListener('click',function(e){if(e.target===this)closeTodoModal();});
+
+function renderBring(){
+  const list=document.getElementById('bringList');
+  if(!bringItems.length){list.innerHTML='<div class="no-events">Liste ist leer</div>';return;}
+  list.innerHTML=bringItems.map((item,i)=>`<div class="bring-item"><span class="bring-label">${item}</span><span class="bring-delete" onclick="deleteBring(${i})">×</span></div>`).join('');
+}
+function deleteBring(i){bringItems.splice(i,1);localStorage.setItem('dash_bring',JSON.stringify(bringItems));renderBring();}
+function addBringItem(){const input=document.getElementById('newBring'),val=input.value.trim();if(!val)return;bringItems.push(val);input.value='';localStorage.setItem('dash_bring',JSON.stringify(bringItems));renderBring();}
+
+// Meal Planner
+const SHEET_ID = '1cc79Ey2ovmerwijlfcaZc171KFYI6l-Id47lEAjEjoM';
+const MEALS = ['Mittagessen', 'Abendessen'];
+const DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+let mealData = {};
+DAYS.forEach(day => { mealData[day] = {}; MEALS.forEach(meal => { mealData[day][meal] = ''; }); });
+
+async function loadMealPlan() {
+  try {
+    const token = gapi.client.getToken();
+    if (!token) return;
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:H10`, {
+      headers: { 'Authorization': 'Bearer ' + token.access_token }
+    });
+    const d = await r.json();
+    const rows = d.values || [];
+    mealData = {};
+    DAYS.forEach((day, di) => {
+      mealData[day] = {};
+      MEALS.forEach((meal, mi) => {
+        mealData[day][meal] = rows[mi + 1]?.[di + 1] || '';
+      });
+    });
+    renderMealGrid();
+  } catch(e) { console.error('Meal load:', e); renderMealGrid(); }
+}
+
+function renderMealGrid() {
+  const grid = document.getElementById('mealGrid');
+  const today = new Date().getDay();
+  const todayIndex = today === 0 ? 6 : today - 1;
+  
+  let html = DAYS.map((day, di) => `
+    <div style="min-width:0;">
+      <div style="font-size:11px;font-weight:600;color:${di===todayIndex?'#185FA5':'#aaa'};text-align:center;margin-bottom:6px;${di===todayIndex?'text-decoration:underline;':''}">${day.slice(0,2)}</div>
+      ${MEALS.map(meal => `
+        <div style="margin-bottom:4px;">
+          <div style="font-size:9px;color:#ccc;margin-bottom:2px;">${meal.slice(0,5)}</div>
+          <input 
+            value="${mealData[day]?.[meal] || ''}"
+            placeholder="..."
+            onchange="mealData['${day}']['${meal}']=this.value"
+            style="width:100%;font-size:11px;padding:5px 6px;border-radius:6px;border:0.5px solid ${di===todayIndex?'#185FA5':'#e0e0e0'};background:${di===todayIndex?'#EEF5FF':'#f8f9fa'};color:#1a1a1a;outline:none;font-family:inherit;"
+          />
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+  
+  grid.innerHTML = html;
+}
+
+async function saveMealPlan() {
+  try {
+    const token = gapi.client.getToken();
+    if (!token) return;
+    
+    // Build sheet data
+    const values = [
+      ['', ...DAYS],
+      ...MEALS.map(meal => [meal, ...DAYS.map(day => mealData[day]?.[meal] || '')])
+    ];
+    
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:H4?valueInputOption=RAW`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token.access_token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values })
+    });
+    
+    // Show saved confirmation
+    const btn = document.querySelector('button[onclick="saveMealPlan()"]');
+    btn.textContent = '✅ Gespeichert!';
+    setTimeout(() => btn.textContent = '💾 Speichern', 2000);
+  } catch(e) { console.error('Meal save:', e); alert('Fehler beim Speichern: ' + e.message); }
+}
+
+async function suggestMeals() {
+  const suggestionsDiv = document.getElementById('mealSuggestions');
+  const content = document.getElementById('mealSuggestionsContent');
+  suggestionsDiv.style.display = 'block';
+  content.textContent = 'Claude denkt nach...';
+  
+  try {
+    // Get context
+    const weather = document.getElementById('weatherText')?.textContent || '';
+    const nextEvents = Array.from(document.querySelectorAll('.event-title-text')).slice(0,3).map(e => e.textContent).join(', ');
+    const bringItems = JSON.parse(localStorage.getItem('dash_bring') || '[]').join(', ');
+    const currentMeals = DAYS.map(day => `${day}: ${Object.values(mealData[day]||{}).filter(Boolean).join(', ')}`).filter(m => !m.endsWith(': ')).join('\n');
+    
+    const prompt = `Du bist ein hilfreicher Koch-Assistent für ein Schweizer Pärchen (Sérgio und Miriam) in Dietlikon.
+
+Kontext:
+- Wetter: ${weather}
+- Aktuelle Einkaufsliste (Bring!): ${bringItems || 'leer'}
+- Kommende Termine: ${nextEvents || 'keine'}
+- Aktuelle Mahlzeiten diese Woche: ${currentMeals || 'noch nicht geplant'}
+
+Schlage 3-4 Abendessen für diese Woche vor. Berücksichtige:
+- Das Wetter und die Jahreszeit
+- Was schon in der Einkaufsliste ist
+- Wie beschäftigt sie sind (Termine)
+- Abwechslung (nicht zweimal dasselbe)
+- Schweizer/europäische Küche
+
+Antworte kurz und direkt mit den Vorschlägen. Für jeden Vorschlag: Name des Gerichts + welche Zutaten noch fehlen (die noch nicht in der Einkaufsliste sind).`;
+
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await r.json();
+    content.textContent = data.content?.[0]?.text || 'Keine Vorschläge verfügbar';
+  } catch(e) {
+    content.textContent = 'Fehler beim Laden der Vorschläge. Stelle sicher dass du eingeloggt bist.';
+    console.error('Suggest meals:', e);
+  }
+}
+async function showNearbyStations(which) {
+  const inputId = which === 'from' ? 'transportFrom' : 'transportTo';
+  const dropdownId = which === 'from' ? 'suggestFrom' : 'suggestTo';
+  const dropdown = document.getElementById(dropdownId);
+  const currentVal = document.getElementById(inputId).value.trim();
+  if (currentVal.length >= 2) return; // Already typing, let searchStation handle it
+  dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">📍 Standort wird ermittelt...</div>';
+  dropdown.style.display = 'block';
+  if (!navigator.geolocation) {
+    dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Standort nicht verfügbar</div>';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    try {
+      const { latitude, longitude } = pos.coords;
+      const r = await fetch(`https://transport.opendata.ch/v1/locations?x=${longitude}&y=${latitude}&type=station`);
+      const d = await r.json();
+      const stations = (d.stations || []).filter(s => s.name).slice(0, 6);
+      if (!stations.length) { dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Keine Stationen gefunden</div>'; return; }
+      dropdown.innerHTML = '<div style="padding:5px 10px;font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">📍 In der Nähe</div>' +
+        stations.map(s => `
+          <div onclick="selectStation('${which}','${s.name.replace(/'/g,"\\'")}');event.stopPropagation();" style="padding:7px 10px;font-size:12px;color:#1a1a1a;cursor:pointer;border-bottom:0.5px solid #f0f0f0;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">
+            ${s.name}
+          </div>`).join('');
+    } catch(e) { dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Fehler beim Laden</div>'; }
+  }, () => {
+    dropdown.innerHTML = '<div style="padding:7px 10px;font-size:11px;color:#aaa;">Standort verweigert</div>';
+  });
+}
+
+let stationSearchTimer = null;
+async function searchStation(which, query) {
+  clearTimeout(stationSearchTimer);
+  const dropdownId = which === 'from' ? 'suggestFrom' : 'suggestTo';
+  const dropdown = document.getElementById(dropdownId);
+  if (query.length < 2) { dropdown.style.display = 'none'; return; }
+  stationSearchTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(`https://transport.opendata.ch/v1/locations?query=${encodeURIComponent(query)}&type=station`);
+      const d = await r.json();
+      const stations = (d.stations || []).filter(s => s.name).slice(0, 6);
+      if (!stations.length) { dropdown.style.display = 'none'; return; }
+      dropdown.innerHTML = stations.map(s => `
+        <div onclick="selectStation('${which}','${s.name.replace(/'/g,"\\'")}');event.stopPropagation();" style="padding:7px 10px;font-size:12px;color:#1a1a1a;cursor:pointer;border-bottom:0.5px solid #f0f0f0;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='white'">
+          ${s.name}
+        </div>`).join('');
+      dropdown.style.display = 'block';
+    } catch(e) { dropdown.style.display = 'none'; }
+  }, 300);
+}
+
+function selectStation(which, name) {
+  const inputId = which === 'from' ? 'transportFrom' : 'transportTo';
+  const dropdownId = which === 'from' ? 'suggestFrom' : 'suggestTo';
+  document.getElementById(inputId).value = name;
+  document.getElementById(dropdownId).style.display = 'none';
+  loadTransport();
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+  document.getElementById('suggestFrom').style.display = 'none';
+  document.getElementById('suggestTo').style.display = 'none';
+});
+
+async function loadTransport() {
+  const list = document.getElementById('transportList');
+  const from = document.getElementById('transportFrom')?.value.trim() || 'Dietlikon';
+  const to = document.getElementById('transportTo')?.value.trim() || 'Zürich HB';
+  list.innerHTML = '<div class="no-events">Laden...</div>';
+  try {
+    const r = await fetch(`https://transport.opendata.ch/v1/connections?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&limit=4`);
+    const d = await r.json();
+    if (!d.connections || !d.connections.length) { list.innerHTML = '<div class="no-events">Keine Verbindungen gefunden</div>'; return; }
+    list.innerHTML = d.connections.map(c => {
+      const dep = new Date(c.from.departure);
+      const arr = new Date(c.to.arrival);
+      const depStr = String(dep.getHours()).padStart(2,'0') + ':' + String(dep.getMinutes()).padStart(2,'0');
+      const arrStr = String(arr.getHours()).padStart(2,'0') + ':' + String(arr.getMinutes()).padStart(2,'0');
+      const dur = Math.round((arr - dep) / 60000);
+      const cat = c.sections?.[0]?.journey?.category || '';
+      const num = c.sections?.[0]?.journey?.number || '';
+      const track = c.from.platform ? ` · Gl. ${c.from.platform}` : '';
+      const now = new Date();
+      const minsLeft = Math.round((dep - now) / 60000);
+      const urgent = minsLeft <= 5 ? 'color:#e24b4a;font-weight:600;' : minsLeft <= 10 ? 'color:#EA8B00;font-weight:600;' : 'color:#1D9E75;';
+      const minsText = minsLeft <= 0 ? 'Jetzt' : minsLeft < 60 ? `${minsLeft} min` : '';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid #f0f0f0;">
+        <div style="background:#e30613;color:white;font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;flex-shrink:0;">${cat}${num}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:#1a1a1a;">${depStr} → ${arrStr}</div>
+          <div style="font-size:10px;color:#aaa;">${dur} min${track}</div>
+        </div>
+        <div style="font-size:11px;${urgent}">${minsText}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML = '<div class="no-events">Fehler beim Laden</div>'; console.error(e); }
+}
+
+function toggleLight(el){
+  const isOn=el.classList.contains('on');
+  el.classList.toggle('on',!isOn);el.classList.toggle('off',isOn);
+  const s=el.querySelector('.light-status');s.textContent=isOn?'Aus':'An';s.className='light-status '+(isOn?'off':'on');
+}
+
+// Spotify PKCE Auth
+const SPOTIFY_CLIENT_ID = 'ecfa6e034adc402cb72789d0f2f7e9d2';
+const SPOTIFY_REDIRECT = 'https://subtle-daffodil-a75d92.netlify.app';
+const SPOTIFY_SCOPES = 'user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative';
+
+function generateVerifier(len) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  let r = '';
+  for (let i = 0; i < len; i++) r += chars[Math.floor(Math.random() * chars.length)];
+  return r;
+}
+async function generateChallenge(verifier) {
+  const data = new TextEncoder().encode(verifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+async function spotifyLogin() {
+  const verifier = generateVerifier(128);
+  sessionStorage.setItem('sp_verifier', verifier);
+  const challenge = await generateChallenge(verifier);
+  window.location.href = 'https://accounts.spotify.com/authorize?' + new URLSearchParams({
+    response_type: 'code', client_id: SPOTIFY_CLIENT_ID, scope: SPOTIFY_SCOPES,
+    redirect_uri: SPOTIFY_REDIRECT, code_challenge_method: 'S256', code_challenge: challenge
+  });
+}
+async function handleSpotifyCallback() {
+  const code = new URLSearchParams(window.location.search).get('code');
+  if (!code) { if (spotifyToken) initSpotifyPlayer(); return; }
+  const verifier = sessionStorage.getItem('sp_verifier');
+  window.history.replaceState({}, '', window.location.pathname);
+  const resp = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ client_id: SPOTIFY_CLIENT_ID, grant_type: 'authorization_code', code, redirect_uri: SPOTIFY_REDIRECT, code_verifier: verifier })
+  });
+  const data = await resp.json();
+  if (data.access_token) {
+    spotifyToken = data.access_token;
+    localStorage.setItem('spotify_token', spotifyToken);
+    initSpotifyPlayer();
+  }
+}
+function setSpotifyToken() {
+  const input = document.getElementById('spTokenInput');
+  const token = input.value.trim();
+  if (!token) return;
+  spotifyToken = token;
+  localStorage.setItem('spotify_token', token);
+  initSpotifyPlayer();
+}
+
+function initSpotifyPlayer() {
+  document.getElementById('spotifyContent').innerHTML = `
+    <div style="display:flex;background:rgba(0,0,0,0.04);border-radius:10px;padding:2px;margin-bottom:12px;">
+      <button id="spTabPlayer" onclick="spSwitchTab('player')" style="flex:1;padding:6px;border:none;background:white;font-size:12px;font-weight:600;color:#1a1a1a;cursor:pointer;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">▶ Player</button>
+      <button id="spTabPlaylists" onclick="spSwitchTab('playlists')" style="flex:1;padding:6px;border:none;background:none;font-size:12px;font-weight:500;color:#aaa;cursor:pointer;border-radius:8px;">≡ Playlists</button>
+      <button id="spTabDevices" onclick="spSwitchTab('devices')" style="flex:1;padding:6px;border:none;background:none;font-size:12px;font-weight:500;color:#aaa;cursor:pointer;border-radius:8px;">📡 Geräte</button>
+    </div>
+    <div id="spViewPlayer">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div class="sp-art-placeholder" id="spArtwork">🎵</div>
+        <div style="flex:1;min-width:0;">
+          <div class="sp-track" id="spTrack">Laden...</div>
+          <div class="sp-artist" id="spArtist"></div>
+          <div id="spDevice" style="font-size:10px;color:#aaa;margin-top:2px;"></div>
+        </div>
+      </div>
+      <div class="sp-progress-bar"><div class="sp-progress-fill" id="spProgress" style="width:0%"></div></div>
+      <div class="sp-times"><span id="spCurrent">0:00</span><span id="spTotal">0:00</span></div>
+      <div class="sp-controls">
+        <button class="sp-btn" onclick="spotifyPrev()">⏮</button>
+        <button class="sp-btn play" id="spPlayBtn" onclick="spotifyToggle()">⏸</button>
+        <button class="sp-btn" onclick="spotifyNext()">⏭</button>
+      </div>
+      <div class="sp-volume">
+        <span style="font-size:12px;color:#aaa;">🔈</span>
+        <input type="range" min="0" max="100" value="50" oninput="spotifyVolume(this.value)" style="flex:1;height:3px;accent-color:#1DB954;" />
+        <span style="font-size:12px;color:#aaa;">🔊</span>
+      </div>
+    </div>
+    <div id="spViewPlaylists" style="display:none;">
+      <div id="spPlaylists" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;">
+        <div style="font-size:12px;color:#bbb;text-align:center;padding:8px;">Laden...</div>
+      </div>
+    </div>
+    <div id="spViewDevices" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;color:#aaa;">Verfügbare Geräte</div>
+        <span onclick="loadDevices()" style="font-size:11px;color:#1DB954;cursor:pointer;font-weight:600;">↻</span>
+      </div>
+      <div id="spDeviceList" style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:12px;color:#bbb;text-align:center;padding:8px;">Laden...</div>
+      </div>
+    </div>`;
+  fetchSpotifyState();
+  if (spotifyInterval) clearInterval(spotifyInterval);
+  spotifyInterval = setInterval(fetchSpotifyState, 5000);
+  setInterval(tickProgress, 1000);
+  loadPlaylists();
+}
+
+function spSwitchTab(tab) {
+  ['player','playlists','devices'].forEach(t => {
+    const view = document.getElementById('spView'+t.charAt(0).toUpperCase()+t.slice(1));
+    const btn = document.getElementById('spTab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if (view) view.style.display = t === tab ? 'block' : 'none';
+    if (btn) {
+      btn.style.background = t === tab ? 'white' : 'none';
+      btn.style.color = t === tab ? '#1a1a1a' : '#aaa';
+      btn.style.fontWeight = t === tab ? '600' : '500';
+      btn.style.boxShadow = t === tab ? '0 1px 3px rgba(0,0,0,0.1)' : 'none';
+    }
+  });
+  if (tab === 'devices') loadDevices();
+}
+
+async function loadDevices() {
+  if (!spotifyToken) return;
+  const list = document.getElementById('spDeviceList');
+  list.innerHTML = '<div style="font-size:12px;color:#bbb;text-align:center;padding:8px;">Laden...</div>';
+  try {
+    const r = await fetch('https://api.spotify.com/v1/me/player/devices', { headers: { 'Authorization': 'Bearer ' + spotifyToken }});
+    const d = await r.json();
+    if (!d.devices || !d.devices.length) {
+      list.innerHTML = '<div style="font-size:12px;color:#bbb;text-align:center;padding:8px;">Keine Geräte gefunden.<br><small>Öffne Spotify auf einem Gerät.</small></div>';
+      return;
+    }
+    const icons = { Computer: '💻', Smartphone: '📱', Speaker: '🔊', TV: '📺', CastAudio: '📡', CastVideo: '📺' };
+    list.innerHTML = d.devices.map(dev => `
+      <div onclick="transferPlayback('${dev.id}')" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid ${dev.is_active ? '#1DB954' : 'rgba(0,0,0,0.06)'};background:${dev.is_active ? 'rgba(29,185,84,0.06)' : 'rgba(0,0,0,0.02)'};cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='rgba(29,185,84,0.1)'" onmouseout="this.style.background='${dev.is_active ? 'rgba(29,185,84,0.06)' : 'rgba(0,0,0,0.02)'}'">
+        <span style="font-size:20px;">${icons[dev.type] || '🔊'}</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:${dev.is_active ? '600' : '500'};color:${dev.is_active ? '#1DB954' : '#1a1a1a'};">${dev.name}</div>
+          <div style="font-size:10px;color:#aaa;">${dev.type}${dev.is_active ? ' · Aktiv' : ''}</div>
+        </div>
+        ${dev.is_active ? '<span style="color:#1DB954;font-size:12px;">✓</span>' : '<span style="color:#ddd;font-size:12px;">▶</span>'}
+      </div>`).join('');
+  } catch(e) { list.innerHTML = '<div style="font-size:12px;color:#bbb;text-align:center;padding:8px;">Fehler beim Laden</div>'; }
+}
+
+async function transferPlayback(deviceId) {
+  try {
+    await fetch('https://api.spotify.com/v1/me/player', {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + spotifyToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ device_ids: [deviceId], play: true })
+    });
+    setTimeout(() => { loadDevices(); fetchSpotifyState(); }, 1000);
+  } catch(e) { console.error('Transfer:', e); }
+}
+
+async function loadPlaylists() {
+  if (!spotifyToken) return;
+  document.getElementById('spPlaylists').innerHTML = '<div style="font-size:12px;color:#bbb;text-align:center;padding:8px;">Laden...</div>';
+  try {
+    const r = await fetch('https://api.spotify.com/v1/me/playlists?limit=20', { headers: { 'Authorization': 'Bearer ' + spotifyToken }});
+    const d = await r.json();
+    if (!d.items || !d.items.length) { document.getElementById('spPlaylists').innerHTML = '<div style="font-size:12px;color:#bbb;text-align:center;padding:8px;">Keine Playlists gefunden</div>'; return; }
+    document.getElementById('spPlaylists').innerHTML = d.items.map(pl => `
+      <div onclick="playPlaylist('${pl.uri}')" style="display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:8px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
+        ${pl.images?.[0]?.url ? `<img src="${pl.images[0].url}" style="width:32px;height:32px;border-radius:4px;flex-shrink:0;object-fit:cover;">` : `<div style="width:32px;height:32px;border-radius:4px;background:#191414;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🎵</div>`}
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:500;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${pl.name}</div>
+          <div style="font-size:10px;color:#aaa;">${pl.tracks?.total ?? '?'} Songs</div>
+        </div>
+        <span style="font-size:16px;color:#1DB954;">▶</span>
+      </div>`).join('');
+  } catch(e) { console.error('Playlists:', e); }
+}
+
+async function playPlaylist(uri) {
+  if (!spotifyToken) return;
+  try {
+    await fetch('https://api.spotify.com/v1/me/player/play', {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + spotifyToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ context_uri: uri })
+    });
+    setTimeout(fetchSpotifyState, 800);
+  } catch(e) { console.error('Play playlist:', e); }
+}
+
+function fmtTime(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+(String(s%60).padStart(2,'0'));}
+
+async function fetchSpotifyState() {
+  if (!spotifyToken) return;
+  try {
+    const r = await fetch('https://api.spotify.com/v1/me/player', {headers:{'Authorization':'Bearer '+spotifyToken}});
+    if (r.status===204){document.getElementById('spTrack').textContent='Nichts wird abgespielt';return;}
+    if (r.status===401){document.getElementById('spTrack').textContent='Token abgelaufen – neu eingeben';localStorage.removeItem('spotify_token');return;}
+    if (!r.ok) return;
+    const d = await r.json();
+    if (!d||!d.item) return;
+    isPlaying=d.is_playing; currentProgress=d.progress_ms; currentDuration=d.item.duration_ms;
+    document.getElementById('spTrack').textContent=d.item.name;
+    document.getElementById('spArtist').textContent=d.item.artists.map(a=>a.name).join(', ');
+    document.getElementById('spProgress').style.width=Math.round((currentProgress/currentDuration)*100)+'%';
+    document.getElementById('spCurrent').textContent=fmtTime(currentProgress);
+    document.getElementById('spTotal').textContent=fmtTime(currentDuration);
+    document.getElementById('spPlayBtn').textContent=isPlaying?'⏸':'▶';
+    if(d.item.album?.images?.[0]?.url) document.getElementById('spArtwork').innerHTML=`<img src="${d.item.album.images[0].url}" class="sp-art">`;
+    if(d.device?.volume_percent!==undefined) document.querySelector('.sp-volume input').value=d.device.volume_percent;
+    if(d.device?.name) document.getElementById('spDevice').textContent='📡 '+d.device.name;
+  } catch(e){console.error('Spotify:',e);}
+}
+
+function tickProgress(){if(!isPlaying)return;currentProgress+=1000;if(currentDuration>0){const pct=Math.min(100,Math.round((currentProgress/currentDuration)*100));document.getElementById('spProgress').style.width=pct+'%';document.getElementById('spCurrent').textContent=fmtTime(currentProgress);}}
+
+async function spotifyToggle(){await fetch('https://api.spotify.com/v1/me/player/'+(isPlaying?'pause':'play'),{method:'PUT',headers:{'Authorization':'Bearer '+spotifyToken}});isPlaying=!isPlaying;document.getElementById('spPlayBtn').textContent=isPlaying?'⏸':'▶';}
+async function spotifyNext(){await fetch('https://api.spotify.com/v1/me/player/next',{method:'POST',headers:{'Authorization':'Bearer '+spotifyToken}});setTimeout(fetchSpotifyState,500);}
+async function spotifyPrev(){await fetch('https://api.spotify.com/v1/me/player/previous',{method:'POST',headers:{'Authorization':'Bearer '+spotifyToken}});setTimeout(fetchSpotifyState,500);}
+let volumeTimer = null;
+async function spotifyVolume(val){
+  clearTimeout(volumeTimer);
+  volumeTimer = setTimeout(async () => {
+    try {
+      await fetch('https://api.spotify.com/v1/me/player/volume?volume_percent='+Math.round(val),{method:'PUT',headers:{'Authorization':'Bearer '+spotifyToken}});
+    } catch(e) { console.error('Volume error:', e); }
+  }, 300);
+}
+
+// Event Modal
+let modalWho = null;
+function openEventModal(who, date) {
+  modalWho = who;
+  const names = {sergio:'Sérgio', miriam:'Miriam', family:'Familie'};
+  document.getElementById('modalTitle').textContent = 'Neuer Termin – ' + (names[who]||who);
+  if (date) {
+    document.getElementById('modalDate').value = date;
+  } else {
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+    document.getElementById('modalDate').value = tomorrow.toISOString().split('T')[0];
+  }
+  document.getElementById('modalTime').value = '10:00';
+  document.getElementById('modalTitle_input').value = '';
+  document.getElementById('modalNote').value = '';
+  document.getElementById('modalRepeat').value = 'NONE';
+  document.getElementById('repeatCountRow').style.display = 'none';
+  document.getElementById('modalRepeatCount').value = '5';
+  document.getElementById('modalReminder').value = '15';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('modalSubmitBtn').textContent = 'Termin erstellen';
+  document.getElementById('eventModal').style.display = 'flex';
+}
+function closeEventModal() {
+  document.getElementById('eventModal').style.display = 'none';
+  editingEvent = null;
+}
+let editingEvent = null;
+
+function editEvent(evDataEncoded) {
+  const ev = JSON.parse(decodeURIComponent(evDataEncoded));
+  editingEvent = ev;
+  modalWho = ev.who;
+  const name = ev.who === 'sergio' ? 'Sérgio' : 'Miriam';
+  document.getElementById('modalTitle').textContent = 'Termin bearbeiten – ' + name;
+  document.getElementById('modalTitle_input').value = ev.summary;
+  const start = new Date(ev.start);
+  document.getElementById('modalDate').value = start.toISOString().split('T')[0];
+  document.getElementById('modalTime').value = ev.start.includes('T') ? String(start.getHours()).padStart(2,'0')+':'+String(start.getMinutes()).padStart(2,'0') : '10:00';
+  document.getElementById('modalDuration').value = ev.duration || 60;
+  document.getElementById('modalNote').value = ev.description || '';
+  document.getElementById('modalRepeat').value = 'NONE';
+  document.getElementById('repeatCountRow').style.display = 'none';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('modalSubmitBtn').textContent = 'Änderungen speichern';
+  document.getElementById('eventModal').style.display = 'flex';
+}
+
+async function deleteEvent(calId, eventId, who) {
+  if (!confirm('Termin wirklich löschen?')) return;
+  try {
+    await gapi.client.calendar.events.delete({ calendarId: calId, eventId: eventId });
+    loadAllEvents();
+  } catch(e) { alert('Fehler beim Löschen: ' + (e.result?.error?.message || e)); }
+}
+
+function toggleRepeatCount() {
+  const val = document.getElementById('modalRepeat').value;
+  document.getElementById('repeatCountRow').style.display = val === 'NONE' ? 'none' : 'block';
+}
+async function submitEvent() {
+  const title = document.getElementById('modalTitle_input').value.trim();
+  const date = document.getElementById('modalDate').value;
+  const time = document.getElementById('modalTime').value;
+  const duration = parseInt(document.getElementById('modalDuration').value);
+  const note = document.getElementById('modalNote').value.trim();
+  const repeat = document.getElementById('modalRepeat').value;
+  const repeatCount = parseInt(document.getElementById('modalRepeatCount').value) || 5;
+  const reminder = document.getElementById('modalReminder').value;
+  if (!title) { document.getElementById('modalError').textContent = 'Bitte einen Titel eingeben!'; document.getElementById('modalError').style.display = 'block'; return; }
+  if (!date) { document.getElementById('modalError').textContent = 'Bitte ein Datum wählen!'; document.getElementById('modalError').style.display = 'block'; return; }
+  const calId = editingEvent ? editingEvent.calId : (modalWho==='family' ? calendars.family : calendars[modalWho]);
+  if (!calId) { document.getElementById('modalError').textContent = 'Kalender nicht verbunden!'; document.getElementById('modalError').style.display = 'block'; return; }
+  document.getElementById('modalSubmitBtn').textContent = editingEvent ? 'Wird gespeichert...' : 'Wird erstellt...';
+  try {
+    const start = new Date(date + 'T' + (time || '10:00') + ':00');
+    const end = new Date(start.getTime() + duration * 60000);
+    const resource = {
+      summary: title,
+      description: note || undefined,
+      start: { dateTime: start.toISOString(), timeZone: 'Europe/Zurich' },
+      end: { dateTime: end.toISOString(), timeZone: 'Europe/Zurich' }
+    };
+    if (!editingEvent && repeat !== 'NONE') {
+      resource.recurrence = [`RRULE:FREQ=${repeat};COUNT=${repeatCount}`];
+    }
+    let eventId;
+    if (editingEvent) {
+      await gapi.client.calendar.events.update({ calendarId: calId, eventId: editingEvent.id, resource });
+      eventId = editingEvent.id;
+    } else {
+      const resp = await gapi.client.calendar.events.insert({ calendarId: calId, resource });
+      eventId = resp.result.id;
+    }
+    // Save reminder preference
+    if (eventId && reminder !== '0') localStorage.setItem('reminder_' + eventId, reminder);
+    const who = editingEvent ? editingEvent.who : modalWho;
+    editingEvent = null;
+    closeEventModal();
+    loadAllEvents();
+  } catch(e) {
+    document.getElementById('modalError').textContent = 'Fehler: ' + (e.result?.error?.message || e);
+    document.getElementById('modalError').style.display = 'block';
+    document.getElementById('modalSubmitBtn').textContent = editingEvent ? 'Änderungen speichern' : 'Termin erstellen';
+  }
+}
+// Close modal on backdrop click
+document.getElementById('eventModal').addEventListener('click', function(e) { if(e.target===this) closeEventModal(); });
+</script>
+
+<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body>
+</html>
