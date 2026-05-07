@@ -795,7 +795,7 @@ const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/calendar https://www.goog
 let calendars = { sergio: null, miriam: null };
 let todos = JSON.parse(localStorage.getItem('dash_todos') || '[]');
 let bringItems = [];
-const BRING_API = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://192.168.1.11/api';
+const BRING_API = window.location.hostname === 'paviacruz.duckdns.org' ? 'https://paviacruz.duckdns.org/api' : 'https://paviacruz.duckdns.org/api';
 
 async function loadBringItems() {
   try {
@@ -1786,7 +1786,7 @@ async function loadTransport() {
   } catch(e) { list.innerHTML = '<div class="no-events">Fehler beim Laden</div>'; console.error(e); }
 }
 
-const IKEA_API = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://192.168.1.11/api';
+const IKEA_API = 'https://paviacruz.duckdns.org/api';
 
 async function loadLights() {
   try {
@@ -1835,7 +1835,7 @@ function toggleLight(el) {
 
 // Spotify PKCE Auth
 const SPOTIFY_CLIENT_ID = 'ecfa6e034adc402cb72789d0f2f7e9d2';
-const SPOTIFY_REDIRECT = 'https://cruz170699.github.io/home-dashboard';
+const SPOTIFY_REDIRECT = 'https://paviacruz.duckdns.org';
 const SPOTIFY_SCOPES = 'user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative';
 
 function generateVerifier(len) {
