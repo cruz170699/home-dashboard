@@ -794,7 +794,7 @@ const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/calendar https://www.goog
 let calendars = { sergio: null, miriam: null };
 let todos = JSON.parse(localStorage.getItem('dash_todos') || '[]');
 let bringItems = [];
-const BRING_API = 'https://192.168.1.11/api';
+const BRING_API = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://192.168.1.11/api';
 
 async function loadBringItems() {
   try {
@@ -1785,7 +1785,7 @@ async function loadTransport() {
   } catch(e) { list.innerHTML = '<div class="no-events">Fehler beim Laden</div>'; console.error(e); }
 }
 
-const IKEA_API = 'https://192.168.1.11/api';
+const IKEA_API = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://192.168.1.11/api';
 
 async function loadLights() {
   try {
