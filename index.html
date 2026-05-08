@@ -570,7 +570,7 @@ async function sbbAutocomplete(inputId, listId) {
       const item = document.createElement('div');
       item.className = 'sbb-autocomplete-item';
       item.textContent = s.name;
-      item.onclick = () => { input.value = s.name; list.innerHTML = ''; };
+      item.onclick = () => { input.value = s.name; list.innerHTML = ''; searchSBB(); };
       list.appendChild(item);
     });
   } catch(e) { list.innerHTML = ''; }
@@ -586,7 +586,7 @@ document.addEventListener('click', (e) => {
 
 async function searchSBB() {
   const from = document.getElementById('sbb-from').value.trim();
-  const date = document.getElementById('sbb-date').value;
+  const to = document.getElementById('sbb-to').value.trim();
   const time = document.getElementById('sbb-time').value;
   if (!from || !to) return;
   const results = document.getElementById('sbb-results');
