@@ -671,17 +671,9 @@ function renderMealStrip() {
     el.className = 'meal-pill' + (isToday ? ' today' : '');
     el.style.cursor = 'pointer';
     el.innerHTML = `<div class="meal-pill-day">${isToday ? 'HEUTE' : m.day.slice(0,2).toUpperCase()}</div><div class="meal-pill-main">${m.lunch}</div><div class="meal-pill-sub">${m.dinner}</div>`;
-    el.onclick = () => openMealPopup(m, isToday);
+    el.onclick = () => openMealWeekPopup();
     strip.appendChild(el);
   });
-  // Week overview button
-  const btn = document.createElement('div');
-  btn.className = 'meal-pill';
-  btn.style.cssText = 'cursor:pointer;min-width:36px;max-width:36px;display:flex;align-items:center;justify-content:center;font-size:16px;';
-  btn.textContent = '📋';
-  btn.title = 'Alle Mahlzeiten';
-  btn.onclick = openMealWeekPopup;
-  strip.appendChild(btn);
 }
 loadMeals();
 
