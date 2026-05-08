@@ -301,9 +301,61 @@ html, body {
 .new-event-form input, .new-event-form select { background: var(--surface2); border: none; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--text); outline: none; }
 .new-event-submit { background: var(--blue); color: white; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 4px; transition: background 0.15s; }
 .new-event-submit:hover { background: var(--blue2); }
+
+/* Meal Popups */
+#meal-popup, #meal-week-popup { display: none; position: fixed; inset: 0; z-index: 998; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+#meal-popup.open, #meal-week-popup.open { display: flex; }
+.meal-popup-card { background: #ffffff; border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); width: 360px; max-width: 95vw; padding: 20px; animation: popupIn 0.25s cubic-bezier(.4,0,.2,1); }
+.meal-popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.meal-popup-title { font-size: 17px; font-weight: 700; }
+.meal-section { margin-bottom: 12px; }
+.meal-section-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.meal-edit-input { width: 100%; background: var(--surface2); border: none; border-radius: 10px; padding: 9px 12px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--text); outline: none; }
+.meal-save-btn { width: 100%; background: var(--blue); color: white; border: none; border-radius: 12px; padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px; }
+.meal-week-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 0.5px solid var(--border); gap: 10px; cursor: pointer; }
+.meal-week-row:last-child { border-bottom: none; }
+.meal-week-row:hover { background: var(--surface2); border-radius: 8px; padding-left: 6px; }
+.meal-week-day { font-size: 12px; font-weight: 700; width: 28px; color: var(--text2); flex-shrink: 0; }
+.meal-week-day.today-day { color: var(--blue); }
+.meal-week-meals { flex: 1; font-size: 12px; }
+.meal-week-lunch { color: var(--text); font-weight: 500; }
+.meal-week-dinner { color: var(--text2); }
 </style>
 </head>
 <body>
+
+<!-- Meal Detail/Edit Popup -->
+<div id="meal-popup" onclick="if(event.target===this)closeMealPopup()">
+  <div class="meal-popup-card">
+    <div class="meal-popup-header">
+      <div class="meal-popup-title" id="meal-popup-day">Montag</div>
+      <button class="event-popup-close" onclick="closeMealPopup()">✕</button>
+    </div>
+    <div class="meal-section">
+      <div class="meal-section-label">Mittagessen</div>
+      <input class="meal-edit-input" id="meal-edit-lunch" placeholder="Mittagessen...">
+    </div>
+    <div class="meal-section">
+      <div class="meal-section-label">Abendessen</div>
+      <input class="meal-edit-input" id="meal-edit-dinner" placeholder="Abendessen...">
+    </div>
+    <button class="meal-save-btn" onclick="saveMeal()">Speichern</button>
+  </div>
+</div>
+
+<!-- Meal Week Overview Popup -->
+<div id="meal-week-popup" onclick="if(event.target===this)closeMealWeekPopup()">
+  <div class="meal-popup-card" style="width:420px;">
+    <div class="meal-popup-header">
+      <div class="meal-popup-title">🍽️ Wochenplan</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button id="meal-suggest-btn" onclick="getMealSuggestions()" style="background:var(--surface2);border:none;border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;" title="KI Vorschläge">✨ Vorschläge</button>
+        <button class="event-popup-close" onclick="closeMealWeekPopup()">✕</button>
+      </div>
+    </div>
+    <div id="meal-week-list"></div>
+  </div>
+</div>
 
 <!-- Event Detail Popup -->
 <div id="event-popup" onclick="if(event.target===this)closeEventPopup()">
@@ -520,12 +572,47 @@ function initOAuth() {
         document.getElementById('login-overlay').style.display = 'none';
         loadCalendarEvents();
         loadTodos();
+        requestNotificationPermission();
       }
     },
   });
   document.getElementById('btn-google-login').onclick = () => client.requestAccessToken();
 }
 window.addEventListener('load', () => { setTimeout(() => { if (window.google) initOAuth(); else setTimeout(initOAuth, 1500); }, 500); });
+
+// ── NOTIFICATIONS ──
+let notifiedEvents = new Set();
+
+async function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    await Notification.requestPermission();
+  }
+}
+
+function checkUpcomingEvents() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = new Date();
+  calEvents.forEach(ev => {
+    if (!ev.startDateTime) return; // skip all-day events
+    const evStart = new Date(ev.startDateTime);
+    const diffMin = (evStart - now) / 60000;
+    const reminders = ev.reminders || [{method:'popup', minutes:15}];
+    reminders.forEach(rem => {
+      if (rem.method !== 'popup') return;
+      const key = `${ev.eventId}-${rem.minutes}`;
+      // Fire notification when we're within 1 minute of the reminder time
+      if (diffMin <= rem.minutes && diffMin > rem.minutes - 1 && !notifiedEvents.has(key)) {
+        notifiedEvents.add(key);
+        const msg = rem.minutes === 0 ? 'Jetzt' : rem.minutes >= 60 ? `In ${Math.round(rem.minutes/60)}h` : `In ${rem.minutes} Min`;
+        new Notification(`📅 ${ev.rawTitle || ev.title}`, {
+          body: `${msg} · ${ev.time || ev.date}`,
+          tag: key
+        });
+      }
+    });
+  });
+}
+setInterval(checkUpcomingEvents, 60000);
 
 function updateClock() {
   const now = new Date();
@@ -548,25 +635,239 @@ async function loadWeather() {
 loadWeather(); setInterval(loadWeather, 600000);
 
 const DAYS_SHEET = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+let mealData = []; // stores all 7 days meals
+
 async function loadMeals() {
   try {
     const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/A1:H3?key=${CONFIG.SHEETS_API_KEY}`);
     const d = await r.json(); const rows = d.values;
-    const strip = document.getElementById('meal-strip'); strip.innerHTML = '';
-    const todayJS = new Date().getDay();
+    mealData = [];
     for (let i = 0; i < 7; i++) {
-      const jsDay = i === 6 ? 0 : i + 1;
-      const isToday = jsDay === todayJS;
-      const lunch = rows?.[1]?.[i+1] || '—';
-      const dinner = rows?.[2]?.[i+1] || '—';
-      const el = document.createElement('div');
-      el.className = 'meal-pill' + (isToday ? ' today' : '');
-      el.innerHTML = `<div class="meal-pill-day">${isToday ? 'HEUTE' : DAYS_SHEET[i].slice(0,2).toUpperCase()}</div><div class="meal-pill-main">${lunch}</div><div class="meal-pill-sub">${dinner}</div>`;
-      strip.appendChild(el);
+      mealData.push({
+        day: DAYS_SHEET[i],
+        jsDay: i === 6 ? 0 : i + 1,
+        colIdx: i + 1,
+        lunch: rows?.[1]?.[i+1] || '—',
+        dinner: rows?.[2]?.[i+1] || '—'
+      });
     }
+    renderMealStrip();
+    autoSaveMealHistory();
   } catch(e) {}
 }
+
+function renderMealStrip() {
+  const strip = document.getElementById('meal-strip'); strip.innerHTML = '';
+  const todayJS = new Date().getDay();
+  // Show today + next 3 days only
+  const todayIdx = mealData.findIndex(m => m.jsDay === todayJS);
+  const toShow = [];
+  for (let i = 0; i < 4; i++) {
+    toShow.push(mealData[(todayIdx + i) % 7]);
+  }
+  toShow.forEach((m, i) => {
+    const isToday = i === 0;
+    const el = document.createElement('div');
+    el.className = 'meal-pill' + (isToday ? ' today' : '');
+    el.style.cursor = 'pointer';
+    el.innerHTML = `<div class="meal-pill-day">${isToday ? 'HEUTE' : m.day.slice(0,2).toUpperCase()}</div><div class="meal-pill-main">${m.lunch}</div><div class="meal-pill-sub">${m.dinner}</div>`;
+    el.onclick = () => openMealPopup(m, isToday);
+    strip.appendChild(el);
+  });
+  // Week overview button
+  const btn = document.createElement('div');
+  btn.className = 'meal-pill';
+  btn.style.cssText = 'cursor:pointer;min-width:36px;max-width:36px;display:flex;align-items:center;justify-content:center;font-size:16px;';
+  btn.textContent = '📋';
+  btn.title = 'Alle Mahlzeiten';
+  btn.onclick = openMealWeekPopup;
+  strip.appendChild(btn);
+}
 loadMeals();
+
+// ── MEAL POPUPS ──
+let currentMealColIdx = null;
+
+function openMealPopup(meal, isToday) {
+  document.getElementById('meal-popup-day').textContent = isToday ? 'Heute — ' + meal.day : meal.day;
+  document.getElementById('meal-edit-lunch').value = meal.lunch === '—' ? '' : meal.lunch;
+  document.getElementById('meal-edit-dinner').value = meal.dinner === '—' ? '' : meal.dinner;
+  currentMealColIdx = meal.colIdx;
+  document.getElementById('meal-popup').classList.add('open');
+  setTimeout(() => document.getElementById('meal-edit-lunch').focus(), 100);
+}
+function closeMealPopup() { document.getElementById('meal-popup').classList.remove('open'); }
+
+async function saveMeal() {
+  if (!currentMealColIdx) return;
+  const lunch = document.getElementById('meal-edit-lunch').value.trim() || '—';
+  const dinner = document.getElementById('meal-edit-dinner').value.trim() || '—';
+  // Find column letter (B=col1, C=col2, etc.)
+  const colLetter = String.fromCharCode(65 + currentMealColIdx);
+  try {
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${colLetter}2:${colLetter}3?valueInputOption=RAW`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [[lunch], [dinner]] })
+    });
+    closeMealPopup();
+    loadMeals();
+  } catch(e) { alert('Fehler beim Speichern! Bitte erneut anmelden.'); }
+}
+
+function openMealWeekPopup() {
+  const todayJS = new Date().getDay();
+  const list = document.getElementById('meal-week-list');
+  list.innerHTML = '';
+  mealData.forEach(m => {
+    const isToday = m.jsDay === todayJS;
+    const row = document.createElement('div');
+    row.className = 'meal-week-row';
+    row.innerHTML = `
+      <div class="meal-week-day ${isToday ? 'today-day' : ''}">${m.day.slice(0,2)}</div>
+      <div class="meal-week-meals">
+        <div class="meal-week-lunch">${m.lunch}</div>
+        <div class="meal-week-dinner">${m.dinner}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);">✏️</div>
+    `;
+    row.onclick = () => { closeMealWeekPopup(); openMealPopup(m, isToday); };
+    list.appendChild(row);
+  });
+  document.getElementById('meal-week-popup').classList.add('open');
+}
+function closeMealWeekPopup() { document.getElementById('meal-week-popup').classList.remove('open'); }
+
+// ── MEAL HISTORY AUTO-SAVE ──
+async function autoSaveMealHistory() {
+  if (!oauthToken || mealData.length === 0) return;
+  const today = new Date();
+  if (today.getDay() !== 6) return; // Only on Saturdays
+  const weekStr = today.toISOString().split('T')[0];
+  try {
+    // Check if this week already saved
+    const checkR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/History!A:A`, {
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
+    });
+    const checkD = await checkR.json();
+    const existing = (checkD.values || []).flat();
+    if (existing.includes(weekStr)) return; // Already saved this week
+    // Save current week
+    const row = [weekStr,
+      mealData[0].lunch, mealData[0].dinner,
+      mealData[1].lunch, mealData[1].dinner,
+      mealData[2].lunch, mealData[2].dinner,
+      mealData[3].lunch, mealData[3].dinner,
+      mealData[4].lunch, mealData[4].dinner,
+      mealData[5].lunch, mealData[5].dinner,
+      mealData[6].lunch, mealData[6].dinner,
+    ];
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/History!A:O:append?valueInputOption=RAW`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [row] })
+    });
+  } catch(e) {}
+}
+
+// ── AI MEAL SUGGESTIONS ──
+async function getMealSuggestions() {
+  const btn = document.getElementById('meal-suggest-btn');
+  btn.textContent = '⏳';
+  btn.disabled = true;
+  try {
+    // Get history
+    let historyText = 'Keine Geschichte verfügbar.';
+    if (oauthToken) {
+      const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/History!A1:O50`, {
+        headers: { 'Authorization': `Bearer ${oauthToken}` }
+      });
+      const d = await r.json();
+      if (d.values && d.values.length > 1) {
+        historyText = d.values.map(row => row.join(', ')).join('\n');
+      }
+    }
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `Du bist ein Mahlzeiten-Assistent für ein Schweizer Pärchen (Sérgio & Miriam). 
+Basierend auf ihrer Mahlzeiten-Geschichte, schlage einen kompletten Wochenplan vor.
+Antworte NUR mit JSON in diesem Format:
+{"montag":{"lunch":"...","dinner":"..."},"dienstag":{"lunch":"...","dinner":"..."},"mittwoch":{"lunch":"...","dinner":"..."},"donnerstag":{"lunch":"...","dinner":"..."},"freitag":{"lunch":"...","dinner":"..."},"samstag":{"lunch":"...","dinner":"..."},"sonntag":{"lunch":"...","dinner":"..."}}
+
+Mahlzeiten-Geschichte (letzte Wochen):
+${historyText}
+
+Aktuelle Woche:
+${mealData.map(m => `${m.day}: M=${m.lunch}, A=${m.dinner}`).join('\n')}
+
+Schlage abwechslungsreiche, leckere Mahlzeiten vor. Keine Wiederholungen innerhalb der Woche.`
+        }]
+      })
+    });
+    const data = await response.json();
+    const text = data.content[0].text;
+    const json = JSON.parse(text.replace(/```json|```/g, '').trim());
+    showMealSuggestions(json);
+  } catch(e) {
+    alert('Fehler beim Laden der Vorschläge!');
+  }
+  btn.textContent = '✨';
+  btn.disabled = false;
+}
+
+function showMealSuggestions(suggestions) {
+  const days = ['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
+  const list = document.getElementById('meal-week-list');
+  list.innerHTML = `<div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:8px;">✨ KI-Vorschläge — klicken zum Übernehmen</div>`;
+  days.forEach((day, i) => {
+    const s = suggestions[day];
+    if (!s) return;
+    const m = mealData[i];
+    const row = document.createElement('div');
+    row.className = 'meal-week-row';
+    row.innerHTML = `
+      <div class="meal-week-day">${m.day.slice(0,2)}</div>
+      <div class="meal-week-meals">
+        <div class="meal-week-lunch">${s.lunch}</div>
+        <div class="meal-week-dinner">${s.dinner}</div>
+      </div>
+      <div style="font-size:11px;color:var(--blue);">Übernehmen</div>
+    `;
+    row.onclick = async () => {
+      currentMealColIdx = m.colIdx;
+      document.getElementById('meal-edit-lunch').value = s.lunch;
+      document.getElementById('meal-edit-dinner').value = s.dinner;
+      await saveMeal();
+      openMealWeekPopup();
+    };
+    list.appendChild(row);
+  });
+  // Accept all button
+  const acceptAll = document.createElement('button');
+  acceptAll.className = 'meal-save-btn';
+  acceptAll.textContent = 'Alle Vorschläge übernehmen';
+  acceptAll.style.marginTop = '12px';
+  acceptAll.onclick = async () => {
+    for (let i = 0; i < days.length; i++) {
+      const s = suggestions[days[i]];
+      if (!s) continue;
+      currentMealColIdx = mealData[i].colIdx;
+      document.getElementById('meal-edit-lunch').value = s.lunch;
+      document.getElementById('meal-edit-dinner').value = s.dinner;
+      await saveMeal();
+    }
+    closeMealWeekPopup();
+    loadMeals();
+  };
+  list.appendChild(acceptAll);
+  document.getElementById('meal-week-popup').classList.add('open');
+}
 
 async function loadSBB() {
   try {
@@ -705,14 +1006,26 @@ async function loadCalendarEvents() {
   ];
   for (const cal of cals) {
     try {
-      const r = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events?timeMin=${firstDay}&timeMax=${lastDay}&singleEvents=true&orderBy=startTime&maxResults=50`, { headers: { 'Authorization': `Bearer ${oauthToken}` } });
+      const r = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events?timeMin=${firstDay}&timeMax=${lastDay}&singleEvents=true&orderBy=startTime&maxResults=50&fields=items(id,summary,start,end,reminders)`, { headers: { 'Authorization': `Bearer ${oauthToken}` } });
       const d = await r.json();
       if (d.items) d.items.forEach(ev => {
         const start = ev.start?.date || ev.start?.dateTime; if (!start) return;
         const dateStr = start.split('T')[0];
         const time = ev.start?.dateTime ? new Date(ev.start.dateTime).toLocaleTimeString('de-CH', {hour:'2-digit',minute:'2-digit'}) : '';
         const title = ev.summary || '(Kein Titel)';
-        calEvents.push({ date: dateStr, title: time ? `${time} ${title}` : title, color: cal.color, calKey: cal.key });
+        const reminders = ev.reminders?.overrides || (ev.reminders?.useDefault ? [{method:'popup',minutes:30}] : []);
+        calEvents.push({ 
+          date: dateStr, 
+          title: time ? `${time} ${title}` : title, 
+          rawTitle: title,
+          time: time,
+          color: cal.color, 
+          calKey: cal.key,
+          eventId: ev.id,
+          calId: cal.id,
+          reminders: reminders,
+          startDateTime: ev.start?.dateTime || null
+        });
       });
     } catch(e) {}
   }
@@ -769,13 +1082,18 @@ function goToday() { calDate = new Date(); loadCalendarEvents(); }
 
 // Event detail popup
 function showEventDetail(ev) {
-  document.getElementById('event-popup-title').textContent = ev.title;
+  document.getElementById('event-popup-title').textContent = ev.rawTitle || ev.title;
   const calColors = { green: '#34C759', pink: '#FF2D55', blue: '#007AFF' };
   const calNames = { green: 'Sérgio', pink: 'Miriam', blue: 'Familie' };
   document.getElementById('event-popup-body').innerHTML = `
     <div class="event-meta-row">📅 ${ev.date}</div>
     ${ev.time ? `<div class="event-meta-row">⏰ ${ev.time}</div>` : ''}
     <div class="event-meta-row"><span style="width:10px;height:10px;border-radius:50%;background:${calColors[ev.color]||'#007AFF'};display:inline-block;margin-right:4px;"></span>${calNames[ev.color]||'Kalender'}</div>
+    ${ev.eventId ? `
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button onclick="editEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" style="flex:1;padding:10px;border-radius:10px;background:var(--surface2);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">✏️ Bearbeiten</button>
+      <button onclick="deleteEvent('${ev.calId}','${ev.eventId}')" style="flex:1;padding:10px;border-radius:10px;background:#fce7f3;border:none;font-size:13px;font-weight:600;cursor:pointer;color:#9d174d;font-family:'Inter',sans-serif;">🗑️ Löschen</button>
+    </div>` : ''}
   `;
   document.getElementById('event-popup').classList.add('open');
 }
@@ -791,6 +1109,33 @@ function showDayEvents(dateStr, evs) {
 }
 function closeEventPopup() { document.getElementById('event-popup').classList.remove('open'); }
 
+async function deleteEvent(calId, eventId) {
+  if (!confirm('Event wirklich löschen?')) return;
+  try {
+    await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
+    });
+    closeEventPopup();
+    loadCalendarEvents();
+  } catch(e) { alert('Fehler beim Löschen!'); }
+}
+
+function editEvent(ev) {
+  closeEventPopup();
+  document.getElementById('new-event-title').value = ev.rawTitle || '';
+  document.getElementById('new-event-date').value = ev.date || '';
+  document.getElementById('new-event-time').value = ev.time || '';
+  const calKey = ev.calKey || 'sergio';
+  document.getElementById('new-event-cal').value = calKey;
+  // Store the event being edited
+  document.getElementById('new-event-popup').dataset.editId = ev.eventId || '';
+  document.getElementById('new-event-popup').dataset.editCalId = ev.calId || '';
+  document.getElementById('new-event-popup').classList.add('open');
+  document.querySelector('.new-event-submit').textContent = 'Speichern';
+  setTimeout(() => document.getElementById('new-event-title').focus(), 100);
+}
+
 // New event popup
 function openNewEvent(dateStr) {
   document.getElementById('new-event-date').value = dateStr || new Date().toISOString().split('T')[0];
@@ -799,37 +1144,47 @@ function openNewEvent(dateStr) {
   document.getElementById('new-event-popup').classList.add('open');
   setTimeout(() => document.getElementById('new-event-title').focus(), 100);
 }
-function closeNewEvent() { document.getElementById('new-event-popup').classList.remove('open'); }
+function closeNewEvent() { 
+  document.getElementById('new-event-popup').classList.remove('open');
+  document.getElementById('new-event-popup').dataset.editId = '';
+  document.getElementById('new-event-popup').dataset.editCalId = '';
+  document.querySelector('.new-event-submit').textContent = 'Event hinzufügen';
+}
 
 async function submitNewEvent() {
   const title = document.getElementById('new-event-title').value.trim();
   const date = document.getElementById('new-event-date').value;
   const time = document.getElementById('new-event-time').value;
   const calKey = document.getElementById('new-event-cal').value;
+  const editId = document.getElementById('new-event-popup').dataset.editId;
+  const editCalId = document.getElementById('new-event-popup').dataset.editCalId;
   if (!title || !date) return alert('Bitte Titel und Datum eingeben!');
-  const calIds = {
-    sergio: CONFIG.GCAL_ID_SERGIO,
-    miriam: CONFIG.GCAL_ID_MIRIAM,
-    familie: CONFIG.GCAL_ID_FAMILIE
-  };
-  const calId = calIds[calKey];
+  const calIds = { sergio: CONFIG.GCAL_ID_SERGIO, miriam: CONFIG.GCAL_ID_MIRIAM, familie: CONFIG.GCAL_ID_FAMILIE };
+  const calId = editCalId || calIds[calKey];
   const event = { summary: title };
   if (time) {
     event.start = { dateTime: `${date}T${time}:00`, timeZone: 'Europe/Zurich' };
     event.end = { dateTime: `${date}T${time}:00`, timeZone: 'Europe/Zurich' };
   } else {
-    event.start = { date };
-    event.end = { date };
+    event.start = { date }; event.end = { date };
   }
   try {
-    await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(event)
-    });
+    if (editId) {
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${editId}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(event)
+      });
+    } else {
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(event)
+      });
+    }
     closeNewEvent();
     loadCalendarEvents();
-  } catch(e) { alert('Fehler beim Hinzufügen!'); }
+  } catch(e) { alert('Fehler!'); }
 }
 
 let todos = [];
