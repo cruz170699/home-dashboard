@@ -608,8 +608,10 @@ async function searchSBB() {
       const arrTime = arr.toLocaleTimeString('de-CH', {hour:'2-digit',minute:'2-digit'});
       const durMin = Math.round((arr - dep) / 60000);
       const durStr = durMin >= 60 ? `${Math.floor(durMin/60)}h ${durMin%60}min` : `${durMin} min`;
-      const line = c.sections?.[0]?.journey?.name || c.sections?.[0]?.journey?.category || 'Bahn';
-      const lineClean = line.replace(/\d{4,}/g, '').trim() || line;
+      const journey = c.sections?.[0]?.journey;
+      const cat = journey?.category || '?';
+      const lineNum = journey?.name?.match(/^[A-Z]+\s*(\d{1,4})$/)?.[1] || '';
+      const lineClean = lineNum ? `${cat}${lineNum}` : cat;
       const platform = c.from.platform ? `Gleis ${c.from.platform}` : '';
       const delay = c.from.prognosis?.departure ? Math.round((new Date(c.from.prognosis.departure) - dep) / 60000) : 0;
       const card = document.createElement('div');
