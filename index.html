@@ -288,9 +288,54 @@ html, body {
 .ios-toggle.on { background: var(--green); }
 .ios-toggle::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 2px; left: 2px; transition: transform 0.25s cubic-bezier(.4,0,.2,1); box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
 .ios-toggle.on::after { transform: translateX(16px); }
+
+/* Event & New Event Popups */
+#event-popup, #new-event-popup { display: none; position: fixed; inset: 0; z-index: 998; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+#event-popup.open, #new-event-popup.open { display: flex; }
+.event-popup-card { background: #ffffff; border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); width: 360px; max-width: 95vw; padding: 20px; animation: popupIn 0.25s cubic-bezier(.4,0,.2,1); }
+.event-popup-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.event-popup-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; flex: 1; padding-right: 10px; }
+.event-popup-close { width: 28px; height: 28px; border-radius: 50%; background: var(--surface2); border: none; cursor: pointer; font-size: 16px; color: var(--text2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.event-meta-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+.new-event-form { display: flex; flex-direction: column; gap: 10px; }
+.new-event-form input, .new-event-form select { background: var(--surface2); border: none; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--text); outline: none; }
+.new-event-submit { background: var(--blue); color: white; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 4px; transition: background 0.15s; }
+.new-event-submit:hover { background: var(--blue2); }
 </style>
 </head>
 <body>
+
+<!-- Event Detail Popup -->
+<div id="event-popup" onclick="if(event.target===this)closeEventPopup()">
+  <div class="event-popup-card">
+    <div class="event-popup-header">
+      <div class="event-popup-title" id="event-popup-title">Event</div>
+      <button class="event-popup-close" onclick="closeEventPopup()">✕</button>
+    </div>
+    <div id="event-popup-body"></div>
+  </div>
+</div>
+
+<!-- New Event Popup -->
+<div id="new-event-popup" onclick="if(event.target===this)closeNewEvent()">
+  <div class="event-popup-card">
+    <div class="event-popup-header">
+      <div class="event-popup-title">Neues Event</div>
+      <button class="event-popup-close" onclick="closeNewEvent()">✕</button>
+    </div>
+    <div class="new-event-form">
+      <input id="new-event-title" placeholder="Titel" type="text">
+      <input id="new-event-date" type="date">
+      <input id="new-event-time" type="time" placeholder="Zeit (optional)">
+      <select id="new-event-cal">
+        <option value="sergio">Sérgio</option>
+        <option value="miriam">Miriam</option>
+        <option value="familie">Familie</option>
+      </select>
+      <button class="new-event-submit" onclick="submitNewEvent()">Event hinzufügen</button>
+    </div>
+  </div>
+</div>
 
 <div id="login-overlay">
   <div class="logo">🏠</div>
@@ -349,6 +394,7 @@ html, body {
         <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
         <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
         <button class="cal-today-btn" onclick="goToday()">Heute</button>
+        <button class="cal-today-btn" style="background:var(--blue);color:white;" onclick="openNewEvent('')">+ Event</button>
       </div>
     </div>
     <div class="cal-weekdays">
@@ -467,7 +513,7 @@ let oauthToken = null;
 function initOAuth() {
   const client = google.accounts.oauth2.initTokenClient({
     client_id: CONFIG.GCAL_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/tasks',
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks',
     callback: (resp) => {
       if (resp.access_token) {
         oauthToken = resp.access_token;
@@ -697,15 +743,94 @@ function renderCalendar() {
     const evs = calEvents.filter(e => e.date === dateStr && !hiddenCals.has(e.calKey));
     if (evs.length) {
       const evc = document.createElement('div'); evc.className = 'cal-cell-events';
-      evs.slice(0, 2).forEach(ev => { const el = document.createElement('div'); el.className = `cal-ev ${ev.color}`; el.textContent = ev.title; evc.appendChild(el); });
-      if (evs.length > 2) { const m = document.createElement('div'); m.style.cssText = 'font-size:9px;color:var(--text3);padding:0 4px;'; m.textContent = `+${evs.length-2} mehr`; evc.appendChild(m); }
+      evs.slice(0, 3).forEach(ev => {
+        const el = document.createElement('div');
+        el.className = `cal-ev ${ev.color}`;
+        el.textContent = ev.title;
+        el.style.cursor = 'pointer';
+        el.onclick = (e) => { e.stopPropagation(); showEventDetail(ev); };
+        evc.appendChild(el);
+      });
+      if (evs.length > 3) {
+        const m = document.createElement('div');
+        m.style.cssText = 'font-size:9px;color:var(--text3);padding:0 4px;cursor:pointer;';
+        m.textContent = `+${evs.length-3} mehr`;
+        m.onclick = (e) => { e.stopPropagation(); showDayEvents(dateStr, evs); };
+        evc.appendChild(m);
+      }
       cell.appendChild(evc);
     }
+    cell.onclick = () => openNewEvent(dateStr);
     grid.appendChild(cell);
   }
 }
 function changeMonth(dir) { calDate.setMonth(calDate.getMonth() + dir); loadCalendarEvents(); }
 function goToday() { calDate = new Date(); loadCalendarEvents(); }
+
+// Event detail popup
+function showEventDetail(ev) {
+  document.getElementById('event-popup-title').textContent = ev.title;
+  const calColors = { green: '#34C759', pink: '#FF2D55', blue: '#007AFF' };
+  const calNames = { green: 'Sérgio', pink: 'Miriam', blue: 'Familie' };
+  document.getElementById('event-popup-body').innerHTML = `
+    <div class="event-meta-row">📅 ${ev.date}</div>
+    ${ev.time ? `<div class="event-meta-row">⏰ ${ev.time}</div>` : ''}
+    <div class="event-meta-row"><span style="width:10px;height:10px;border-radius:50%;background:${calColors[ev.color]||'#007AFF'};display:inline-block;margin-right:4px;"></span>${calNames[ev.color]||'Kalender'}</div>
+  `;
+  document.getElementById('event-popup').classList.add('open');
+}
+function showDayEvents(dateStr, evs) {
+  document.getElementById('event-popup-title').textContent = dateStr;
+  document.getElementById('event-popup-body').innerHTML = evs.map(ev => `
+    <div class="event-meta-row" style="cursor:pointer;" onclick="showEventDetail(${JSON.stringify(ev).replace(/"/g,'&quot;')})">
+      <span style="width:8px;height:8px;border-radius:50%;background:${ev.color==='green'?'#34C759':ev.color==='pink'?'#FF2D55':'#007AFF'};display:inline-block;flex-shrink:0;"></span>
+      ${ev.title}
+    </div>
+  `).join('');
+  document.getElementById('event-popup').classList.add('open');
+}
+function closeEventPopup() { document.getElementById('event-popup').classList.remove('open'); }
+
+// New event popup
+function openNewEvent(dateStr) {
+  document.getElementById('new-event-date').value = dateStr || new Date().toISOString().split('T')[0];
+  document.getElementById('new-event-title').value = '';
+  document.getElementById('new-event-time').value = '';
+  document.getElementById('new-event-popup').classList.add('open');
+  setTimeout(() => document.getElementById('new-event-title').focus(), 100);
+}
+function closeNewEvent() { document.getElementById('new-event-popup').classList.remove('open'); }
+
+async function submitNewEvent() {
+  const title = document.getElementById('new-event-title').value.trim();
+  const date = document.getElementById('new-event-date').value;
+  const time = document.getElementById('new-event-time').value;
+  const calKey = document.getElementById('new-event-cal').value;
+  if (!title || !date) return alert('Bitte Titel und Datum eingeben!');
+  const calIds = {
+    sergio: CONFIG.GCAL_ID_SERGIO,
+    miriam: CONFIG.GCAL_ID_MIRIAM,
+    familie: CONFIG.GCAL_ID_FAMILIE
+  };
+  const calId = calIds[calKey];
+  const event = { summary: title };
+  if (time) {
+    event.start = { dateTime: `${date}T${time}:00`, timeZone: 'Europe/Zurich' };
+    event.end = { dateTime: `${date}T${time}:00`, timeZone: 'Europe/Zurich' };
+  } else {
+    event.start = { date };
+    event.end = { date };
+  }
+  try {
+    await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(event)
+    });
+    closeNewEvent();
+    loadCalendarEvents();
+  } catch(e) { alert('Fehler beim Hinzufügen!'); }
+}
 
 let todos = [];
 let taskListId = null;
