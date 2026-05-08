@@ -467,12 +467,13 @@ let oauthToken = null;
 function initOAuth() {
   const client = google.accounts.oauth2.initTokenClient({
     client_id: CONFIG.GCAL_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/tasks.readonly',
+    scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/tasks',
     callback: (resp) => {
       if (resp.access_token) {
         oauthToken = resp.access_token;
         document.getElementById('login-overlay').style.display = 'none';
         loadCalendarEvents();
+        loadTodos();
       }
     },
   });
@@ -706,22 +707,85 @@ function renderCalendar() {
 function changeMonth(dir) { calDate.setMonth(calDate.getMonth() + dir); loadCalendarEvents(); }
 function goToday() { calDate = new Date(); loadCalendarEvents(); }
 
-let todos = [
-  { id: 1, text: 'HFP Lernkarten fertigstellen', done: false },
-  { id: 2, text: 'Angebot Oerlikon prüfen', done: false },
-  { id: 3, text: 'Miriam anrufen', done: true },
-  { id: 4, text: 'Dashboard V3 fertigstellen', done: false },
-];
+let todos = [];
+let taskListId = null;
+
+async function loadTodos() {
+  if (!oauthToken) return;
+  try {
+    // Get task lists first
+    const listsR = await fetch('https://tasks.googleapis.com/tasks/v1/users/@me/lists', {
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
+    });
+    const listsD = await listsR.json();
+    if (!listsD.items || listsD.items.length === 0) return;
+    taskListId = listsD.items[0].id;
+
+    // Get tasks from first list
+    const tasksR = await fetch(`https://tasks.googleapis.com/tasks/v1/lists/${taskListId}/tasks?showCompleted=true&maxResults=20`, {
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
+    });
+    const tasksD = await tasksR.json();
+    todos = (tasksD.items || []).map(t => ({
+      id: t.id,
+      text: t.title,
+      done: t.status === 'completed',
+      googleId: t.id
+    }));
+    renderTodos();
+  } catch(e) {
+    console.log('Tasks error', e);
+  }
+}
+
 function renderTodos() {
   const list = document.getElementById('todo-list'); list.innerHTML = '';
+  if (todos.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text3);">Keine Aufgaben</div>';
+    return;
+  }
   todos.forEach(t => {
     const row = document.createElement('div'); row.className = 'todo-row';
-    row.innerHTML = `<div class="todo-circle ${t.done?'done':''}" onclick="toggleTodo(${t.id})"></div><div class="todo-label ${t.done?'done':''}">${t.text}</div>`;
+    row.innerHTML = `<div class="todo-circle ${t.done?'done':''}" onclick="toggleTodo('${t.id}')"></div><div class="todo-label ${t.done?'done':''}">${t.text}</div>`;
     list.appendChild(row);
   });
 }
-function toggleTodo(id) { const t = todos.find(x=>x.id===id); if(t){t.done=!t.done;renderTodos();} }
-function addTodo() { const tx=prompt('Neue Aufgabe:'); if(tx&&tx.trim()){todos.unshift({id:Date.now(),text:tx.trim(),done:false});renderTodos();} }
+
+async function toggleTodo(id) {
+  const t = todos.find(x=>x.id===id);
+  if (!t) return;
+  t.done = !t.done;
+  renderTodos();
+  if (oauthToken && taskListId) {
+    try {
+      await fetch(`https://tasks.googleapis.com/tasks/v1/lists/${taskListId}/tasks/${id}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: t.done ? 'completed' : 'needsAction' })
+      });
+    } catch(e) {}
+  }
+}
+
+async function addTodo() {
+  const tx = prompt('Neue Aufgabe:');
+  if (!tx || !tx.trim()) return;
+  if (oauthToken && taskListId) {
+    try {
+      const r = await fetch(`https://tasks.googleapis.com/tasks/v1/lists/${taskListId}/tasks`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: tx.trim() })
+      });
+      const d = await r.json();
+      todos.unshift({ id: d.id, text: d.title, done: false });
+      renderTodos();
+    } catch(e) {}
+  } else {
+    todos.unshift({ id: Date.now().toString(), text: tx.trim(), done: false });
+    renderTodos();
+  }
+}
 renderTodos();
 
 let bringItems = [];
