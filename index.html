@@ -751,36 +751,37 @@ async function spFetch(url, opts={}) {
   try { return await r.json(); } catch(e) { return {}; }
 }
 
-// ── Playback state (via HA for mini card, Spotify API for popup) ──
+// ── Playback state via Spotify API directly ──
 async function loadSpotify() {
+  if (!spToken) { return; }
   try {
-    const r = await fetch(`${CONFIG.HA_URL}/api/states/${SP_ENTITY}`, {headers: HA_HEADERS});
-    const d = await r.json();
-    spotifyPlaying = d.state === 'playing';
-    spShuffle = d.attributes.shuffle || false;
-    spRepeat = d.attributes.repeat || 'off';
-    const track = d.attributes.media_title || 'Kein Titel';
-    const artist = d.attributes.media_artist || '—';
-    const pic = d.attributes.entity_picture;
-    spDuration = d.attributes.media_duration || 0;
-    spProgress = d.attributes.media_position || 0;
+    const d = await spFetch('https://api.spotify.com/v1/me/player');
+    if (!d || !d.item) return;
+    spotifyPlaying = d.is_playing;
+    spShuffle = d.shuffle_state || false;
+    spRepeat = d.repeat_state || 'off';
+    const track = d.item.name || 'Kein Titel';
+    const artist = d.item.artists?.map(a => a.name).join(', ') || '—';
+    const pic = d.item.album?.images?.[0]?.url || null;
+    spDuration = (d.item.duration_ms || 0) / 1000;
+    spProgress = (d.progress_ms || 0) / 1000;
     // Mini card
     document.getElementById('sp-track').textContent = track;
     document.getElementById('sp-artist').textContent = artist;
     document.getElementById('sp-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
     document.getElementById('sp-status').textContent = spotifyPlaying ? 'Läuft' : 'Pausiert';
-    if (pic) document.getElementById('sp-art').innerHTML = `<img src="${CONFIG.HA_URL}${pic}" alt="">`;
+    if (pic) document.getElementById('sp-art').innerHTML = `<img src="${pic}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`;
     // Popup
     document.getElementById('sp-popup-track').textContent = track;
     document.getElementById('sp-popup-artist').textContent = artist;
     document.getElementById('sp-popup-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
-    if (pic) document.getElementById('sp-popup-art').innerHTML = `<img src="${CONFIG.HA_URL}${pic}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
-    // Shuffle/Repeat buttons
+    if (pic) document.getElementById('sp-popup-art').innerHTML = `<img src="${pic}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+    // Shuffle/Repeat
     document.getElementById('sp-shuffle-btn').classList.toggle('active', spShuffle);
     document.getElementById('sp-repeat-btn').classList.toggle('active', spRepeat !== 'off');
     document.getElementById('sp-repeat-btn').textContent = spRepeat === 'track' ? '🔂' : '↻';
   } catch(e) {
-    document.getElementById('sp-track').textContent = 'HA nicht verbunden';
+    document.getElementById('sp-track').textContent = 'Spotify verbinden';
   }
 }
 
@@ -800,12 +801,21 @@ function updateSpProgress() {
 }
 setInterval(updateSpProgress, 1000);
 
-async function spAction(a) {
-  try { await fetch(`${CONFIG.HA_URL}/api/services/media_player/${a}`, {method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:SP_ENTITY})}); setTimeout(loadSpotify, 600); } catch(e) {}
+async function spotifyPlayPause() {
+  await spFetch(`https://api.spotify.com/v1/me/player/${spotifyPlaying?'pause':'play'}`, {method:'PUT'});
+  spotifyPlaying = !spotifyPlaying;
+  document.getElementById('sp-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
+  document.getElementById('sp-popup-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
+  setTimeout(loadSpotify, 500);
 }
-function spotifyPlayPause(){spAction(spotifyPlaying?'media_pause':'media_play');}
-function spotifyNext(){spAction('media_next_track');}
-function spotifyPrev(){spAction('media_previous_track');}
+async function spotifyNext() {
+  await spFetch('https://api.spotify.com/v1/me/player/next', {method:'POST'});
+  setTimeout(loadSpotify, 600);
+}
+async function spotifyPrev() {
+  await spFetch('https://api.spotify.com/v1/me/player/previous', {method:'POST'});
+  setTimeout(loadSpotify, 600);
+}
 
 async function toggleShuffle() {
   spShuffle = !spShuffle;
