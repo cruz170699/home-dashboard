@@ -423,18 +423,30 @@ async function loadBring() {
   const tags = document.getElementById('bring-tags');
   tags.innerHTML = '<span style="font-size:11px;color:var(--text3)">Laden...</span>';
   try {
-    // Use HA WebSocket-style REST: POST to get_items with return_response
+    // HA REST API: POST with return_response=true in URL
+    // Body uses "entity_id" directly (not "target") for service calls
     const r = await fetch(`${CONFIG.HA_URL}/api/services/todo/get_items?return_response=true`, {
       method: 'POST',
       headers: HA_HEADERS,
       body: JSON.stringify({
         entity_id: CONFIG.BRING_ENTITY,
-        status: ['needs_action']
+        status: 'needs_action'
       })
     });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
-    // Response format: {"todo.pavia_cruz_home_assistent": {"items": [...]}}
-    const items = d?.[CONFIG.BRING_ENTITY]?.items || [];
+    // Response: [{...changed states...}, {"response": {"todo.xxx": {"items": [...]}}}]
+    // OR: {"todo.xxx": {"items": [...]}} directly
+    let items = [];
+    if (Array.isArray(d)) {
+      // New HA format: array with response at end
+      const responseObj = d.find(x => x && typeof x === 'object' && CONFIG.BRING_ENTITY in x);
+      items = responseObj?.[CONFIG.BRING_ENTITY]?.items || [];
+    } else if (d?.[CONFIG.BRING_ENTITY]?.items) {
+      items = d[CONFIG.BRING_ENTITY].items;
+    } else if (d?.response?.[CONFIG.BRING_ENTITY]?.items) {
+      items = d.response[CONFIG.BRING_ENTITY].items;
+    }
     bringItems = items.map(i => ({ name: i.summary, uid: i.uid }));
     renderBring();
   } catch(e) {
