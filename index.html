@@ -551,8 +551,8 @@ html, body {
 <script>
 const CONFIG = {
   PI_URL: 'http://192.168.1.11:5000',
-  HA_URL: 'http://192.168.1.11:8123',
-  HA_TOKEN: 'YOUR_HA_TOKEN_HERE',
+  HA_URL: 'https://ha.ha-cruz.com',
+  HA_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1MTI2MmRkYTlmMjI0MWYxYmE2MzQ2MzA4YjJlZGZlZiIsImlhdCI6MTc3ODMxNzk5NywiZXhwIjoyMDkzNjc3OTk3fQ.rHHRurKg5F4gfxEaHvVVs4ml-yWCZv0-OjBp5H9ppck',
   GCAL_CLIENT_ID: '438929727680-b8qi3q72guf6a44u0h3g2adst8n378tv.apps.googleusercontent.com',
   SHEETS_API_KEY: 'AIzaSyCjaHl6Sj0iTn9RFHl4JIP5ZsDzGV-wZKE',
   SHEETS_ID: '1cc79Ey2ovmerwijlfcaZc171KFYI6l-Id47lEAjEjoM',
@@ -1290,7 +1290,7 @@ loadBring();
 let spotifyPlaying = false, spProgress = 0, spDuration = 0;
 async function loadSpotify() {
   try {
-    const r = await fetch(`${CONFIG.HA_URL}/api/states/media_player.spotify`,{headers:{'Authorization':`Bearer ${CONFIG.HA_TOKEN}`}});
+    const r = await fetch(`${CONFIG.HA_URL}/api/states/media_player.spotify_spsrglo_cruz`,{headers:{'Authorization':`Bearer ${CONFIG.HA_TOKEN}`}});
     const d = await r.json();
     spotifyPlaying = d.state==='playing';
     document.getElementById('sp-track').textContent = d.attributes.media_title||'Kein Titel';
@@ -1307,7 +1307,7 @@ function updateSpProgress() {
 }
 function fmt(s){return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`}
 setInterval(updateSpProgress,1000);
-async function spAction(a){try{await fetch(`${CONFIG.HA_URL}/api/services/media_player/${a}`,{method:'POST',headers:{'Authorization':`Bearer ${CONFIG.HA_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify({entity_id:'media_player.spotify'})});setTimeout(loadSpotify,500);}catch(e){}}
+async function spAction(a){try{await fetch(`${CONFIG.HA_URL}/api/services/media_player/${a}`,{method:'POST',headers:{'Authorization':`Bearer ${CONFIG.HA_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify({entity_id:'media_player.spotify_spsrglo_cruz'})});setTimeout(loadSpotify,500);}catch(e){}}
 function spotifyPlayPause(){spAction(spotifyPlaying?'media_pause':'media_play');}
 function spotifyNext(){spAction('media_next_track');}
 function spotifyPrev(){spAction('media_previous_track');}
