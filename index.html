@@ -508,25 +508,21 @@ let bringItems = [];
 async function loadBring() {
   const tags = document.getElementById('bring-tags');
   tags.innerHTML = '<span style="font-size:11px;color:var(--text3)">Laden...</span>';
+  console.log('loadBring called, HA_URL:', CONFIG.HA_URL, 'Entity:', CONFIG.BRING_ENTITY);
   try {
-    // HA REST API: POST with return_response=true in URL
-    // Body uses "entity_id" directly (not "target") for service calls
-    const r = await fetch(`${CONFIG.HA_URL}/api/services/todo/get_items?return_response=true`, {
+    const url = `${CONFIG.HA_URL}/api/services/todo/get_items?return_response=true`;
+    console.log('Fetching:', url);
+    const r = await fetch(url, {
       method: 'POST',
       headers: HA_HEADERS,
-      body: JSON.stringify({
-        entity_id: CONFIG.BRING_ENTITY,
-        status: 'needs_action'
-      })
+      body: JSON.stringify({ entity_id: CONFIG.BRING_ENTITY, status: 'needs_action' })
     });
+    console.log('Response status:', r.status);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
     console.log('Bring raw response:', JSON.stringify(d));
-    // Response: [{...changed states...}, {"response": {"todo.xxx": {"items": [...]}}}]
-    // OR: {"todo.xxx": {"items": [...]}} directly
     let items = [];
     if (Array.isArray(d)) {
-      // New HA format: array with response at end
       const responseObj = d.find(x => x && typeof x === 'object' && CONFIG.BRING_ENTITY in x);
       items = responseObj?.[CONFIG.BRING_ENTITY]?.items || [];
     } else if (d?.[CONFIG.BRING_ENTITY]?.items) {
@@ -534,11 +530,12 @@ async function loadBring() {
     } else if (d?.response?.[CONFIG.BRING_ENTITY]?.items) {
       items = d.response[CONFIG.BRING_ENTITY].items;
     }
+    console.log('Parsed items:', items);
     bringItems = items.map(i => ({ name: i.summary, uid: i.uid }));
     renderBring();
   } catch(e) {
-    tags.innerHTML = '<span style="font-size:11px;color:var(--red)">Fehler beim Laden</span>';
     console.error('Bring error:', e);
+    tags.innerHTML = '<span style="font-size:11px;color:var(--red)">Fehler beim Laden</span>';
   }
 }
 
