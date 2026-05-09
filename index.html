@@ -522,16 +522,12 @@ async function loadBring() {
     const d = await r.json();
     console.log('Bring raw response:', JSON.stringify(d));
     let items = [];
-    if (d?.service_response?.[CONFIG.BRING_ENTITY]?.items) {
-      items = d.service_response[CONFIG.BRING_ENTITY].items;
-    } else if (Array.isArray(d)) {
-      const responseObj = d.find(x => x?.service_response?.[CONFIG.BRING_ENTITY]);
-      items = responseObj?.service_response?.[CONFIG.BRING_ENTITY]?.items || [];
-    } else if (d?.[CONFIG.BRING_ENTITY]?.items) {
-      items = d[CONFIG.BRING_ENTITY].items;
-    } else if (d?.response?.[CONFIG.BRING_ENTITY]?.items) {
-      items = d.response[CONFIG.BRING_ENTITY].items;
-    }
+    // HA returns an array: [{changed_states:[], service_response:{...}}]
+    const response = Array.isArray(d) ? d[0] : d;
+    items = response?.service_response?.[CONFIG.BRING_ENTITY]?.items
+         || response?.[CONFIG.BRING_ENTITY]?.items
+         || response?.response?.[CONFIG.BRING_ENTITY]?.items
+         || [];
     console.log('Parsed items:', items);
     bringItems = items.map(i => ({ name: i.summary, uid: i.uid }));
     renderBring();
