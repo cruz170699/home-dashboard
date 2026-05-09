@@ -521,6 +521,7 @@ async function loadBring() {
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
+    console.log('Bring raw response:', JSON.stringify(d));
     // Response: [{...changed states...}, {"response": {"todo.xxx": {"items": [...]}}}]
     // OR: {"todo.xxx": {"items": [...]}} directly
     let items = [];
