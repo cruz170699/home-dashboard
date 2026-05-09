@@ -53,7 +53,7 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 .meal-pill.today .meal-pill-main{color:white;}
 .meal-pill-sub{font-size:11px;font-weight:500;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .meal-pill.today .meal-pill-sub{color:rgba(255,255,255,0.75);}
-.sbb-block{display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:var(--radius-sm);padding:5px 12px;flex-shrink:0;cursor:pointer;min-width:200px;}
+.sbb-block{display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:var(--radius-sm);padding:5px 10px;flex-shrink:0;cursor:pointer;}
 .sbb-route{font-size:9px;color:var(--text2);font-weight:500;white-space:nowrap;}
 .sbb-times{display:flex;gap:6px;align-items:center;}
 .sbb-time-block{text-align:center;}
@@ -401,14 +401,16 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
           <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
           <div class="sbb-dot"></div>
           <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
+          <div class="sbb-dot"></div>
+          <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
         </div>
       </div>
     </div>
     <div class="vdivider"></div>
     <div class="cal-toggles">
-      <button class="cal-chip active" onclick="toggleCal('sergio',this)"><span class="cal-chip-dot" style="background:#34C759;"></span></button>
-      <button class="cal-chip active" onclick="toggleCal('miriam',this)"><span class="cal-chip-dot" style="background:#FF2D55;"></span></button>
-      <button class="cal-chip active" onclick="toggleCal('familie',this)"><span class="cal-chip-dot" style="background:#007AFF;"></span></button>
+      <button class="cal-chip active" onclick="toggleCal('sergio',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#34C759;"></button>
+      <button class="cal-chip active" onclick="toggleCal('miriam',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#FF2D55;"></button>
+      <button class="cal-chip active" onclick="toggleCal('familie',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#007AFF;"></button>
     </div>
   </div>
 
@@ -725,7 +727,7 @@ async function getMealSuggestions(){const btn=document.getElementById('meal-sugg
 function showMealSuggestions(suggestions){const days=['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];const list=document.getElementById('meal-week-list');list.innerHTML=`<div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:8px;">✨ KI-Vorschläge — klicken zum Übernehmen</div>`;days.forEach((day,i)=>{const s=suggestions[day];if(!s)return;const m=mealData[i];const row=document.createElement('div');row.className='meal-week-row';row.innerHTML=`<div class="meal-week-day">${m.day.slice(0,2)}</div><div class="meal-week-meals"><div class="meal-week-lunch">${s.lunch}</div><div class="meal-week-dinner">${s.dinner}</div></div><div style="font-size:11px;color:var(--blue);">Übernehmen</div>`;row.onclick=async()=>{currentMealColIdx=m.colIdx;document.getElementById('meal-edit-lunch').value=s.lunch;document.getElementById('meal-edit-dinner').value=s.dinner;await saveMeal();openMealWeekPopup();};list.appendChild(row);});const acceptAll=document.createElement('button');acceptAll.className='meal-save-btn';acceptAll.textContent='Alle Vorschläge übernehmen';acceptAll.style.marginTop='12px';acceptAll.onclick=async()=>{for(let i=0;i<days.length;i++){const s=suggestions[days[i]];if(!s)continue;currentMealColIdx=mealData[i].colIdx;document.getElementById('meal-edit-lunch').value=s.lunch;document.getElementById('meal-edit-dinner').value=s.dinner;await saveMeal();}closeMealWeekPopup();loadMeals();};list.appendChild(acceptAll);document.getElementById('meal-week-popup').classList.add('open');}
 
 // ── SBB ──
-async function loadSBB(){try{const r=await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=3');if(!r.ok)throw new Error();const d=await r.json();const container=document.getElementById('sbb-times');container.innerHTML='';d.connections.forEach((c,i)=>{if(i>0){const dot=document.createElement('div');dot.className='sbb-dot';container.appendChild(dot);}const dep=new Date(c.from.departure);const time=dep.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});const delay=c.from.prognosis?.departure?Math.round((new Date(c.from.prognosis.departure)-dep)/60000):0;const el=document.createElement('div');el.className='sbb-time-block';el.innerHTML=`<div class="sbb-time">${time}</div>${delay>0?`<div class="sbb-delay">+${delay}'</div>`:`<div class="sbb-ok">✓</div>`}`;container.appendChild(el);});}catch(e){document.getElementById('sbb-times').innerHTML='<div class="sbb-time" style="font-size:10px;color:var(--red);">Klicken</div>';}}
+async function loadSBB(){try{const r=await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=4');if(!r.ok)throw new Error();const d=await r.json();const container=document.getElementById('sbb-times');container.innerHTML='';d.connections.forEach((c,i)=>{if(i>0){const dot=document.createElement('div');dot.className='sbb-dot';container.appendChild(dot);}const dep=new Date(c.from.departure);const time=dep.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});const delay=c.from.prognosis?.departure?Math.round((new Date(c.from.prognosis.departure)-dep)/60000):0;const el=document.createElement('div');el.className='sbb-time-block';el.innerHTML=`<div class="sbb-time">${time}</div>${delay>0?`<div class="sbb-delay">+${delay}'</div>`:`<div class="sbb-ok">✓</div>`}`;container.appendChild(el);});}catch(e){document.getElementById('sbb-times').innerHTML='<div class="sbb-time" style="font-size:10px;color:var(--red);">Klicken</div>';}}
 loadSBB();setInterval(loadSBB,60000);
 function openSBBPopup(){document.getElementById('sbb-popup').classList.add('open');const now=new Date();document.getElementById('sbb-date').value=now.toISOString().split('T')[0];document.getElementById('sbb-time-input').value=now.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});document.getElementById('sbb-results').innerHTML='';searchSBB();}
 function closeSBBPopup(){document.getElementById('sbb-popup').classList.remove('open');}
