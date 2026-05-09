@@ -22,10 +22,27 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 .clock-time{font-size:24px;font-weight:700;letter-spacing:-1px;line-height:1;}
 .clock-date{font-size:10px;color:var(--text2);font-weight:400;margin-top:1px;}
 .vdivider{width:0.5px;height:30px;background:var(--border2);flex-shrink:0;margin:0 2px;}
-.weather-block{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.weather-block{display:flex;align-items:center;gap:5px;flex-shrink:0;cursor:pointer;}
 .weather-icon{font-size:20px;}
 .weather-temp{font-size:16px;font-weight:600;}
 .weather-loc{font-size:10px;color:var(--text2);}
+/* WEATHER POPUP */
+#weather-popup{display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
+#weather-popup.open{display:flex;}
+.weather-popup-card{background:#ffffff;border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,0.18);width:420px;max-width:95vw;overflow:hidden;animation:popupIn 0.25s cubic-bezier(.4,0,.2,1);}
+.weather-popup-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:0.5px solid var(--border);}
+.weather-popup-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.weather-popup-body{padding:8px 16px 16px;}
+.weather-day-row{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:0.5px solid var(--border);}
+.weather-day-row:last-child{border-bottom:none;}
+.weather-day-name{font-size:12px;font-weight:700;width:36px;color:var(--text2);flex-shrink:0;}
+.weather-day-name.today{color:var(--blue);}
+.weather-day-icon{font-size:22px;width:30px;text-align:center;flex-shrink:0;}
+.weather-day-desc{flex:1;font-size:11px;color:var(--text2);}
+.weather-day-temps{font-size:13px;font-weight:700;flex-shrink:0;text-align:right;}
+.weather-day-min{font-size:11px;color:var(--text3);font-weight:400;}
+.weather-day-meta{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.weather-meta-chip{font-size:10px;color:var(--text2);background:var(--surface2);border-radius:6px;padding:2px 6px;white-space:nowrap;}
 .meal-strip{display:flex;gap:5px;flex:1;overflow-x:auto;scrollbar-width:none;align-items:center;padding:0 2px;}
 .meal-strip::-webkit-scrollbar{display:none;}
 .meal-pill{flex-shrink:0;background:var(--surface2);border-radius:12px;padding:5px 10px;min-width:80px;max-width:110px;}
@@ -36,7 +53,7 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 .meal-pill.today .meal-pill-main{color:white;}
 .meal-pill-sub{font-size:11px;font-weight:500;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .meal-pill.today .meal-pill-sub{color:rgba(255,255,255,0.75);}
-.sbb-block{display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:var(--radius-sm);padding:5px 10px;flex-shrink:0;cursor:pointer;}
+.sbb-block{display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:var(--radius-sm);padding:5px 12px;flex-shrink:0;cursor:pointer;min-width:200px;}
 .sbb-route{font-size:9px;color:var(--text2);font-weight:500;white-space:nowrap;}
 .sbb-times{display:flex;gap:6px;align-items:center;}
 .sbb-time-block{text-align:center;}
@@ -293,6 +310,19 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
   </div>
 </div>
 
+<!-- WEATHER POPUP -->
+<div id="weather-popup" onclick="if(event.target===this)closeWeatherPopup()">
+  <div class="weather-popup-card">
+    <div class="weather-popup-header">
+      <div class="weather-popup-title">🌤 Wetter — Dietlikon</div>
+      <button class="event-popup-close" onclick="closeWeatherPopup()">✕</button>
+    </div>
+    <div class="weather-popup-body" id="weather-popup-body">
+      <div style="text-align:center;padding:20px;color:var(--text2);font-size:13px;">Laden...</div>
+    </div>
+  </div>
+</div>
+
 <!-- SPOTIFY POPUP -->
 <div id="sp-popup" onclick="if(event.target===this)closeSPPopup()">
   <div class="sp-popup-card">
@@ -352,7 +382,7 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
       <div class="clock-date" id="date-str">Laden...</div>
     </div>
     <div class="vdivider"></div>
-    <div class="weather-block">
+    <div class="weather-block" onclick="openWeatherPopup()">
       <span class="weather-icon" id="weather-icon">⛅</span>
       <div><div class="weather-temp" id="weather-temp">—°C</div><div class="weather-loc">Dietlikon</div></div>
     </div>
@@ -376,9 +406,9 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
     </div>
     <div class="vdivider"></div>
     <div class="cal-toggles">
-      <button class="cal-chip active" onclick="toggleCal('sergio',this)"><span class="cal-chip-dot" style="background:#34C759;"></span>Sérgio</button>
-      <button class="cal-chip active" onclick="toggleCal('miriam',this)"><span class="cal-chip-dot" style="background:#FF2D55;"></span>Miriam</button>
-      <button class="cal-chip active" onclick="toggleCal('familie',this)"><span class="cal-chip-dot" style="background:#007AFF;"></span>Familie</button>
+      <button class="cal-chip active" onclick="toggleCal('sergio',this)"><span class="cal-chip-dot" style="background:#34C759;"></span></button>
+      <button class="cal-chip active" onclick="toggleCal('miriam',this)"><span class="cal-chip-dot" style="background:#FF2D55;"></span></button>
+      <button class="cal-chip active" onclick="toggleCal('familie',this)"><span class="cal-chip-dot" style="background:#007AFF;"></span></button>
     </div>
   </div>
 
@@ -624,8 +654,59 @@ function updateClock(){const now=new Date();document.getElementById('clock').tex
 setInterval(updateClock,1000);updateClock();
 
 // ── WEATHER ──
-async function loadWeather(){try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=47.45&longitude=8.61&current_weather=true&timezone=Europe/Zurich');const d=await r.json();const w=d.current_weather;const icons={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};document.getElementById('weather-icon').textContent=icons[w.weathercode]||'🌡';document.getElementById('weather-temp').textContent=`${Math.round(w.temperature)}°C`;}catch(e){}}
-loadWeather();setInterval(loadWeather,600000);
+const WX_ICONS={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+const WX_DESC={0:'Klar',1:'Meist klar',2:'Teilweise bewölkt',3:'Bewölkt',45:'Nebel',48:'Reifnebel',51:'Leichter Nieselregen',53:'Nieselregen',55:'Starker Nieselregen',61:'Leichter Regen',63:'Regen',65:'Starker Regen',71:'Leichter Schnee',73:'Schnee',75:'Starker Schnee',80:'Regenschauer',81:'Regenschauer',82:'Starke Schauer',95:'Gewitter',96:'Gewitter',99:'Gewitter'};
+let weatherData = null;
+
+async function loadWeather() {
+  try {
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=47.45&longitude=8.61&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe/Zurich&forecast_days=7');
+    const d = await r.json();
+    weatherData = d;
+    const w = d.current_weather;
+    document.getElementById('weather-icon').textContent = WX_ICONS[w.weathercode] || '🌡';
+    document.getElementById('weather-temp').textContent = `${Math.round(w.temperature)}°C`;
+  } catch(e) {}
+}
+
+function openWeatherPopup() {
+  document.getElementById('weather-popup').classList.add('open');
+  renderWeatherPopup();
+}
+function closeWeatherPopup() { document.getElementById('weather-popup').classList.remove('open'); }
+
+function renderWeatherPopup() {
+  const body = document.getElementById('weather-popup-body');
+  if (!weatherData?.daily) { body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text2);">Laden...</div>'; loadWeather().then(renderWeatherPopup); return; }
+  const d = weatherData.daily;
+  const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const today = new Date().getDay();
+  body.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(d.time[i]);
+    const dayName = i === 0 ? 'Heute' : i === 1 ? 'Morgen' : days[date.getDay()];
+    const isToday = i === 0;
+    const row = document.createElement('div');
+    row.className = 'weather-day-row';
+    row.innerHTML = `
+      <div class="weather-day-name ${isToday?'today':''}">${dayName}</div>
+      <div class="weather-day-icon">${WX_ICONS[d.weathercode[i]]||'🌡'}</div>
+      <div class="weather-day-desc">${WX_DESC[d.weathercode[i]]||''}</div>
+      <div class="weather-day-meta">
+        <span class="weather-meta-chip">💧 ${d.precipitation_probability_max[i]}%</span>
+        <span class="weather-meta-chip">💨 ${Math.round(d.windspeed_10m_max[i])} km/h</span>
+      </div>
+      <div class="weather-day-temps">
+        ${Math.round(d.temperature_2m_max[i])}°
+        <span class="weather-day-min"> / ${Math.round(d.temperature_2m_min[i])}°</span>
+      </div>
+    `;
+    body.appendChild(row);
+  }
+}
+
+loadWeather();
+setInterval(loadWeather, 600000);
 
 // ── MEALS ──
 const DAYS_SHEET=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
