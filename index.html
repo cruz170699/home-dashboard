@@ -522,9 +522,11 @@ async function loadBring() {
     const d = await r.json();
     console.log('Bring raw response:', JSON.stringify(d));
     let items = [];
-    if (Array.isArray(d)) {
-      const responseObj = d.find(x => x && typeof x === 'object' && CONFIG.BRING_ENTITY in x);
-      items = responseObj?.[CONFIG.BRING_ENTITY]?.items || [];
+    if (d?.service_response?.[CONFIG.BRING_ENTITY]?.items) {
+      items = d.service_response[CONFIG.BRING_ENTITY].items;
+    } else if (Array.isArray(d)) {
+      const responseObj = d.find(x => x?.service_response?.[CONFIG.BRING_ENTITY]);
+      items = responseObj?.service_response?.[CONFIG.BRING_ENTITY]?.items || [];
     } else if (d?.[CONFIG.BRING_ENTITY]?.items) {
       items = d[CONFIG.BRING_ENTITY].items;
     } else if (d?.response?.[CONFIG.BRING_ENTITY]?.items) {
