@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pavia Cruz — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{--bg:#f2f2f7;--surface:rgba(255,255,255,0.85);--surface-solid:#ffffff;--surface2:rgba(120,120,128,0.12);--surface3:rgba(120,120,128,0.08);--border:rgba(60,60,67,0.1);--border2:rgba(60,60,67,0.18);--text:#000000;--text2:rgba(60,60,67,0.6);--text3:rgba(60,60,67,0.3);--blue:#007AFF;--blue2:#0062cc;--green:#34C759;--green2:#248a3d;--red:#FF3B30;--orange:#FF9500;--pink:#FF2D55;--yellow:#FFCC00;--radius-xs:8px;--radius-sm:12px;--radius:16px;--radius-lg:22px;--shadow-sm:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);--shadow:0 2px 12px rgba(0,0,0,0.08),0 1px 4px rgba(0,0,0,0.04);}
@@ -675,26 +676,22 @@ loadLights();setInterval(loadLights,30000);
 // ── OAUTH ──
 let oauthToken=null;
 function initOAuth(){
-  // Check if returning from Google OAuth
-  const params = new URLSearchParams(window.location.hash.replace('#','?') || window.location.search);
-  const token = params.get('access_token');
-  if (token) {
-    oauthToken = token;
-    document.getElementById('login-overlay').style.display = 'none';
-    window.history.replaceState({}, document.title, window.location.pathname);
-    loadCalendarEvents();
-    loadTodos();
-    requestNotificationPermission();
-    return;
-  }
-  document.getElementById('btn-google-login').onclick = () => {
-    const scope = encodeURIComponent('https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks');
-    const redirect = encodeURIComponent(window.location.href.split('?')[0]);
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
-    window.location.href = url;
-  };
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CONFIG.GCAL_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks',
+    callback: (resp) => {
+      if (resp.access_token) {
+        oauthToken = resp.access_token;
+        document.getElementById('login-overlay').style.display = 'none';
+        loadCalendarEvents();
+        loadTodos();
+        requestNotificationPermission();
+      }
+    },
+  });
+  document.getElementById('btn-google-login').onclick = () => client.requestAccessToken();
 }
-window.addEventListener('load', () => { initOAuth(); });
+window.addEventListener('load', () => { setTimeout(() => { if (window.google) initOAuth(); else setTimeout(initOAuth, 1500); }, 500); });
 
 // ── NOTIFICATIONS ──
 let notifiedEvents=new Set();
