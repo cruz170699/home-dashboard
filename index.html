@@ -24,7 +24,34 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 .weather-icon{font-size:20px;}
 .weather-temp{font-size:16px;font-weight:600;}
 .weather-loc{font-size:10px;color:var(--text2);}
-/* WEATHER POPUP */
+/* ── SLEEP MODE ── */
+#sleep-mode{display:none;position:fixed;inset:0;z-index:990;cursor:pointer;overflow:hidden;}
+#sleep-mode.active{display:block;}
+#sleep-bg{position:absolute;inset:0;background:#000;background-size:cover;background-position:center;transition:opacity 2s ease;}
+#sleep-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.5) 100%);}
+#sleep-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:40px;color:white;text-align:center;}
+#sleep-time{font-size:120px;font-weight:200;letter-spacing:-6px;line-height:1;margin-bottom:8px;text-shadow:0 2px 40px rgba(0,0,0,0.5);}
+#sleep-date{font-size:22px;font-weight:300;color:rgba(255,255,255,0.7);margin-bottom:48px;letter-spacing:0.5px;}
+#sleep-weather{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.12);backdrop-filter:blur(20px);border-radius:24px;padding:16px 28px;margin-bottom:20px;border:0.5px solid rgba(255,255,255,0.2);}
+#sleep-weather-icon{font-size:36px;}
+#sleep-weather-temp{font-size:32px;font-weight:300;}
+#sleep-weather-desc{font-size:16px;color:rgba(255,255,255,0.7);margin-top:2px;}
+#sleep-panels{display:flex;gap:16px;max-width:900px;width:100%;margin-bottom:20px;}
+.sleep-panel{flex:1;background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);border-radius:24px;padding:20px 24px;border:0.5px solid rgba(255,255,255,0.15);text-align:left;}
+.sleep-panel-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5);margin-bottom:14px;}
+.sleep-event{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:15px;}
+.sleep-event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sleep-event-time{font-size:13px;color:rgba(255,255,255,0.5);flex-shrink:0;}
+.sleep-meal-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:15px;}
+.sleep-meal-icon{font-size:18px;}
+#sleep-spotify{display:flex;align-items:center;gap:16px;background:rgba(29,185,84,0.15);backdrop-filter:blur(20px);border-radius:24px;padding:16px 24px;border:0.5px solid rgba(29,185,84,0.3);max-width:900px;width:100%;}
+#sleep-sp-art{width:52px;height:52px;border-radius:12px;background:#1db954;flex-shrink:0;overflow:hidden;}
+#sleep-sp-art img{width:100%;height:100%;object-fit:cover;}
+#sleep-sp-info{flex:1;min-width:0;}
+#sleep-sp-track{font-size:18px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#sleep-sp-artist{font-size:14px;color:rgba(255,255,255,0.6);margin-top:2px;}
+#sleep-sp-icon{font-size:24px;color:#1db954;}
+#sleep-hint{position:absolute;bottom:24px;font-size:13px;color:rgba(255,255,255,0.3);letter-spacing:1px;}
 #weather-popup{display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
 #weather-popup.open{display:flex;}
 .weather-popup-card{background:#ffffff;border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,0.18);width:420px;max-width:95vw;overflow:hidden;animation:popupIn 0.25s cubic-bezier(.4,0,.2,1);}
@@ -445,6 +472,8 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
       <button class="cal-chip active" onclick="toggleCal('miriam',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#FF2D55;"></button>
       <button class="cal-chip active" onclick="toggleCal('familie',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#007AFF;"></button>
     </div>
+    <div class="vdivider"></div>
+    <button onclick="enterSleep()" style="background:var(--surface2);border:none;border-radius:var(--radius-sm);padding:6px 14px;cursor:pointer;color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;flex-shrink:0;white-space:nowrap;">🌙 Sleep</button>
   </div>
 
   <div class="main">
@@ -678,7 +707,7 @@ let oauthToken=null;
 function initOAuth(){
   const client = google.accounts.oauth2.initTokenClient({
     client_id: CONFIG.GCAL_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks',
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks https://www.googleapis.com/auth/photoslibrary.readonly',
     callback: (resp) => {
       if (resp.access_token) {
         oauthToken = resp.access_token;
@@ -789,7 +818,7 @@ let calDate=new Date(),calEvents=[],hiddenCals=new Set();
 const MONTH_NAMES=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 function toggleCal(name,btn){if(hiddenCals.has(name)){hiddenCals.delete(name);btn.classList.add('active');}else{hiddenCals.add(name);btn.classList.remove('active');}renderCalendar();}
 async function loadCalendarEvents(){calEvents=[];const firstDay=new Date(calDate.getFullYear(),calDate.getMonth(),1).toISOString();const lastDay=new Date(calDate.getFullYear(),calDate.getMonth()+1,0,23,59,59).toISOString();const cals=[{id:CONFIG.GCAL_ID_SERGIO,color:'green',key:'sergio'},{id:CONFIG.GCAL_ID_MIRIAM,color:'pink',key:'miriam'},{id:CONFIG.GCAL_ID_FAMILIE,color:'blue',key:'familie'}];for(const cal of cals){try{const r=await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events?timeMin=${firstDay}&timeMax=${lastDay}&singleEvents=true&orderBy=startTime&maxResults=50&fields=items(id,summary,start,end,reminders)`,{headers:{'Authorization':`Bearer ${oauthToken}`}});const d=await r.json();if(d.items)d.items.forEach(ev=>{const start=ev.start?.date||ev.start?.dateTime;if(!start)return;const dateStr=start.split('T')[0];const time=ev.start?.dateTime?new Date(ev.start.dateTime).toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'}):'';const title=ev.summary||'(Kein Titel)';const reminders=ev.reminders?.overrides||(ev.reminders?.useDefault?[{method:'popup',minutes:30}]:[]);calEvents.push({date:dateStr,title:time?`${time} ${title}`:title,rawTitle:title,time,color:cal.color,calKey:cal.key,eventId:ev.id,calId:cal.id,reminders,startDateTime:ev.start?.dateTime||null});});}catch(e){}}renderCalendar();}
-function renderCalendar(){const year=calDate.getFullYear(),month=calDate.getMonth();document.getElementById('cal-month-label').textContent=`${MONTH_NAMES[month]} ${year}`;const firstDay=new Date(year,month,1).getDay();const startOffset=firstDay===0?6:firstDay-1;const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();const today=new Date();const grid=document.getElementById('cal-grid');grid.innerHTML='';const total=Math.ceil((startOffset+daysInMonth)/7)*7;for(let i=0;i<total;i++){let dayNum,cellDate,isOther=false;if(i<startOffset){dayNum=daysInPrev-startOffset+i+1;cellDate=new Date(year,month-1,dayNum);isOther=true;}else if(i>=startOffset+daysInMonth){dayNum=i-startOffset-daysInMonth+1;cellDate=new Date(year,month+1,dayNum);isOther=true;}else{dayNum=i-startOffset+1;cellDate=new Date(year,month,dayNum);}const isToday=cellDate.toDateString()===today.toDateString();const cell=document.createElement('div');cell.className='cal-cell'+(isOther?' other-month':'')+(isToday?' today':'');const numEl=document.createElement('div');numEl.className='cal-day-num';numEl.textContent=dayNum;cell.appendChild(numEl);const dateStr=cellDate.toISOString().split('T')[0];const evs=calEvents.filter(e=>e.date===dateStr&&!hiddenCals.has(e.calKey));if(evs.length){const evc=document.createElement('div');evc.className='cal-cell-events';evs.slice(0,3).forEach(ev=>{const el=document.createElement('div');el.className=`cal-ev ${ev.color}`;el.textContent=ev.title;el.style.cursor='pointer';el.onclick=(e)=>{e.stopPropagation();showEventDetail(ev);};evc.appendChild(el);});if(evs.length>3){const m=document.createElement('div');m.style.cssText='font-size:9px;color:var(--text3);padding:0 4px;cursor:pointer;';m.textContent=`+${evs.length-3} mehr`;m.onclick=(e)=>{e.stopPropagation();showDayEvents(dateStr,evs);};evc.appendChild(m);}cell.appendChild(evc);}cell.onclick=()=>openNewEvent(dateStr);grid.appendChild(cell);}}
+function renderCalendar(){const year=calDate.getFullYear(),month=calDate.getMonth();document.getElementById('cal-month-label').textContent=`${MONTH_NAMES[month]} ${year}`;const firstDay=new Date(year,month,1).getDay();const startOffset=firstDay===0?6:firstDay-1;const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();const today=new Date();const grid=document.getElementById('cal-grid');grid.innerHTML='';const total=Math.ceil((startOffset+daysInMonth)/7)*7;for(let i=0;i<total;i++){let dayNum,cellDate,isOther=false;if(i<startOffset){dayNum=daysInPrev-startOffset+i+1;cellDate=new Date(year,month-1,dayNum);isOther=true;}else if(i>=startOffset+daysInMonth){dayNum=i-startOffset-daysInMonth+1;cellDate=new Date(year,month+1,dayNum);isOther=true;}else{dayNum=i-startOffset+1;cellDate=new Date(year,month,dayNum);}const isToday=cellDate.toDateString()===today.toDateString();const cell=document.createElement('div');cell.className='cal-cell'+(isOther?' other-month':'')+(isToday?' today':'');const numEl=document.createElement('div');numEl.className='cal-day-num';numEl.textContent=dayNum;cell.appendChild(numEl);const dateStr=`${cellDate.getFullYear()}-${String(cellDate.getMonth()+1).padStart(2,'0')}-${String(cellDate.getDate()).padStart(2,'0')}`;const evs=calEvents.filter(e=>e.date===dateStr&&!hiddenCals.has(e.calKey));if(evs.length){const evc=document.createElement('div');evc.className='cal-cell-events';evs.slice(0,3).forEach(ev=>{const el=document.createElement('div');el.className=`cal-ev ${ev.color}`;el.textContent=ev.title;el.style.cursor='pointer';el.onclick=(e)=>{e.stopPropagation();showEventDetail(ev);};evc.appendChild(el);});if(evs.length>3){const m=document.createElement('div');m.style.cssText='font-size:9px;color:var(--text3);padding:0 4px;cursor:pointer;';m.textContent=`+${evs.length-3} mehr`;m.onclick=(e)=>{e.stopPropagation();showDayEvents(dateStr,evs);};evc.appendChild(m);}cell.appendChild(evc);}cell.onclick=()=>openNewEvent(dateStr);grid.appendChild(cell);}}
 function changeMonth(dir){calDate.setMonth(calDate.getMonth()+dir);loadCalendarEvents();}
 function goToday(){calDate=new Date();loadCalendarEvents();}
 function showEventDetail(ev){document.getElementById('event-popup-title').textContent=ev.rawTitle||ev.title;const calColors={green:'#34C759',pink:'#FF2D55',blue:'#007AFF'};const calNames={green:'Sérgio',pink:'Miriam',blue:'Familie'};document.getElementById('event-popup-body').innerHTML=`<div class="event-meta-row">📅 ${ev.date}</div>${ev.time?`<div class="event-meta-row">⏰ ${ev.time}</div>`:''}<div class="event-meta-row"><span style="width:10px;height:10px;border-radius:50%;background:${calColors[ev.color]||'#007AFF'};display:inline-block;margin-right:4px;"></span>${calNames[ev.color]||'Kalender'}</div>${ev.eventId?`<div style="display:flex;gap:8px;margin-top:14px;"><button onclick="editEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" style="flex:1;padding:10px;border-radius:10px;background:var(--surface2);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">✏️ Bearbeiten</button><button onclick="deleteEvent('${ev.calId}','${ev.eventId}')" style="flex:1;padding:10px;border-radius:10px;background:#fce7f3;border:none;font-size:13px;font-weight:600;cursor:pointer;color:#9d174d;font-family:'Inter',sans-serif;">🗑️ Löschen</button></div>`:''}`;document.getElementById('event-popup').classList.add('open');}
@@ -1056,5 +1085,241 @@ initSpotify();
 loadSpotify();
 setInterval(loadSpotify, 10000);
 </script>
+<!-- SLEEP MODE -->
+<div id="sleep-mode" onclick="wakeUp()">
+  <div id="sleep-bg"></div>
+  <div id="sleep-content">
+    <div id="sleep-time">00:00</div>
+    <div id="sleep-date">Laden...</div>
+    <div id="sleep-weather">
+      <div id="sleep-weather-icon">⛅</div>
+      <div>
+        <div id="sleep-weather-temp">—°C</div>
+        <div id="sleep-weather-desc">Dietlikon</div>
+      </div>
+    </div>
+    <div id="sleep-panels">
+      <div class="sleep-panel">
+        <div class="sleep-panel-title">📅 Heute</div>
+        <div id="sleep-events">—</div>
+      </div>
+      <div class="sleep-panel">
+        <div class="sleep-panel-title">🍽️ Mahlzeiten</div>
+        <div id="sleep-meals">—</div>
+      </div>
+    </div>
+    <div id="sleep-spotify" style="display:none;">
+      <div id="sleep-sp-art">🎵</div>
+      <div id="sleep-sp-info">
+        <div id="sleep-sp-track">—</div>
+        <div id="sleep-sp-artist">—</div>
+      </div>
+      <div id="sleep-sp-icon">🎵</div>
+    </div>
+    <div id="sleep-bible" style="max-width:700px;width:100%;margin-top:20px;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-radius:24px;padding:20px 28px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.35);margin-bottom:10px;">✝️ Tagesvers</div>
+      <div id="sleep-verse-text" style="font-size:17px;font-weight:300;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;">Laden...</div>
+      <div id="sleep-verse-ref" style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:10px;font-weight:500;">—</div>
+    </div>
+    <div id="sleep-hint">TIPPEN ZUM AUFWACHEN</div>
+  </div>
+</div>
+
+<script>
+// ── SLEEP MODE ──
+let sleepTimer = null;
+let sleepActive = false;
+let photoUrls = [];
+let photoIdx = 0;
+let photoTimer = null;
+
+const SLEEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+function resetSleepTimer() {
+  if (sleepActive) return;
+  clearTimeout(sleepTimer);
+  sleepTimer = setTimeout(enterSleep, SLEEP_TIMEOUT);
+}
+
+// Reset on any interaction
+['mousemove','mousedown','keydown','touchstart','scroll'].forEach(evt => {
+  document.addEventListener(evt, resetSleepTimer, { passive: true });
+});
+
+function enterSleep() {
+  sleepActive = true;
+  updateSleepContent();
+  loadPhotos();
+  document.getElementById('sleep-mode').classList.add('active');
+  startPhotoRotation();
+}
+
+function wakeUp() {
+  sleepActive = false;
+  document.getElementById('sleep-mode').classList.remove('active');
+  clearInterval(photoTimer);
+  clearTimeout(sleepTimer);
+  resetSleepTimer();
+}
+
+function updateSleepContent() {
+  // Clock
+  const now = new Date();
+  document.getElementById('sleep-time').textContent = now.toLocaleTimeString('de-CH', {hour:'2-digit', minute:'2-digit'});
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('sleep-date').textContent = `${days[now.getDay()]}, ${now.getDate()}. ${months[now.getMonth()]}`;
+
+  // Weather
+  document.getElementById('sleep-weather-icon').textContent = document.getElementById('weather-icon').textContent;
+  document.getElementById('sleep-weather-temp').textContent = document.getElementById('weather-temp').textContent;
+
+  // Today's events
+  const today = now.toISOString().split('T')[0];
+  const todayEvents = calEvents.filter(e => e.date === today).slice(0, 4);
+  const evEl = document.getElementById('sleep-events');
+  if (todayEvents.length) {
+    evEl.innerHTML = todayEvents.map(ev => `
+      <div class="sleep-event">
+        <div class="sleep-event-dot" style="background:${ev.color==='green'?'#34C759':ev.color==='pink'?'#FF2D55':'#007AFF'}"></div>
+        ${ev.time ? `<span class="sleep-event-time">${ev.time}</span>` : ''}
+        <span>${ev.rawTitle || ev.title}</span>
+      </div>`).join('');
+  } else {
+    evEl.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:14px;">Keine Events heute</div>';
+  }
+
+  // Today's meals
+  const todayMeal = mealData.find(m => m.jsDay === now.getDay());
+  const mealsEl = document.getElementById('sleep-meals');
+  if (todayMeal) {
+    mealsEl.innerHTML = `
+      <div class="sleep-meal-row"><span class="sleep-meal-icon">☀️</span><span>${todayMeal.lunch || '—'}</span></div>
+      <div class="sleep-meal-row"><span class="sleep-meal-icon">🌙</span><span>${todayMeal.dinner || '—'}</span></div>`;
+  } else {
+    mealsEl.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:14px;">—</div>';
+  }
+
+  // Spotify
+  const spTrack = document.getElementById('sp-track').textContent;
+  const spArtist = document.getElementById('sp-artist').textContent;
+  const spStatus = document.getElementById('sp-status').textContent;
+  const spEl = document.getElementById('sleep-spotify');
+  if (spStatus === 'Läuft' && spTrack && spTrack !== 'Kein Titel') {
+    spEl.style.display = 'flex';
+    document.getElementById('sleep-sp-track').textContent = spTrack;
+    document.getElementById('sleep-sp-artist').textContent = spArtist;
+    const spArt = document.getElementById('sp-art').innerHTML;
+    document.getElementById('sleep-sp-art').innerHTML = spArt;
+  } else {
+    spEl.style.display = 'none';
+  }
+  // Bible verse
+  loadBibleVerse();
+}
+
+// Update clock every minute while sleeping
+setInterval(() => { if (sleepActive) updateSleepContent(); }, 30000);
+
+// ── GOOGLE PHOTOS ──
+async function loadPhotos() {
+  if (!oauthToken) return;
+  try {
+    const r = await fetch('https://photoslibrary.googleapis.com/v1/mediaItems?pageSize=20', {
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
+    });
+    const d = await r.json();
+    if (d.mediaItems) {
+      photoUrls = d.mediaItems
+        .filter(item => item.mimeType?.startsWith('image/'))
+        .map(item => `${item.baseUrl}=w1920-h1080-c`);
+      if (photoUrls.length) setBackground(photoUrls[0]);
+    }
+  } catch(e) {
+    // Fallback — dark gradient
+    document.getElementById('sleep-bg').style.background = 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a0a 100%)';
+  }
+}
+
+function setBackground(url) {
+  const bg = document.getElementById('sleep-bg');
+  bg.style.opacity = '0';
+  setTimeout(() => {
+    bg.style.backgroundImage = `url(${url})`;
+    bg.style.opacity = '1';
+  }, 500);
+}
+
+function startPhotoRotation() {
+  clearInterval(photoTimer);
+  photoTimer = setInterval(() => {
+    if (!sleepActive || !photoUrls.length) return;
+    photoIdx = (photoIdx + 1) % photoUrls.length;
+    setBackground(photoUrls[photoIdx]);
+  }, 15000); // rotate every 15 seconds
+}
+
+// ── BIBLE VERSE OF THE DAY ──
+const BIBLE_VERSES = [
+  { text: "Denn also hat Gott die Welt geliebt, dass er seinen eingeborenen Sohn gab, damit jeder, der an ihn glaubt, nicht verloren geht, sondern ewiges Leben hat.", ref: "Johannes 3,16" },
+  { text: "Der HERR ist mein Hirte, mir wird nichts mangeln.", ref: "Psalm 23,1" },
+  { text: "Ich bin der Weg und die Wahrheit und das Leben; niemand kommt zum Vater als nur durch mich.", ref: "Johannes 14,6" },
+  { text: "Alle Dinge wirken denen, die Gott lieben, zum Besten, denen, die nach seinem Vorsatz berufen sind.", ref: "Römer 8,28" },
+  { text: "Ich vermag alles durch den, der mich stärkt.", ref: "Philipper 4,13" },
+  { text: "Vertrau auf den HERRN von ganzem Herzen und stütz dich nicht auf deinen Verstand.", ref: "Sprüche 3,5" },
+  { text: "Fürchte dich nicht, denn ich bin mit dir; sei nicht verzagt, denn ich bin dein Gott!", ref: "Jesaja 41,10" },
+  { text: "Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Weg.", ref: "Psalm 119,105" },
+  { text: "Kommt her zu mir, alle ihr Mühseligen und Beladenen! Ich werde euch Ruhe geben.", ref: "Matthäus 11,28" },
+  { text: "Gott aber ist treu, der euch nicht über eure Kraft versuchen lässt.", ref: "1. Korinther 10,13" },
+  { text: "Die auf den HERRN harren, gewinnen neue Kraft; sie fahren auf mit Flügeln wie Adler.", ref: "Jesaja 40,31" },
+  { text: "Sucht zuerst das Reich Gottes und seine Gerechtigkeit, so wird euch das alles hinzugefügt werden.", ref: "Matthäus 6,33" },
+  { text: "Ich bin die Auferstehung und das Leben. Wer an mich glaubt, wird leben, auch wenn er gestorben ist.", ref: "Johannes 11,25" },
+  { text: "Seid fröhlich in Hoffnung, geduldig in Bedrängnis, beharrlich im Gebet.", ref: "Römer 12,12" },
+  { text: "Der HERR segne dich und behüte dich; der HERR lasse sein Angesicht leuchten über dir.", ref: "4. Mose 6,24-25" },
+  { text: "Habt keine Angst, ihr seid mehr wert als viele Spatzen.", ref: "Matthäus 10,31" },
+  { text: "Wer in mir bleibt und ich in ihm, der bringt viel Frucht; denn ohne mich könnt ihr nichts tun.", ref: "Johannes 15,5" },
+  { text: "Der HERR ist nahe denen, die zerbrochenen Herzens sind.", ref: "Psalm 34,19" },
+  { text: "Auf Gott allein vertraut meine Seele in Stille; von ihm kommt meine Hilfe.", ref: "Psalm 62,2" },
+  { text: "Gnade und Wahrheit sind durch Jesus Christus geworden.", ref: "Johannes 1,17" },
+  { text: "Wir wandeln durch Glauben, nicht durch Schauen.", ref: "2. Korinther 5,7" },
+  { text: "Befiehl dem HERRN deine Wege und vertrau auf ihn, er wird es vollbringen.", ref: "Psalm 37,5" },
+  { text: "Gott ist unsere Zuflucht und Stärke, eine sehr zuverlässige Hilfe in Bedrängnissen.", ref: "Psalm 46,2" },
+  { text: "Die Gnade unseres Herrn Jesus Christus sei mit eurem Geist.", ref: "Galater 6,18" },
+  { text: "Denn ich bin überzeugt, dass weder Tod noch Leben... uns scheiden kann von der Liebe Gottes.", ref: "Römer 8,38-39" },
+  { text: "Einer ist euer Vater, der himmlische. Und ihr alle seid Brüder.", ref: "Matthäus 23,8-9" },
+  { text: "Der Friede Gottes, der allen Verstand übersteigt, wird eure Herzen und eure Gedanken bewahren.", ref: "Philipper 4,7" },
+  { text: "Christus ist gestorben für unsere Sünden nach der Schrift.", ref: "1. Korinther 15,3" },
+  { text: "So spricht der HERR: Ich kenne die Gedanken, die ich über euch habe — Gedanken des Friedens.", ref: "Jeremia 29,11" },
+  { text: "Liebt einander, wie ich euch geliebt habe. Daran werden alle erkennen, dass ihr meine Jünger seid.", ref: "Johannes 13,34-35" },
+];
+
+function getDailyVerse() {
+  const cached = localStorage.getItem('daily_verse_date');
+  const today = new Date().toDateString();
+  if (cached === today) {
+    const idx = parseInt(localStorage.getItem('daily_verse_idx') || '0');
+    return BIBLE_VERSES[idx % BIBLE_VERSES.length];
+  }
+  // New day — pick verse based on day of year for consistency
+  const start = new Date(new Date().getFullYear(), 0, 0);
+  const diff = new Date() - start;
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const idx = dayOfYear % BIBLE_VERSES.length;
+  localStorage.setItem('daily_verse_date', today);
+  localStorage.setItem('daily_verse_idx', idx.toString());
+  return BIBLE_VERSES[idx];
+}
+
+function loadBibleVerse() {
+  const verse = getDailyVerse();
+  document.getElementById('sleep-verse-text').textContent = `„${verse.text}"`;
+  document.getElementById('sleep-verse-ref').textContent = verse.ref;
+}
+
+// Start the idle timer
+resetSleepTimer();
+loadBibleVerse();
+</script>
+
 </body>
 </html>
