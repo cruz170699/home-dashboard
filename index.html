@@ -27,13 +27,13 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 /* ── SLEEP MODE ── */
 #sleep-mode{display:none;position:fixed;inset:0;z-index:990;cursor:pointer;overflow:hidden;}
 #sleep-mode.active{display:block;}
-#sleep-bg{position:absolute;inset:0;background:#000;background-size:cover;background-position:center;transition:opacity 2s ease;}
+#sleep-bg{position:absolute;inset:0;background:#000;background-size:cover;background-position:center top;transition:opacity 2s ease;}
 #sleep-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.3) 100%);}
 #sleep-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:40px;color:white;text-align:center;}
 #sleep-time{font-size:120px;font-weight:200;letter-spacing:-6px;line-height:1;margin-bottom:8px;text-shadow:0 2px 40px rgba(0,0,0,0.3);}
 #sleep-date{font-size:22px;font-weight:300;color:rgba(255,255,255,0.8);margin-bottom:32px;letter-spacing:0.5px;}
-.lg{background:rgba(255,255,255,0.09);backdrop-filter:blur(60px) saturate(200%) brightness(1.1);-webkit-backdrop-filter:blur(60px) saturate(200%) brightness(1.1);border:1px solid rgba(255,255,255,0.28);border-bottom:1px solid rgba(255,255,255,0.1);border-right:1px solid rgba(255,255,255,0.1);box-shadow:0 8px 32px rgba(0,0,0,0.18),0 2px 8px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.35),inset 0 -1px 0 rgba(0,0,0,0.05);position:relative;overflow:hidden;}
-.lg::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,0.15),rgba(255,255,255,0));pointer-events:none;border-radius:inherit;}
+.lg{background:rgba(255,255,255,0.04);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);border:1px solid rgba(255,255,255,0.15);border-bottom:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);box-shadow:0 8px 32px rgba(0,0,0,0.12),inset 0 1px 0 rgba(255,255,255,0.2);position:relative;overflow:hidden;}
+.lg::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,0.08),rgba(255,255,255,0));pointer-events:none;border-radius:inherit;}
 #sleep-weather{display:flex;align-items:center;gap:20px;border-radius:28px;padding:16px 32px;margin-bottom:14px;}
 #sleep-weather-icon{font-size:38px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));}
 #sleep-weather-temp{font-size:34px;font-weight:200;}
