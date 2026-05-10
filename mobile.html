@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ALFIE — Mahlzeiten</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -272,16 +271,25 @@ let autoSaveTimer=null;
 
 // ── AUTH ──
 function initOAuth(){
-  const client=google.accounts.oauth2.initTokenClient({
-    client_id:CONFIG.GCAL_CLIENT_ID,
-    scope:'https://www.googleapis.com/auth/spreadsheets',
-    callback:(resp)=>{
-      if(resp.access_token){oauthToken=resp.access_token;document.getElementById('login-overlay').style.display='none';loadAll();}
-    }
-  });
-  document.getElementById('btn-login').onclick=()=>client.requestAccessToken();
+  // Check if returning from Google OAuth (token in URL hash)
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  const token = params.get('access_token');
+  if(token){
+    oauthToken = token;
+    document.getElementById('login-overlay').style.display='none';
+    window.history.replaceState({},document.title,window.location.pathname);
+    loadAll();
+    return;
+  }
+  document.getElementById('btn-login').onclick=()=>{
+    const scope=encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');
+    const redirect=encodeURIComponent('https://cruz170699.github.io/home-dashboard/mobile.html');
+    const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
+    window.location.href=url;
+  };
 }
-window.addEventListener('load',()=>{setTimeout(()=>{if(window.google)initOAuth();else setTimeout(initOAuth,1500);},500);});
+window.addEventListener('load',()=>initOAuth());
 
 async function loadAll(){await loadMeals();await loadFavorites();}
 
