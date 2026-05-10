@@ -46,7 +46,6 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
 .list-day-name{font-size:20px;font-weight:700;}
 .list-day-name.today-color{color:var(--blue);}
 .list-day-date{font-size:13px;color:var(--text3);margin-top:2px;}
-.list-day-edit{padding:9px 18px;border-radius:20px;background:var(--surface2);color:var(--blue);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
 .list-meals{padding:0 18px 16px;display:flex;flex-direction:column;gap:10px;}
 .list-meal-row{display:flex;align-items:center;gap:12px;}
 .list-meal-icon{font-size:20px;flex-shrink:0;}
@@ -311,13 +310,15 @@ function renderList(){
     const isToday=m.date.toDateString()===today.toDateString();
     const el=document.createElement('div');
     el.className='list-day'+(isToday?' is-today':'');
+    el.style.cursor='pointer';
+    el.onclick=()=>openEditView(i);
     el.innerHTML=`
       <div class="list-day-header">
         <div>
           <div class="list-day-name ${isToday?'today-color':''}">${isToday?'📍 Heute':m.day}</div>
           <div class="list-day-date">${m.date.getDate()}.${m.date.getMonth()+1}.</div>
         </div>
-        <button class="list-day-edit" onclick="openEditView(${i})">✏️ Bearbeiten</button>
+        <div style="font-size:20px;color:var(--text3);">›</div>
       </div>
       <div class="list-meals">
         <div class="list-meal-row">
