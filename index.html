@@ -29,30 +29,31 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 #sleep-mode.active{display:block;}
 #sleep-bg{position:absolute;inset:0;background:#000;background-size:contain;background-position:center center;background-repeat:no-repeat;transition:opacity 2s ease;}
 #sleep-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.3) 100%);}
-#sleep-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:40px;color:white;text-align:center;}
-#sleep-time{font-size:120px;font-weight:200;letter-spacing:-6px;line-height:1;margin-bottom:8px;text-shadow:0 2px 40px rgba(0,0,0,0.3);}
-#sleep-date{font-size:22px;font-weight:300;color:rgba(255,255,255,0.8);margin-bottom:32px;letter-spacing:0.5px;}
+#sleep-content{position:absolute;inset:0;color:white;pointer-events:none;}
+#sleep-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+#sleep-time{font-size:110px;font-weight:200;letter-spacing:-6px;line-height:1;margin-bottom:6px;text-shadow:0 2px 40px rgba(0,0,0,0.3);}
+#sleep-date{font-size:20px;font-weight:300;color:rgba(255,255,255,0.8);letter-spacing:0.5px;}
 .lg{background:rgba(255,255,255,0.04);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);border:1px solid rgba(255,255,255,0.15);border-bottom:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);box-shadow:0 8px 32px rgba(0,0,0,0.12),inset 0 1px 0 rgba(255,255,255,0.2);position:relative;overflow:hidden;}
 .lg::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,0.08),rgba(255,255,255,0));pointer-events:none;border-radius:inherit;}
-#sleep-weather{display:flex;align-items:center;gap:20px;border-radius:28px;padding:16px 32px;margin-bottom:14px;}
-#sleep-weather-icon{font-size:38px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));}
-#sleep-weather-temp{font-size:34px;font-weight:200;}
-#sleep-weather-desc{font-size:15px;color:rgba(255,255,255,0.65);margin-top:3px;}
+#sleep-weather{display:flex;align-items:center;gap:12px;border-radius:20px;padding:12px 18px;}
+#sleep-weather-icon{font-size:28px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));}
+#sleep-weather-temp{font-size:24px;font-weight:300;}
+#sleep-weather-desc{font-size:12px;color:rgba(255,255,255,0.65);margin-top:2px;}
 #sleep-panels{display:flex;gap:14px;max-width:900px;width:100%;margin-bottom:14px;}
-.sleep-panel{flex:1;border-radius:28px;padding:20px 24px;text-align:left;}
-.sleep-panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-bottom:14px;}
-.sleep-event{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:15px;}
+.sleep-panel{border-radius:20px;padding:14px 18px;text-align:left;}
+.sleep-panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-bottom:10px;}
+.sleep-event{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;}
 .sleep-event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor;}
 .sleep-event-time{font-size:13px;color:rgba(255,255,255,0.5);flex-shrink:0;}
-.sleep-meal-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:15px;}
-.sleep-meal-icon{font-size:20px;}
+.sleep-meal-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;}
+.sleep-meal-icon{font-size:16px;}
 #sleep-spotify{display:flex;align-items:center;gap:18px;border-radius:28px;padding:16px 24px;max-width:900px;width:100%;margin-bottom:14px;}
-#sleep-sp-art{width:54px;height:54px;border-radius:14px;background:rgba(29,185,84,0.4);flex-shrink:0;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+#sleep-sp-art{width:40px;height:40px;border-radius:10px;background:rgba(29,185,84,0.4);flex-shrink:0;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.2);}
 #sleep-sp-art img{width:100%;height:100%;object-fit:cover;}
 #sleep-sp-info{flex:1;min-width:0;}
-#sleep-sp-track{font-size:18px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-#sleep-sp-artist{font-size:14px;color:rgba(255,255,255,0.6);margin-top:3px;}
-#sleep-sp-icon{font-size:22px;color:rgba(29,185,84,0.9);filter:drop-shadow(0 0 8px rgba(29,185,84,0.4));}
+#sleep-sp-track{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#sleep-sp-artist{font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;}
+#sleep-sp-icon{font-size:16px;color:rgba(29,185,84,0.9);filter:drop-shadow(0 0 8px rgba(29,185,84,0.4));}
 #sleep-bible{max-width:700px;width:100%;border-radius:28px;padding:22px 32px;text-align:center;margin-bottom:14px;}
 #sleep-bible-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.35);margin-bottom:12px;}
 #sleep-verse-text{font-size:17px;font-weight:300;color:rgba(255,255,255,0.92);line-height:1.7;font-style:italic;}
@@ -1095,26 +1096,35 @@ setInterval(loadSpotify, 10000);
 <div id="sleep-mode" onclick="wakeUp()">
   <div id="sleep-bg"></div>
   <div id="sleep-content">
-    <div id="sleep-time">00:00</div>
-    <div id="sleep-date">Laden...</div>
-    <div id="sleep-weather" class="lg">
+    <!-- CENTER: Clock -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);text-align:center;">
+      <div id="sleep-time">00:00</div>
+      <div id="sleep-date">Laden...</div>
+    </div>
+
+    <!-- TOP LEFT: Events -->
+    <div class="sleep-panel lg" style="position:absolute;top:24px;left:24px;width:280px;">
+      <div class="sleep-panel-title">📅 Heute</div>
+      <div id="sleep-events">—</div>
+    </div>
+
+    <!-- TOP RIGHT: Meals -->
+    <div class="sleep-panel lg" style="position:absolute;top:24px;right:24px;width:280px;">
+      <div class="sleep-panel-title">🍽️ Mahlzeiten</div>
+      <div id="sleep-meals">—</div>
+    </div>
+
+    <!-- BOTTOM LEFT: Weather -->
+    <div id="sleep-weather" class="lg" style="position:absolute;bottom:24px;left:24px;">
       <div id="sleep-weather-icon">⛅</div>
       <div>
         <div id="sleep-weather-temp">—°C</div>
         <div id="sleep-weather-desc">Dietlikon</div>
       </div>
     </div>
-    <div id="sleep-panels">
-      <div class="sleep-panel lg">
-        <div class="sleep-panel-title">📅 Heute</div>
-        <div id="sleep-events">—</div>
-      </div>
-      <div class="sleep-panel lg">
-        <div class="sleep-panel-title">🍽️ Mahlzeiten</div>
-        <div id="sleep-meals">—</div>
-      </div>
-    </div>
-    <div id="sleep-spotify" class="lg" style="display:none;">
+
+    <!-- BOTTOM RIGHT: Spotify -->
+    <div id="sleep-spotify" class="lg" style="position:absolute;bottom:24px;right:24px;width:280px;display:none;">
       <div id="sleep-sp-art">🎵</div>
       <div id="sleep-sp-info">
         <div id="sleep-sp-track">—</div>
@@ -1122,11 +1132,14 @@ setInterval(loadSpotify, 10000);
       </div>
       <div id="sleep-sp-icon">🎵</div>
     </div>
-    <div id="sleep-bible" class="lg" style="max-width:700px;width:100%;margin-top:20px;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-radius:24px;padding:20px 28px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+
+    <!-- BOTTOM CENTER: Bible verse -->
+    <div id="sleep-bible" class="lg" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);width:340px;text-align:center;">
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.35);margin-bottom:10px;">✝️ Tagesvers</div>
-      <div id="sleep-verse-text" style="font-size:17px;font-weight:300;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;">Laden...</div>
-      <div id="sleep-verse-ref" style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:10px;font-weight:500;">—</div>
+      <div id="sleep-verse-text" style="font-size:14px;font-weight:300;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;">Laden...</div>
+      <div id="sleep-verse-ref" style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px;font-weight:500;">—</div>
     </div>
+
     <div id="sleep-hint">TIPPEN ZUM AUFWACHEN</div>
   </div>
 </div>
