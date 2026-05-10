@@ -22,15 +22,15 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 #btn-login{background:#2d2458;color:white;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:8px;}
 
 /* HEADER */
-.header{background:var(--surface);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:10;box-shadow:var(--shadow);}
-.header-left h1{font-size:18px;font-weight:700;}
-.header-left p{font-size:11px;color:var(--text2);margin-top:1px;}
+.header{background:var(--surface);padding:18px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:10;box-shadow:var(--shadow);}
+.header-left h1{font-size:22px;font-weight:700;}
+.header-left p{font-size:13px;color:var(--text2);margin-top:1px;}
 .header-right{display:flex;gap:8px;}
 .icon-btn{width:34px;height:34px;border-radius:50%;background:var(--surface2);border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
 
 /* TABS */
 .tabs{display:flex;background:var(--surface);border-bottom:0.5px solid var(--border);}
-.tab{flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:500;color:var(--text2);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:'Inter',sans-serif;transition:all 0.15s;}
+.tab{flex:1;padding:16px 0;text-align:center;font-size:15px;font-weight:500;color:var(--text2);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:'Inter',sans-serif;transition:all 0.15s;}
 .tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600;}
 
 /* CONTENT */
@@ -41,21 +41,21 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 /* DAY CARD */
 .day-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:0.5px solid var(--border);margin-bottom:10px;}
 .day-card.today{border-color:var(--blue);border-width:2px;}
-.day-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;}
+.day-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;}
 .day-header.today-hd{background:#eff6ff;}
-.day-name{font-size:13px;font-weight:700;color:var(--text2);}
+.day-name{font-size:17px;font-weight:700;color:var(--text2);}
 .day-name.today-nm{color:var(--blue);}
-.day-date{font-size:11px;color:var(--text3);}
-.day-edit-btn{padding:5px 12px;border-radius:20px;background:var(--blue);color:white;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
-.meal-rows{padding:10px 14px 12px;display:flex;flex-direction:column;gap:8px;}
-.meal-row{display:flex;align-items:center;gap:8px;}
-.meal-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);width:18px;flex-shrink:0;}
-.meal-text{font-size:14px;font-weight:500;flex:1;}
-.meal-text.empty{color:var(--text3);font-style:italic;font-size:13px;}
+.day-date{font-size:13px;color:var(--text3);}
+.day-edit-btn{padding:10px 20px;border-radius:20px;background:var(--blue);color:white;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.meal-rows{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;}
+.meal-row{display:flex;align-items:center;gap:10px;padding:4px 0;}
+.meal-label{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);width:18px;flex-shrink:0;}
+.meal-text{font-size:16px;font-weight:500;flex:1;}
+.meal-text.empty{color:var(--text3);font-style:italic;font-size:15px;}
 .meal-bring{width:26px;height:26px;border-radius:50%;background:var(--surface2);border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
 /* COPY WEEK BTN */
-.copy-week-btn{width:100%;padding:14px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px dashed var(--border);font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+.copy-week-btn{width:100%;padding:18px;font-size:16px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px dashed var(--border);font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
 .copy-week-btn:active{background:var(--surface2);}
 
 /* EDIT SHEET */
