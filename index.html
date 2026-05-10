@@ -58,7 +58,7 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 #sleep-bible-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.35);margin-bottom:12px;}
 #sleep-verse-text{font-size:17px;font-weight:300;color:rgba(255,255,255,0.92);line-height:1.7;font-style:italic;}
 #sleep-verse-ref{font-size:13px;color:rgba(255,255,255,0.4);margin-top:12px;font-weight:500;letter-spacing:0.5px;}
-#sleep-hint{position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:2px;text-transform:uppercase;}
+#sleep-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
 #weather-popup{display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
 #weather-popup.open{display:flex;}
 .weather-popup-card{background:#ffffff;border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,0.18);width:420px;max-width:95vw;overflow:hidden;animation:popupIn 0.25s cubic-bezier(.4,0,.2,1);}
@@ -1097,25 +1097,13 @@ setInterval(loadSpotify, 10000);
   <div id="sleep-bg"></div>
   <div id="sleep-content">
     <!-- CENTER: Clock -->
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);text-align:center;">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
       <div id="sleep-time">00:00</div>
       <div id="sleep-date">Laden...</div>
     </div>
 
-    <!-- TOP LEFT: Events -->
-    <div class="sleep-panel lg" style="position:absolute;top:24px;left:24px;width:280px;">
-      <div class="sleep-panel-title">📅 Heute</div>
-      <div id="sleep-events">—</div>
-    </div>
-
-    <!-- TOP RIGHT: Meals -->
-    <div class="sleep-panel lg" style="position:absolute;top:24px;right:24px;width:280px;">
-      <div class="sleep-panel-title">🍽️ Mahlzeiten</div>
-      <div id="sleep-meals">—</div>
-    </div>
-
-    <!-- BOTTOM LEFT: Weather -->
-    <div id="sleep-weather" class="lg" style="position:absolute;bottom:24px;left:24px;">
+    <!-- LEFT TOP: Weather -->
+    <div id="sleep-weather" class="lg" style="position:absolute;top:50%;left:24px;transform:translateY(-120%);width:220px;">
       <div id="sleep-weather-icon">⛅</div>
       <div>
         <div id="sleep-weather-temp">—°C</div>
@@ -1123,8 +1111,20 @@ setInterval(loadSpotify, 10000);
       </div>
     </div>
 
-    <!-- BOTTOM RIGHT: Spotify -->
-    <div id="sleep-spotify" class="lg" style="position:absolute;bottom:24px;right:24px;width:280px;display:none;">
+    <!-- LEFT BOTTOM: Events -->
+    <div class="sleep-panel lg" style="position:absolute;top:50%;left:24px;transform:translateY(20%);width:220px;">
+      <div class="sleep-panel-title">📅 Heute</div>
+      <div id="sleep-events">—</div>
+    </div>
+
+    <!-- RIGHT TOP: Meals -->
+    <div class="sleep-panel lg" style="position:absolute;top:50%;right:24px;transform:translateY(-120%);width:220px;">
+      <div class="sleep-panel-title">🍽️ Mahlzeiten</div>
+      <div id="sleep-meals">—</div>
+    </div>
+
+    <!-- RIGHT BOTTOM: Spotify -->
+    <div id="sleep-spotify" class="lg" style="position:absolute;top:50%;right:24px;transform:translateY(20%);width:220px;display:none;">
       <div id="sleep-sp-art">🎵</div>
       <div id="sleep-sp-info">
         <div id="sleep-sp-track">—</div>
@@ -1134,7 +1134,7 @@ setInterval(loadSpotify, 10000);
     </div>
 
     <!-- BOTTOM CENTER: Bible verse -->
-    <div id="sleep-bible" class="lg" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);width:340px;text-align:center;">
+    <div id="sleep-bible" class="lg" style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);width:380px;text-align:center;">
       <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.35);margin-bottom:10px;">✝️ Tagesvers</div>
       <div id="sleep-verse-text" style="font-size:14px;font-weight:300;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;">Laden...</div>
       <div id="sleep-verse-ref" style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px;font-weight:500;">—</div>
