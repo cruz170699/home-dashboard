@@ -71,7 +71,15 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
 .meal-block-input{width:100%;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:18px;font-size:22px;font-family:'Inter',sans-serif;color:white;outline:none;}
 .meal-block-input:focus{border-color:var(--blue);}
 .meal-block-input::placeholder{color:rgba(255,255,255,0.25);}
-.fav-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+/* DROPDOWN SEARCH */
+.meal-input-wrap{position:relative;}
+.meal-dropdown{position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border-radius:16px;margin-top:6px;overflow:hidden;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:none;max-height:260px;overflow-y:auto;}
+.meal-dropdown.open{display:block;}
+.meal-dropdown-item{padding:16px 18px;font-size:19px;color:rgba(255,255,255,0.85);cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px;}
+.meal-dropdown-item:last-child{border-bottom:none;}
+.meal-dropdown-item:active{background:rgba(0,122,255,0.3);}
+.meal-dropdown-emoji{font-size:22px;}
+.meal-dropdown-empty{padding:16px 18px;font-size:16px;color:rgba(255,255,255,0.35);font-style:italic;}
 .fav-chip{padding:12px 20px;background:rgba(255,255,255,0.09);border-radius:24px;font-size:17px;color:rgba(255,255,255,0.75);cursor:pointer;border:1px solid rgba(255,255,255,0.12);}
 .fav-chip:active{background:var(--blue);}
 .bring-row{display:flex;gap:10px;margin-top:14px;}
@@ -367,16 +375,28 @@ function buildCards(){
       <div class="card-dayname">${m.day}</div>
       <div class="meal-block">
         <div class="meal-block-label">☀️ Mittagessen</div>
-        <input class="meal-block-input" id="lunch-${i}" placeholder="Was gibt es zu Mittag?" value="${m.lunch==='—'?'':m.lunch}" oninput="triggerAutosave()">
-        ${lf.length?`<div class="fav-chips">${lf.map(f=>`<div class="fav-chip" onclick="document.getElementById('lunch-${i}').value='${f.name}';triggerAutosave()">${f.emoji} ${f.name}</div>`).join('')}</div>`:''}
+        <div class="meal-input-wrap">
+          <input class="meal-block-input" id="lunch-${i}" placeholder="Suchen oder neu eingeben..." value="${m.lunch==='—'?'':m.lunch}"
+            oninput="triggerAutosave();showDropdown('lunch-${i}','drop-lunch-${i}','lunch')"
+            onfocus="showDropdown('lunch-${i}','drop-lunch-${i}','lunch')"
+            onblur="setTimeout(()=>hideDropdown('drop-lunch-${i}'),250)"
+            autocomplete="off" autocorrect="off">
+          <div class="meal-dropdown" id="drop-lunch-${i}"></div>
+        </div>
         <div class="bring-row">
           <button class="bring-meal-btn" onclick="openBringForInput(${i},'lunch')">🛒 Zutaten zu Bring!</button>
         </div>
       </div>
       <div class="meal-block">
         <div class="meal-block-label">🌙 Abendessen</div>
-        <input class="meal-block-input" id="dinner-${i}" placeholder="Was gibt es zum Abend?" value="${m.dinner==='—'?'':m.dinner}" oninput="triggerAutosave()">
-        ${df.length?`<div class="fav-chips">${df.map(f=>`<div class="fav-chip" onclick="document.getElementById('dinner-${i}').value='${f.name}';triggerAutosave()">${f.emoji} ${f.name}</div>`).join('')}</div>`:''}
+        <div class="meal-input-wrap">
+          <input class="meal-block-input" id="dinner-${i}" placeholder="Suchen oder neu eingeben..." value="${m.dinner==='—'?'':m.dinner}"
+            oninput="triggerAutosave();showDropdown('dinner-${i}','drop-dinner-${i}','dinner')"
+            onfocus="showDropdown('dinner-${i}','drop-dinner-${i}','dinner')"
+            onblur="setTimeout(()=>hideDropdown('drop-dinner-${i}'),250)"
+            autocomplete="off" autocorrect="off">
+          <div class="meal-dropdown" id="drop-dinner-${i}"></div>
+        </div>
         <div class="bring-row">
           <button class="bring-meal-btn" onclick="openBringForInput(${i},'dinner')">🛒 Zutaten zu Bring!</button>
         </div>
@@ -435,6 +455,41 @@ function triggerAutosave(){
       s.textContent='✓ Gespeichert';s.style.color='rgba(255,255,255,0.4)';
     }catch(e){s.textContent='Fehler';s.style.color='var(--red)';}
   },800);
+}
+
+// ── DROPDOWN SEARCH ──
+function showDropdown(inputId, dropId, mealType){
+  const input = document.getElementById(inputId);
+  const drop = document.getElementById(dropId);
+  if(!input || !drop) return;
+  const query = input.value.trim().toLowerCase();
+  const filtered = favorites.filter(f => {
+    const matchType = mealType==='lunch' ? (f.type==='Mittagessen'||f.type==='Beides') : (f.type==='Abendessen'||f.type==='Beides');
+    const matchName = !query || f.name.toLowerCase().includes(query);
+    return matchType && matchName;
+  });
+  if(!filtered.length){
+    drop.innerHTML = query ? `<div class="meal-dropdown-empty">Kein Favorit gefunden — einfach eingeben!</div>` : '';
+    drop.className = query ? 'meal-dropdown open' : 'meal-dropdown';
+    return;
+  }
+  drop.innerHTML = filtered.map(f =>
+    `<div class="meal-dropdown-item" onmousedown="selectMeal('${inputId}','${dropId}','${f.name.replace(/'/g,"\\'")}')">
+      <span class="meal-dropdown-emoji">${f.emoji}</span>${f.name}
+    </div>`
+  ).join('');
+  drop.className = 'meal-dropdown open';
+}
+
+function hideDropdown(dropId){
+  const drop = document.getElementById(dropId);
+  if(drop) drop.className = 'meal-dropdown';
+}
+
+function selectMeal(inputId, dropId, name){
+  const input = document.getElementById(inputId);
+  if(input){ input.value = name; triggerAutosave(); }
+  hideDropdown(dropId);
 }
 
 // ── BRING ──
