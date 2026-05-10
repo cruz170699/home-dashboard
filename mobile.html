@@ -194,7 +194,7 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
   <div class="edit-topbar">
     <button class="edit-close" onclick="closeEditView()">✕ Schliessen</button>
     <div class="edit-day-indicator" id="day-dots"></div>
-    <button class="edit-save-top" onclick="saveCurrentCard()">Speichern</button>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);" id="save-status">✓ Gespeichert</div>
   </div>
   <div class="swipe-container" id="swipe-container">
     <div class="swipe-track" id="swipe-track"></div>
@@ -213,14 +213,15 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
 <div id="bring-modal" onclick="if(event.target===this)closeBring()">
   <div class="bring-sheet">
     <div class="bring-handle"></div>
-    <div class="bring-title">🛒 Zu Bring! hinzufügen</div>
-    <div class="bring-sub" id="bring-sub">Welche Zutaten brauchst du?</div>
-    <div class="bring-items-list" id="bring-items-list"></div>
-    <div class="bring-input-row">
+    <div class="bring-title" id="bring-title">🛒 Zutaten</div>
+    <div class="bring-sub" id="bring-sub">KI schlägt Zutaten vor...</div>
+    <div id="bring-loading" style="text-align:center;padding:20px;color:var(--text2);font-size:15px;">✨ Zutaten werden geladen...</div>
+    <div class="bring-items-list" id="bring-items-list" style="display:none;"></div>
+    <div class="bring-input-row" id="bring-input-row" style="display:none;">
       <input class="bring-add-input" id="bring-new-item" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addBringInputItem()">
       <button class="bring-add-mini" onclick="addBringInputItem()">+</button>
     </div>
-    <button class="bring-confirm" onclick="confirmBringAdd()">✓ Zu Bring! hinzufügen</button>
+    <button class="bring-confirm" id="bring-confirm-btn" style="display:none;" onclick="confirmBringAdd()">✓ Zu Bring! hinzufügen</button>
     <button class="bring-cancel" onclick="closeBring()">Abbrechen</button>
   </div>
 </div>
@@ -336,15 +337,16 @@ function buildSwipeCards(){
       <div class="card-day-name">${m.day}</div>
       <div class="card-meal-section">
         <div class="card-meal-label">☀️ Mittagessen</div>
-        <input class="card-meal-input" id="lunch-${i}" placeholder="Was gibt es zu Mittag?" value="${m.lunch==='—'?'':m.lunch}">
-        ${lunchFavs.length?`<div class="card-fav-chips">${lunchFavs.map(f=>`<div class="card-fav-chip" onclick="document.getElementById('lunch-${i}').value='${f.name}'">${f.emoji} ${f.name}</div>`).join('')}</div>`:''}
+        <input class="card-meal-input" id="lunch-${i}" placeholder="Was gibt es zu Mittag?" value="${m.lunch==='—'?'':m.lunch}" oninput="triggerAutosave(${i})">
+        ${lunchFavs.length?`<div class="card-fav-chips">${lunchFavs.map(f=>`<div class="card-fav-chip" onclick="document.getElementById('lunch-${i}').value='${f.name}';triggerAutosave(${i})">${f.emoji} ${f.name}</div>`).join('')}</div>`:''}
       </div>
       <div class="card-meal-section">
         <div class="card-meal-label">🌙 Abendessen</div>
-        <input class="card-meal-input" id="dinner-${i}" placeholder="Was gibt es zum Abend?" value="${m.dinner==='—'?'':m.dinner}">
-        ${dinnerFavs.length?`<div class="card-fav-chips">${dinnerFavs.map(f=>`<div class="card-fav-chip" onclick="document.getElementById('dinner-${i}').value='${f.name}'">${f.emoji} ${f.name}</div>`).join('')}</div>`:''}
+        <input class="card-meal-input" id="dinner-${i}" placeholder="Was gibt es zum Abend?" value="${m.dinner==='—'?'':m.dinner}" oninput="triggerAutosave(${i})">
+        ${dinnerFavs.length?`<div class="card-fav-chips">${dinnerFavs.map(f=>`<div class="card-fav-chip" onclick="document.getElementById('dinner-${i}').value='${f.name}';triggerAutosave(${i})">${f.emoji} ${f.name}</div>`).join('')}</div>`:''}
       </div>
-      <button class="card-bring-btn" onclick="openBringForDay(${i})">🛒 Zutaten zu Bring! hinzufügen</button>
+      <button class="card-bring-btn" style="margin-bottom:8px;" onclick="openBringForMeal(${i},'lunch')">☀️ Zutaten Mittagessen zu Bring!</button>
+      <button class="card-bring-btn" onclick="openBringForMeal(${i},'dinner')">🌙 Zutaten Abendessen zu Bring!</button>
     `;
     track.appendChild(card);
   });
@@ -374,6 +376,20 @@ function updateSwipeUI(){
 
 function prevDay(){if(currentDayIdx>0){saveCurrentCard(false);goToDay(currentDayIdx-1);}}
 function nextDay(){if(currentDayIdx<6){saveCurrentCard(false);goToDay(currentDayIdx+1);}}
+
+let autoSaveTimer = null;
+
+function triggerAutosave(i) {
+  const status = document.getElementById('save-status');
+  status.textContent = '...';
+  status.style.color = 'rgba(255,255,255,0.3)';
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(async () => {
+    await saveCurrentCard(false);
+    status.textContent = '✓ Gespeichert';
+    status.style.color = 'rgba(255,255,255,0.4)';
+  }, 800);
+}
 
 async function saveCurrentCard(showMsg=true){
   const i=currentDayIdx;
@@ -444,36 +460,90 @@ function selType(type){
   document.getElementById('type-'+map[type])?.classList.add('sel');
 }
 
-// ── BRING ──
-function openBringForDay(idx){
-  const m=mealData[idx];
-  bringItems=[];
-  const lunch=document.getElementById(`lunch-${idx}`)?.value.trim()||m.lunch;
-  const dinner=document.getElementById(`dinner-${idx}`)?.value.trim()||m.dinner;
-  [lunch,dinner].filter(x=>x&&x!=='—').forEach(meal=>bringItems.push({name:meal,checked:true}));
-  document.getElementById('bring-sub').textContent=`Für ${m.day}`;
-  renderBringItems();document.getElementById('bring-modal').classList.add('open');
+// ── BRING with AI ingredients ──
+async function openBringForMeal(dayIdx, mealType) {
+  const m = mealData[dayIdx];
+  const mealName = mealType === 'lunch'
+    ? (document.getElementById(`lunch-${dayIdx}`)?.value.trim() || m.lunch)
+    : (document.getElementById(`dinner-${dayIdx}`)?.value.trim() || m.dinner);
+
+  if (!mealName || mealName === '—') { showToast('Kein Gericht eingetragen'); return; }
+
+  bringItems = [];
+  document.getElementById('bring-title').textContent = `🛒 ${mealName}`;
+  document.getElementById('bring-sub').textContent = `✨ KI schlägt Zutaten vor...`;
+  document.getElementById('bring-loading').style.display = 'block';
+  document.getElementById('bring-items-list').style.display = 'none';
+  document.getElementById('bring-input-row').style.display = 'none';
+  document.getElementById('bring-confirm-btn').style.display = 'none';
+  document.getElementById('bring-modal').classList.add('open');
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [{
+          role: 'user',
+          content: `Liste die wichtigsten Zutaten für "${mealName}" auf. Nur eine JSON-Array mit Strings, keine Mengenangaben, keine Erklärungen:\n["Zutat1","Zutat2","Zutat3",...]`
+        }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content[0].text.replace(/```json|```/g, '').trim();
+    const ingredients = JSON.parse(text);
+    bringItems = ingredients.map(name => ({ name, checked: true }));
+  } catch(e) {
+    bringItems = [{ name: mealName, checked: true }];
+  }
+
+  document.getElementById('bring-loading').style.display = 'none';
+  document.getElementById('bring-items-list').style.display = 'flex';
+  document.getElementById('bring-items-list').style.flexDirection = 'column';
+  document.getElementById('bring-input-row').style.display = 'flex';
+  document.getElementById('bring-confirm-btn').style.display = 'block';
+  renderBringItems();
 }
 
 function renderBringItems(){
-  document.getElementById('bring-items-list').innerHTML=bringItems.map((item,i)=>`
+  document.getElementById('bring-items-list').innerHTML = bringItems.map((item, i) => `
     <div class="bring-item">
-      <div class="bring-check ${item.checked?'on':''}" onclick="toggleBring(${i})"></div>
-      <div class="bring-item-txt">${item.name}</div>
+      <div class="bring-check ${item.checked ? 'on' : ''}" onclick="toggleBring(${i})"></div>
+      <input class="bring-item-input" value="${item.name}" oninput="bringItems[${i}].name=this.value" style="font-size:17px;flex:1;background:none;border:none;outline:none;font-family:'Inter',sans-serif;color:var(--text);">
+      <div onclick="bringItems.splice(${i},1);renderBringItems()" style="color:var(--text3);font-size:18px;cursor:pointer;padding:4px 6px;">✕</div>
     </div>`).join('');
 }
 
-function toggleBring(idx){bringItems[idx].checked=!bringItems[idx].checked;renderBringItems();}
-function addBringInputItem(){const input=document.getElementById('bring-new-item');const val=input.value.trim();if(!val)return;bringItems.push({name:val,checked:true});input.value='';renderBringItems();}
+function toggleBring(idx){ bringItems[idx].checked = !bringItems[idx].checked; renderBringItems(); }
 
-async function confirmBringAdd(){
-  const toAdd=bringItems.filter(i=>i.checked);if(!toAdd.length){closeBring();return;}
-  let added=0;
-  for(const item of toAdd){try{await fetch(`${CONFIG.HA_URL}/api/services/todo/add_item`,{method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:CONFIG.BRING_ENTITY,item:item.name})});added++;}catch(e){}}
-  closeBring();showToast(`🛒 ${added} Artikel zu Bring! hinzugefügt!`);
+function addBringInputItem(){
+  const input = document.getElementById('bring-new-item');
+  const val = input.value.trim(); if (!val) return;
+  bringItems.push({ name: val, checked: true });
+  input.value = '';
+  renderBringItems();
 }
 
-function closeBring(){document.getElementById('bring-modal').classList.remove('open');bringItems=[];}
+async function confirmBringAdd(){
+  const toAdd = bringItems.filter(i => i.checked);
+  if (!toAdd.length) { closeBring(); return; }
+  let added = 0;
+  for (const item of toAdd) {
+    try {
+      await fetch(`${CONFIG.HA_URL}/api/services/todo/add_item`, {
+        method: 'POST', headers: HA_HEADERS,
+        body: JSON.stringify({ entity_id: CONFIG.BRING_ENTITY, item: item.name })
+      });
+      added++;
+    } catch(e) {}
+  }
+  closeBring();
+  showToast(`🛒 ${added} Zutaten zu Bring! hinzugefügt!`);
+}
+
+function closeBring(){ document.getElementById('bring-modal').classList.remove('open'); bringItems = []; }
 
 // ── COPY LAST WEEK ──
 async function copyLastWeek(){
