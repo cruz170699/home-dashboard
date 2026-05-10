@@ -1330,5 +1330,170 @@ resetSleepTimer();
 loadBibleVerse();
 </script>
 
+<!-- ON-SCREEN KEYBOARD -->
+<div id="osk" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(30,30,35,0.97);backdrop-filter:blur(20px);padding:10px 6px 16px;box-shadow:0 -4px 24px rgba(0,0,0,0.3);border-top:0.5px solid rgba(255,255,255,0.1);">
+  <div id="osk-rows"></div>
+</div>
+
+<script>
+// ── ON-SCREEN KEYBOARD ──
+const OSK_LAYOUTS = {
+  default: [
+    ['q','w','e','r','t','z','u','i','o','p'],
+    ['a','s','d','f','g','h','j','k','l'],
+    ['⇧','y','x','c','v','b','n','m','⌫'],
+    ['123','🌐','SPACE','.',',','⏎']
+  ],
+  shift: [
+    ['Q','W','E','R','T','Z','U','I','O','P'],
+    ['A','S','D','F','G','H','J','K','L'],
+    ['⇧','Y','X','C','V','B','N','M','⌫'],
+    ['123','🌐','SPACE','.',',','⏎']
+  ],
+  numbers: [
+    ['1','2','3','4','5','6','7','8','9','0'],
+    ['-','/',':',';','(',')','€','&','@','"'],
+    ['#+=','.',',','?','!','\'','⌫'],
+    ['ABC','🌐','SPACE','.',',','⏎']
+  ],
+  symbols: [
+    ['[',']','{','}','#','%','^','*','+','='],
+    ['_','\\','|','~','<','>','$','·','•','•'],
+    ['123','.',',','?','!','\'','⌫'],
+    ['ABC','🌐','SPACE','.',',','⏎']
+  ]
+};
+
+let oskMode = 'default';
+let oskTarget = null;
+let oskShift = false;
+
+function buildOSK(mode) {
+  const rows = document.getElementById('osk-rows');
+  rows.innerHTML = '';
+  const layout = OSK_LAYOUTS[mode] || OSK_LAYOUTS.default;
+  layout.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.style.cssText = 'display:flex;justify-content:center;gap:5px;margin-bottom:6px;';
+    row.forEach(key => {
+      const btn = document.createElement('button');
+      const isSpecial = ['⇧','⌫','⏎','SPACE','123','ABC','🌐','#+='].includes(key);
+      let width = isSpecial ? (key === 'SPACE' ? '34%' : key === '⏎' ? '12%' : key === '⇧' ? '11%' : key === '⌫' ? '11%' : '9%') : '8.5%';
+      btn.style.cssText = `width:${width};min-width:28px;height:44px;border-radius:8px;border:none;cursor:pointer;font-size:${isSpecial&&key.length>1?'12px':'17px'};font-weight:${isSpecial?'600':'400'};font-family:'Inter',sans-serif;background:${isSpecial?'rgba(120,120,140,0.5)':'rgba(255,255,255,0.15)'};color:white;display:flex;align-items:center;justify-content:center;transition:all 0.1s;-webkit-tap-highlight-color:transparent;`;
+      btn.textContent = key;
+      btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        handleOSKKey(key);
+        btn.style.background = 'rgba(0,122,255,0.6)';
+        setTimeout(() => btn.style.background = isSpecial ? 'rgba(120,120,140,0.5)' : 'rgba(255,255,255,0.15)', 150);
+      });
+      btn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        handleOSKKey(key);
+      });
+      rowEl.appendChild(btn);
+    });
+    rows.appendChild(rowEl);
+  });
+}
+
+function handleOSKKey(key) {
+  if (!oskTarget) return;
+  const el = oskTarget;
+  const start = el.selectionStart ?? el.value.length;
+  const end = el.selectionEnd ?? el.value.length;
+  
+  if (key === '⌫') {
+    if (start === end && start > 0) {
+      el.value = el.value.slice(0, start - 1) + el.value.slice(end);
+      el.setSelectionRange(start - 1, start - 1);
+    } else {
+      el.value = el.value.slice(0, start) + el.value.slice(end);
+      el.setSelectionRange(start, start);
+    }
+  } else if (key === '⏎') {
+    closeOSK();
+    // Trigger any onchange/keydown enter handlers
+    el.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter',bubbles:true}));
+    return;
+  } else if (key === 'SPACE') {
+    el.value = el.value.slice(0, start) + ' ' + el.value.slice(end);
+    el.setSelectionRange(start + 1, start + 1);
+  } else if (key === '⇧') {
+    oskShift = !oskShift;
+    oskMode = oskShift ? 'shift' : 'default';
+    buildOSK(oskMode);
+    return;
+  } else if (key === '123') {
+    oskMode = 'numbers';
+    buildOSK(oskMode);
+    return;
+  } else if (key === 'ABC') {
+    oskMode = 'default';
+    oskShift = false;
+    buildOSK(oskMode);
+    return;
+  } else if (key === '#+=') {
+    oskMode = 'symbols';
+    buildOSK(oskMode);
+    return;
+  } else if (key === '🌐') {
+    // cycle layouts
+    const modes = ['default','numbers','symbols'];
+    const idx = modes.indexOf(oskMode);
+    oskMode = modes[(idx + 1) % modes.length];
+    buildOSK(oskMode);
+    return;
+  } else {
+    el.value = el.value.slice(0, start) + key + el.value.slice(end);
+    el.setSelectionRange(start + 1, start + 1);
+    if (oskShift) { oskShift = false; oskMode = 'default'; buildOSK(oskMode); }
+  }
+  
+  // Trigger input event for autosave etc.
+  el.dispatchEvent(new Event('input', {bubbles: true}));
+}
+
+function openOSK(target) {
+  oskTarget = target;
+  oskMode = 'default';
+  oskShift = false;
+  buildOSK(oskMode);
+  document.getElementById('osk').style.display = 'block';
+  // Scroll target into view above keyboard
+  setTimeout(() => {
+    target.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }, 100);
+}
+
+function closeOSK() {
+  document.getElementById('osk').style.display = 'none';
+  oskTarget = null;
+}
+
+// Attach to all inputs automatically
+function attachOSK() {
+  document.querySelectorAll('input[type="text"], input:not([type]), input[type="search"]').forEach(input => {
+    if (input.dataset.oskAttached) return;
+    input.dataset.oskAttached = 'true';
+    input.setAttribute('readonly', 'true'); // prevent native keyboard
+    input.addEventListener('click', () => openOSK(input));
+    input.addEventListener('touchend', (e) => { e.preventDefault(); openOSK(input); });
+  });
+}
+
+// Run on load and after dynamic content
+attachOSK();
+setInterval(attachOSK, 2000);
+
+// Close when tapping outside
+document.addEventListener('touchstart', (e) => {
+  const osk = document.getElementById('osk');
+  if (osk.style.display !== 'none' && !osk.contains(e.target) && e.target !== oskTarget) {
+    closeOSK();
+  }
+}, { passive: true });
+</script>
+
 </body>
 </html>
