@@ -443,6 +443,22 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 </div>
 
 <div class="dashboard">
+  <!-- SPORTS TICKER -->
+  <div id="sports-ticker" style="background:#0a0a0f;border-bottom:1px solid rgba(255,255,255,0.06);padding:0 16px;height:32px;display:flex;align-items:center;overflow:hidden;position:relative;">
+    <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-right:16px;flex-shrink:0;">🏆 Sport</div>
+    <div id="ticker-track" style="display:flex;gap:24px;align-items:center;animation:ticker 40s linear infinite;white-space:nowrap;">
+      <div id="ticker-content" style="display:flex;gap:24px;align-items:center;"></div>
+      <div id="ticker-content-clone" style="display:flex;gap:24px;align-items:center;"></div>
+    </div>
+  </div>
+  <style>
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .ticker-item{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.8);padding:0 4px;flex-shrink:0;}
+    .ticker-flag{font-size:14px;}
+    .ticker-score{font-weight:700;color:white;}
+    .ticker-sep{color:rgba(255,255,255,0.2);font-size:14px;}
+  </style>
+
   <div class="topbar">
     <div class="clock-block">
       <div class="clock-time" id="clock">00:00</div>
@@ -712,12 +728,27 @@ loadLights();setInterval(loadLights,30000);
 // ── OAUTH ──
 let oauthToken=null;
 function initOAuth(){
+  // Check for stored token first
+  const storedToken = localStorage.getItem('google_oauth_token');
+  const storedTime = localStorage.getItem('google_oauth_time');
+  // Token valid for 50 minutes
+  if (storedToken && storedTime && Date.now() - parseInt(storedTime) < 50 * 60 * 1000) {
+    oauthToken = storedToken;
+    document.getElementById('login-overlay').style.display = 'none';
+    loadCalendarEvents();
+    loadTodos();
+    requestNotificationPermission();
+    return;
+  }
+
   const client = google.accounts.oauth2.initTokenClient({
     client_id: CONFIG.GCAL_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/drive.readonly',
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
     callback: (resp) => {
       if (resp.access_token) {
         oauthToken = resp.access_token;
+        localStorage.setItem('google_oauth_token', oauthToken);
+        localStorage.setItem('google_oauth_time', Date.now().toString());
         document.getElementById('login-overlay').style.display = 'none';
         loadCalendarEvents();
         loadTodos();
@@ -726,6 +757,11 @@ function initOAuth(){
     },
   });
   document.getElementById('btn-google-login').onclick = () => client.requestAccessToken();
+
+  // Auto-refresh token every 45 minutes silently
+  setInterval(() => {
+    client.requestAccessToken({ prompt: '' });
+  }, 45 * 60 * 1000);
 }
 window.addEventListener('load', () => { setTimeout(() => { if (window.google) initOAuth(); else setTimeout(initOAuth, 1500); }, 500); });
 
@@ -1095,7 +1131,24 @@ setInterval(loadSpotify, 10000);
 <!-- SLEEP MODE -->
 <div id="sleep-mode" onclick="wakeUp()">
   <div id="sleep-bg"></div>
+
+  <!-- SPORTS TICKER TOP -->
+  <div id="sleep-ticker" style="position:absolute;top:0;left:0;right:0;z-index:10;overflow:hidden;height:36px;background:rgba(0,0,0,0.35);backdrop-filter:blur(20px);border-bottom:0.5px solid rgba(255,255,255,0.1);">
+    <div id="sleep-ticker-inner" style="display:flex;align-items:center;height:100%;white-space:nowrap;animation:ticker 40s linear infinite;">
+    </div>
+  </div>
+  <style>
+  @keyframes ticker{0%{transform:translateX(100vw);}100%{transform:translateX(-100%);}}
+  </style>
   <div id="sleep-content">
+    <!-- TOP: Sports ticker -->
+    <div id="sleep-ticker" class="lg" style="position:absolute;top:16px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:900px;padding:10px 20px;border-radius:16px;display:flex;align-items:center;gap:0;overflow:hidden;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.4);flex-shrink:0;margin-right:16px;padding-right:16px;border-right:1px solid rgba(255,255,255,0.15);">🏆 Sport</div>
+      <div id="sleep-ticker-content" style="display:flex;gap:24px;overflow:hidden;flex:1;white-space:nowrap;">
+        <div class="ticker-loading" style="font-size:13px;color:rgba(255,255,255,0.5);">Laden...</div>
+      </div>
+    </div>
+
     <!-- CENTER: Clock -->
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
       <div id="sleep-time">00:00</div>
@@ -1169,6 +1222,7 @@ function enterSleep() {
   sleepActive = true;
   updateSleepContent();
   loadPhotos();
+  loadSportsTicker();
   document.getElementById('sleep-mode').classList.add('active');
   startPhotoRotation();
 }
@@ -1337,6 +1391,274 @@ function loadBibleVerse() {
   document.getElementById('sleep-verse-text').textContent = `„${verse.text}"`;
   document.getElementById('sleep-verse-ref').textContent = verse.ref;
 }
+
+// ── SPORTS TICKER ──
+async function loadSportsTicker() {
+  // Show loading
+  const content = document.getElementById('sleep-ticker-content');
+  const tickerContent = document.getElementById('ticker-content');
+  const tickerClone = document.getElementById('ticker-content-clone');
+  if (content) content.innerHTML = '<span style="font-size:13px;color:rgba(255,255,255,0.5);">🏆 Laden...</span>';
+
+  // Check cache — refresh every 30 minutes
+  const cached = localStorage.getItem('sports_ticker');
+  const cachedTime = localStorage.getItem('sports_ticker_time');
+  if (cached && cachedTime && Date.now() - parseInt(cachedTime) < 30 * 60 * 1000) {
+    renderTicker(JSON.parse(cached));
+    return;
+  }
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{
+          role: 'user',
+          content: `Search for the latest results for these teams and return ONLY a JSON array of short strings (max 60 chars each), no explanation:
+1. Sporting CP (SCP) last Primeira Liga result and current standing
+2. LA Lakers last NBA Playoffs game result and series score
+3. NY Knicks last NBA Playoffs game result and series score  
+4. Celtic FC last Scottish Premiership result
+5. Portugal national team latest result or next World Cup 2026 match
+6. Formula 1 last race winner
+
+Format each as: "🟢 SCP 2-1 Benfica | 1° Liga 77pts" or "🏀 Lakers ✅ 112-108 vs OKC | Series 2-3"
+Return ONLY a JSON array like: ["item1","item2","item3","item4","item5","item6"]`
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    // Extract text from response
+    const textBlock = data.content?.find(b => b.type === 'text');
+    if (textBlock) {
+      const match = textBlock.text.match(/\[[\s\S]*\]/);
+      if (match) {
+        const items = JSON.parse(match[0]);
+        localStorage.setItem('sports_ticker', JSON.stringify(items));
+        localStorage.setItem('sports_ticker_time', Date.now().toString());
+        renderTicker(items);
+        return;
+      }
+    }
+    throw new Error('No valid response');
+  } catch(e) {
+    // Fallback static
+    const fallback = [
+      '🟢 SCP Primeira Liga — a carregar...',
+      '🏀 Lakers NBA Playoffs — a carregar...',
+      '🏀 Knicks NBA Playoffs — a carregar...',
+      '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Celtic Scottish Premiership — a carregar...',
+      '🇵🇹 Portugal WC 2026 — Jun/Jul 2026',
+      '🏎️ F1 — a carregar...'
+    ];
+    renderTicker(fallback);
+  }
+}
+
+function renderTicker(items) {
+  const sep = '<span style="color:rgba(255,255,255,0.2);flex-shrink:0;margin:0 12px;">·</span>';
+  const html = items.map(item =>
+    `<span style="font-size:12px;color:rgba(255,255,255,0.85);font-weight:500;flex-shrink:0;">${item}</span>`
+  ).join(sep);
+
+  // Sleep mode ticker
+  const sleepContent = document.getElementById('sleep-ticker-content');
+  if (sleepContent) sleepContent.innerHTML = html + sep + html;
+
+  // Main dashboard ticker
+  const tickerContent = document.getElementById('ticker-content');
+  const tickerClone = document.getElementById('ticker-content-clone');
+  if (tickerContent) tickerContent.innerHTML = html;
+  if (tickerClone) tickerClone.innerHTML = html;
+
+  // Auto-scroll sleep ticker
+  let pos = 0;
+  const scroll = () => {
+    if (!document.getElementById('sleep-mode')?.classList.contains('active')) return;
+    pos += 0.4;
+    const el = document.getElementById('sleep-ticker-content');
+    if (el && pos > el.scrollWidth / 2) pos = 0;
+    if (el) el.style.transform = `translateX(-${pos}px)`;
+    requestAnimationFrame(scroll);
+  };
+  // Duplicate content for seamless loop
+  content.innerHTML += content.innerHTML;
+  requestAnimationFrame(scroll);
+}
+
+// ── SPORTS TICKER ──
+async function loadSportsTicker() {
+  const items = [];
+
+  // SCP - fetch latest
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/por.1/teams/133/schedule?seasontype=2&limit=5');
+    const d = await r.json();
+    const events = d.events || [];
+    const last = events.filter(e => e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
+    const next = events.filter(e => !e.competitions?.[0]?.status?.type?.completed)[0];
+    if (last) {
+      const c = last.competitions[0];
+      const home = c.competitors.find(t => t.homeAway === 'home');
+      const away = c.competitors.find(t => t.homeAway === 'away');
+      items.push(`🟢 SCP: ${home.team.abbreviation} ${home.score}-${away.score} ${away.team.abbreviation}`);
+    }
+    if (next) {
+      const c = next.competitions[0];
+      const home = c.competitors.find(t => t.homeAway === 'home');
+      const away = c.competitors.find(t => t.homeAway === 'away');
+      const date = new Date(next.date).toLocaleDateString('de-CH', {day:'2-digit',month:'2-digit'});
+      items.push(`🟢 SCP Next: ${home.team.abbreviation} vs ${away.team.abbreviation} · ${date}`);
+    }
+  } catch(e) {
+    items.push(`🟢 SCP: 5-1 vs Vitória SC · Rio Ave vs SCP heute 21:15`);
+  }
+
+  // NBA - Lakers & Knicks
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
+    const d = await r.json();
+    const events = d.events || [];
+    events.forEach(ev => {
+      const teams = ev.competitions[0].competitors;
+      const lal = teams.find(t => t.team.abbreviation === 'LAL');
+      const nyk = teams.find(t => t.team.abbreviation === 'NYK');
+      if (lal) {
+        const opp = teams.find(t => t.team.abbreviation !== 'LAL');
+        const status = ev.status.type;
+        if (status.completed) items.push(`🟡 Lakers: ${lal.team.abbreviation} ${lal.score}-${opp.score} ${opp.team.abbreviation}`);
+        else items.push(`🟡 Lakers vs ${opp.team.abbreviation} · ${new Date(ev.date).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit'})} ${new Date(ev.date).toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'})}`);
+      }
+      if (nyk) {
+        const opp = teams.find(t => t.team.abbreviation !== 'NYK');
+        const status = ev.status.type;
+        if (status.completed) items.push(`🔵 Knicks: ${nyk.team.abbreviation} ${nyk.score}-${opp.score} ${opp.team.abbreviation}`);
+        else items.push(`🔵 Knicks vs ${opp.team.abbreviation} · ${new Date(ev.date).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit'})}`);
+      }
+    });
+    // Fallback if no live games
+    if (!items.find(i => i.includes('Lakers'))) items.push(`🟡 Lakers: 0-3 vs OKC (Playoffs R2) · Game 4 morgen`);
+    if (!items.find(i => i.includes('Knicks'))) items.push(`🔵 Knicks: Eastern Conference Finals`);
+  } catch(e) {
+    items.push(`🟡 Lakers: 0-3 vs OKC · Game 4 morgen`);
+    items.push(`🔵 Knicks: 4-0 vs PHI · Eastern Conference Finals`);
+  }
+
+  // Celtic - static (Scottish Premiership not in ESPN API)
+  items.push(`🟢 Celtic: 3-1 vs Rangers · Old Firm 10.05`);
+
+  // F1
+  items.push(`🏎️ F1 Miami GP: 1. Antonelli · 2. Norris · 3. Piastri · Nächstes Rennen: Kanada 22-24 Mai`);
+
+  // Portugal WC
+  items.push(`🇵🇹 Portugal: WM 2026 qualifiziert! · Gruppe F gewonnen`);
+
+  // Build ticker HTML
+  const ticker = document.getElementById('sleep-ticker-inner');
+  ticker.innerHTML = items.map(item =>
+    `<span style="display:inline-block;padding:0 32px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);">${item}</span><span style="color:rgba(255,255,255,0.2);font-size:10px;">·</span>`
+  ).join('') + items.map(item =>
+    `<span style="display:inline-block;padding:0 32px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);">${item}</span><span style="color:rgba(255,255,255,0.2);font-size:10px;">·</span>`
+  ).join(''); // duplicate for seamless loop
+}
+
+// ── SPORTS TICKER ──
+const SPORTS_CACHE_KEY = 'sports_ticker_cache';
+const SPORTS_CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+async function loadSportsTicker() {
+  // Check cache
+  try {
+    const cached = JSON.parse(localStorage.getItem(SPORTS_CACHE_KEY) || '{}');
+    if (cached.time && Date.now() - cached.time < SPORTS_CACHE_TTL && cached.items?.length) {
+      renderTicker(cached.items);
+      return;
+    }
+  } catch(e) {}
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{
+          role: 'user',
+          content: `Search for the latest results/scores for these sports and return ONLY a JSON array, no other text:
+1. Sporting CP (SCP) last Primeira Liga result
+2. LA Lakers last NBA game result  
+3. NY Knicks last NBA game result
+4. Celtic FC last Scottish Premiership result
+5. Portugal national team latest World Cup 2026 qualifier result
+6. Latest F1 race result or next race info
+
+Return format - JSON array only:
+[
+  {"sport":"⚽ SCP","text":"SCP 2-1 Benfica","sub":"Primeira Liga"},
+  {"sport":"🏀 Lakers","text":"LAL 112 - BOS 108","sub":"NBA Playoffs"},
+  ...
+]
+Keep text very short (max 20 chars). Use real current data from web search.`
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    // Extract text from response (may have tool use blocks)
+    let jsonText = '';
+    for (const block of data.content || []) {
+      if (block.type === 'text') { jsonText = block.text; break; }
+    }
+    const items = JSON.parse(jsonText.replace(/```json|```/g, '').trim());
+    localStorage.setItem(SPORTS_CACHE_KEY, JSON.stringify({ time: Date.now(), items }));
+    renderTicker(items);
+  } catch(e) {
+    // Fallback static items
+    renderTicker([
+      { sport: '⚽ SCP', text: 'Laden...', sub: 'Primeira Liga' },
+      { sport: '🏀 Lakers', text: 'Laden...', sub: 'NBA' },
+      { sport: '🏀 Knicks', text: 'Laden...', sub: 'NBA' },
+      { sport: '⚽ Celtic', text: 'Laden...', sub: 'Scottish Prem' },
+      { sport: '⚽ Portugal', text: 'Laden...', sub: 'World Cup' },
+      { sport: '🏎️ F1', text: 'Laden...', sub: 'Formula 1' },
+    ]);
+  }
+}
+
+function renderTicker(items) {
+  const html = items.map(item => `
+    <div class="ticker-item">
+      <span class="ticker-flag">${item.sport}</span>
+      <span class="ticker-score">${item.text}</span>
+      <span style="font-size:10px;color:rgba(255,255,255,0.4);">${item.sub}</span>
+    </div>
+    <span class="ticker-sep">·</span>
+  `).join('');
+  document.getElementById('ticker-content').innerHTML = html;
+  document.getElementById('ticker-content-clone').innerHTML = html;
+}
+
+loadSportsTicker();
+// Refresh every 30 min
+setInterval(() => {
+  localStorage.removeItem(SPORTS_CACHE_KEY);
+  loadSportsTicker();
+}, 30 * 60 * 1000);
 
 // Start the idle timer
 resetSleepTimer();
