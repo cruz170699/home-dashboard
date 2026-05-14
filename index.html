@@ -728,15 +728,13 @@ loadLights();setInterval(loadLights,30000);
 // ── OAUTH ──
 let oauthToken=null;
 function initOAuth(){
-  // Check for stored token first
   const storedToken = localStorage.getItem('google_oauth_token');
   const storedTime = localStorage.getItem('google_oauth_time');
-  // Token valid for 50 minutes
   if (storedToken && storedTime && Date.now() - parseInt(storedTime) < 50 * 60 * 1000) {
     oauthToken = storedToken;
     document.getElementById('login-overlay').style.display = 'none';
     loadCalendarEvents();
-    loadTodos();
+    loadTraffic();
     requestNotificationPermission();
     return;
   }
@@ -751,14 +749,13 @@ function initOAuth(){
         localStorage.setItem('google_oauth_time', Date.now().toString());
         document.getElementById('login-overlay').style.display = 'none';
         loadCalendarEvents();
-        loadTodos();
+        loadTraffic();
         requestNotificationPermission();
       }
     },
   });
   document.getElementById('btn-google-login').onclick = () => client.requestAccessToken();
 
-  // Auto-refresh token every 45 minutes silently
   setInterval(() => {
     client.requestAccessToken({ prompt: '' });
   }, 45 * 60 * 1000);
