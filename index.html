@@ -504,12 +504,25 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
   </div>
 
   <div class="bottom">
-    <div class="card">
+    <div class="card" id="traffic-card">
       <div class="card-header">
-        <div class="card-title-row"><div class="card-icon blue">📋</div><span class="card-label">To-dos</span></div>
-        <button class="pill-btn blue" onclick="addTodo()">+ Neu</button>
+        <div class="card-title-row"><div class="card-icon blue">🚗</div><span class="card-label">Verkehr</span></div>
+        <button class="pill-btn gray" onclick="loadTraffic()" style="font-size:14px;padding:4px 10px;">↻</button>
       </div>
-      <div class="todo-scroll" id="todo-list"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:4px 0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:11px;color:var(--text2);">Dietlikon → Volketswil</div>
+          <div id="traffic-status" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surface2);">—</div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <div id="traffic-duration" style="font-size:28px;font-weight:700;color:var(--text);">—</div>
+          <div id="traffic-normal" style="font-size:11px;color:var(--text3);">normal: —</div>
+        </div>
+        <div id="traffic-depart" style="font-size:12px;color:var(--text2);padding:6px 10px;background:var(--surface2);border-radius:8px;text-align:center;">Abfahrt berechnen...</div>
+        <div id="traffic-bar" style="height:4px;border-radius:2px;background:var(--surface2);overflow:hidden;">
+          <div id="traffic-bar-fill" style="height:100%;width:0%;border-radius:2px;background:var(--green);transition:width 0.5s;"></div>
+        </div>
+      </div>
     </div>
 
     <!-- BRING via HA -->
@@ -914,7 +927,82 @@ async function submitNewEvent(){
 
 // ── TODOS ──
 let todos=[],taskListId=null;
-async function loadTodos(){if(!oauthToken)return;try{const listsR=await fetch('https://tasks.googleapis.com/tasks/v1/users/@me/lists',{headers:{'Authorization':`Bearer ${oauthToken}`}});const listsD=await listsR.json();if(!listsD.items||listsD.items.length===0)return;taskListId=listsD.items[0].id;const tasksR=await fetch(`https://tasks.googleapis.com/tasks/v1/lists/${taskListId}/tasks?showCompleted=true&maxResults=20`,{headers:{'Authorization':`Bearer ${oauthToken}`}});const tasksD=await tasksR.json();todos=(tasksD.items||[]).map(t=>({id:t.id,text:t.title,done:t.status==='completed'}));renderTodos();}catch(e){}}
+// ── TRAFFIC ──
+const TRAFFIC_CONFIG = {
+  MAPS_KEY: 'AIzaSyAJJDZCPITUdHBEI_XneYwE-ynlwRHXWgw',
+  ORIGIN: 'Fadackerstrasse 5, 8305 Dietlikon, Switzerland',
+  DEST: 'Industriestrasse 25, 8604 Volketswil, Switzerland',
+  ARRIVAL: '06:20',
+};
+
+async function loadTraffic() {
+  try {
+    const now = new Date();
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(TRAFFIC_CONFIG.ORIGIN)}&destinations=${encodeURIComponent(TRAFFIC_CONFIG.DEST)}&mode=driving&departure_time=now&traffic_model=best_guess&key=${TRAFFIC_CONFIG.MAPS_KEY}`;
+
+    // Use allorigins proxy to avoid CORS
+    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+    const wrapper = await r.json();
+    const d = JSON.parse(wrapper.contents);
+
+    const element = d?.rows?.[0]?.elements?.[0];
+    if (!element || element.status !== 'OK') throw new Error('No data');
+
+    const durationSecs = element.duration_in_traffic?.value || element.duration?.value;
+    const normalSecs = element.duration?.value;
+    const durationMins = Math.ceil(durationSecs / 60);
+    const normalMins = Math.ceil(normalSecs / 60);
+    const delay = durationMins - normalMins;
+
+    // Color status
+    let color, statusText;
+    if (delay <= 2) { color = 'var(--green)'; statusText = '🟢 Frei'; }
+    else if (delay <= 8) { color = 'var(--orange)'; statusText = '🟡 Mässig'; }
+    else { color = 'var(--red)'; statusText = '🔴 Stau'; }
+
+    // Calculate departure time to arrive by 06:20
+    const [arrH, arrM] = TRAFFIC_CONFIG.ARRIVAL.split(':').map(Number);
+    const arrivalDate = new Date();
+    arrivalDate.setHours(arrH, arrM, 0, 0);
+    const departDate = new Date(arrivalDate.getTime() - durationSecs * 1000);
+    const departStr = `${String(departDate.getHours()).padStart(2,'0')}:${String(departDate.getMinutes()).padStart(2,'0')}`;
+
+    // Check if late
+    const minsUntilDepart = Math.round((departDate - now) / 60000);
+    let departMsg;
+    if (minsUntilDepart < 0) {
+      departMsg = `⚠️ Zu spät für 06:20 Ankunft!`;
+      document.getElementById('traffic-depart').style.background = 'rgba(255,59,48,0.15)';
+      document.getElementById('traffic-depart').style.color = 'var(--red)';
+    } else if (minsUntilDepart < 15) {
+      departMsg = `🚨 Jetzt abfahren! (Abfahrt ${departStr})`;
+      document.getElementById('traffic-depart').style.background = 'rgba(255,149,0,0.15)';
+      document.getElementById('traffic-depart').style.color = 'var(--orange)';
+    } else {
+      departMsg = `🕐 Abfahrt ${departStr} (in ${minsUntilDepart} Min.)`;
+      document.getElementById('traffic-depart').style.background = 'var(--surface2)';
+      document.getElementById('traffic-depart').style.color = 'var(--text2)';
+    }
+
+    document.getElementById('traffic-duration').textContent = `${durationMins} Min`;
+    document.getElementById('traffic-duration').style.color = color;
+    document.getElementById('traffic-normal').textContent = `normal: ${normalMins} Min`;
+    document.getElementById('traffic-status').textContent = statusText;
+    document.getElementById('traffic-status').style.background = delay <= 2 ? 'rgba(52,199,89,0.15)' : delay <= 8 ? 'rgba(255,149,0,0.15)' : 'rgba(255,59,48,0.15)';
+    document.getElementById('traffic-status').style.color = color;
+    document.getElementById('traffic-depart').textContent = departMsg;
+    document.getElementById('traffic-bar-fill').style.width = `${Math.min(100, (delay / 20) * 100)}%`;
+    document.getElementById('traffic-bar-fill').style.background = color;
+
+  } catch(e) {
+    document.getElementById('traffic-duration').textContent = '—';
+    document.getElementById('traffic-depart').textContent = 'Keine Verbindung';
+  }
+}
+
+// Load traffic on start and refresh every 5 minutes
+loadTraffic();
+setInterval(loadTraffic, 5 * 60 * 1000);if(!oauthToken)return;try{const listsR=await fetch('https://tasks.googleapis.com/tasks/v1/users/@me/lists',{headers:{'Authorization':`Bearer ${oauthToken}`}});const listsD=await listsR.json();if(!listsD.items||listsD.items.length===0)return;taskListId=listsD.items[0].id;const tasksR=await fetch(`https://tasks.googleapis.com/tasks/v1/lists/${taskListId}/tasks?showCompleted=true&maxResults=20`,{headers:{'Authorization':`Bearer ${oauthToken}`}});const tasksD=await tasksR.json();todos=(tasksD.items||[]).map(t=>({id:t.id,text:t.title,done:t.status==='completed'}));renderTodos();}catch(e){}}
 function renderTodos(){const list=document.getElementById('todo-list');list.innerHTML='';if(todos.length===0){list.innerHTML='<div style="font-size:12px;color:var(--text3);">Keine Aufgaben</div>';return;}todos.forEach(t=>{const row=document.createElement('div');row.className='todo-row';row.innerHTML=`<div class="todo-circle ${t.done?'done':''}" onclick="toggleTodo('${t.id}')"></div><div class="todo-label ${t.done?'done':''}">${t.text}</div>`;list.appendChild(row);});}
 async function toggleTodo(id){const t=todos.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderTodos();if(oauthToken&&taskListId){try{await fetch(`https://tasks.googleapis.com/tasks/v1/lists/${taskListId}/tasks/${id}`,{method:'PATCH',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({status:t.done?'completed':'needsAction'})});}catch(e){}}}
 async function addTodo(){const tx=prompt('Neue Aufgabe:');if(!tx||!tx.trim())return;if(oauthToken&&taskListId){try{const r=await fetch(`https://tasks.googleapis.com/tasks/v1/lists/${taskListId}/tasks`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({title:tx.trim()})});const d=await r.json();todos.unshift({id:d.id,text:d.title,done:false});renderTodos();}catch(e){}}else{todos.unshift({id:Date.now().toString(),text:tx.trim(),done:false});renderTodos();}}
