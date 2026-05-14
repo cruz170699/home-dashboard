@@ -330,8 +330,11 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
     </div>
     <div class="new-event-form">
       <input id="new-event-title" placeholder="Titel" type="text">
-      <input id="new-event-date" type="date">
-      <input id="new-event-time" type="time">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="flex:1"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Von</div><input id="new-event-date" type="date" style="width:100%;"></div>
+        <div style="flex:1"><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Bis</div><input id="new-event-end-date" type="date" style="width:100%;"></div>
+      </div>
+      <input id="new-event-time" type="time" placeholder="Uhrzeit (optional)">
       <select id="new-event-cal">
         <option value="sergio">Sérgio</option>
         <option value="miriam">Miriam</option>
@@ -852,10 +855,62 @@ function showEventDetail(ev){document.getElementById('event-popup-title').textCo
 function showDayEvents(dateStr,evs){document.getElementById('event-popup-title').textContent=dateStr;document.getElementById('event-popup-body').innerHTML=evs.map(ev=>`<div class="event-meta-row" style="cursor:pointer;" onclick="showEventDetail(${JSON.stringify(ev).replace(/"/g,'&quot;')})"><span style="width:8px;height:8px;border-radius:50%;background:${ev.color==='green'?'#34C759':ev.color==='pink'?'#FF2D55':'#007AFF'};display:inline-block;flex-shrink:0;"></span>${ev.title}</div>`).join('');document.getElementById('event-popup').classList.add('open');}
 function closeEventPopup(){document.getElementById('event-popup').classList.remove('open');}
 async function deleteEvent(calId,eventId){if(!confirm('Event wirklich löschen?'))return;try{await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`,{method:'DELETE',headers:{'Authorization':`Bearer ${oauthToken}`}});closeEventPopup();loadCalendarEvents();}catch(e){alert('Fehler!');}}
-function editEvent(ev){closeEventPopup();document.getElementById('new-event-title').value=ev.rawTitle||'';document.getElementById('new-event-date').value=ev.date||'';document.getElementById('new-event-time').value=ev.time||'';document.getElementById('new-event-cal').value=ev.calKey||'sergio';document.getElementById('new-event-popup').dataset.editId=ev.eventId||'';document.getElementById('new-event-popup').dataset.editCalId=ev.calId||'';document.getElementById('new-event-popup').classList.add('open');document.querySelector('.new-event-submit').textContent='Speichern';setTimeout(()=>document.getElementById('new-event-title').focus(),100);}
-function openNewEvent(dateStr){document.getElementById('new-event-date').value=dateStr||new Date().toISOString().split('T')[0];document.getElementById('new-event-title').value='';document.getElementById('new-event-time').value='';document.getElementById('new-event-popup').classList.add('open');setTimeout(()=>document.getElementById('new-event-title').focus(),100);}
+function editEvent(ev){
+  closeEventPopup();
+  document.getElementById('new-event-title').value = ev.rawTitle||'';
+  document.getElementById('new-event-date').value = ev.date||'';
+  document.getElementById('new-event-end-date').value = ev.endDate||ev.date||'';
+  document.getElementById('new-event-time').value = ev.time||'';
+  document.getElementById('new-event-cal').value = ev.calKey||'sergio';
+  document.getElementById('new-event-popup').dataset.editId = ev.eventId||'';
+  document.getElementById('new-event-popup').dataset.editCalId = ev.calId||'';
+  document.getElementById('new-event-popup').classList.add('open');
+  document.querySelector('.new-event-submit').textContent='Speichern';
+  setTimeout(()=>document.getElementById('new-event-title').focus(),100);
+}
+function openNewEvent(dateStr){
+  const d = dateStr || new Date().toISOString().split('T')[0];
+  document.getElementById('new-event-date').value = d;
+  document.getElementById('new-event-end-date').value = d;
+  document.getElementById('new-event-title').value = '';
+  document.getElementById('new-event-time').value = '';
+  document.getElementById('new-event-popup').classList.add('open');
+  setTimeout(()=>document.getElementById('new-event-title').focus(),100);
+}
 function closeNewEvent(){document.getElementById('new-event-popup').classList.remove('open');document.getElementById('new-event-popup').dataset.editId='';document.getElementById('new-event-popup').dataset.editCalId='';document.querySelector('.new-event-submit').textContent='Event hinzufügen';}
-async function submitNewEvent(){const title=document.getElementById('new-event-title').value.trim(),date=document.getElementById('new-event-date').value,time=document.getElementById('new-event-time').value,calKey=document.getElementById('new-event-cal').value;const editId=document.getElementById('new-event-popup').dataset.editId,editCalId=document.getElementById('new-event-popup').dataset.editCalId;if(!title||!date)return alert('Bitte Titel und Datum eingeben!');const calIds={sergio:CONFIG.GCAL_ID_SERGIO,miriam:CONFIG.GCAL_ID_MIRIAM,familie:CONFIG.GCAL_ID_FAMILIE};const calId=editCalId||calIds[calKey];const event={summary:title};if(time){event.start={dateTime:`${date}T${time}:00`,timeZone:'Europe/Zurich'};event.end={dateTime:`${date}T${time}:00`,timeZone:'Europe/Zurich'};}else{event.start={date};event.end={date};}try{if(editId){await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${editId}`,{method:'PATCH',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify(event)});}else{await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify(event)});}closeNewEvent();loadCalendarEvents();}catch(e){alert('Fehler!');}}
+async function submitNewEvent(){
+  const title = document.getElementById('new-event-title').value.trim();
+  const date = document.getElementById('new-event-date').value;
+  const endDate = document.getElementById('new-event-end-date').value || date;
+  const time = document.getElementById('new-event-time').value;
+  const calKey = document.getElementById('new-event-cal').value;
+  const editId = document.getElementById('new-event-popup').dataset.editId;
+  const editCalId = document.getElementById('new-event-popup').dataset.editCalId;
+  if(!title||!date) return alert('Bitte Titel und Datum eingeben!');
+  const calIds={sergio:CONFIG.GCAL_ID_SERGIO,miriam:CONFIG.GCAL_ID_MIRIAM,familie:CONFIG.GCAL_ID_FAMILIE};
+  const calId = editCalId||calIds[calKey];
+  const event = {summary:title};
+  if(time){
+    event.start={dateTime:`${date}T${time}:00`,timeZone:'Europe/Zurich'};
+    event.end={dateTime:`${endDate}T${time}:00`,timeZone:'Europe/Zurich'};
+  } else {
+    // For all-day multi-day events, end date must be day after last day
+    const endDateObj = new Date(endDate);
+    endDateObj.setDate(endDateObj.getDate()+1);
+    const endDateStr = endDateObj.toISOString().split('T')[0];
+    event.start={date};
+    event.end={date: endDateStr};
+  }
+  try{
+    if(editId){
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${editId}`,{method:'PATCH',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify(event)});
+    } else {
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify(event)});
+    }
+    closeNewEvent();
+    loadCalendarEvents();
+  }catch(e){alert('Fehler!');}
+}
 
 // ── TODOS ──
 let todos=[],taskListId=null;
@@ -1126,7 +1181,7 @@ setInterval(loadSpotify, 10000);
   </style>
   <div id="sleep-content">
     <!-- TOP: Sports ticker -->
-    <div id="sleep-ticker" class="lg" style="position:absolute;top:16px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:900px;padding:10px 20px;border-radius:16px;display:flex;align-items:center;gap:0;overflow:hidden;">
+    <div id="sleep-ticker" class="lg" style="position:absolute;top:20px;left:24px;right:24px;padding:10px 20px;border-radius:16px;display:flex;align-items:center;gap:0;overflow:hidden;">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.4);flex-shrink:0;margin-right:16px;padding-right:16px;border-right:1px solid rgba(255,255,255,0.15);">🏆 Sport</div>
       <div id="sleep-ticker-content" style="display:flex;gap:24px;overflow:hidden;flex:1;white-space:nowrap;">
         <div class="ticker-loading" style="font-size:13px;color:rgba(255,255,255,0.5);">Laden...</div>
@@ -1140,7 +1195,7 @@ setInterval(loadSpotify, 10000);
     </div>
 
     <!-- LEFT TOP: Weather -->
-    <div id="sleep-weather" class="lg" style="position:absolute;top:50%;left:24px;transform:translateY(-120%);width:220px;">
+    <div id="sleep-weather" class="lg" style="position:absolute;top:50%;left:24px;transform:translateY(-130%);width:220px;">
       <div id="sleep-weather-icon">⛅</div>
       <div>
         <div id="sleep-weather-temp">—°C</div>
@@ -1155,7 +1210,7 @@ setInterval(loadSpotify, 10000);
     </div>
 
     <!-- RIGHT TOP: Meals -->
-    <div class="sleep-panel lg" style="position:absolute;top:50%;right:24px;transform:translateY(-120%);width:220px;">
+    <div class="sleep-panel lg" style="position:absolute;top:50%;right:24px;transform:translateY(-130%);width:220px;">
       <div class="sleep-panel-title">🍽️ Mahlzeiten</div>
       <div id="sleep-meals">—</div>
     </div>
@@ -1378,13 +1433,10 @@ function loadBibleVerse() {
 
 // ── SPORTS TICKER ──
 async function loadSportsTicker() {
-  // Show loading
   const content = document.getElementById('sleep-ticker-content');
-  const tickerContent = document.getElementById('ticker-content');
-  const tickerClone = document.getElementById('ticker-content-clone');
   if (content) content.innerHTML = '<span style="font-size:13px;color:rgba(255,255,255,0.5);">🏆 Laden...</span>';
 
-  // Check cache — refresh every 30 minutes
+  // Cache 30 min
   const cached = localStorage.getItem('sports_ticker');
   const cachedTime = localStorage.getItem('sports_ticker_time');
   if (cached && cachedTime && Date.now() - parseInt(cachedTime) < 30 * 60 * 1000) {
@@ -1392,60 +1444,107 @@ async function loadSportsTicker() {
     return;
   }
 
+  const items = [];
+
+  // ── NBA (Lakers + Knicks) via ESPN API ──
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{
-          role: 'user',
-          content: `Search for the latest results for these teams and return ONLY a JSON array of short strings (max 60 chars each), no explanation:
-1. Sporting CP (SCP) last Primeira Liga result and current standing
-2. LA Lakers last NBA Playoffs game result and series score
-3. NY Knicks last NBA Playoffs game result and series score  
-4. Celtic FC last Scottish Premiership result
-5. Portugal national team latest result or next World Cup 2026 match
-6. Formula 1 last race winner
-
-Format each as: "🟢 SCP 2-1 Benfica | 1° Liga 77pts" or "🏀 Lakers ✅ 112-108 vs OKC | Series 2-3"
-Return ONLY a JSON array like: ["item1","item2","item3","item4","item5","item6"]`
-        }]
-      })
-    });
-
-    const data = await resp.json();
-    // Extract text from response
-    const textBlock = data.content?.find(b => b.type === 'text');
-    if (textBlock) {
-      const match = textBlock.text.match(/\[[\s\S]*\]/);
-      if (match) {
-        const items = JSON.parse(match[0]);
-        localStorage.setItem('sports_ticker', JSON.stringify(items));
-        localStorage.setItem('sports_ticker_time', Date.now().toString());
-        renderTicker(items);
-        return;
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
+    const d = await r.json();
+    const games = d?.events || [];
+    for (const game of games) {
+      const comp = game.competitions?.[0];
+      const teams = comp?.competitors || [];
+      const lal = teams.find(t => t.team?.abbreviation === 'LAL');
+      const nyk = teams.find(t => t.team?.abbreviation === 'NYK');
+      const opp_lal = teams.find(t => t.team?.abbreviation !== 'LAL') ;
+      const opp_nyk = teams.find(t => t.team?.abbreviation !== 'NYK');
+      if (lal) {
+        const won = parseInt(lal.score) > parseInt(opp_lal.score);
+        items.push(`🏀 Lakers ${won?'✅':'❌'} ${lal.score}-${opp_lal.score} vs ${opp_lal.team.abbreviation}`);
+      }
+      if (nyk) {
+        const won = parseInt(nyk.score) > parseInt(opp_nyk.score);
+        items.push(`🏀 Knicks ${won?'✅':'❌'} ${nyk.score}-${opp_nyk.score} vs ${opp_nyk.team.abbreviation}`);
       }
     }
-    throw new Error('No valid response');
-  } catch(e) {
-    // Fallback static
-    const fallback = [
-      '🟢 SCP Primeira Liga — a carregar...',
-      '🏀 Lakers NBA Playoffs — a carregar...',
-      '🏀 Knicks NBA Playoffs — a carregar...',
-      '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Celtic Scottish Premiership — a carregar...',
-      '🇵🇹 Portugal WC 2026 — Jun/Jul 2026',
-      '🏎️ F1 — a carregar...'
-    ];
-    renderTicker(fallback);
-  }
+    // If no live games, get last results
+    if (!items.find(i => i.includes('Lakers'))) {
+      const r2 = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/13/schedule');
+      const d2 = await r2.json();
+      const last = (d2?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
+      if (last) {
+        const comp = last.competitions[0];
+        const lal = comp.competitors.find(t=>t.team.abbreviation==='LAL');
+        const opp = comp.competitors.find(t=>t.team.abbreviation!=='LAL');
+        const won = parseInt(lal?.score)>parseInt(opp?.score);
+        items.push(`🏀 Lakers ${won?'✅':'❌'} ${lal?.score}-${opp?.score} vs ${opp?.team.abbreviation}`);
+      }
+    }
+    if (!items.find(i => i.includes('Knicks'))) {
+      const r2 = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/18/schedule');
+      const d2 = await r2.json();
+      const last = (d2?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
+      if (last) {
+        const comp = last.competitions[0];
+        const nyk = comp.competitors.find(t=>t.team.abbreviation==='NYK');
+        const opp = comp.competitors.find(t=>t.team.abbreviation!=='NYK');
+        const won = parseInt(nyk?.score)>parseInt(opp?.score);
+        items.push(`🏀 Knicks ${won?'✅':'❌'} ${nyk?.score}-${opp?.score} vs ${opp?.team.abbreviation}`);
+      }
+    }
+  } catch(e) { items.push('🏀 NBA — keine Verbindung'); }
+
+  // ── F1 via Ergast ──
+  try {
+    const r = await fetch('https://ergast.com/api/f1/current/last/results.json');
+    const d = await r.json();
+    const race = d?.MRData?.RaceTable?.Races?.[0];
+    if (race) {
+      const winner = race.Results?.[0];
+      items.push(`🏎️ F1 ${race.raceName}: ${winner?.Driver?.familyName} (${winner?.Constructor?.name})`);
+    }
+  } catch(e) { items.push('🏎️ F1 — keine Verbindung'); }
+
+  // ── SCP via ESPN Soccer ──
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/por.1/teams/1235/schedule');
+    const d = await r.json();
+    const last = (d?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
+    if (last) {
+      const comp = last.competitions[0];
+      const home = comp.competitors.find(c=>c.homeAway==='home');
+      const away = comp.competitors.find(c=>c.homeAway==='away');
+      const isSCPHome = home?.team?.abbreviation?.includes('SCP') || home?.team?.displayName?.includes('Sporting');
+      const scpScore = isSCPHome ? home?.score : away?.score;
+      const oppScore = isSCPHome ? away?.score : home?.score;
+      const oppName = isSCPHome ? away?.team?.abbreviation : home?.team?.abbreviation;
+      const won = parseInt(scpScore) > parseInt(oppScore);
+      items.push(`🟢 SCP ${won?'✅':'❌'} ${scpScore}-${oppScore} vs ${oppName}`);
+    }
+  } catch(e) { items.push('🟢 SCP — keine Verbindung'); }
+
+  // ── Boston Celtics via ESPN ──
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/2/schedule');
+    const d = await r.json();
+    const last = (d?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
+    if (last) {
+      const comp = last.competitions[0];
+      const cel = comp.competitors.find(t=>t.team.abbreviation==='BOS');
+      const opp = comp.competitors.find(t=>t.team.abbreviation!=='BOS');
+      const won = parseInt(cel?.score)>parseInt(opp?.score);
+      items.push(`🍀 Celtics ${won?'✅':'❌'} ${cel?.score}-${opp?.score} vs ${opp?.team.abbreviation}`);
+    }
+  } catch(e) { items.push('🍀 Celtics — keine Verbindung'); }
+
+  // ── Portugal ──
+  items.push('🇵🇹 Portugal WC 2026 — Gruppe A | Jun-Jul 2026');
+
+  if (items.length === 0) items.push('🏆 Keine Sportdaten verfügbar');
+
+  localStorage.setItem('sports_ticker', JSON.stringify(items));
+  localStorage.setItem('sports_ticker_time', Date.now().toString());
+  renderTicker(items);
 }
 
 function renderTicker(items) {
