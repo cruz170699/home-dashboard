@@ -30,7 +30,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 /* ── APP SHELL ── */
 #app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;z-index:1;}
 #app-content{flex:1;overflow:hidden;position:relative;min-height:0;isolation:isolate;}
-.page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:90px;background:var(--bg);transform:translateX(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;visibility:hidden;will-change:transform;}
+.page{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:80px;background:var(--bg);transform:translateX(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;visibility:hidden;will-change:transform;}
 .page.active{transform:translateX(0);opacity:1;pointer-events:all;visibility:visible;}
 .page.prev{transform:translateX(-100%);opacity:0;pointer-events:none;visibility:hidden;}
 
