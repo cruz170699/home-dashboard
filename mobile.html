@@ -485,7 +485,18 @@ function onLogin(){
   loadFavorites();
 }
 
-window.addEventListener('load',()=>initAuth());
+window.addEventListener('load',()=>{
+  initAuth();
+  // Backup - attach directly to button
+  const btn = document.getElementById('btn-login');
+  if(btn){
+    btn.addEventListener('click',()=>{
+      const scope=encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');
+      const redirect=encodeURIComponent('https://cruz170699.github.io/home-dashboard/mobile.html');
+      window.location.href=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
+    });
+  }
+});
 
 // ── TAB NAVIGATION ──
 let currentTab='meals';
