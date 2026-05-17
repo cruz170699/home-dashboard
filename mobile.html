@@ -1054,19 +1054,44 @@ async function saveTracker(){
     document.getElementById('tr-notes').value,
   ];
   try{
-    // Ensure header
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:J1?valueInputOption=RAW`,{method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({values:[['Datum','Gewicht','Schritte','Wasser','Frühstück','Mittagessen','Abendessen','Snacks','Aktivität','Notizen']]})});
+    // Ensure Tracker sheet exists
+    try {
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}:batchUpdate`,{
+        method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({requests:[{addSheet:{properties:{title:'Tracker'}}}]})
+      });
+    } catch(e) {} // Sheet may already exist
+
+    // Ensure header row
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:J1?valueInputOption=RAW`,{
+      method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+      body:JSON.stringify({values:[['Datum','Gewicht','Schritte','Wasser','Frühstück','Mittagessen','Abendessen','Snacks','Aktivität','Notizen']]})
+    });
+
+    // Find existing row for this date
     const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:A`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d=await r.json();const rows=d.values||[];
     const idx=rows.findIndex(r=>r[0]===trackerDate);
+
     if(idx>0){
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:J${idx+1}?valueInputOption=RAW`,{method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({values:[row]})});
+      // Update existing
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:J${idx+1}?valueInputOption=RAW`,{
+        method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({values:[row]})
+      });
     } else {
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:J:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({values:[row]})});
+      // Append new row
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
+        method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({values:[row]})
+      });
     }
     document.getElementById('save-indicator').textContent='✓ Gespeichert';
     updateSummary(row);
-  }catch(e){document.getElementById('save-indicator').textContent='⚠️ Fehler';}
+  }catch(e){
+    console.error('Save error:',e);
+    document.getElementById('save-indicator').textContent='⚠️ Fehler';
+  }
 }
 
 function addWater(amount){
@@ -1094,14 +1119,17 @@ async function lookupNutrition(meal) {
   }
   try {
     const query = encodeURIComponent(text.split('\n')[0].split(',')[0].trim());
-    const r = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=1`);
-    const d = await r.json();
+    // Use allorigins proxy to avoid CORS
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=1`;
+    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+    const wrapper = await r.json();
+    const d = JSON.parse(wrapper.contents);
     const product = d?.products?.[0];
     if (product?.nutriments) {
       const kcal = Math.round(product.nutriments['energy-kcal_100g'] || product.nutriments['energy-kcal'] || 0);
       const protein = Math.round((product.nutriments['proteins_100g'] || 0) * 10) / 10;
       nutritionData[meal] = {kcal, protein};
-      updateNutritionDisplay(meal, {kcal, protein, name: product.product_name});
+      updateNutritionDisplay(meal, {kcal, protein});
     } else {
       nutritionData[meal] = {kcal:0, protein:0};
       updateNutritionDisplay(meal, null);
