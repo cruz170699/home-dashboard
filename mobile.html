@@ -338,7 +338,28 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
   </div>
   <div class="tracker-date-strip" id="tracker-dates"></div>
   <div class="tracker-scroll">
-    <!-- Body -->
+    <!-- SUMMARY CARD -->
+    <div style="background:linear-gradient(135deg,rgba(0,122,255,0.2),rgba(123,97,255,0.2));border:1px solid rgba(0,122,255,0.3);border-radius:22px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.4);margin-bottom:14px;">✨ Übersicht</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div style="text-align:center;">
+          <div id="sum-weight" style="font-size:24px;font-weight:700;color:white;">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">kg</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid rgba(255,255,255,0.1);border-right:1px solid rgba(255,255,255,0.1);">
+          <div id="sum-water" style="font-size:24px;font-weight:700;color:#60AAFF;">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">L Wasser</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="sum-steps" style="font-size:24px;font-weight:700;color:#34C759;">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Schritte</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:16px;">
+        <div id="sum-activity" style="font-size:13px;color:rgba(255,255,255,0.5);flex:1;">🏃 —</div>
+        <div id="sum-meals" style="font-size:13px;color:rgba(255,255,255,0.5);flex:1;text-align:right;">🍽️ —</div>
+      </div>
+    </div>
     <div class="tracker-section">
       <div class="tracker-section-hd">⚖️ Körper</div>
       <div class="tracker-row">
@@ -557,10 +578,22 @@ async function loadTracker() {
       document.getElementById('tr-snacks').value = row[7] || '';
       document.getElementById('tr-activity').value = row[8] || '';
       document.getElementById('tr-notes').value = row[9] || '';
+      // Update summary
+      document.getElementById('sum-weight').textContent = row[1] || '—';
+      document.getElementById('sum-water').textContent = row[3] || '—';
+      document.getElementById('sum-steps').textContent = row[2] ? parseInt(row[2]).toLocaleString('de-CH') : '—';
+      document.getElementById('sum-activity').textContent = row[8] ? `🏃 ${row[8].substring(0,25)}` : '🏃 Keine Aktivität';
+      const meals = [row[4],row[5],row[6]].filter(x=>x).length;
+      document.getElementById('sum-meals').textContent = `🍽️ ${meals}/3 Mahlzeiten`;
     } else {
       ['tr-weight','tr-steps','tr-water','tr-breakfast','tr-lunch','tr-dinner','tr-snacks','tr-activity','tr-notes'].forEach(id => {
         document.getElementById(id).value = '';
       });
+      document.getElementById('sum-weight').textContent = '—';
+      document.getElementById('sum-water').textContent = '—';
+      document.getElementById('sum-steps').textContent = '—';
+      document.getElementById('sum-activity').textContent = '🏃 Keine Aktivität';
+      document.getElementById('sum-meals').textContent = '🍽️ 0/3 Mahlzeiten';
     }
   } catch(e) {}
 }
