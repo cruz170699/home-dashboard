@@ -28,12 +28,12 @@
 html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
 
 /* ── APP SHELL ── */
-#app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;z-index:1;}
 #app-content{flex:1;overflow:hidden;position:relative;min-height:0;}
 .page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:90px;}
-.page{transform:translateX(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;}
-.page.active{transform:translateX(0);opacity:1;pointer-events:all;}
-.page.prev{transform:translateX(-30%);opacity:0;pointer-events:none;}
+.page{transform:translateX(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;visibility:hidden;}
+.page.active{transform:translateX(0);opacity:1;pointer-events:all;visibility:visible;}
+.page.prev{transform:translateX(-100%);opacity:0;pointer-events:none;visibility:hidden;}
 
 /* ── LOGIN ── */
 #login-page{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
@@ -242,7 +242,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 </div>
 
 <!-- PIN SCREEN -->
-<div id="pin-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:90;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px;">
+<div id="pin-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:700;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px;">
   <div style="font-size:36px;font-weight:800;color:#C4B0FF;letter-spacing:-1px;">ALFIE</div>
   <div style="font-size:17px;color:rgba(255,255,255,0.4);" id="pin-screen-sub">Wer bist du?</div>
   <div style="display:flex;gap:14px;width:100%;max-width:360px;">
@@ -281,7 +281,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 .pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.15s;}
 .pin-dot.filled{background:white;}
 </style>
-<div id="home-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
+<div id="home-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:600;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
   <svg width="180" height="132" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <radialGradient id="bg2" cx="50%" cy="45%" r="65%"><stop offset="0%" stop-color="#0e1117"/><stop offset="100%" stop-color="#07080b"/></radialGradient>
@@ -786,7 +786,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 </div>
 
 <!-- FOOD SEARCH MODAL -->
-<div id="food-modal" style="position:fixed;inset:0;z-index:400;background:var(--bg);transform:translateY(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;">
+<div id="food-modal" style="position:fixed;inset:0;z-index:400;background:var(--bg);transform:translateY(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;visibility:hidden;">
   <div style="padding:16px 20px 12px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
     <button onclick="closeFoodSearch()" style="background:var(--surface2);border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--text2);">✕</button>
     <div style="font-size:18px;font-weight:700;" id="food-modal-title">Essen hinzufügen</div>
@@ -1287,8 +1287,16 @@ async function getMobileSuggestions(){
     const data=await resp.json();
     const json=JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
     const keys=['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
+    const curSheetName = getSheetName(currentWeekOffset);
     for(let i=0;i<7;i++){
       if(json[keys[i]]){mealData[i].lunch=json[keys[i]].lunch;mealData[i].dinner=json[keys[i]].dinner;}
+    }
+    // Save to correct sheet
+    for(let i=0;i<7;i++){
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${encodeURIComponent(curSheetName)}!${String.fromCharCode(66+i)}2:${String.fromCharCode(66+i)}3?valueInputOption=RAW`,{
+        method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({values:[[mealData[i].lunch],[mealData[i].dinner]]})
+      });
     }
     renderDays();showToast('✨ Vorschläge geladen!');
   }catch(e){showToast('Fehler');}
@@ -1297,18 +1305,23 @@ async function getMobileSuggestions(){
 async function copyLastWeek(){
   showToast('📋 Laden...');
   try{
-    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/History!A:O`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
-    const d=await r.json();const rows=d.values||[];
+    // Get previous week's sheet name
+    const prevSheetName = getSheetName(currentWeekOffset - 1);
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${encodeURIComponent(prevSheetName)}!A1:H3`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const d=await r.json();
+    if(d.error){showToast('Keine Vorwoche gefunden');return;}
+    const rows=d.values||[];
     if(rows.length<2){showToast('Keine Daten');return;}
-    const last=rows[rows.length-1];
+    const curSheetName = getSheetName(currentWeekOffset);
+    // Write to current week
     for(let i=0;i<7;i++){
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${String.fromCharCode(66+i)}2:${String.fromCharCode(66+i)}3?valueInputOption=RAW`,{
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${encodeURIComponent(curSheetName)}!${String.fromCharCode(66+i)}2:${String.fromCharCode(66+i)}3?valueInputOption=RAW`,{
         method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
-        body:JSON.stringify({values:[[last[1+i*2]||'—'],[last[2+i*2]||'—']]})
+        body:JSON.stringify({values:[[rows[1]?.[i+1]||'—'],[rows[2]?.[i+1]||'—']]})
       });
     }
-    await loadMeals();showToast('📋 Letzte Woche übernommen!');
-  }catch(e){showToast('Fehler');}
+    await loadMeals();showToast('📋 Vorwoche übernommen!');
+  }catch(e){showToast('Fehler: '+e.message);}
 }
 
 // ── FAVORITES ──
@@ -1551,7 +1564,7 @@ async function loadTracker(){
         if(tm.dinner&&tm.dinner!=='—')document.getElementById('tr-dinner').placeholder=tm.dinner;
       }
     }
-  }catch(e){['tr-weight','tr-steps','tr-water','tr-breakfast','tr-lunch','tr-dinner','tr-snacks','tr-activity','tr-notes'].forEach(id=>document.getElementById(id).value='');updateSummary(null);}
+  }catch(e){['tr-weight','tr-steps','tr-water','tr-activity-name','tr-activity-mins','tr-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });updateSummary(null);}
 }
 
 function updateSummary(row){
@@ -1700,12 +1713,16 @@ function openFoodSearch(meal) {
   document.getElementById('food-search-input').value = '';
   document.getElementById('food-search-results').innerHTML = '';
   document.getElementById('food-search-status').textContent = 'Tippe um zu suchen...';
-  document.getElementById('food-modal').style.transform = 'translateY(0)';
+  const modal = document.getElementById('food-modal');
+  modal.style.visibility = 'visible';
+  modal.style.transform = 'translateY(0)';
   setTimeout(() => document.getElementById('food-search-input').focus(), 300);
 }
 
 function closeFoodSearch() {
-  document.getElementById('food-modal').style.transform = 'translateY(100%)';
+  const modal = document.getElementById('food-modal');
+  modal.style.transform = 'translateY(100%)';
+  setTimeout(() => modal.style.visibility = 'hidden', 320);
   currentFoodMeal = null;
 }
 
