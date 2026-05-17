@@ -281,7 +281,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 .pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.15s;}
 .pin-dot.filled{background:white;}
 </style>
-<div id="home-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:50;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
+<div id="home-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
   <svg width="180" height="132" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <radialGradient id="bg2" cx="50%" cy="45%" r="65%"><stop offset="0%" stop-color="#0e1117"/><stop offset="100%" stop-color="#07080b"/></radialGradient>
@@ -587,7 +587,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
   </div>
 
   <!-- TAB BAR -->
-  <div id="tab-bar">
+  <div id="tab-bar" style="display:none;">
     <button class="tab-btn" id="tab-home" onclick="goHome()">
       <div class="tab-icon">
         <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
@@ -941,12 +941,14 @@ function resetPin(){
 function enterApp(tab){
   document.getElementById('home-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
+  document.getElementById('tab-bar').style.display = 'flex';
   switchTab(tab);
 }
 
 // Back to home from tab bar logo tap
 function goHome(){
   document.getElementById('app').style.display = 'none';
+  document.getElementById('tab-bar').style.display = 'none';
   document.getElementById('home-screen').style.display = 'flex';
 }
 
