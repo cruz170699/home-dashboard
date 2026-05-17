@@ -45,7 +45,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 #btn-login span{background:white;border-radius:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
 /* ── TAB BAR ── */
-#tab-bar{flex-shrink:0;background:rgba(28,28,30,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe-bottom));z-index:100;order:2;position:fixed;bottom:0;left:0;right:0;}
+#tab-bar{background:rgba(28,28,30,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe-bottom));z-index:500;position:fixed;bottom:0;left:0;right:0;}
 .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border:none;background:none;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;color:var(--text3);}
 .tab-btn:active{transform:scale(0.88);}
 .tab-icon{font-size:clamp(24px,3vw,40px);line-height:1;display:flex;align-items:center;justify-content:center;}
@@ -363,8 +363,14 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
             <button class="pill-btn pill-surface" onclick="copyLastWeek()" style="padding:10px 16px;font-size:14px;">📋</button>
           </div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:14px;">
-          <button onclick="switchMealTab('week',this)" id="meal-tab-week" class="pill-btn pill-blue" style="font-size:14px;">Diese Woche</button>
+        <!-- Week selector -->
+        <div style="display:flex;align-items:center;gap:8px;margin-top:14px;">
+          <button onclick="changeWeek(-1)" style="background:var(--surface2);border:none;border-radius:12px;padding:8px 14px;color:var(--text);font-size:18px;cursor:pointer;">‹</button>
+          <div id="week-strip" style="display:flex;gap:6px;overflow-x:auto;flex:1;scrollbar-width:none;"></div>
+          <button onclick="changeWeek(1)" style="background:var(--surface2);border:none;border-radius:12px;padding:8px 14px;color:var(--text);font-size:18px;cursor:pointer;">›</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button onclick="switchMealTab('week',this)" id="meal-tab-week" class="pill-btn pill-blue" style="font-size:14px;">Woche</button>
           <button onclick="switchMealTab('favs',this)" id="meal-tab-favs" class="pill-btn pill-surface" style="font-size:14px;">⭐ Favoriten</button>
         </div>
       </div>
@@ -417,9 +423,28 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
             </div>
           </div>
         </div>
-        <div style="margin-top:10px;display:flex;justify-content:space-between;">
-          <div class="summary-bottom-item" id="sum-meals">🍽️ 0/3 Mahlzeiten</div>
-          <div class="summary-bottom-item" id="sum-activity">🏃 Keine Aktivität</div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span style="font-size:13px;color:var(--text2);">👟 Schritte</span>
+              <span style="font-size:13px;font-weight:600;color:var(--green);" id="sum-steps-bar">0 / 10000</span>
+            </div>
+            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
+              <div id="steps-bar" style="height:100%;width:0%;background:var(--green);border-radius:3px;transition:width 0.4s;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span style="font-size:13px;color:var(--text2);">💧 Wasser</span>
+              <span style="font-size:13px;font-weight:600;color:var(--blue);" id="sum-water-bar">0 / 2.5L</span>
+            </div>
+            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
+              <div id="water-bar" style="height:100%;width:0%;background:var(--blue);border-radius:3px;transition:width 0.4s;"></div>
+            </div>
+          </div>
+          <div style="margin-top:4px;display:flex;justify-content:space-between;">
+            <div class="summary-bottom-item" id="sum-meals">🍽️ 0/3 Mahlzeiten</div>
+            <div class="summary-bottom-item" id="sum-activity">🏃 Keine Aktivität</div>
+          </div>
         </div>
       </div>
       <div class="save-indicator" id="save-indicator">✓ Alles gespeichert</div>
@@ -433,7 +458,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
         </div>
         <div class="tr-row">
           <div class="tr-label">Schritte</div>
-          <input class="tr-input" id="tr-steps" type="number" placeholder="—" oninput="triggerAutosaveTracker()">
+          <input class="tr-input" id="tr-steps" type="number" placeholder="—" oninput="triggerAutosaveTracker();updateStepBar()">
           <div class="tr-unit">👟</div>
         </div>
       </div>
@@ -441,7 +466,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
         <div class="tr-section-hd">💧 Wasser</div>
         <div class="tr-row">
           <div class="tr-label">Getrunken</div>
-          <input class="tr-input" id="tr-water" type="number" step="0.1" placeholder="0" oninput="triggerAutosaveTracker()">
+          <input class="tr-input" id="tr-water" type="number" step="0.1" placeholder="0" oninput="triggerAutosaveTracker();updateWaterBar()">
           <div class="tr-unit">L</div>
         </div>
         <div class="water-row">
@@ -491,33 +516,52 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
         </div>
         <!-- Goals -->
         <div style="padding:14px 18px;border-top:0.5px solid var(--border);">
-          <div style="font-size:13px;color:var(--text3);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">🎯 Tagesziele</div>
-          <div style="display:flex;gap:10px;">
-            <div style="flex:1;">
-              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">Kalorien</div>
-              <input type="number" id="goal-kcal" class="tr-input" style="width:100%;" value="1800" placeholder="kcal" oninput="updateNutritionBars()">
+          <div style="font-size:13px;color:var(--text3);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">🎯 Tagesziele</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">🔥 Kalorien</div>
+              <input type="number" id="goal-kcal" class="tr-input" style="width:100%;" placeholder="1800 kcal" oninput="updateNutritionBars();saveGoals()">
             </div>
-            <div style="flex:1;">
-              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">Protein</div>
-              <input type="number" id="goal-protein" class="tr-input" style="width:100%;" value="120" placeholder="g" oninput="updateNutritionBars()">
+            <div>
+              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">💪 Protein</div>
+              <input type="number" id="goal-protein" class="tr-input" style="width:100%;" placeholder="120 g" oninput="updateNutritionBars();saveGoals()">
+            </div>
+            <div>
+              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">👟 Schritte</div>
+              <input type="number" id="goal-steps" class="tr-input" style="width:100%;" placeholder="10000" oninput="updateStepBar();saveGoals()">
+            </div>
+            <div>
+              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">💧 Wasser</div>
+              <input type="number" id="goal-water" class="tr-input" style="width:100%;" placeholder="2.5 L" step="0.25" oninput="updateWaterBar();saveGoals()">
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Activity -->
       <div class="tr-section">
         <div class="tr-section-hd">🏃 Aktivität</div>
         <div class="tr-food-block">
-          <textarea class="tr-textarea" id="tr-activity" placeholder="z.B. Laufen 30 Min, Yoga 45 Min..." oninput="triggerAutosaveTracker()"></textarea>
+          <div style="font-size:14px;font-weight:600;color:var(--text3);margin-bottom:10px;">Was hast du gemacht?</div>
+          <input type="text" id="tr-activity-name" class="tr-input" style="width:100%;margin-bottom:10px;" 
+            placeholder="z.B. Laufen, Yoga, Schwimmen..."
+            oninput="triggerAutosaveTracker()"
+            onblur="if(this.value.trim())askWorkoutDuration()">
+          <div id="workout-duration-row" style="display:none;align-items:center;gap:10px;margin-top:8px;">
+            <div style="font-size:15px;color:var(--text2);flex:1;">⏱️ Wie lange?</div>
+            <input type="number" id="tr-activity-mins" class="tr-input" style="width:90px;" placeholder="Min" oninput="triggerAutosaveTracker()">
+            <div style="font-size:14px;color:var(--text3);">Min</div>
+          </div>
+          <div id="tr-activity-display" style="margin-top:8px;font-size:14px;color:var(--green);"></div>
         </div>
       </div>
-      <div class="tr-section" style="margin-bottom:20px;">
+
+      <div class="tr-section" style="margin-bottom:30px;">
         <div class="tr-section-hd">📝 Notizen</div>
         <div class="tr-food-block">
           <textarea class="tr-textarea" id="tr-notes" placeholder="Wie war dein Tag?" oninput="triggerAutosaveTracker()"></textarea>
         </div>
       </div>
-    </div>
-
     </div>
 
     <!-- SETTINGS PAGE -->
@@ -587,7 +631,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
   </div>
 
   <!-- TAB BAR -->
-  <div id="tab-bar" style="display:none;">
+  <div id="tab-bar">
     <button class="tab-btn" id="tab-home" onclick="goHome()">
       <div class="tab-icon">
         <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
@@ -672,9 +716,17 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
     <div class="modal-title" id="edit-modal-title">Montag</div>
     <div class="modal-save-status" id="modal-save-status">✓</div>
   </div>
-  <div class="modal-body">
-    <div class="modal-section">
-      <div class="modal-section-label">☀️ Mittagessen</div>
+  <!-- Meal tabs -->
+  <div style="display:flex;border-bottom:0.5px solid var(--border);flex-shrink:0;">
+    <button id="meal-tab-btn-lunch" onclick="switchMealEditTab('lunch')" style="flex:1;padding:14px;border:none;background:none;color:var(--blue);font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid var(--blue);">☀️ Mittag</button>
+    <button id="meal-tab-btn-dinner" onclick="switchMealEditTab('dinner')" style="flex:1;padding:14px;border:none;background:none;color:var(--text3);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid transparent;">🌙 Abend</button>
+  </div>
+  <!-- Swipeable container -->
+  <div id="meal-edit-swipe" style="flex:1;overflow:hidden;position:relative;" 
+    ontouchstart="mealSwipeStart(event)" ontouchend="mealSwipeEnd(event)">
+    <!-- Lunch panel -->
+    <div id="meal-panel-lunch" style="position:absolute;inset:0;overflow-y:auto;padding:20px;transition:transform 0.3s cubic-bezier(.4,0,.2,1);transform:translateX(0);">
+      <div class="modal-section-label" style="margin-bottom:10px;">☀️ Mittagessen</div>
       <div class="meal-input-wrap">
         <input class="modal-input" id="edit-lunch" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-lunch','drop-lunch','lunch')"
@@ -682,12 +734,13 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
           onblur="setTimeout(()=>hideDrop('drop-lunch'),250)">
         <div class="meal-dropdown" id="drop-lunch"></div>
       </div>
-      <div class="bring-btn-row">
+      <div style="margin-top:14px;">
         <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'lunch')">🛒 Zutaten zu Bring!</button>
       </div>
     </div>
-    <div class="modal-section">
-      <div class="modal-section-label">🌙 Abendessen</div>
+    <!-- Dinner panel -->
+    <div id="meal-panel-dinner" style="position:absolute;inset:0;overflow-y:auto;padding:20px;transition:transform 0.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);">
+      <div class="modal-section-label" style="margin-bottom:10px;">🌙 Abendessen</div>
       <div class="meal-input-wrap">
         <input class="modal-input" id="edit-dinner" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-dinner','drop-dinner','dinner')"
@@ -695,7 +748,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
           onblur="setTimeout(()=>hideDrop('drop-dinner'),250)">
         <div class="meal-dropdown" id="drop-dinner"></div>
       </div>
-      <div class="bring-btn-row">
+      <div style="margin-top:14px;">
         <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'dinner')">🛒 Zutaten zu Bring!</button>
       </div>
     </div>
@@ -865,8 +918,9 @@ let pinEntry = '';
 
 function onLogin(){
   document.getElementById('login-page').classList.add('hidden');
-  loadMeals();
   loadFavorites();
+  renderWeekStrip();
+  loadMeals();
   loadProfilePics();
   const savedUser = sessionStorage.getItem('alfie_user');
   if(savedUser){ setUser(savedUser); }
@@ -929,6 +983,8 @@ function setUser(user){
   const savedPin=localStorage.getItem(`alfie_pin_${user}`);
   if(savedPin) PINS[user]=savedPin;
   document.getElementById('home-screen').style.display='flex';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-home').classList.add('active');
 }
 
 function resetPin(){
@@ -941,15 +997,15 @@ function resetPin(){
 function enterApp(tab){
   document.getElementById('home-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
-  document.getElementById('tab-bar').style.display = 'flex';
   switchTab(tab);
 }
 
 // Back to home from tab bar logo tap
 function goHome(){
   document.getElementById('app').style.display = 'none';
-  document.getElementById('tab-bar').style.display = 'none';
   document.getElementById('home-screen').style.display = 'flex';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-home').classList.add('active');
 }
 
 window.addEventListener('load',()=>{
@@ -962,6 +1018,9 @@ window.addEventListener('load',()=>{
 // ── TAB NAVIGATION ──
 let currentTab='meals';
 function switchTab(tab){
+  // Hide home screen, show app
+  document.getElementById('home-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.page').forEach(p=>{
@@ -985,21 +1044,119 @@ function switchMealTab(tab,btn){
 }
 
 // ── MEALS ──
+// Week offset: 0 = current week, 1 = next week, etc.
+let currentWeekOffset = 0;
+
+function getWeekMonday(offset) {
+  const today = new Date();
+  const day = today.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  const mon = new Date(today);
+  mon.setDate(today.getDate() + diff + offset * 7);
+  mon.setHours(0,0,0,0);
+  return mon;
+}
+
+function getWeekKey(offset) {
+  const mon = getWeekMonday(offset);
+  return `${mon.getFullYear()}-W${String(Math.ceil((mon.getDate()) / 7)).padStart(2,'0')}-${mon.getMonth()+1}-${mon.getDate()}`;
+}
+
+function getSheetName(offset) {
+  const mon = getWeekMonday(offset);
+  const dd = String(mon.getDate()).padStart(2,'0');
+  const mm = String(mon.getMonth()+1).padStart(2,'0');
+  const yyyy = mon.getFullYear();
+  return `Week_${yyyy}_${mm}_${dd}`;
+}
+
+function renderWeekStrip() {
+  const strip = document.getElementById('week-strip');
+  strip.innerHTML = '';
+  const today = new Date();
+  for (let i = 0; i <= 3; i++) {
+    const mon = getWeekMonday(i);
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    const isActive = i === currentWeekOffset;
+    const isCurrent = i === 0;
+    const btn = document.createElement('button');
+    btn.style.cssText = `flex-shrink:0;padding:8px 12px;border-radius:14px;border:none;background:${isActive?'var(--blue)':'var(--surface2)'};color:${isActive?'white':'var(--text2)'};font-size:13px;font-weight:${isActive?'700':'500'};cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;`;
+    btn.textContent = isCurrent ? `📍 Diese Woche` : `${mon.getDate()}.${mon.getMonth()+1}–${sun.getDate()}.${sun.getMonth()+1}`;
+    btn.onclick = () => { currentWeekOffset = i; renderWeekStrip(); loadMeals(); };
+    strip.appendChild(btn);
+  }
+  // Auto-remove oldest week when a new one starts (keep rolling 4)
+  checkAndArchiveOldWeeks();
+}
+
+function checkAndArchiveOldWeeks() {
+  // This runs automatically — weeks auto-roll forward
+  // No action needed, getWeekMonday(0) always returns current week's Monday
+}
+
+function changeWeek(dir) {
+  const newOffset = currentWeekOffset + dir;
+  if (newOffset < 0 || newOffset > 3) return;
+  currentWeekOffset = newOffset;
+  renderWeekStrip();
+  loadMeals();
+}
+
 async function loadMeals(){
+  const sheetName = getSheetName(currentWeekOffset);
+  const mon = getWeekMonday(currentWeekOffset);
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  document.getElementById('week-label').textContent = `${mon.getDate()}.${mon.getMonth()+1} – ${sun.getDate()}.${sun.getMonth()+1}.${sun.getFullYear()}`;
+
   try{
-    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Sheet1!A1:H3?key=${CONFIG.SHEETS_API_KEY}`);
-    const d=await r.json();const rows=d.values||[];
-    const today=new Date();
-    const off=today.getDay()===0?-6:1-today.getDay();
-    const mon=new Date(today);mon.setDate(today.getDate()+off);
-    mealData=DAYS.map((day,i)=>{
-      const date=new Date(mon);date.setDate(mon.getDate()+i);
-      return{day,jsDay:DAY_JS[i],col:String.fromCharCode(66+i),lunch:rows[1]?.[i+1]||'—',dinner:rows[2]?.[i+1]||'—',date};
+    // Try to read existing sheet for this week
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${encodeURIComponent(sheetName)}!A1:H3`, {
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
     });
+    const d = await r.json();
+
+    if (d.error) {
+      // Sheet doesn't exist yet — create it and prefill with empty data
+      await createWeekSheet(sheetName, mon);
+      mealData = buildEmptyWeek(mon);
+    } else {
+      const rows = d.values || [];
+      mealData = DAYS.map((day, i) => {
+        const date = new Date(mon); date.setDate(mon.getDate() + i);
+        return { day, jsDay: DAY_JS[i], col: String.fromCharCode(66+i), lunch: rows[1]?.[i+1]||'—', dinner: rows[2]?.[i+1]||'—', date, sheetName };
+      });
+    }
     renderDays();
-    const s=mealData[0].date,e=mealData[6].date;
-    document.getElementById('week-label').textContent=`${s.getDate()}.${s.getMonth()+1} – ${e.getDate()}.${e.getMonth()+1}.${e.getFullYear()}`;
-  }catch(e){}
+  } catch(e) {
+    mealData = buildEmptyWeek(mon);
+    renderDays();
+  }
+}
+
+function buildEmptyWeek(mon) {
+  const sheetName = getSheetName(currentWeekOffset);
+  return DAYS.map((day, i) => {
+    const date = new Date(mon); date.setDate(mon.getDate() + i);
+    return { day, jsDay: DAY_JS[i], col: String.fromCharCode(66+i), lunch: '—', dinner: '—', date, sheetName };
+  });
+}
+
+async function createWeekSheet(sheetName, mon) {
+  try {
+    // Create the sheet tab
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}:batchUpdate`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requests: [{ addSheet: { properties: { title: sheetName } } }] })
+    });
+    // Write header row
+    const headers = ['', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${encodeURIComponent(sheetName)}!A1:H3?valueInputOption=RAW`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [headers, ['Mittag','—','—','—','—','—','—','—'], ['Abend','—','—','—','—','—','—','—']] })
+    });
+  } catch(e) {}
 }
 
 function renderDays(){
@@ -1028,6 +1185,37 @@ function renderDays(){
 }
 
 // ── EDIT ──
+// ── MEAL EDIT SWIPE ──
+let mealEditTab = 'lunch';
+let mealSwipeStartX = 0;
+
+function switchMealEditTab(tab) {
+  mealEditTab = tab;
+  const lunchPanel = document.getElementById('meal-panel-lunch');
+  const dinnerPanel = document.getElementById('meal-panel-dinner');
+  const lunchBtn = document.getElementById('meal-tab-btn-lunch');
+  const dinnerBtn = document.getElementById('meal-tab-btn-dinner');
+  if (tab === 'lunch') {
+    lunchPanel.style.transform = 'translateX(0)';
+    dinnerPanel.style.transform = 'translateX(100%)';
+    lunchBtn.style.color = 'var(--blue)'; lunchBtn.style.borderBottom = '2px solid var(--blue)'; lunchBtn.style.fontWeight = '700';
+    dinnerBtn.style.color = 'var(--text3)'; dinnerBtn.style.borderBottom = '2px solid transparent'; dinnerBtn.style.fontWeight = '600';
+  } else {
+    lunchPanel.style.transform = 'translateX(-100%)';
+    dinnerPanel.style.transform = 'translateX(0)';
+    dinnerBtn.style.color = 'var(--blue)'; dinnerBtn.style.borderBottom = '2px solid var(--blue)'; dinnerBtn.style.fontWeight = '700';
+    lunchBtn.style.color = 'var(--text3)'; lunchBtn.style.borderBottom = '2px solid transparent'; lunchBtn.style.fontWeight = '600';
+  }
+}
+
+function mealSwipeStart(e) { mealSwipeStartX = e.touches[0].clientX; }
+function mealSwipeEnd(e) {
+  const diff = mealSwipeStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) < 50) return;
+  if (diff > 0 && mealEditTab === 'lunch') switchMealEditTab('dinner');
+  else if (diff < 0 && mealEditTab === 'dinner') switchMealEditTab('lunch');
+}
+
 function openEdit(idx){
   editingDayIdx=idx;
   const m=mealData[idx];
@@ -1035,6 +1223,7 @@ function openEdit(idx){
   document.getElementById('edit-lunch').value=m.lunch==='—'?'':m.lunch;
   document.getElementById('edit-dinner').value=m.dinner==='—'?'':m.dinner;
   document.getElementById('modal-save-status').textContent='✓';
+  switchMealEditTab('lunch');
   document.getElementById('edit-modal').classList.add('open');
 }
 
@@ -1053,8 +1242,9 @@ function triggerModalAutosave(){
     const lunch=document.getElementById('edit-lunch').value.trim()||'—';
     const dinner=document.getElementById('edit-dinner').value.trim()||'—';
     mealData[i].lunch=lunch;mealData[i].dinner=dinner;
+    const sheetName=mealData[i].sheetName||getSheetName(currentWeekOffset);
     try{
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${mealData[i].col}2:${mealData[i].col}3?valueInputOption=RAW`,{
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${encodeURIComponent(sheetName)}!${mealData[i].col}2:${mealData[i].col}3?valueInputOption=RAW`,{
         method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[[lunch],[dinner]]})
       });
@@ -1337,22 +1527,21 @@ async function loadTracker(){
   foodLog = { breakfast:[], lunch:[], dinner:[], snacks:[] };
   ['breakfast','lunch','dinner','snacks'].forEach(m => renderFoodList(m));
   updateNutritionBars();
+  loadGoals();
   try{
     const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:K`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d=await r.json();
     const rows=d.values||[];
     const row=rows.find(r=>r[0]===trackerDate);
-    const ids=['tr-weight','tr-steps','tr-water','tr-activity','tr-notes'];
-    ids.forEach((id,i)=>document.getElementById(id).value=row?.[i+1]||'');
-    // Restore food log from column 10 (index 9+1=10)
-    try {
-      if(row?.[10]) {
-        foodLog = JSON.parse(row[10]);
-        ['breakfast','lunch','dinner','snacks'].forEach(m => renderFoodList(m));
-        updateNutritionBars();
-      }
-    } catch(e) {}
+    const ids=['tr-weight','tr-steps','tr-water','tr-activity-name','tr-activity-mins','tr-notes'];
+    ids.forEach((id,i)=>{ const el=document.getElementById(id); if(el) el.value=row?.[i+1]||''; });
+    // Show duration row if activity exists
+    if(row?.[4]) document.getElementById('workout-duration-row').style.display='flex';
+    // Restore food log
+    try { if(row?.[10]){ foodLog=JSON.parse(row[10]); ['breakfast','lunch','dinner','snacks'].forEach(m=>renderFoodList(m)); updateNutritionBars(); } } catch(e){}
     updateSummary(row);
+    updateStepBar();
+    updateWaterBar();
     // Pre-fill meals from meal planner
     if(!row?.[5]&&mealData.length){
       const d2=new Date(trackerDate);
@@ -1369,9 +1558,11 @@ function updateSummary(row){
   document.getElementById('sum-weight').textContent=row?.[1]||'—';
   document.getElementById('sum-water').textContent=row?.[3]||'—';
   document.getElementById('sum-steps').textContent=row?.[2]?parseInt(row[2]).toLocaleString('de-CH'):'—';
-  const meals=[row?.[4],row?.[5],row?.[6]].filter(x=>x).length;
+  const meals=[row?.[4],row?.[5],row?.[6]].filter(x=>x&&x!=='').length;
   document.getElementById('sum-meals').textContent=`🍽️ ${meals}/3 Mahlzeiten`;
-  document.getElementById('sum-activity').textContent=row?.[8]?`🏃 ${row[8].substring(0,20)}...`:'🏃 Keine Aktivität';
+  const actName = row?.[4]||'';
+  const actMins = row?.[5]||'';
+  document.getElementById('sum-activity').textContent = actName ? `🏃 ${actName}${actMins?' '+actMins+'min':''}` : '🏃 Keine Aktivität';
 }
 
 function triggerAutosaveTracker(){
@@ -1388,8 +1579,9 @@ async function saveTracker(){
     document.getElementById('tr-weight').value,
     document.getElementById('tr-steps').value,
     document.getElementById('tr-water').value,
-    '','','','',
-    document.getElementById('tr-activity').value,
+    document.getElementById('tr-activity-name').value,
+    document.getElementById('tr-activity-mins').value,
+    '','','',
     document.getElementById('tr-notes').value,
     JSON.stringify(foodLog),
   ];
@@ -1432,11 +1624,71 @@ async function saveTracker(){
 
 function addWater(amount){
   const input=document.getElementById('tr-water');
-  input.value=Math.max(0,Math.round((parseFloat(input.value)||0+amount)*100)/100);
+  input.value=Math.max(0,Math.round(((parseFloat(input.value)||0)+amount)*100)/100);
   triggerAutosaveTracker();
+  updateWaterBar();
 }
 
-// ── FOOD TRACKING ──
+// ── GOALS ──
+function saveGoals() {
+  localStorage.setItem('alfie_goals', JSON.stringify({
+    kcal: document.getElementById('goal-kcal').value,
+    protein: document.getElementById('goal-protein').value,
+    steps: document.getElementById('goal-steps').value,
+    water: document.getElementById('goal-water').value,
+  }));
+}
+
+function loadGoals() {
+  const saved = localStorage.getItem('alfie_goals');
+  if (saved) {
+    const g = JSON.parse(saved);
+    if(g.kcal) document.getElementById('goal-kcal').value = g.kcal;
+    if(g.protein) document.getElementById('goal-protein').value = g.protein;
+    if(g.steps) document.getElementById('goal-steps').value = g.steps;
+    if(g.water) document.getElementById('goal-water').value = g.water;
+  } else {
+    document.getElementById('goal-kcal').value = 1800;
+    document.getElementById('goal-protein').value = 120;
+    document.getElementById('goal-steps').value = 10000;
+    document.getElementById('goal-water').value = 2.5;
+  }
+}
+
+function updateStepBar() {
+  const steps = parseInt(document.getElementById('tr-steps')?.value) || 0;
+  const goal = parseInt(document.getElementById('goal-steps')?.value) || 10000;
+  const pct = Math.min(100, steps/goal*100);
+  const bar = document.getElementById('steps-bar');
+  const label = document.getElementById('sum-steps-bar');
+  if(bar) bar.style.width = pct + '%';
+  if(label) label.textContent = `${steps.toLocaleString('de-CH')} / ${goal.toLocaleString('de-CH')}`;
+}
+
+function updateWaterBar() {
+  const water = parseFloat(document.getElementById('tr-water')?.value) || 0;
+  const goal = parseFloat(document.getElementById('goal-water')?.value) || 2.5;
+  const pct = Math.min(100, water/goal*100);
+  const bar = document.getElementById('water-bar');
+  const label = document.getElementById('sum-water-bar');
+  if(bar) bar.style.width = pct + '%';
+  if(label) label.textContent = `${water}L / ${goal}L`;
+}
+
+// ── ACTIVITY DURATION ──
+function askWorkoutDuration() {
+  const name = document.getElementById('tr-activity-name')?.value.trim();
+  if (!name) return;
+  const row = document.getElementById('workout-duration-row');
+  if (row) row.style.display = 'flex';
+}
+
+function getActivityText() {
+  const name = document.getElementById('tr-activity-name')?.value.trim();
+  const mins = document.getElementById('tr-activity-mins')?.value;
+  if (!name) return '';
+  return mins ? `${name} — ${mins} Min` : name;
+}
 let foodLog = { breakfast:[], lunch:[], dinner:[], snacks:[] };
 let currentFoodMeal = null;
 let foodSearchTimer = null;
