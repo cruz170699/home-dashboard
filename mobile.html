@@ -18,6 +18,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
   --blue:#007AFF;--green:#30D158;--red:#FF453A;--orange:#FF9F0A;--yellow:#FFD60A;--purple:#BF5AF2;
+  --accent:#007AFF;
   --bg:#000;--surface:#1C1C1E;--surface2:#2C2C2E;--surface3:#3A3A3C;
   --text:#fff;--text2:rgba(255,255,255,0.6);--text3:rgba(255,255,255,0.3);
   --border:rgba(255,255,255,0.08);--radius:18px;
@@ -1554,11 +1555,17 @@ async function searchFood(query) {
   }
 
   document.getElementById('food-search-status').textContent = `${results.length} Ergebnisse`;
-  document.getElementById('food-search-results').innerHTML = results.map((f, i) => `
-    <div class="food-search-result" onclick="addFoodItem(${i})">
-      <div class="food-result-name">${f.cat} ${f.name}</div>
-      <div class="food-result-nut">🔥 ${f.kcal} kcal · 💪 ${f.protein}g Protein · 🍞 ${f.carbs}g Kohlenhydrate · 🧈 ${f.fat}g Fett <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>
-    </div>`).join('');
+  const container = document.getElementById('food-search-results');
+  container.innerHTML = '';
+  results.forEach((f, i) => {
+    const el = document.createElement('div');
+    el.className = 'food-search-result';
+    el.innerHTML = `<div class="food-result-name">${f.cat} ${f.name}</div>
+      <div class="food-result-nut">🔥 ${f.kcal} kcal · 💪 ${f.protein}g Protein · 🍞 ${f.carbs}g · 🧈 ${f.fat}g <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>`;
+    el.addEventListener('touchend', (e) => { e.preventDefault(); addFoodItem(i); });
+    el.addEventListener('click', () => addFoodItem(i));
+    container.appendChild(el);
+  });
 
   window._foodResults = results;
 }
@@ -1630,7 +1637,11 @@ function setTheme(themeId){
   document.documentElement.style.setProperty('--bg',t.bg);
   document.documentElement.style.setProperty('--surface',t.surface);
   document.documentElement.style.setProperty('--blue',t.accent);
+  document.documentElement.style.setProperty('--accent',t.accent);
   document.documentElement.style.setProperty('--green',themeId==='neon'?'#39FF14':'#30D158');
+  // Apply bg to body directly
+  document.body.style.background = t.bg;
+  document.getElementById('app').style.background = t.bg;
   localStorage.setItem(`alfie_theme_${currentUser}`,themeId);
   document.querySelectorAll('[id^="theme-"]').forEach(el=>{el.style.borderColor='transparent';el.style.background='transparent';});
   const sel=document.getElementById(`theme-${themeId}`);
