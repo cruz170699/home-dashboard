@@ -215,7 +215,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 </head>
 <body>
 
-<!-- APP SHELL -->
+<!-- LOGIN -->
 <div id="login-page">
   <div class="login-logo">ALFIE</div>
   <div class="login-sub">Home Assistant</div>
@@ -225,7 +225,74 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
   </button>
 </div>
 
-<div id="app">
+<!-- HOME SCREEN -->
+<div id="home-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:50;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
+  <svg width="180" height="132" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="bg2" cx="50%" cy="45%" r="65%"><stop offset="0%" stop-color="#0e1117"/><stop offset="100%" stop-color="#07080b"/></radialGradient>
+      <radialGradient id="hl" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#7B61FF" stop-opacity="0.2"/><stop offset="100%" stop-color="#7B61FF" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="680" height="500" fill="url(#bg2)" rx="20"/>
+    <ellipse cx="340" cy="210" rx="260" ry="190" fill="url(#hl)"/>
+    <circle cx="340" cy="200" r="112" fill="#0b0a14" stroke="#2d2458" stroke-width="1.5"/>
+    <text x="340" y="224" text-anchor="middle" font-family="Inter,sans-serif" font-size="66" font-weight="700" fill="#C4B0FF" textLength="280" lengthAdjust="spacing">ALFIE</text>
+    <text x="340" y="318" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#9B85FF" textLength="200" lengthAdjust="spacing">HOME ASSISTANT</text>
+  </svg>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:400px;margin-top:32px;">
+    <div onclick="enterApp('meals')" style="background:#1a1530;border:1px solid rgba(123,97,255,0.3);border-radius:24px;padding:24px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
+      <svg viewBox="0 0 104 80" width="80" height="62" xmlns="http://www.w3.org/2000/svg">
+        <line x1="36" y1="14" x2="36" y2="52" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="30" y1="14" x2="30" y2="30" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="42" y1="14" x2="42" y2="30" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M30 30 Q36 36 42 30" stroke="#C4B0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <line x1="68" y1="14" x2="68" y2="52" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M68 14 Q76 22 68 34" stroke="#C4B0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="52" cy="46" r="22" stroke="#C4B0FF" stroke-width="2.5" fill="none"/>
+        <circle cx="52" cy="46" r="13" stroke="#C4B0FF" stroke-width="1.2" fill="none"/>
+        
+      </svg>
+      <div style="font-size:16px;font-weight:700;color:white;">ALFIE Meals</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">Wochenplan & Favoriten</div>
+    </div>
+
+    <div onclick="enterApp('lights')" style="background:#1a1f10;border:1px solid rgba(255,214,10,0.3);border-radius:24px;padding:24px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
+      <svg viewBox="0 0 104 80" width="80" height="62" xmlns="http://www.w3.org/2000/svg">
+        <path d="M52 12 Q32 24 32 42 Q32 58 44 64 L44 74 Q44 78 52 78 Q60 78 60 74 L60 64 Q72 58 72 42 Q72 24 52 12Z" stroke="#FFD60A" stroke-width="2.5" fill="rgba(255,214,10,0.07)" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="45" y1="68" x2="59" y2="68" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="47" y1="74" x2="57" y2="74" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M47 44 Q52 37 57 44" stroke="#FFD60A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <line x1="52" y1="5" x2="52" y2="1" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="76" y1="18" x2="80" y2="14" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="28" y1="18" x2="24" y2="14" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="80" y1="42" x2="86" y2="42" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="24" y1="42" x2="18" y2="42" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
+        
+      </svg>
+      <div style="font-size:16px;font-weight:700;color:white;">ALFIE Q</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">ALFIE Qontroll</div>
+    </div>
+
+    <div onclick="enterApp('tracker')" style="background:#101a20;border:1px solid rgba(48,209,88,0.3);border-radius:24px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;grid-column:1/-1;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
+      <svg viewBox="0 0 160 80" width="140" height="62" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="46" width="22" height="28" rx="3" fill="rgba(48,209,88,0.2)" stroke="#30D158" stroke-width="2"/>
+        <rect x="54" y="30" width="22" height="44" rx="3" fill="rgba(48,209,88,0.2)" stroke="#30D158" stroke-width="2"/>
+        <rect x="88" y="14" width="22" height="60" rx="3" fill="rgba(48,209,88,0.35)" stroke="#30D158" stroke-width="2"/>
+        <polyline points="24,38 58,24 76,30 90,14 108,20" fill="none" stroke="#C4B0FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="24" cy="38" r="3.5" fill="#C4B0FF"/>
+        <circle cx="58" cy="24" r="3.5" fill="#C4B0FF"/>
+        <circle cx="76" cy="30" r="3.5" fill="#C4B0FF"/>
+        <circle cx="90" cy="14" r="3.5" fill="#C4B0FF"/>
+        <circle cx="108" cy="20" r="3.5" fill="#C4B0FF"/>
+        <line x1="14" y1="76" x2="120" y2="76" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+        
+      </svg>
+      <div style="font-size:16px;font-weight:700;color:white;">ALFIE HT</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);">Health Tracker</div>
+    </div>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
   <div id="app-content">
 
     <!-- MEALS PAGE -->
@@ -262,7 +329,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
     <!-- TRACKER PAGE -->
     <div class="page" id="page-tracker">
       <div class="nav-header">
-        <div class="nav-title">📊 Mein Tag</div>
+        <div class="nav-title">📊 ALFIE HT</div>
         <div class="nav-subtitle" id="tracker-date-label">Heute</div>
       </div>
       <div class="tracker-date-row" id="tracker-dates"></div>
@@ -345,6 +412,10 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 
   <!-- TAB BAR -->
   <div id="tab-bar">
+    <button class="tab-btn" id="tab-home" onclick="goHome()">
+      <div class="tab-icon">🏠</div>
+      <div class="tab-label">Home</div>
+    </button>
     <button class="tab-btn active" id="tab-meals" onclick="switchTab('meals')">
       <div class="tab-icon">🍽️</div>
       <div class="tab-label">Mahlzeiten</div>
@@ -481,8 +552,22 @@ function initAuth(){
 
 function onLogin(){
   document.getElementById('login-page').classList.add('hidden');
+  const home = document.getElementById('home-screen');
+  home.style.display = 'flex';
   loadMeals();
   loadFavorites();
+}
+
+function enterApp(tab){
+  document.getElementById('home-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  switchTab(tab);
+}
+
+// Back to home from tab bar logo tap
+function goHome(){
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('home-screen').style.display = 'flex';
 }
 
 window.addEventListener('load',()=>{
