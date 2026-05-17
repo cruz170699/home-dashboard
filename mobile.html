@@ -10,6 +10,11 @@
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* Responsive scale for large screens (Fold 7 inner = ~900px wide) */
+:root { --scale: 1; }
+@media (min-width: 600px) { :root { --scale: 1.2; } }
+@media (min-width: 768px) { :root { --scale: 1.4; } }
+@media (min-width: 900px) { :root { --scale: 1.6; } }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
   --blue:#007AFF;--green:#30D158;--red:#FF453A;--orange:#FF9F0A;--yellow:#FFD60A;--purple:#BF5AF2;
@@ -32,8 +37,8 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 /* ── LOGIN ── */
 #login-page{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
 #login-page.hidden{display:none;}
-.login-logo{font-size:52px;font-weight:800;color:#C4B0FF;letter-spacing:-2px;}
-.login-sub{font-size:15px;color:rgba(255,255,255,0.3);letter-spacing:2px;text-transform:uppercase;margin-top:-20px;}
+.login-logo{font-size:clamp(44px,6vw,80px);font-weight:800;color:#C4B0FF;letter-spacing:-2px;}
+.login-sub{font-size:clamp(13px,1.8vw,22px);color:rgba(255,255,255,0.3);letter-spacing:2px;text-transform:uppercase;margin-top:-20px;}
 #btn-login{background:#1a1530;color:white;border:1px solid rgba(123,97,255,0.3);border-radius:16px;padding:18px 32px;font-size:17px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
 #btn-login:active{transform:scale(0.96);}
 #btn-login span{background:white;border-radius:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -42,15 +47,15 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 #tab-bar{flex-shrink:0;background:rgba(28,28,30,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe-bottom));z-index:100;}
 .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border:none;background:none;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;}
 .tab-btn:active{transform:scale(0.88);}
-.tab-icon{font-size:26px;line-height:1;}
-.tab-label{font-size:11px;font-weight:500;color:var(--text3);}
+.tab-icon{font-size:clamp(24px,3vw,40px);line-height:1;}
+.tab-label{font-size:clamp(10px,1.3vw,17px);font-weight:500;color:var(--text3);}
 .tab-btn.active .tab-label{color:var(--blue);}
 .tab-btn.active .tab-icon{transform:scale(1.1);}
 
 /* ── NAV HEADER ── */
 .nav-header{padding:calc(16px + var(--safe-top)) 20px 12px;background:var(--bg);position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
-.nav-title{font-size:32px;font-weight:800;letter-spacing:-0.5px;}
-.nav-subtitle{font-size:15px;color:var(--text2);margin-top:2px;}
+.nav-title{font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-0.5px;}
+.nav-subtitle{font-size:clamp(14px,1.8vw,22px);color:var(--text2);margin-top:2px;}
 .nav-row{display:flex;align-items:flex-end;justify-content:space-between;}
 
 /* ── SECTION HEADER ── */
@@ -69,14 +74,14 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 .day-card:active{transform:scale(0.98);opacity:0.9;}
 .day-card.today{border:2px solid var(--blue);}
 .day-top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;}
-.day-name{font-size:20px;font-weight:700;}
-.day-date{font-size:13px;color:var(--text3);margin-top:2px;}
+.day-name{font-size:clamp(18px,2.5vw,32px);font-weight:700;}
+.day-date{font-size:clamp(12px,1.5vw,20px);color:var(--text3);margin-top:2px;}
 .day-arrow{color:var(--text3);font-size:20px;}
 .day-meals{padding:0 18px 16px;display:flex;flex-direction:column;gap:10px;}
 .meal-row{display:flex;align-items:center;gap:12px;}
 .meal-icon{font-size:20px;flex-shrink:0;}
-.meal-text{font-size:17px;font-weight:400;}
-.meal-empty{color:var(--text3);font-style:italic;font-size:16px;}
+.meal-text{font-size:clamp(15px,2vw,26px);font-weight:400;}
+.meal-empty{color:var(--text3);font-style:italic;font-size:clamp(14px,1.8vw,24px);}
 .meal-divider{height:0.5px;background:var(--border);}
 
 /* PILL BUTTONS */
@@ -107,10 +112,10 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 .room-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);padding:20px 20px 8px;}
 .light-row{display:flex;align-items:center;padding:16px 18px;border-bottom:0.5px solid var(--border);}
 .light-row:last-child{border-bottom:none;}
-.light-emoji{font-size:28px;margin-right:14px;}
+.light-emoji{font-size:clamp(26px,3.5vw,44px);margin-right:14px;}
 .light-info{flex:1;}
-.light-name{font-size:17px;font-weight:500;}
-.light-status{font-size:14px;color:var(--text3);margin-top:2px;}
+.light-name{font-size:clamp(16px,2.2vw,28px);font-weight:500;}
+.light-status{font-size:clamp(13px,1.7vw,22px);color:var(--text3);margin-top:2px;}
 .toggle{width:52px;height:32px;border-radius:16px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background 0.25s;}
 .toggle.on{background:var(--green);}
 .toggle.off{background:var(--surface3);}
@@ -132,16 +137,16 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 .summary-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
 .summary-metric{text-align:center;padding:0 8px;}
 .summary-metric+.summary-metric{border-left:0.5px solid var(--border);}
-.summary-value{font-size:28px;font-weight:700;}
-.summary-label{font-size:12px;color:var(--text3);margin-top:3px;}
+.summary-value{font-size:clamp(24px,3.5vw,44px);font-weight:700;}
+.summary-label{font-size:clamp(11px,1.4vw,18px);color:var(--text3);margin-top:3px;}
 .summary-bottom{margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;}
 .summary-bottom-item{font-size:13px;color:var(--text3);}
 .tr-section{background:var(--surface);border-radius:var(--radius);margin:0 16px 12px;overflow:hidden;}
 .tr-section-hd{padding:14px 18px 10px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);}
 .tr-row{display:flex;align-items:center;padding:14px 18px;border-bottom:0.5px solid var(--border);gap:12px;}
 .tr-row:last-child{border-bottom:none;}
-.tr-label{font-size:18px;font-weight:500;flex:1;}
-.tr-input{background:var(--surface2);border:none;border-radius:12px;padding:12px 16px;font-size:18px;font-family:'Inter',sans-serif;color:var(--text);outline:none;width:110px;text-align:right;}
+.tr-label{font-size:clamp(16px,2.2vw,28px);font-weight:500;flex:1;}
+.tr-input{background:var(--surface2);border:none;border-radius:12px;padding:clamp(10px,1.5vw,18px) clamp(14px,2vw,22px);font-size:clamp(16px,2.2vw,28px);font-family:'Inter',sans-serif;color:var(--text);outline:none;width:110px;text-align:right;}
 .tr-input::placeholder{color:var(--text3);}
 .tr-unit{font-size:16px;color:var(--text3);width:28px;flex-shrink:0;}
 .water-row{display:flex;gap:8px;padding:10px 18px 16px;}
@@ -211,6 +216,16 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 .meal-dropdown-item{padding:14px 18px;font-size:17px;color:var(--text);cursor:pointer;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;}
 .meal-dropdown-item:last-child{border-bottom:none;}
 .meal-dropdown-item:active{background:rgba(0,122,255,0.2);}
+.food-add-btn{width:100%;padding:12px;border-radius:12px;background:rgba(0,122,255,0.1);border:1.5px dashed rgba(0,122,255,0.3);color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.food-item{display:flex;align-items:center;padding:10px 12px;background:var(--surface2);border-radius:12px;gap:10px;}
+.food-item-name{flex:1;font-size:clamp(14px,1.8vw,24px);font-weight:500;}
+.food-item-nut{font-size:12px;color:var(--orange);flex-shrink:0;}
+.food-item-del{color:var(--text3);font-size:16px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
+.food-search-result{display:flex;flex-direction:column;padding:14px 18px;border-bottom:0.5px solid var(--border);cursor:pointer;gap:3px;}
+.food-search-result:active{background:rgba(0,122,255,0.1);}
+.food-result-name{font-size:clamp(15px,2vw,26px);font-weight:500;}
+.food-result-brand{font-size:clamp(12px,1.5vw,20px);color:var(--text3);}
+.food-result-nut{font-size:clamp(12px,1.5vw,20px);color:var(--orange);font-weight:600;}
 </style>
 </head>
 <body>
@@ -398,33 +413,41 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
       </div>
       <div class="tr-section">
         <div class="tr-section-hd">🍽️ Essen</div>
+        <!-- Breakfast -->
         <div class="tr-food-block">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <div class="tr-food-label" style="margin-bottom:0;">☀️ Frühstück</div>
-            <div id="nut-breakfast" style="font-size:12px;color:var(--orange);"></div>
+            <div id="nut-breakfast" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
           </div>
-          <textarea class="tr-textarea" id="tr-breakfast" placeholder="Was hast du gefrühstückt?" oninput="triggerAutosaveTracker();debounceLookup('breakfast')"></textarea>
+          <div id="food-list-breakfast" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+          <button class="food-add-btn" onclick="openFoodSearch('breakfast')">+ Essen hinzufügen</button>
         </div>
+        <!-- Lunch -->
         <div class="tr-food-block">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <div class="tr-food-label" style="margin-bottom:0;">🌤️ Mittagessen</div>
-            <div id="nut-lunch" style="font-size:12px;color:var(--orange);"></div>
+            <div id="nut-lunch" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
           </div>
-          <textarea class="tr-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker();debounceLookup('lunch')"></textarea>
+          <div id="food-list-lunch" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+          <button class="food-add-btn" onclick="openFoodSearch('lunch')">+ Essen hinzufügen</button>
         </div>
+        <!-- Dinner -->
         <div class="tr-food-block">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <div class="tr-food-label" style="margin-bottom:0;">🌙 Abendessen</div>
-            <div id="nut-dinner" style="font-size:12px;color:var(--orange);"></div>
+            <div id="nut-dinner" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
           </div>
-          <textarea class="tr-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker();debounceLookup('dinner')"></textarea>
+          <div id="food-list-dinner" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+          <button class="food-add-btn" onclick="openFoodSearch('dinner')">+ Essen hinzufügen</button>
         </div>
+        <!-- Snacks -->
         <div class="tr-food-block">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <div class="tr-food-label" style="margin-bottom:0;">🍪 Snacks</div>
-            <div id="nut-snacks" style="font-size:12px;color:var(--orange);"></div>
+            <div id="nut-snacks" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
           </div>
-          <textarea class="tr-textarea" id="tr-snacks" placeholder="Snacks..." oninput="triggerAutosaveTracker();debounceLookup('snacks')"></textarea>
+          <div id="food-list-snacks" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+          <button class="food-add-btn" onclick="openFoodSearch('snacks')">+ Essen hinzufügen</button>
         </div>
         <!-- Goals -->
         <div style="padding:14px 18px;border-top:0.5px solid var(--border);">
@@ -543,6 +566,21 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
     <button class="bring-confirm" onclick="saveIng()">💾 Speichern</button>
     <button class="bring-cancel" onclick="closeIng()">Abbrechen</button>
   </div>
+</div>
+
+<!-- FOOD SEARCH MODAL -->
+<div id="food-modal" style="position:fixed;inset:0;z-index:400;background:var(--bg);transform:translateY(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;">
+  <div style="padding:16px 20px 12px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+    <button onclick="closeFoodSearch()" style="background:var(--surface2);border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--text2);">✕</button>
+    <div style="font-size:18px;font-weight:700;" id="food-modal-title">Essen hinzufügen</div>
+  </div>
+  <div style="padding:14px 16px;flex-shrink:0;">
+    <input id="food-search-input" type="text" placeholder="Lebensmittel suchen..." 
+      style="width:100%;background:var(--surface);border:none;border-radius:14px;padding:14px 18px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;"
+      oninput="debounceSearch(this.value)">
+  </div>
+  <div id="food-search-status" style="text-align:center;padding:8px;font-size:14px;color:var(--text3);"></div>
+  <div id="food-search-results" style="flex:1;overflow-y:auto;"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1004,14 +1042,24 @@ function renderDateStrip(){
 async function loadTracker(){
   document.getElementById('tracker-date-label').textContent=trackerDate===new Date().toISOString().split('T')[0]?'Heute':trackerDate;
   nutritionData = { breakfast:{kcal:0,protein:0}, lunch:{kcal:0,protein:0}, dinner:{kcal:0,protein:0}, snacks:{kcal:0,protein:0} };
+  foodLog = { breakfast:[], lunch:[], dinner:[], snacks:[] };
+  ['breakfast','lunch','dinner','snacks'].forEach(m => renderFoodList(m));
   updateNutritionBars();
   try{
     const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:J`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d=await r.json();
     const rows=d.values||[];
     const row=rows.find(r=>r[0]===trackerDate);
-    const ids=['tr-weight','tr-steps','tr-water','tr-breakfast','tr-lunch','tr-dinner','tr-snacks','tr-activity','tr-notes'];
+    const ids=['tr-weight','tr-steps','tr-water','tr-activity','tr-notes'];
     ids.forEach((id,i)=>document.getElementById(id).value=row?.[i+1]||'');
+    // Restore food log from column 10 (index 9+1=10)
+    try {
+      if(row?.[10]) {
+        foodLog = JSON.parse(row[10]);
+        ['breakfast','lunch','dinner','snacks'].forEach(m => renderFoodList(m));
+        updateNutritionBars();
+      }
+    } catch(e) {}
     updateSummary(row);
     // Pre-fill meals from meal planner
     if(!row?.[5]&&mealData.length){
@@ -1046,12 +1094,10 @@ async function saveTracker(){
     document.getElementById('tr-weight').value,
     document.getElementById('tr-steps').value,
     document.getElementById('tr-water').value,
-    document.getElementById('tr-breakfast').value,
-    document.getElementById('tr-lunch').value,
-    document.getElementById('tr-dinner').value,
-    document.getElementById('tr-snacks').value,
+    '', '', '', '', // breakfast/lunch/dinner/snacks (legacy - now in foodLog)
     document.getElementById('tr-activity').value,
     document.getElementById('tr-notes').value,
+    JSON.stringify(foodLog), // column K - food log
   ];
   try{
     // Ensure Tracker sheet exists
@@ -1100,59 +1146,114 @@ function addWater(amount){
   triggerAutosaveTracker();
 }
 
-// ── NUTRITION LOOKUP ──
-let nutritionData = { breakfast:{kcal:0,protein:0}, lunch:{kcal:0,protein:0}, dinner:{kcal:0,protein:0}, snacks:{kcal:0,protein:0} };
-let nutritionTimers = {};
+// ── FOOD TRACKING ──
+let foodLog = { breakfast:[], lunch:[], dinner:[], snacks:[] };
+let currentFoodMeal = null;
+let foodSearchTimer = null;
 
-function debounceLookup(meal) {
-  clearTimeout(nutritionTimers[meal]);
-  nutritionTimers[meal] = setTimeout(() => lookupNutrition(meal), 1500);
+function openFoodSearch(meal) {
+  currentFoodMeal = meal;
+  const labels = {breakfast:'☀️ Frühstück', lunch:'🌤️ Mittagessen', dinner:'🌙 Abendessen', snacks:'🍪 Snacks'};
+  document.getElementById('food-modal-title').textContent = labels[meal];
+  document.getElementById('food-search-input').value = '';
+  document.getElementById('food-search-results').innerHTML = '';
+  document.getElementById('food-search-status').textContent = 'Tippe um zu suchen...';
+  document.getElementById('food-modal').style.transform = 'translateY(0)';
+  setTimeout(() => document.getElementById('food-search-input').focus(), 300);
 }
 
-async function lookupNutrition(meal) {
-  const text = document.getElementById(`tr-${meal}`)?.value.trim();
-  if (!text) {
-    nutritionData[meal] = {kcal:0, protein:0};
-    updateNutritionDisplay(meal, null);
-    updateNutritionBars();
+function closeFoodSearch() {
+  document.getElementById('food-modal').style.transform = 'translateY(100%)';
+  currentFoodMeal = null;
+}
+
+function debounceSearch(query) {
+  clearTimeout(foodSearchTimer);
+  if (!query.trim()) {
+    document.getElementById('food-search-results').innerHTML = '';
+    document.getElementById('food-search-status').textContent = 'Tippe um zu suchen...';
     return;
   }
+  document.getElementById('food-search-status').textContent = '🔍 Suchen...';
+  foodSearchTimer = setTimeout(() => searchFood(query), 600);
+}
+
+async function searchFood(query) {
   try {
-    const query = encodeURIComponent(text.split('\n')[0].split(',')[0].trim());
-    // Use allorigins proxy to avoid CORS
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=1`;
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10&fields=product_name,brands,nutriments,serving_size`;
     const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
     const wrapper = await r.json();
     const d = JSON.parse(wrapper.contents);
-    const product = d?.products?.[0];
-    if (product?.nutriments) {
-      const kcal = Math.round(product.nutriments['energy-kcal_100g'] || product.nutriments['energy-kcal'] || 0);
-      const protein = Math.round((product.nutriments['proteins_100g'] || 0) * 10) / 10;
-      nutritionData[meal] = {kcal, protein};
-      updateNutritionDisplay(meal, {kcal, protein});
-    } else {
-      nutritionData[meal] = {kcal:0, protein:0};
-      updateNutritionDisplay(meal, null);
+    const products = (d?.products || []).filter(p => p.product_name && p.nutriments);
+
+    if (!products.length) {
+      document.getElementById('food-search-status').textContent = 'Keine Ergebnisse gefunden';
+      document.getElementById('food-search-results').innerHTML = '';
+      return;
     }
-    updateNutritionBars();
+
+    document.getElementById('food-search-status').textContent = `${products.length} Ergebnisse`;
+    document.getElementById('food-search-results').innerHTML = products.map((p, i) => {
+      const kcal = Math.round(p.nutriments['energy-kcal_100g'] || p.nutriments['energy-kcal'] || 0);
+      const protein = Math.round((p.nutriments['proteins_100g'] || 0) * 10) / 10;
+      const fat = Math.round((p.nutriments['fat_100g'] || 0) * 10) / 10;
+      const carbs = Math.round((p.nutriments['carbohydrates_100g'] || 0) * 10) / 10;
+      const brand = p.brands ? p.brands.split(',')[0].trim() : '';
+      return `<div class="food-search-result" onclick="addFoodItem(${i})">
+        <div class="food-result-name">${p.product_name}</div>
+        ${brand ? `<div class="food-result-brand">${brand}</div>` : ''}
+        <div class="food-result-nut">🔥 ${kcal} kcal · 💪 ${protein}g Protein · 🍞 ${carbs}g Kohlenhydrate · 🧈 ${fat}g Fett <span style="color:var(--text3);font-size:11px;">pro 100g</span></div>
+      </div>`;
+    }).join('');
+
+    // Store results for onclick
+    window._foodResults = products;
   } catch(e) {
-    updateNutritionDisplay(meal, null);
+    document.getElementById('food-search-status').textContent = '⚠️ Fehler bei der Suche';
   }
 }
 
-function updateNutritionDisplay(meal, data) {
-  const el = document.getElementById(`nut-${meal}`);
-  if (!el) return;
-  if (data && (data.kcal > 0 || data.protein > 0)) {
-    el.textContent = `🔥 ${data.kcal} kcal · 💪 ${data.protein}g`;
-  } else {
-    el.textContent = '';
-  }
+function addFoodItem(idx) {
+  const p = window._foodResults[idx];
+  if (!p || !currentFoodMeal) return;
+  const kcal = Math.round(p.nutriments['energy-kcal_100g'] || p.nutriments['energy-kcal'] || 0);
+  const protein = Math.round((p.nutriments['proteins_100g'] || 0) * 10) / 10;
+  const item = { name: p.product_name, kcal, protein };
+  foodLog[currentFoodMeal].push(item);
+  renderFoodList(currentFoodMeal);
+  updateNutritionBars();
+  triggerAutosaveTracker();
+  closeFoodSearch();
+  showToast(`✅ ${p.product_name} hinzugefügt`);
+}
+
+function removeFoodItem(meal, idx) {
+  foodLog[meal].splice(idx, 1);
+  renderFoodList(meal);
+  updateNutritionBars();
+  triggerAutosaveTracker();
+}
+
+function renderFoodList(meal) {
+  const container = document.getElementById(`food-list-${meal}`);
+  if (!container) return;
+  const items = foodLog[meal];
+  container.innerHTML = items.map((item, i) => `
+    <div class="food-item">
+      <div class="food-item-name">${item.name}</div>
+      <div class="food-item-nut">🔥${item.kcal} · 💪${item.protein}g</div>
+      <div class="food-item-del" onclick="removeFoodItem('${meal}',${i})">✕</div>
+    </div>`).join('');
+  // Update meal total
+  const totalKcal = items.reduce((s,i) => s+i.kcal, 0);
+  const totalProtein = items.reduce((s,i) => s+i.protein, 0);
+  const nutEl = document.getElementById(`nut-${meal}`);
+  if (nutEl) nutEl.textContent = items.length ? `🔥 ${totalKcal} kcal · 💪 ${totalProtein}g` : '';
 }
 
 function updateNutritionBars() {
-  const totalKcal = Object.values(nutritionData).reduce((s,v) => s + v.kcal, 0);
-  const totalProtein = Object.values(nutritionData).reduce((s,v) => s + v.protein, 0);
+  const totalKcal = Object.values(foodLog).flat().reduce((s,i) => s+i.kcal, 0);
+  const totalProtein = Object.values(foodLog).flat().reduce((s,i) => s+i.protein, 0);
   const goalKcal = parseInt(document.getElementById('goal-kcal')?.value) || 1800;
   const goalProtein = parseInt(document.getElementById('goal-protein')?.value) || 120;
   document.getElementById('sum-kcal').textContent = `${totalKcal} / ${goalKcal} kcal`;
