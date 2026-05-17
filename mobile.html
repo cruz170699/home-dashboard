@@ -243,7 +243,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 <!-- PIN SCREEN -->
 <div id="pin-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:90;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px;">
   <div style="font-size:36px;font-weight:800;color:#C4B0FF;letter-spacing:-1px;">ALFIE</div>
-  <div style="font-size:17px;color:rgba(255,255,255,0.4);">Wer bist du?</div>
+  <div style="font-size:17px;color:rgba(255,255,255,0.4);" id="pin-screen-sub">Wer bist du?</div>
   <div style="display:flex;gap:14px;width:100%;max-width:360px;">
     <!-- Sergio -->
     <button onclick="selectUser('sergio')" style="flex:1;padding:24px 16px;border-radius:22px;background:rgba(0,122,255,0.12);border:1.5px solid rgba(0,122,255,0.3);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
@@ -824,11 +824,32 @@ function uploadPic(user, input) {
   const reader = new FileReader();
   reader.onload = (e) => {
     const dataUrl = e.target.result;
-    localStorage.setItem(`alfie_pic_${user}`, dataUrl);
-    const picEl = document.getElementById(`pic-${user}`);
-    picEl.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    try {
+      localStorage.setItem(`alfie_pic_${user}`, dataUrl);
+    } catch(err) {
+      // If localStorage is full, compress image first
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 200; canvas.height = 200;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, 200, 200);
+        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        localStorage.setItem(`alfie_pic_${user}`, compressed);
+        updatePicUI(user, compressed);
+      };
+      img.src = dataUrl;
+      return;
+    }
+    updatePicUI(user, dataUrl);
   };
   reader.readAsDataURL(file);
+}
+
+function updatePicUI(user, dataUrl) {
+  const picEl = document.getElementById(`pic-${user}`);
+  if(picEl) picEl.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+  showToast('📷 Foto gespeichert!');
 }
 
 function loadProfilePics() {
@@ -901,11 +922,12 @@ function setUser(user){
   currentUser=user;
   sessionStorage.setItem('alfie_user',user);
   document.getElementById('pin-screen').style.display='none';
+  // Tracker only for Miriam, Settings for both
   document.getElementById('tab-tracker').style.display=user==='sergio'?'none':'flex';
+  document.getElementById('tab-settings').style.display='flex';
   const trackerCard=document.getElementById('home-tracker-card');
   if(trackerCard) trackerCard.style.display=user==='sergio'?'none':'flex';
   loadTheme(user);
-  // Load saved PIN
   const savedPin=localStorage.getItem(`alfie_pin_${user}`);
   if(savedPin) PINS[user]=savedPin;
   document.getElementById('home-screen').style.display='flex';
@@ -913,6 +935,8 @@ function setUser(user){
 
 function resetPin(){
   pinEntry=''; currentUser=null;
+  const inp = document.getElementById('pin-input');
+  if(inp) inp.value='';
   document.getElementById('pin-entry').style.display='none';
 }
 
@@ -1623,12 +1647,24 @@ function uploadSettingsPic(input){
   const file=input.files[0]; if(!file)return;
   const reader=new FileReader();
   reader.onload=(e)=>{
-    const dataUrl=e.target.result;
-    localStorage.setItem(`alfie_pic_${currentUser}`,dataUrl);
-    document.getElementById('settings-pic').innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-    const pinEl=document.getElementById(`pic-${currentUser}`);
-    if(pinEl) pinEl.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-    showToast('📷 Foto gespeichert!');
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 200; canvas.height = 200;
+      const ctx = canvas.getContext('2d');
+      // Crop to square center
+      const size = Math.min(img.width, img.height);
+      const x = (img.width - size) / 2;
+      const y = (img.height - size) / 2;
+      ctx.drawImage(img, x, y, size, size, 0, 0, 200, 200);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      localStorage.setItem(`alfie_pic_${currentUser}`, dataUrl);
+      document.getElementById('settings-pic').innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+      const pinEl=document.getElementById(`pic-${currentUser}`);
+      if(pinEl) pinEl.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+      showToast('📷 Foto gespeichert!');
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
