@@ -117,7 +117,23 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
 .meal-block-input{width:100%;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:18px;font-size:22px;font-family:'Inter',sans-serif;color:white;outline:none;}
 .meal-block-input:focus{border-color:var(--blue);}
 .meal-block-input::placeholder{color:rgba(255,255,255,0.25);}
-/* DROPDOWN SEARCH */
+/* TRACKER */
+.tracker-scroll{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;padding-bottom:80px;}
+.tracker-section{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.tracker-section-hd{padding:14px 18px;background:var(--surface2);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);display:flex;align-items:center;gap:8px;}
+.tracker-row{display:flex;align-items:center;padding:14px 18px;border-bottom:0.5px solid var(--border);gap:12px;}
+.tracker-row:last-child{border-bottom:none;}
+.tracker-label{font-size:17px;font-weight:500;flex:1;}
+.tracker-input{background:var(--surface2);border:none;border-radius:10px;padding:10px 14px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;width:110px;text-align:right;}
+.tracker-unit{font-size:15px;color:var(--text3);flex-shrink:0;width:30px;}
+.tracker-textarea{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:12px 14px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;min-height:60px;}
+.tracker-date-strip{display:flex;gap:8px;overflow-x:auto;padding:14px 18px;scrollbar-width:none;}
+.tracker-date-btn{flex-shrink:0;padding:8px 16px;border-radius:20px;border:none;background:var(--surface2);font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;}
+.tracker-date-btn.active{background:var(--blue);color:white;}
+.save-tracker-btn{width:100%;padding:18px;border-radius:16px;background:var(--blue);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
+.water-btns{display:flex;gap:8px;flex-wrap:wrap;padding:8px 18px 14px;}
+.water-btn{padding:8px 14px;border-radius:20px;background:var(--surface2);border:none;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;}
+.water-btn.active{background:#eff6ff;color:var(--blue);font-weight:600;}
 .meal-input-wrap{position:relative;}
 .meal-dropdown{position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border-radius:16px;margin-top:6px;overflow:hidden;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:none;max-height:260px;overflow-y:auto;}
 .meal-dropdown.open{display:block;}
@@ -229,6 +245,11 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
       <div class="menu-card-label">Lichter</div>
       <div class="menu-card-sub">IKEA Dirigera</div>
     </div>
+    <div class="menu-card" onclick="showScreen('tracker-view');loadTracker()" style="grid-column:1/-1;">
+      <div class="menu-card-icon">📊</div>
+      <div class="menu-card-label">Miriams Tracker</div>
+      <div class="menu-card-sub">Gewicht · Schritte · Wasser · Essen · Sport</div>
+    </div>
   </div>
 </div>
 
@@ -301,6 +322,83 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
 </div>
 
 <!-- LIST VIEW -->
+
+<!-- TRACKER -->
+<div class="screen" id="tracker-view">
+  <div class="lights-header">
+    <button class="back-btn" onclick="showHome()">‹ Home</button>
+    <div style="font-size:26px;font-weight:700;margin-left:8px;">📊 Mein Tag</div>
+  </div>
+  <!-- Date strip -->
+  <div class="tracker-date-strip" id="tracker-dates"></div>
+  <div class="tracker-scroll">
+    <!-- Body -->
+    <div class="tracker-section">
+      <div class="tracker-section-hd">⚖️ Körper</div>
+      <div class="tracker-row">
+        <div class="tracker-label">Gewicht</div>
+        <input class="tracker-input" id="tr-weight" type="number" step="0.1" placeholder="—">
+        <div class="tracker-unit">kg</div>
+      </div>
+      <div class="tracker-row">
+        <div class="tracker-label">Schritte</div>
+        <input class="tracker-input" id="tr-steps" type="number" placeholder="—">
+        <div class="tracker-unit">👟</div>
+      </div>
+    </div>
+    <!-- Water -->
+    <div class="tracker-section">
+      <div class="tracker-section-hd">💧 Wasser</div>
+      <div class="tracker-row">
+        <div class="tracker-label">Getrunken</div>
+        <input class="tracker-input" id="tr-water" type="number" step="0.1" placeholder="—">
+        <div class="tracker-unit">L</div>
+      </div>
+      <div class="water-btns">
+        <button class="water-btn" onclick="addWater(0.25)">+0.25L</button>
+        <button class="water-btn" onclick="addWater(0.5)">+0.5L</button>
+        <button class="water-btn" onclick="addWater(1)">+1L</button>
+        <button class="water-btn" onclick="addWater(-0.25)">-0.25L</button>
+      </div>
+    </div>
+    <!-- Food -->
+    <div class="tracker-section">
+      <div class="tracker-section-hd">🍽️ Essen</div>
+      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text2);">☀️ Frühstück</div>
+        <textarea class="tracker-textarea" id="tr-breakfast" placeholder="Was hast du gefrühstückt?"></textarea>
+      </div>
+      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text2);">🌤️ Mittagessen</div>
+        <textarea class="tracker-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan oder eingeben..."></textarea>
+      </div>
+      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text2);">🌙 Abendessen</div>
+        <textarea class="tracker-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan oder eingeben..."></textarea>
+      </div>
+      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text2);">🍪 Snacks</div>
+        <textarea class="tracker-textarea" id="tr-snacks" placeholder="Snacks..."></textarea>
+      </div>
+    </div>
+    <!-- Activity -->
+    <div class="tracker-section">
+      <div class="tracker-section-hd">🏃 Aktivität</div>
+      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text2);">Sport / Aktivität</div>
+        <textarea class="tracker-textarea" id="tr-activity" placeholder="z.B. Laufen 30 Min, Yoga 45 Min..."></textarea>
+      </div>
+    </div>
+    <!-- Notes -->
+    <div class="tracker-section">
+      <div class="tracker-section-hd">📝 Notizen</div>
+      <div class="tracker-row" style="flex-direction:column;align-items:stretch;">
+        <textarea class="tracker-textarea" id="tr-notes" placeholder="Wie war dein Tag?"></textarea>
+      </div>
+    </div>
+    <button class="save-tracker-btn" onclick="saveTracker()">💾 Speichern</button>
+  </div>
+</div>
 
 <!-- EDIT VIEW -->
 <div id="edit-view">
@@ -401,7 +499,117 @@ function afterLogin(){
 
 async function loadAll(){await loadMeals();await loadFavorites();}
 
-// ── NAVIGATION ──
+// ── TRACKER ──
+const TRACKER_SHEET_ID = '1w0cGk__mlyKh5P7y5f-QVEijID2jakNS4qJ8uRqnEHU';
+let trackerDate = new Date().toISOString().split('T')[0];
+
+function renderDateStrip() {
+  const strip = document.getElementById('tracker-dates');
+  strip.innerHTML = '';
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const ds = d.toISOString().split('T')[0];
+    const dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const btn = document.createElement('button');
+    btn.className = 'tracker-date-btn' + (ds === trackerDate ? ' active' : '');
+    btn.innerHTML = `<div>${dayNames[d.getDay()]}</div><div style="font-size:12px;">${d.getDate()}.${d.getMonth()+1}</div>`;
+    btn.onclick = () => { trackerDate = ds; renderDateStrip(); loadTracker(); };
+    strip.appendChild(btn);
+  }
+}
+
+async function loadTracker() {
+  renderDateStrip();
+  // Load today's meals from meal planner
+  if (mealData.length) {
+    const today = new Date();
+    const todayDay = today.getDay();
+    const DAY_JS = [1,2,3,4,5,6,0];
+    const todayMeal = mealData.find(m => m.jsDay === todayDay);
+    if (todayMeal && trackerDate === today.toISOString().split('T')[0]) {
+      if (todayMeal.lunch && todayMeal.lunch !== '—') document.getElementById('tr-lunch').placeholder = todayMeal.lunch;
+      if (todayMeal.dinner && todayMeal.dinner !== '—') document.getElementById('tr-dinner').placeholder = todayMeal.dinner;
+    }
+  }
+  // Load from sheets
+  try {
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A:K`, {
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
+    });
+    const d = await r.json();
+    const rows = d.values || [];
+    const row = rows.find(r => r[0] === trackerDate);
+    if (row) {
+      document.getElementById('tr-weight').value = row[1] || '';
+      document.getElementById('tr-steps').value = row[2] || '';
+      document.getElementById('tr-water').value = row[3] || '';
+      document.getElementById('tr-breakfast').value = row[4] || '';
+      document.getElementById('tr-lunch').value = row[5] || '';
+      document.getElementById('tr-dinner').value = row[6] || '';
+      document.getElementById('tr-snacks').value = row[7] || '';
+      document.getElementById('tr-activity').value = row[8] || '';
+      document.getElementById('tr-notes').value = row[9] || '';
+    } else {
+      ['tr-weight','tr-steps','tr-water','tr-breakfast','tr-lunch','tr-dinner','tr-snacks','tr-activity','tr-notes'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+    }
+  } catch(e) {}
+}
+
+async function saveTracker() {
+  const row = [
+    trackerDate,
+    document.getElementById('tr-weight').value,
+    document.getElementById('tr-steps').value,
+    document.getElementById('tr-water').value,
+    document.getElementById('tr-breakfast').value,
+    document.getElementById('tr-lunch').value,
+    document.getElementById('tr-dinner').value,
+    document.getElementById('tr-snacks').value,
+    document.getElementById('tr-activity').value,
+    document.getElementById('tr-notes').value,
+  ];
+  try {
+    // First ensure header row exists
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A1:J1?valueInputOption=RAW`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [['Datum','Gewicht','Schritte','Wasser','Frühstück','Mittagessen','Abendessen','Snacks','Aktivität','Notizen']] })
+    });
+    // Check if row for this date exists
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A:A`, {
+      headers: { 'Authorization': `Bearer ${oauthToken}` }
+    });
+    const d = await r.json();
+    const rows = d.values || [];
+    const rowIdx = rows.findIndex(r => r[0] === trackerDate);
+    if (rowIdx > 0) {
+      // Update existing row
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A${rowIdx+1}:J${rowIdx+1}?valueInputOption=RAW`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [row] })
+      });
+    } else {
+      // Append new row
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A:J:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [row] })
+      });
+    }
+    showToast('✅ Gespeichert!');
+  } catch(e) { showToast('Fehler beim Speichern'); }
+}
+
+function addWater(amount) {
+  const input = document.getElementById('tr-water');
+  const current = parseFloat(input.value) || 0;
+  input.value = Math.max(0, Math.round((current + amount) * 100) / 100);
+}
 function showHome(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('home-menu').classList.add('active');
