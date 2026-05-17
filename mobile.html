@@ -268,8 +268,8 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
         <line x1="24" y1="42" x2="18" y2="42" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
         
       </svg>
-      <div style="font-size:16px;font-weight:700;color:white;">ALFIE Q</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">ALFIE Qontroll</div>
+      <div style="font-size:16px;font-weight:700;color:white;">ALFIE C</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">ALFIE Control</div>
     </div>
 
     <div onclick="enterApp('tracker')" style="background:#101a20;border:1px solid rgba(48,209,88,0.3);border-radius:24px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;grid-column:1/-1;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
@@ -341,7 +341,28 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
           <div class="summary-metric"><div class="summary-value" id="sum-water" style="color:var(--blue);">—</div><div class="summary-label">L Wasser</div></div>
           <div class="summary-metric"><div class="summary-value" id="sum-steps" style="color:var(--green);">—</div><div class="summary-label">Schritte</div></div>
         </div>
-        <div class="summary-bottom">
+        <!-- Calorie & Protein bars -->
+        <div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;flex-direction:column;gap:10px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span style="font-size:13px;color:var(--text2);">🔥 Kalorien</span>
+              <span style="font-size:13px;font-weight:600;color:var(--orange);" id="sum-kcal">0 / 1800 kcal</span>
+            </div>
+            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
+              <div id="kcal-bar" style="height:100%;width:0%;background:var(--orange);border-radius:3px;transition:width 0.4s;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span style="font-size:13px;color:var(--text2);">💪 Protein</span>
+              <span style="font-size:13px;font-weight:600;color:var(--blue);" id="sum-protein">0 / 120g</span>
+            </div>
+            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
+              <div id="protein-bar" style="height:100%;width:0%;background:var(--blue);border-radius:3px;transition:width 0.4s;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:space-between;">
           <div class="summary-bottom-item" id="sum-meals">🍽️ 0/3 Mahlzeiten</div>
           <div class="summary-bottom-item" id="sum-activity">🏃 Keine Aktivität</div>
         </div>
@@ -378,20 +399,46 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
       <div class="tr-section">
         <div class="tr-section-hd">🍽️ Essen</div>
         <div class="tr-food-block">
-          <div class="tr-food-label">☀️ Frühstück</div>
-          <textarea class="tr-textarea" id="tr-breakfast" placeholder="Was hast du gefrühstückt?" oninput="triggerAutosaveTracker()"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="tr-food-label" style="margin-bottom:0;">☀️ Frühstück</div>
+            <div id="nut-breakfast" style="font-size:12px;color:var(--orange);"></div>
+          </div>
+          <textarea class="tr-textarea" id="tr-breakfast" placeholder="Was hast du gefrühstückt?" oninput="triggerAutosaveTracker();debounceLookup('breakfast')"></textarea>
         </div>
         <div class="tr-food-block">
-          <div class="tr-food-label">🌤️ Mittagessen</div>
-          <textarea class="tr-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker()"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="tr-food-label" style="margin-bottom:0;">🌤️ Mittagessen</div>
+            <div id="nut-lunch" style="font-size:12px;color:var(--orange);"></div>
+          </div>
+          <textarea class="tr-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker();debounceLookup('lunch')"></textarea>
         </div>
         <div class="tr-food-block">
-          <div class="tr-food-label">🌙 Abendessen</div>
-          <textarea class="tr-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker()"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="tr-food-label" style="margin-bottom:0;">🌙 Abendessen</div>
+            <div id="nut-dinner" style="font-size:12px;color:var(--orange);"></div>
+          </div>
+          <textarea class="tr-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker();debounceLookup('dinner')"></textarea>
         </div>
         <div class="tr-food-block">
-          <div class="tr-food-label">🍪 Snacks</div>
-          <textarea class="tr-textarea" id="tr-snacks" placeholder="Snacks..." oninput="triggerAutosaveTracker()"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="tr-food-label" style="margin-bottom:0;">🍪 Snacks</div>
+            <div id="nut-snacks" style="font-size:12px;color:var(--orange);"></div>
+          </div>
+          <textarea class="tr-textarea" id="tr-snacks" placeholder="Snacks..." oninput="triggerAutosaveTracker();debounceLookup('snacks')"></textarea>
+        </div>
+        <!-- Goals -->
+        <div style="padding:14px 18px;border-top:0.5px solid var(--border);">
+          <div style="font-size:13px;color:var(--text3);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">🎯 Tagesziele</div>
+          <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">Kalorien</div>
+              <input type="number" id="goal-kcal" class="tr-input" style="width:100%;" value="1800" placeholder="kcal" oninput="updateNutritionBars()">
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">Protein</div>
+              <input type="number" id="goal-protein" class="tr-input" style="width:100%;" value="120" placeholder="g" oninput="updateNutritionBars()">
+            </div>
+          </div>
         </div>
       </div>
       <div class="tr-section">
@@ -956,6 +1003,8 @@ function renderDateStrip(){
 
 async function loadTracker(){
   document.getElementById('tracker-date-label').textContent=trackerDate===new Date().toISOString().split('T')[0]?'Heute':trackerDate;
+  nutritionData = { breakfast:{kcal:0,protein:0}, lunch:{kcal:0,protein:0}, dinner:{kcal:0,protein:0}, snacks:{kcal:0,protein:0} };
+  updateNutritionBars();
   try{
     const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:J`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d=await r.json();
@@ -1026,7 +1075,65 @@ function addWater(amount){
   triggerAutosaveTracker();
 }
 
-// ── HELPERS ──
+// ── NUTRITION LOOKUP ──
+let nutritionData = { breakfast:{kcal:0,protein:0}, lunch:{kcal:0,protein:0}, dinner:{kcal:0,protein:0}, snacks:{kcal:0,protein:0} };
+let nutritionTimers = {};
+
+function debounceLookup(meal) {
+  clearTimeout(nutritionTimers[meal]);
+  nutritionTimers[meal] = setTimeout(() => lookupNutrition(meal), 1500);
+}
+
+async function lookupNutrition(meal) {
+  const text = document.getElementById(`tr-${meal}`)?.value.trim();
+  if (!text) {
+    nutritionData[meal] = {kcal:0, protein:0};
+    updateNutritionDisplay(meal, null);
+    updateNutritionBars();
+    return;
+  }
+  try {
+    const query = encodeURIComponent(text.split('\n')[0].split(',')[0].trim());
+    const r = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=1`);
+    const d = await r.json();
+    const product = d?.products?.[0];
+    if (product?.nutriments) {
+      const kcal = Math.round(product.nutriments['energy-kcal_100g'] || product.nutriments['energy-kcal'] || 0);
+      const protein = Math.round((product.nutriments['proteins_100g'] || 0) * 10) / 10;
+      nutritionData[meal] = {kcal, protein};
+      updateNutritionDisplay(meal, {kcal, protein, name: product.product_name});
+    } else {
+      nutritionData[meal] = {kcal:0, protein:0};
+      updateNutritionDisplay(meal, null);
+    }
+    updateNutritionBars();
+  } catch(e) {
+    updateNutritionDisplay(meal, null);
+  }
+}
+
+function updateNutritionDisplay(meal, data) {
+  const el = document.getElementById(`nut-${meal}`);
+  if (!el) return;
+  if (data && (data.kcal > 0 || data.protein > 0)) {
+    el.textContent = `🔥 ${data.kcal} kcal · 💪 ${data.protein}g`;
+  } else {
+    el.textContent = '';
+  }
+}
+
+function updateNutritionBars() {
+  const totalKcal = Object.values(nutritionData).reduce((s,v) => s + v.kcal, 0);
+  const totalProtein = Object.values(nutritionData).reduce((s,v) => s + v.protein, 0);
+  const goalKcal = parseInt(document.getElementById('goal-kcal')?.value) || 1800;
+  const goalProtein = parseInt(document.getElementById('goal-protein')?.value) || 120;
+  document.getElementById('sum-kcal').textContent = `${totalKcal} / ${goalKcal} kcal`;
+  document.getElementById('sum-protein').textContent = `${totalProtein} / ${goalProtein}g`;
+  document.getElementById('kcal-bar').style.width = `${Math.min(100, totalKcal/goalKcal*100)}%`;
+  document.getElementById('protein-bar').style.width = `${Math.min(100, totalProtein/goalProtein*100)}%`;
+  document.getElementById('kcal-bar').style.background = totalKcal > goalKcal ? 'var(--red)' : 'var(--orange)';
+  document.getElementById('protein-bar').style.background = totalProtein >= goalProtein ? 'var(--green)' : 'var(--blue)';
+}
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
