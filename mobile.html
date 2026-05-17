@@ -1023,6 +1023,7 @@ function switchTab(tab){
   document.querySelectorAll('.page').forEach(p=>{
     p.style.display = p.id==='page-'+tab ? 'block' : 'none';
   });
+  window.scrollTo(0,0);
   currentTab=tab;
   if(tab==='lights')loadLights();
   if(tab==='tracker'){loadTracker();renderDateStrip();}
