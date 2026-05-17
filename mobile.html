@@ -29,10 +29,10 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 
 /* ── APP SHELL ── */
 #app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;z-index:1;}
-#app-content{flex:1;overflow:hidden;position:relative;min-height:0;isolation:isolate;}
-.page{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:80px;background:var(--bg);transform:translateX(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;visibility:hidden;will-change:transform;}
-.page.active{transform:translateX(0);opacity:1;pointer-events:all;visibility:visible;}
-.page.prev{transform:translateX(-100%);opacity:0;pointer-events:none;visibility:hidden;}
+#app-content{flex:1;min-height:0;position:relative;overflow:hidden;}
+.page{display:none;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:80px;background:var(--bg);}
+.page.active{display:block;}
+.page.prev{display:none;}
 
 /* ── LOGIN ── */
 #login-page{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
@@ -350,7 +350,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
   <div id="app-content">
 
     <!-- MEALS PAGE -->
-    <div class="page active" id="page-meals">
+    <div class="page" id="page-meals" style="display:block;">
       <div class="nav-header">
         <div class="nav-row">
           <div>
@@ -1017,14 +1017,12 @@ window.addEventListener('load',()=>{
 // ── TAB NAVIGATION ──
 let currentTab='meals';
 function switchTab(tab){
-  // Hide home screen, show app
   document.getElementById('home-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.page').forEach(p=>{
-    if(p.id==='page-'+tab){p.classList.remove('prev');p.classList.add('active');}
-    else{p.classList.remove('active');p.classList.add('prev');}
+    p.style.display = p.id==='page-'+tab ? 'block' : 'none';
   });
   currentTab=tab;
   if(tab==='lights')loadLights();
