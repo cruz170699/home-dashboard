@@ -240,7 +240,47 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
   </button>
 </div>
 
-<!-- HOME SCREEN -->
+<!-- PIN SCREEN -->
+<div id="pin-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:90;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px;">
+  <div style="font-size:36px;font-weight:800;color:#C4B0FF;letter-spacing:-1px;">ALFIE</div>
+  <div style="font-size:17px;color:rgba(255,255,255,0.4);">Wer bist du?</div>
+  <div style="display:flex;gap:14px;width:100%;max-width:360px;">
+    <!-- Sergio -->
+    <button onclick="selectUser('sergio')" style="flex:1;padding:24px 16px;border-radius:22px;background:rgba(0,122,255,0.12);border:1.5px solid rgba(0,122,255,0.3);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div id="pic-sergio" style="width:72px;height:72px;border-radius:50%;background:rgba(0,122,255,0.3);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(0,122,255,0.5);">👨</div>
+      Sérgio
+      <div onclick="event.stopPropagation();document.getElementById('upload-sergio').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">📷 Foto</div>
+      <input type="file" id="upload-sergio" accept="image/*" style="display:none" onchange="uploadPic('sergio',this)">
+    </button>
+    <!-- Miriam -->
+    <button onclick="selectUser('miriam')" style="flex:1;padding:24px 16px;border-radius:22px;background:rgba(191,90,242,0.12);border:1.5px solid rgba(191,90,242,0.3);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div id="pic-miriam" style="width:72px;height:72px;border-radius:50%;background:rgba(191,90,242,0.3);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(191,90,242,0.5);">👩</div>
+      Miriam
+      <div onclick="event.stopPropagation();document.getElementById('upload-miriam').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">📷 Foto</div>
+      <input type="file" id="upload-miriam" accept="image/*" style="display:none" onchange="uploadPic('miriam',this)">
+    </button>
+  </div>
+  <!-- PIN entry -->
+  <div id="pin-entry" style="display:none;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:320px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div id="pin-pic" style="width:52px;height:52px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:28px;"></div>
+      <div id="pin-name" style="font-size:22px;font-weight:700;color:white;"></div>
+    </div>
+    <div id="pin-dots" style="display:flex;gap:14px;"></div>
+    <div id="pin-error" style="font-size:14px;color:var(--red);height:18px;"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;">
+      ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`
+        <button onclick="pinKey('${k}')" style="padding:20px;border-radius:18px;background:${k===''?'transparent':'rgba(255,255,255,0.08)'};border:none;color:white;font-size:24px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;${k===''?'pointer-events:none;':''}">${k}</button>
+      `).join('')}
+    </div>
+    <button onclick="resetPin()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;">← Zurück</button>
+  </div>
+</div>
+
+<style>
+.pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.15s;}
+.pin-dot.filled{background:white;}
+</style>
 <div id="home-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:50;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
   <svg width="180" height="132" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -287,7 +327,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
       <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">ALFIE Control</div>
     </div>
 
-    <div onclick="enterApp('tracker')" style="background:#101a20;border:1px solid rgba(48,209,88,0.3);border-radius:24px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;grid-column:1/-1;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
+    <div onclick="enterApp('tracker')" id="home-tracker-card" style="background:#101a20;border:1px solid rgba(48,209,88,0.3);border-radius:24px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;grid-column:1/-1;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
       <svg viewBox="0 0 160 80" width="140" height="62" xmlns="http://www.w3.org/2000/svg">
         <rect x="20" y="46" width="22" height="28" rx="3" fill="rgba(48,209,88,0.2)" stroke="#30D158" stroke-width="2"/>
         <rect x="54" y="30" width="22" height="44" rx="3" fill="rgba(48,209,88,0.2)" stroke="#30D158" stroke-width="2"/>
@@ -478,6 +518,75 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
       </div>
     </div>
 
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="nav-header">
+        <div class="nav-title">⚙️ Einstellungen</div>
+        <div class="nav-subtitle" id="settings-username">—</div>
+      </div>
+
+      <!-- Profile -->
+      <div class="section-hd">Profil</div>
+      <div class="card">
+        <div class="card-row" style="flex-direction:column;align-items:center;gap:14px;padding:24px;">
+          <div id="settings-pic" style="width:90px;height:90px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden;border:2px solid var(--border);cursor:pointer;" onclick="document.getElementById('upload-settings').click()">👤</div>
+          <input type="file" id="upload-settings" accept="image/*" style="display:none" onchange="uploadSettingsPic(this)">
+          <button onclick="document.getElementById('upload-settings').click()" style="background:var(--surface2);border:none;border-radius:12px;padding:10px 20px;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">📷 Foto ändern</button>
+        </div>
+      </div>
+
+      <!-- Change PIN -->
+      <div class="section-hd">Sicherheit</div>
+      <div class="card">
+        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:12px;padding:18px;">
+          <div style="font-size:16px;font-weight:600;">🔐 PIN ändern</div>
+          <input type="number" id="new-pin" class="tr-input" style="width:100%;background:var(--surface2);" placeholder="Neuer PIN eingeben">
+          <input type="number" id="new-pin-confirm" class="tr-input" style="width:100%;background:var(--surface2);" placeholder="PIN bestätigen">
+          <button onclick="changePin()" style="width:100%;padding:14px;border-radius:14px;background:var(--blue);color:white;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">PIN speichern</button>
+          <div id="pin-change-msg" style="font-size:13px;text-align:center;height:18px;"></div>
+        </div>
+      </div>
+
+      <!-- Themes -->
+      <div class="section-hd">Theme</div>
+      <div class="card">
+        <div style="padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          ${[
+            {id:'midnight',name:'Midnight',bg:'#07080b',accent:'#7B61FF'},
+            {id:'ocean',name:'Ocean',bg:'#040d18',accent:'#00C9FF'},
+            {id:'forest',name:'Forest',bg:'#050f08',accent:'#30D158'},
+            {id:'sunset',name:'Sunset',bg:'#120806',accent:'#FF6B35'},
+            {id:'rose',name:'Rose',bg:'#110609',accent:'#FF2D55'},
+            {id:'gold',name:'Gold',bg:'#0f0d04',accent:'#FFD60A'},
+            {id:'arctic',name:'Arctic',bg:'#050810',accent:'#64D2FF'},
+            {id:'neon',name:'Neon',bg:'#010a01',accent:'#39FF14'},
+          ].map(t=>`
+            <div onclick="setTheme('${t.id}')" id="theme-${t.id}" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;">
+              <div style="width:44px;height:44px;border-radius:12px;background:${t.bg};border:2px solid ${t.accent};display:flex;align-items:center;justify-content:center;">
+                <div style="width:18px;height:18px;border-radius:50%;background:${t.accent};"></div>
+              </div>
+              <div style="font-size:11px;font-weight:600;color:var(--text2);">${t.name}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="section-hd">Benachrichtigungen</div>
+      <div class="card" style="margin-bottom:30px;">
+        <div class="card-row">
+          <div class="card-row-icon">🔔</div>
+          <div class="card-row-label">Benachrichtigungen</div>
+          <button id="notif-toggle" onclick="toggleNotif()" style="width:52px;height:32px;border-radius:16px;border:none;cursor:pointer;position:relative;background:var(--surface3);transition:background 0.25s;" >
+            <div id="notif-thumb" style="position:absolute;width:26px;height:26px;border-radius:50%;background:white;top:3px;left:3px;transition:left 0.25s;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
   <!-- TAB BAR -->
@@ -535,6 +644,26 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
         </svg>
       </div>
       <div class="tab-label">HT</div>
+    </button>
+    <button class="tab-btn" id="tab-settings" onclick="switchTab('settings')">
+      <div class="tab-icon">
+        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.3"/>
+          <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="20" y1="6" x2="20" y2="3"/>
+            <line x1="20" y1="34" x2="20" y2="37"/>
+            <line x1="34" y1="20" x2="37" y2="20"/>
+            <line x1="6" y1="20" x2="3" y2="20"/>
+            <line x1="29.9" y1="10.1" x2="32" y2="8"/>
+            <line x1="10.1" y1="29.9" x2="8" y2="32"/>
+            <line x1="29.9" y1="29.9" x2="32" y2="32"/>
+            <line x1="10.1" y1="10.1" x2="8" y2="8"/>
+          </g>
+          <circle cx="20" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="20" cy="20" r="2" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="tab-label">Settings</div>
     </button>
   </div>
 </div>
@@ -644,15 +773,25 @@ let favType='Mittagessen', trackerDate=new Date().toISOString().split('T')[0];
 let modalAutoSaveTimer=null, trackerAutoSaveTimer=null;
 
 // ── AUTH ──
+function getAuthUrl(){
+  const scope=encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');
+  const redirect=encodeURIComponent('https://cruz170699.github.io/home-dashboard/mobile.html');
+  return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
+}
+
 function initAuth(){
-  // Check cached token first
+  // Check cached token — only valid 55 min (tokens expire after 60)
   const cached = localStorage.getItem('alfie_token');
   const cachedTime = localStorage.getItem('alfie_token_time');
-  if(cached && cachedTime && Date.now() - parseInt(cachedTime) < 50 * 60 * 1000){
+  if(cached && cachedTime && Date.now() - parseInt(cachedTime) < 55 * 60 * 1000){
     oauthToken = cached;
     onLogin();
     return;
   }
+  // Clear expired token
+  localStorage.removeItem('alfie_token');
+  localStorage.removeItem('alfie_token_time');
+
   // Check if returning from Google OAuth
   const hash=window.location.hash.substring(1);
   const params=new URLSearchParams(hash);
@@ -666,19 +805,112 @@ function initAuth(){
     return;
   }
   // Show login
-  document.getElementById('btn-login').onclick=()=>{
-    const scope=encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');
-    const redirect=encodeURIComponent('https://cruz170699.github.io/home-dashboard/mobile.html');
-    window.location.href=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
-  };
+  document.getElementById('btn-login').onclick=()=>{ window.location.href=getAuthUrl(); };
 }
+
+// Auto re-auth when token expires
+setInterval(()=>{
+  const cachedTime = localStorage.getItem('alfie_token_time');
+  if(cachedTime && Date.now() - parseInt(cachedTime) > 55 * 60 * 1000){
+    localStorage.removeItem('alfie_token');
+    localStorage.removeItem('alfie_token_time');
+    window.location.href=getAuthUrl();
+  }
+}, 60 * 1000);
+
+// ── PROFILE PICS ──
+function uploadPic(user, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    localStorage.setItem(`alfie_pic_${user}`, dataUrl);
+    const picEl = document.getElementById(`pic-${user}`);
+    picEl.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadProfilePics() {
+  ['sergio','miriam'].forEach(user => {
+    const saved = localStorage.getItem(`alfie_pic_${user}`);
+    if (saved) {
+      const picEl = document.getElementById(`pic-${user}`);
+      if (picEl) picEl.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
+    }
+  });
+}
+const PINS = { sergio: '1799', miriam: '10800' };
+let currentUser = null;
+let pinEntry = '';
 
 function onLogin(){
   document.getElementById('login-page').classList.add('hidden');
-  const home = document.getElementById('home-screen');
-  home.style.display = 'flex';
   loadMeals();
   loadFavorites();
+  loadProfilePics();
+  const savedUser = sessionStorage.getItem('alfie_user');
+  if(savedUser){ setUser(savedUser); }
+  else { document.getElementById('pin-screen').style.display='flex'; }
+}
+
+function selectUser(user){
+  currentUser = user;
+  pinEntry = '';
+  const saved = localStorage.getItem(`alfie_pic_${user}`);
+  const pinPic = document.getElementById('pin-pic');
+  if(saved){
+    pinPic.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    pinPic.innerHTML = user==='sergio' ? '👨' : '👩';
+  }
+  document.getElementById('pin-name').textContent = user==='sergio' ? 'Sérgio' : 'Miriam';
+  document.getElementById('pin-error').textContent = '';
+  const pinLen = PINS[user].length;
+  document.getElementById('pin-dots').innerHTML = Array(pinLen).fill('<div class="pin-dot"></div>').join('');
+  document.getElementById('pin-entry').style.display='flex';
+}
+
+function pinKey(key){
+  if(!currentUser) return;
+  if(key==='⌫'){ pinEntry=pinEntry.slice(0,-1); updatePinDots(); return; }
+  if(key===''||key==='undefined') return;
+  pinEntry += String(key);
+  updatePinDots();
+  if(pinEntry.length >= PINS[currentUser].length) setTimeout(checkPin, 100);
+}
+
+function updatePinDots(){
+  document.getElementById('pin-dots').querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled', i<pinEntry.length));
+}
+
+function checkPin(){
+  if(pinEntry === PINS[currentUser]){
+    setUser(currentUser);
+  } else {
+    document.getElementById('pin-error').textContent='❌ Falscher PIN';
+    pinEntry=''; updatePinDots();
+  }
+}
+
+function setUser(user){
+  currentUser=user;
+  sessionStorage.setItem('alfie_user',user);
+  document.getElementById('pin-screen').style.display='none';
+  document.getElementById('tab-tracker').style.display=user==='sergio'?'none':'flex';
+  const trackerCard=document.getElementById('home-tracker-card');
+  if(trackerCard) trackerCard.style.display=user==='sergio'?'none':'flex';
+  loadTheme(user);
+  // Load saved PIN
+  const savedPin=localStorage.getItem(`alfie_pin_${user}`);
+  if(savedPin) PINS[user]=savedPin;
+  document.getElementById('home-screen').style.display='flex';
+}
+
+function resetPin(){
+  pinEntry=''; currentUser=null;
+  document.getElementById('pin-entry').style.display='none';
 }
 
 function enterApp(tab){
@@ -697,13 +929,7 @@ window.addEventListener('load',()=>{
   initAuth();
   // Backup - attach directly to button
   const btn = document.getElementById('btn-login');
-  if(btn){
-    btn.addEventListener('click',()=>{
-      const scope=encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');
-      const redirect=encodeURIComponent('https://cruz170699.github.io/home-dashboard/mobile.html');
-      window.location.href=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
-    });
-  }
+  if(btn){ btn.addEventListener('click',()=>{ window.location.href=getAuthUrl(); }); }
 });
 
 // ── TAB NAVIGATION ──
@@ -718,6 +944,7 @@ function switchTab(tab){
   currentTab=tab;
   if(tab==='lights')loadLights();
   if(tab==='tracker'){loadTracker();renderDateStrip();}
+  if(tab==='settings')loadSettingsPage();
 }
 
 // ── MEAL TAB SWITCH ──
@@ -1210,67 +1437,103 @@ function debounceSearch(query) {
     document.getElementById('food-search-status').textContent = 'Tippe um zu suchen...';
     return;
   }
-  document.getElementById('food-search-status').textContent = '🔍 Suchen...';
-  foodSearchTimer = setTimeout(() => searchFood(query), 600);
+  // Instant for local DB
+  searchFood(query);
 }
 
+// ── FOOD DATABASE (Swiss/German common foods) ──
+const FOOD_DB = [
+  // Fleisch & Fisch
+  {name:'Hühnerbrust (gegrillt)',kcal:165,protein:31,carbs:0,fat:3.6,cat:'🥩'},
+  {name:'Poulet mit Haut',kcal:215,protein:26,carbs:0,fat:12,cat:'🥩'},
+  {name:'Rindfleisch (mager)',kcal:158,protein:26,carbs:0,fat:5.5,cat:'🥩'},
+  {name:'Hackfleisch (gemischt)',kcal:254,protein:17,carbs:0,fat:20,cat:'🥩'},
+  {name:'Lachs',kcal:208,protein:20,carbs:0,fat:13,cat:'🐟'},
+  {name:'Thunfisch (Dose)',kcal:116,protein:26,carbs:0,fat:1,cat:'🐟'},
+  {name:'Crevetten',kcal:85,protein:18,carbs:1,fat:1,cat:'🐟'},
+  {name:'Kabeljau',kcal:82,protein:18,carbs:0,fat:0.7,cat:'🐟'},
+  // Milchprodukte
+  {name:'Joghurt (natur)',kcal:61,protein:3.5,carbs:4.7,fat:3.3,cat:'🥛'},
+  {name:'Joghurt (0% Fett)',kcal:35,protein:3.5,carbs:4,fat:0.1,cat:'🥛'},
+  {name:'Skyr',kcal:63,protein:11,carbs:4,fat:0.2,cat:'🥛'},
+  {name:'Magerquark',kcal:67,protein:12,carbs:4,fat:0.2,cat:'🥛'},
+  {name:'Hüttenkäse',kcal:98,protein:11,carbs:3.4,fat:4.3,cat:'🧀'},
+  {name:'Mozzarella',kcal:254,protein:18,carbs:2.2,fat:19,cat:'🧀'},
+  {name:'Vollmilch',kcal:61,protein:3.2,carbs:4.7,fat:3.3,cat:'🥛'},
+  {name:'Milch (Halbfett)',kcal:46,protein:3.3,carbs:4.8,fat:1.5,cat:'🥛'},
+  {name:'Eier',kcal:155,protein:13,carbs:1.1,fat:11,cat:'🥚'},
+  // Getreide & Stärke
+  {name:'Reis (gekocht)',kcal:130,protein:2.7,carbs:28,fat:0.3,cat:'🌾'},
+  {name:'Pasta (gekocht)',kcal:131,protein:5,carbs:25,fat:1.1,cat:'🍝'},
+  {name:'Spaghetti (gekocht)',kcal:131,protein:5,carbs:25,fat:1.1,cat:'🍝'},
+  {name:'Brot (Vollkorn)',kcal:247,protein:9,carbs:41,fat:3.5,cat:'🍞'},
+  {name:'Weissbrot',kcal:265,protein:9,carbs:49,fat:3.2,cat:'🍞'},
+  {name:'Haferflocken',kcal:371,protein:13,carbs:58,fat:7,cat:'🌾'},
+  {name:'Quinoa (gekocht)',kcal:120,protein:4.4,carbs:22,fat:1.9,cat:'🌾'},
+  {name:'Kartoffeln (gekocht)',kcal:87,protein:1.9,carbs:20,fat:0.1,cat:'🥔'},
+  {name:'Süsskartoffeln',kcal:86,protein:1.6,carbs:20,fat:0.1,cat:'🥔'},
+  // Gemüse
+  {name:'Brokkoli',kcal:34,protein:2.8,carbs:7,fat:0.4,cat:'🥦'},
+  {name:'Spinat',kcal:23,protein:2.9,carbs:3.6,fat:0.4,cat:'🥬'},
+  {name:'Tomaten',kcal:18,protein:0.9,carbs:3.9,fat:0.2,cat:'🍅'},
+  {name:'Gurke',kcal:16,protein:0.7,carbs:3.6,fat:0.1,cat:'🥒'},
+  {name:'Paprika (rot)',kcal:31,protein:1,carbs:6,fat:0.3,cat:'🫑'},
+  {name:'Zucchini',kcal:17,protein:1.2,carbs:3.1,fat:0.3,cat:'🥒'},
+  {name:'Karotten',kcal:41,protein:0.9,carbs:10,fat:0.2,cat:'🥕'},
+  {name:'Salat (gemischt)',kcal:20,protein:1.5,carbs:3.5,fat:0.3,cat:'🥗'},
+  // Früchte
+  {name:'Banane',kcal:89,protein:1.1,carbs:23,fat:0.3,cat:'🍌'},
+  {name:'Apfel',kcal:52,protein:0.3,carbs:14,fat:0.2,cat:'🍎'},
+  {name:'Erdbeeren',kcal:32,protein:0.7,carbs:7.7,fat:0.3,cat:'🍓'},
+  {name:'Heidelbeeren',kcal:57,protein:0.7,carbs:14,fat:0.3,cat:'🫐'},
+  {name:'Orange',kcal:47,protein:0.9,carbs:12,fat:0.1,cat:'🍊'},
+  {name:'Mango',kcal:60,protein:0.8,carbs:15,fat:0.4,cat:'🥭'},
+  {name:'Avocado',kcal:160,protein:2,carbs:9,fat:15,cat:'🥑'},
+  // Nüsse & Samen
+  {name:'Mandeln',kcal:579,protein:21,carbs:22,fat:50,cat:'🌰'},
+  {name:'Erdnüsse',kcal:567,protein:26,carbs:16,fat:49,cat:'🥜'},
+  {name:'Walnüsse',kcal:654,protein:15,carbs:14,fat:65,cat:'🌰'},
+  // Schweizer Gerichte
+  {name:'Rösti',kcal:156,protein:2.5,carbs:27,fat:5,cat:'🇨🇭'},
+  {name:'Zürcher Geschnetzeltes',kcal:185,protein:18,carbs:5,fat:10,cat:'🇨🇭'},
+  {name:'Raclette Käse',kcal:350,protein:24,carbs:0,fat:28,cat:'🧀'},
+  {name:'Birchermüesli',kcal:150,protein:5,carbs:26,fat:3,cat:'🥣'},
+  // Snacks & Diverses
+  {name:'Schokolade (dunkel)',kcal:546,protein:5,carbs:60,fat:31,cat:'🍫'},
+  {name:'Chips',kcal:536,protein:7,carbs:53,fat:35,cat:'🍿'},
+  {name:'Protein Riegel',kcal:350,protein:20,carbs:40,fat:8,cat:'💪'},
+  {name:'Hummus',kcal:166,protein:8,carbs:14,fat:10,cat:'🫘'},
+  {name:'Olivenöl',kcal:884,protein:0,carbs:0,fat:100,cat:'🫒'},
+  {name:'Butter',kcal:717,protein:0.9,carbs:0.1,fat:81,cat:'🧈'},
+  // Drinks
+  {name:'Orangensaft',kcal:45,protein:0.7,carbs:10,fat:0.2,cat:'🥤'},
+  {name:'Proteinshake',kcal:120,protein:24,carbs:5,fat:1.5,cat:'💪'},
+  {name:'Kaffee (schwarz)',kcal:2,protein:0.3,carbs:0,fat:0,cat:'☕'},
+];
+
 async function searchFood(query) {
-  try {
-    document.getElementById('food-search-results').innerHTML = '';
-    document.getElementById('food-search-status').textContent = '🔍 Verbinde mit Datenbank...';
-    const url = `https://search.openfoodfacts.org/search?q=${encodeURIComponent(query)}&langs=de,fr,en&page_size=10&fields=product_name,brands,nutriments`;
-    const r = await fetch(url);
-    if(!r.ok){ throw new Error(`HTTP ${r.status}`); }
-    const d = await r.json();
-    const products = (d?.hits || []).filter(p => p.product_name && p.nutriments);
+  document.getElementById('food-search-results').innerHTML = '';
+  if(!query.trim()) return;
 
-    if (!products.length) {
-      document.getElementById('food-search-status').textContent = 'Keine Ergebnisse — versuche Englisch';
-      document.getElementById('food-search-results').innerHTML = '';
-      return;
-    }
+  const q = query.toLowerCase().trim();
+  const results = FOOD_DB.filter(f =>
+    f.name.toLowerCase().includes(q) ||
+    f.cat.includes(q)
+  ).slice(0, 15);
 
-    document.getElementById('food-search-status').textContent = `${products.length} Ergebnisse`;
-    document.getElementById('food-search-results').innerHTML = products.map((p, i) => {
-      const kcal = Math.round(p.nutriments?.['energy-kcal_100g'] || p.nutriments?.['energy-kcal'] || 0);
-      const protein = Math.round((p.nutriments?.['proteins_100g'] || 0) * 10) / 10;
-      const fat = Math.round((p.nutriments?.['fat_100g'] || 0) * 10) / 10;
-      const carbs = Math.round((p.nutriments?.['carbohydrates_100g'] || 0) * 10) / 10;
-      const brand = p.brands ? p.brands.split(',')[0].trim() : '';
-      return `<div class="food-search-result" onclick="addFoodItem(${i})">
-        <div class="food-result-name">${p.product_name}</div>
-        ${brand ? `<div class="food-result-brand">${brand}</div>` : ''}
-        <div class="food-result-nut">🔥 ${kcal} kcal · 💪 ${protein}g · 🍞 ${carbs}g · 🧈 ${fat}g <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>
-      </div>`;
-    }).join('');
-
-    window._foodResults = products;
-  } catch(e) {
-    // Fallback to allorigins proxy
-    try {
-      const url2 = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10`;
-      const r2 = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url2)}`);
-      const wrapper = await r2.json();
-      const d2 = JSON.parse(wrapper.contents);
-      const products2 = (d2?.products || []).filter(p => p.product_name && p.nutriments);
-      if(products2.length) {
-        document.getElementById('food-search-status').textContent = `${products2.length} Ergebnisse`;
-        document.getElementById('food-search-results').innerHTML = products2.map((p,i) => {
-          const kcal = Math.round(p.nutriments?.['energy-kcal_100g'] || 0);
-          const protein = Math.round((p.nutriments?.['proteins_100g'] || 0)*10)/10;
-          return `<div class="food-search-result" onclick="addFoodItem(${i})">
-            <div class="food-result-name">${p.product_name}</div>
-            <div class="food-result-nut">🔥 ${kcal} kcal · 💪 ${protein}g Protein / 100g</div>
-          </div>`;
-        }).join('');
-        window._foodResults = products2;
-      } else {
-        document.getElementById('food-search-status').textContent = 'Keine Ergebnisse gefunden';
-      }
-    } catch(e2) {
-      document.getElementById('food-search-status').textContent = '⚠️ Verbindungsfehler';
-    }
+  if(!results.length){
+    document.getElementById('food-search-status').textContent = 'Nicht gefunden — tippe auf Deutsch';
+    return;
   }
+
+  document.getElementById('food-search-status').textContent = `${results.length} Ergebnisse`;
+  document.getElementById('food-search-results').innerHTML = results.map((f, i) => `
+    <div class="food-search-result" onclick="addFoodItem(${i})">
+      <div class="food-result-name">${f.cat} ${f.name}</div>
+      <div class="food-result-nut">🔥 ${f.kcal} kcal · 💪 ${f.protein}g Protein · 🍞 ${f.carbs}g Kohlenhydrate · 🧈 ${f.fat}g Fett <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>
+    </div>`).join('');
+
+  window._foodResults = results;
 }
 
 function addFoodItem(idx) {
@@ -1323,6 +1586,96 @@ function updateNutritionBars() {
   document.getElementById('kcal-bar').style.background = totalKcal > goalKcal ? 'var(--red)' : 'var(--orange)';
   document.getElementById('protein-bar').style.background = totalProtein >= goalProtein ? 'var(--green)' : 'var(--blue)';
 }
+// ── SETTINGS ──
+const THEMES = {
+  midnight: {bg:'#07080b', surface:'#1C1C1E', accent:'#7B61FF'},
+  ocean:    {bg:'#040d18', surface:'#0d1f2d', accent:'#00C9FF'},
+  forest:   {bg:'#050f08', surface:'#0d1f11', accent:'#30D158'},
+  sunset:   {bg:'#120806', surface:'#1f120d', accent:'#FF6B35'},
+  rose:     {bg:'#110609', surface:'#1f0d12', accent:'#FF2D55'},
+  gold:     {bg:'#0f0d04', surface:'#1f1a0d', accent:'#FFD60A'},
+  arctic:   {bg:'#050810', surface:'#0d1220', accent:'#64D2FF'},
+  neon:     {bg:'#010a01', surface:'#0d1a0d', accent:'#39FF14'},
+};
+
+function setTheme(themeId){
+  const t=THEMES[themeId]; if(!t)return;
+  document.documentElement.style.setProperty('--bg',t.bg);
+  document.documentElement.style.setProperty('--surface',t.surface);
+  document.documentElement.style.setProperty('--blue',t.accent);
+  document.documentElement.style.setProperty('--green',themeId==='neon'?'#39FF14':'#30D158');
+  localStorage.setItem(`alfie_theme_${currentUser}`,themeId);
+  document.querySelectorAll('[id^="theme-"]').forEach(el=>{el.style.borderColor='transparent';el.style.background='transparent';});
+  const sel=document.getElementById(`theme-${themeId}`);
+  if(sel){sel.style.borderColor=t.accent;sel.style.background='rgba(255,255,255,0.05)';}
+  showToast(`🎨 ${themeId.charAt(0).toUpperCase()+themeId.slice(1)} aktiviert`);
+}
+
+function loadTheme(user){
+  const saved=localStorage.getItem(`alfie_theme_${user}`)||'midnight';
+  setTheme(saved);
+}
+
+function uploadSettingsPic(input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    const dataUrl=e.target.result;
+    localStorage.setItem(`alfie_pic_${currentUser}`,dataUrl);
+    document.getElementById('settings-pic').innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    const pinEl=document.getElementById(`pic-${currentUser}`);
+    if(pinEl) pinEl.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    showToast('📷 Foto gespeichert!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadSettingsPage(){
+  document.getElementById('settings-username').textContent=currentUser==='sergio'?'Sérgio':'Miriam';
+  const saved=localStorage.getItem(`alfie_pic_${currentUser}`);
+  const picEl=document.getElementById('settings-pic');
+  if(saved) picEl.innerHTML=`<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
+  else picEl.innerHTML=currentUser==='sergio'?'👨':'👩';
+  const savedTheme=localStorage.getItem(`alfie_theme_${currentUser}`)||'midnight';
+  document.querySelectorAll('[id^="theme-"]').forEach(el=>{el.style.borderColor='transparent';el.style.background='transparent';});
+  const selTheme=document.getElementById(`theme-${savedTheme}`);
+  if(selTheme){selTheme.style.borderColor=THEMES[savedTheme]?.accent;selTheme.style.background='rgba(255,255,255,0.05)';}
+  const notifOn=localStorage.getItem(`alfie_notif_${currentUser}`)==='true';
+  updateNotifToggle(notifOn);
+  // Load saved PIN
+  const savedPin=localStorage.getItem(`alfie_pin_${currentUser}`);
+  if(savedPin) PINS[currentUser]=savedPin;
+}
+
+function changePin(){
+  const newPin=document.getElementById('new-pin').value.trim();
+  const confirm=document.getElementById('new-pin-confirm').value.trim();
+  const msg=document.getElementById('pin-change-msg');
+  if(!newPin){msg.style.color='var(--red)';msg.textContent='PIN eingeben!';return;}
+  if(newPin!==confirm){msg.style.color='var(--red)';msg.textContent='PINs stimmen nicht überein!';return;}
+  PINS[currentUser]=newPin;
+  localStorage.setItem(`alfie_pin_${currentUser}`,newPin);
+  document.getElementById('new-pin').value='';
+  document.getElementById('new-pin-confirm').value='';
+  msg.style.color='var(--green)';msg.textContent='✅ PIN gespeichert!';
+  setTimeout(()=>msg.textContent='',2000);
+}
+
+let notifEnabled=false;
+function toggleNotif(){
+  notifEnabled=!notifEnabled;
+  localStorage.setItem(`alfie_notif_${currentUser}`,notifEnabled);
+  updateNotifToggle(notifEnabled);
+  if(notifEnabled&&Notification.permission!=='granted') Notification.requestPermission();
+}
+function updateNotifToggle(on){
+  notifEnabled=on;
+  const btn=document.getElementById('notif-toggle');
+  const thumb=document.getElementById('notif-thumb');
+  if(btn) btn.style.background=on?'var(--green)':'var(--surface3)';
+  if(thumb) thumb.style.left=on?'23px':'3px';
+}
+
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
