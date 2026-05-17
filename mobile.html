@@ -28,9 +28,9 @@
 html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
 
 /* ── APP SHELL ── */
-#app{display:block;background:var(--bg);}
+#app{background:var(--bg);}
 #app-content{display:block;}
-.page{display:none;min-height:100vh;overflow-y:visible;padding-bottom:80px;background:var(--bg);}
+.page{display:none;padding-bottom:80px;background:var(--bg);}
 .page.active{display:block;}
 
 /* ── LOGIN ── */
@@ -994,7 +994,7 @@ function resetPin(){
 
 function enterApp(tab){
   document.getElementById('home-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
+  document.getElementById('app').style.display = 'block';
   switchTab(tab);
 }
 
@@ -1017,7 +1017,7 @@ window.addEventListener('load',()=>{
 let currentTab='meals';
 function switchTab(tab){
   document.getElementById('home-screen').style.display='none';
-  document.getElementById('app').style.display='flex';
+  document.getElementById('app').style.display='block';
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.page').forEach(p=>{
