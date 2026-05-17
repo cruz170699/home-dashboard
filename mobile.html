@@ -451,14 +451,27 @@ let modalAutoSaveTimer=null, trackerAutoSaveTimer=null;
 
 // ── AUTH ──
 function initAuth(){
+  // Check cached token first
+  const cached = localStorage.getItem('alfie_token');
+  const cachedTime = localStorage.getItem('alfie_token_time');
+  if(cached && cachedTime && Date.now() - parseInt(cachedTime) < 50 * 60 * 1000){
+    oauthToken = cached;
+    onLogin();
+    return;
+  }
+  // Check if returning from Google OAuth
   const hash=window.location.hash.substring(1);
   const params=new URLSearchParams(hash);
   const token=params.get('access_token');
   if(token){
     oauthToken=token;
+    localStorage.setItem('alfie_token', token);
+    localStorage.setItem('alfie_token_time', Date.now().toString());
     window.history.replaceState({},document.title,window.location.pathname);
-    onLogin();return;
+    onLogin();
+    return;
   }
+  // Show login
   document.getElementById('btn-login').onclick=()=>{
     const scope=encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');
     const redirect=encodeURIComponent('https://cruz170699.github.io/home-dashboard/mobile.html');
