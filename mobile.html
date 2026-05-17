@@ -146,6 +146,8 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
 .tr-row:last-child{border-bottom:none;}
 .tr-label{font-size:clamp(16px,2.2vw,28px);font-weight:500;flex:1;}
 .tr-input{background:var(--surface2);border:none;border-radius:12px;padding:clamp(10px,1.5vw,18px) clamp(14px,2vw,22px);font-size:clamp(16px,2.2vw,28px);font-family:'Inter',sans-serif;color:var(--text);outline:none;width:110px;text-align:right;}
+select.tr-input{width:100%;text-align:left;color:var(--text);}
+select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--text);}
 .tr-input::placeholder{color:var(--text3);}
 .tr-unit{font-size:16px;color:var(--text3);width:28px;flex-shrink:0;}
 .water-row{display:flex;gap:8px;padding:10px 18px 16px;}
@@ -157,7 +159,7 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
 .tr-textarea{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:14px 16px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;min-height:56px;}
 .tr-textarea::placeholder{color:var(--text3);}
 .tr-textarea:focus{background:var(--surface3);}
-.save-indicator{text-align:center;font-size:13px;color:var(--text3);padding:8px;margin-bottom:8px;}
+.save-indicator{text-align:center;font-size:13px;color:var(--text3);padding:4px;margin:0;}
 
 /* ── BRING MODAL ── */
 #bring-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
@@ -451,12 +453,12 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
         <div class="tr-section-hd">⚖️ Körper</div>
         <div class="tr-row">
           <div class="tr-label">Gewicht</div>
-          <input class="tr-input" id="tr-weight" type="number" step="0.1" placeholder="—" oninput="triggerAutosaveTracker()">
+          <input class="tr-input" id="tr-weight" type="number" step="0.1" placeholder="—" oninput="triggerAutosaveTracker();updateSummary()">
           <div class="tr-unit">kg</div>
         </div>
         <div class="tr-row">
           <div class="tr-label">Schritte</div>
-          <input class="tr-input" id="tr-steps" type="number" placeholder="—" oninput="triggerAutosaveTracker();updateStepBar()">
+          <input class="tr-input" id="tr-steps" type="number" placeholder="—" oninput="triggerAutosaveTracker();updateStepBar();updateSummary()">
           <div class="tr-unit">👟</div>
         </div>
       </div>
@@ -464,7 +466,7 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
         <div class="tr-section-hd">💧 Wasser</div>
         <div class="tr-row">
           <div class="tr-label">Getrunken</div>
-          <input class="tr-input" id="tr-water" type="number" step="0.1" placeholder="0" oninput="triggerAutosaveTracker();updateWaterBar()">
+          <input class="tr-input" id="tr-water" type="number" step="0.1" placeholder="0" oninput="triggerAutosaveTracker();updateWaterBar();updateSummary()">
           <div class="tr-unit">L</div>
         </div>
         <div class="water-row">
@@ -541,11 +543,62 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
         <div class="tr-section-hd">🏃 Aktivität</div>
         <div class="tr-food-block">
           <div style="font-size:14px;font-weight:600;color:var(--text3);margin-bottom:10px;">Was hast du gemacht?</div>
-          <input type="text" id="tr-activity-name" class="tr-input" style="width:100%;margin-bottom:10px;" 
-            placeholder="z.B. Laufen, Yoga, Schwimmen..."
-            oninput="triggerAutosaveTracker()"
-            onblur="if(this.value.trim())askWorkoutDuration()">
-          <div id="workout-duration-row" style="display:none;align-items:center;gap:10px;margin-top:8px;">
+          <select id="tr-activity-name" class="tr-input" style="width:100%;margin-bottom:10px;appearance:none;-webkit-appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;"
+            oninput="triggerAutosaveTracker();if(this.value)document.getElementById('workout-duration-row').style.display='flex';else document.getElementById('workout-duration-row').style.display='none';">
+            <option value="">— Aktivität wählen —</option>
+            <optgroup label="🏃 Laufen & Gehen">
+              <option value="Laufen">🏃 Laufen</option>
+              <option value="Joggen">🏃 Joggen</option>
+              <option value="Spazieren">🚶 Spazieren</option>
+              <option value="Wandern">🥾 Wandern</option>
+              <option value="Nordic Walking">🚶 Nordic Walking</option>
+            </optgroup>
+            <optgroup label="🚴 Radfahren">
+              <option value="Velofahren">🚴 Velofahren</option>
+              <option value="E-Bike">⚡ E-Bike</option>
+              <option value="Spinning">🚴 Spinning</option>
+            </optgroup>
+            <optgroup label="💪 Kraft & Training">
+              <option value="Fitnessstudio">🏋️ Fitnessstudio</option>
+              <option value="Krafttraining">💪 Krafttraining</option>
+              <option value="Crossfit">🔥 Crossfit</option>
+              <option value="Heimtraining">🏠 Heimtraining</option>
+              <option value="Liegestütze">💪 Liegestütze</option>
+            </optgroup>
+            <optgroup label="🧘 Yoga & Entspannung">
+              <option value="Yoga">🧘 Yoga</option>
+              <option value="Pilates">🧘 Pilates</option>
+              <option value="Stretching">🤸 Stretching</option>
+              <option value="Meditation">🧠 Meditation</option>
+            </optgroup>
+            <optgroup label="🏊 Wasser">
+              <option value="Schwimmen">🏊 Schwimmen</option>
+              <option value="Wasserpolo">🤽 Wasserpolo</option>
+            </optgroup>
+            <optgroup label="⚽ Sport">
+              <option value="Fussball">⚽ Fussball</option>
+              <option value="Basketball">🏀 Basketball</option>
+              <option value="Tennis">🎾 Tennis</option>
+              <option value="Volleyball">🏐 Volleyball</option>
+              <option value="Badminton">🏸 Badminton</option>
+              <option value="Tischtennis">🏓 Tischtennis</option>
+            </optgroup>
+            <optgroup label="🥊 Kampfsport">
+              <option value="Boxen">🥊 Boxen</option>
+              <option value="Kampfsport">🥋 Kampfsport</option>
+            </optgroup>
+            <optgroup label="❄️ Winter">
+              <option value="Skifahren">⛷️ Skifahren</option>
+              <option value="Snowboard">🏂 Snowboard</option>
+            </optgroup>
+            <optgroup label="➕ Sonstiges">
+              <option value="Tanzen">💃 Tanzen</option>
+              <option value="Klettern">🧗 Klettern</option>
+              <option value="Seilspringen">🪢 Seilspringen</option>
+              <option value="Anderes">✏️ Anderes</option>
+            </optgroup>
+          </select>
+          <div id="workout-duration-row" style="display:none;align-items:center;gap:10px;margin-top:4px;">
             <div style="font-size:15px;color:var(--text2);flex:1;">⏱️ Wie lange?</div>
             <input type="number" id="tr-activity-mins" class="tr-input" style="width:90px;" placeholder="Min" oninput="triggerAutosaveTracker()">
             <div style="font-size:14px;color:var(--text3);">Min</div>
@@ -1552,26 +1605,34 @@ async function loadTracker(){
     updateSummary(row);
     updateStepBar();
     updateWaterBar();
-    // Pre-fill meals from meal planner
-    if(!row?.[5]&&mealData.length){
-      const d2=new Date(trackerDate);
+    // Pre-fill meals from meal planner if no food logged yet
+    const hasFood = foodLog.lunch.length===0 && foodLog.dinner.length===0;
+    if(hasFood && mealData.length){
+      const d2=new Date(trackerDate+'T12:00:00');
       const tm=mealData.find(m=>m.date.toDateString()===d2.toDateString());
       if(tm){
-        if(tm.lunch&&tm.lunch!=='—')document.getElementById('tr-lunch').placeholder=tm.lunch;
-        if(tm.dinner&&tm.dinner!=='—')document.getElementById('tr-dinner').placeholder=tm.dinner;
+        if(tm.lunch&&tm.lunch!=='—'){
+          foodLog.lunch=[{name:tm.lunch,kcal:0,protein:0}];
+          renderFoodList('lunch');
+        }
+        if(tm.dinner&&tm.dinner!=='—'){
+          foodLog.dinner=[{name:tm.dinner,kcal:0,protein:0}];
+          renderFoodList('dinner');
+        }
       }
     }
   }catch(e){['tr-weight','tr-steps','tr-water','tr-activity-name','tr-activity-mins','tr-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });updateSummary(null);}
 }
 
 function updateSummary(row){
-  document.getElementById('sum-weight').textContent=row?.[1]||'—';
-  document.getElementById('sum-water').textContent=row?.[3]||'—';
-  document.getElementById('sum-steps').textContent=row?.[2]?parseInt(row[2]).toLocaleString('de-CH'):'—';
-  const meals=[row?.[4],row?.[5],row?.[6]].filter(x=>x&&x!=='').length;
-  document.getElementById('sum-meals').textContent=`🍽️ ${meals}/3 Mahlzeiten`;
-  const actName = row?.[4]||'';
-  const actMins = row?.[5]||'';
+  const weight = document.getElementById('tr-weight')?.value || row?.[1] || '—';
+  const water = document.getElementById('tr-water')?.value || row?.[3] || '—';
+  const steps = document.getElementById('tr-steps')?.value || row?.[2] || '';
+  document.getElementById('sum-weight').textContent = weight;
+  document.getElementById('sum-water').textContent = water || '—';
+  document.getElementById('sum-steps').textContent = steps ? parseInt(steps).toLocaleString('de-CH') : '—';
+  const actName = document.getElementById('tr-activity-name')?.value || row?.[4] || '';
+  const actMins = document.getElementById('tr-activity-mins')?.value || row?.[5] || '';
   document.getElementById('sum-activity').textContent = actName ? `🏃 ${actName}${actMins?' '+actMins+'min':''}` : '🏃 Keine Aktivität';
 }
 
@@ -1637,6 +1698,7 @@ function addWater(amount){
   input.value=Math.max(0,Math.round(((parseFloat(input.value)||0)+amount)*100)/100);
   triggerAutosaveTracker();
   updateWaterBar();
+  updateSummary();
 }
 
 // ── GOALS ──
