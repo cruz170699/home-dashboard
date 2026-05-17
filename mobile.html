@@ -446,7 +446,7 @@ const DAY_JS = [1,2,3,4,5,6,0];
 
 let oauthToken=null, mealData=[], favorites=[], lightStates={};
 let editingDayIdx=null, bringItems=[], ingItems=[], editingFavIdx=null;
-let selFavType='Mittagessen', trackerDate=new Date().toISOString().split('T')[0];
+let favType='Mittagessen', trackerDate=new Date().toISOString().split('T')[0];
 let modalAutoSaveTimer=null, trackerAutoSaveTimer=null;
 
 // ── AUTH ──
@@ -713,7 +713,7 @@ function renderFavsList(){
 }
 
 function selFavType(type){
-  selFavType=type;
+  favType=type;
   ['type-lunch','type-dinner','type-both'].forEach(id=>document.getElementById(id)?.classList.remove('sel'));
   const map={'Mittagessen':'type-lunch','Abendessen':'type-dinner','Beides':'type-both'};
   document.getElementById(map[type])?.classList.add('sel');
@@ -722,7 +722,7 @@ function selFavType(type){
 async function addFav(){
   const name=document.getElementById('new-fav-name').value.trim();if(!name)return;
   const emojis={'Mittagessen':'☀️','Abendessen':'🌙','Beides':'🍽️'};
-  favorites.push({name,type:selFavType,emoji:emojis[selFavType],ingredients:[]});
+  favorites.push({name,type:favType,emoji:emojis[favType],ingredients:[]});
   document.getElementById('new-fav-name').value='';
   renderFavsList();await saveFavorites();showToast('⭐ Gespeichert!');
 }
