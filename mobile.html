@@ -45,11 +45,11 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
 
 /* ── TAB BAR ── */
 #tab-bar{flex-shrink:0;background:rgba(28,28,30,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe-bottom));z-index:100;}
-.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border:none;background:none;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border:none;background:none;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;color:var(--text3);}
 .tab-btn:active{transform:scale(0.88);}
-.tab-icon{font-size:clamp(24px,3vw,40px);line-height:1;}
-.tab-label{font-size:clamp(10px,1.3vw,17px);font-weight:500;color:var(--text3);}
-.tab-btn.active .tab-label{color:var(--blue);}
+.tab-icon{font-size:clamp(24px,3vw,40px);line-height:1;display:flex;align-items:center;justify-content:center;}
+.tab-label{font-size:clamp(10px,1.3vw,17px);font-weight:500;color:inherit;}
+.tab-btn.active{color:var(--blue);}
 .tab-btn.active .tab-icon{transform:scale(1.1);}
 
 /* ── NAV HEADER ── */
@@ -483,20 +483,58 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
   <!-- TAB BAR -->
   <div id="tab-bar">
     <button class="tab-btn" id="tab-home" onclick="goHome()">
-      <div class="tab-icon">🏠</div>
+      <div class="tab-icon">
+        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="18" r="10" fill="none" stroke="#9B85FF" stroke-width="2"/>
+          <text x="20" y="22" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="#C4B0FF">ALFIE</text>
+        </svg>
+      </div>
       <div class="tab-label">Home</div>
     </button>
     <button class="tab-btn active" id="tab-meals" onclick="switchTab('meals')">
-      <div class="tab-icon">🍽️</div>
-      <div class="tab-label">Mahlzeiten</div>
+      <div class="tab-icon">
+        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <line x1="13" y1="8" x2="13" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="10" y1="8" x2="10" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="16" y1="8" x2="16" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M10 15 Q13 18 16 15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="27" y1="8" x2="27" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M27 8 Q32 12 27 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="20" cy="22" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+          <circle cx="20" cy="22" r="4.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+        </svg>
+      </div>
+      <div class="tab-label">Meals</div>
     </button>
     <button class="tab-btn" id="tab-lights" onclick="switchTab('lights')">
-      <div class="tab-icon">💡</div>
-      <div class="tab-label">Lichter</div>
+      <div class="tab-icon">
+        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6 Q12 11 12 19 Q12 25 16 27 L16 31 Q16 33 20 33 Q24 33 24 31 L24 27 Q28 25 28 19 Q28 11 20 6Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="17" y1="29" x2="23" y2="29" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="18" y1="32" x2="22" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M17 20 Q20 16 23 20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="20" y1="2" x2="20" y2="0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="30" y1="10" x2="32" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="10" y1="10" x2="8" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="34" y1="20" x2="36" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="6" y1="20" x2="4" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="tab-label">Control</div>
     </button>
     <button class="tab-btn" id="tab-tracker" onclick="switchTab('tracker')">
-      <div class="tab-icon">📊</div>
-      <div class="tab-label">Tracker</div>
+      <div class="tab-icon">
+        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="24" width="7" height="10" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="16" y="18" width="7" height="16" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="26" y="12" width="7" height="22" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+          <polyline points="8,20 19,13 29,8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="8" cy="20" r="2" fill="currentColor"/>
+          <circle cx="19" cy="13" r="2" fill="currentColor"/>
+          <circle cx="29" cy="8" r="2" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="tab-label">HT</div>
     </button>
   </div>
 </div>
@@ -1090,53 +1128,51 @@ function triggerAutosaveTracker(){
 
 async function saveTracker(){
   if(!oauthToken){ document.getElementById('save-indicator').textContent='⚠️ Nicht eingeloggt'; return; }
+  document.getElementById('save-indicator').textContent='💾 Speichern...';
   const row=[
     trackerDate,
     document.getElementById('tr-weight').value,
     document.getElementById('tr-steps').value,
     document.getElementById('tr-water').value,
-    '','','','', // legacy columns
+    '','','','',
     document.getElementById('tr-activity').value,
     document.getElementById('tr-notes').value,
     JSON.stringify(foodLog),
   ];
   try{
-    // Ensure Tracker sheet exists
-    try{
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}:batchUpdate`,{
-        method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
-        body:JSON.stringify({requests:[{addSheet:{properties:{title:'Tracker'}}}]})
-      });
-    }catch(e){}
-
-    // Write header row A1:K1
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:K1?valueInputOption=RAW`,{
-      method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
-      body:JSON.stringify({values:[['Datum','Gewicht','Schritte','Wasser','B','M','A','S','Aktivität','Notizen','FoodLog']]})
+    // Try simple append first to test connection
+    const testR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:A`,{
+      headers:{'Authorization':`Bearer ${oauthToken}`}
     });
-
-    // Find existing row
-    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:A`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
-    const d=await r.json();
+    if(!testR.ok){
+      const err = await testR.json();
+      document.getElementById('save-indicator').textContent=`⚠️ ${err.error?.message||testR.status}`;
+      return;
+    }
+    const d=await testR.json();
     const rows=d.values||[];
     const idx=rows.findIndex(r=>r[0]===trackerDate);
 
+    let saveR;
     if(idx>0){
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:K${idx+1}?valueInputOption=RAW`,{
+      saveR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:K${idx+1}?valueInputOption=RAW`,{
         method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[row]})
       });
     } else {
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:K:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
+      saveR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:K:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
         method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[row]})
       });
     }
+    if(!saveR.ok){
+      const err2 = await saveR.json();
+      document.getElementById('save-indicator').textContent=`⚠️ ${err2.error?.message||saveR.status}`;
+      return;
+    }
     document.getElementById('save-indicator').textContent='✓ Gespeichert';
-    updateSummary(row);
   }catch(e){
-    console.error('Save error:',e);
-    document.getElementById('save-indicator').textContent='⚠️ Fehler: '+e.message;
+    document.getElementById('save-indicator').textContent=`⚠️ ${e.message}`;
   }
 }
 
@@ -1181,9 +1217,10 @@ function debounceSearch(query) {
 async function searchFood(query) {
   try {
     document.getElementById('food-search-results').innerHTML = '';
-    // Use search-a-licious API - better CORS support
-    const url = `https://search.openfoodfacts.org/search?q=${encodeURIComponent(query)}&langs=de,fr,en&page_size=10&fields=product_name,brands,nutriments,serving_size`;
+    document.getElementById('food-search-status').textContent = '🔍 Verbinde mit Datenbank...';
+    const url = `https://search.openfoodfacts.org/search?q=${encodeURIComponent(query)}&langs=de,fr,en&page_size=10&fields=product_name,brands,nutriments`;
     const r = await fetch(url);
+    if(!r.ok){ throw new Error(`HTTP ${r.status}`); }
     const d = await r.json();
     const products = (d?.hits || []).filter(p => p.product_name && p.nutriments);
 
