@@ -2,722 +2,500 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#07080b">
 <title>ALFIE</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
-  --bg:#f2f2f7;--surface:#fff;--surface2:rgba(120,120,128,0.12);
-  --border:rgba(60,60,67,0.1);--text:#000;--text2:rgba(60,60,67,0.6);--text3:rgba(60,60,67,0.3);
-  --blue:#007AFF;--green:#34C759;--red:#FF3B30;--orange:#FF9500;--yellow:#FFD60A;
-  --radius:22px;--shadow:0 4px 20px rgba(0,0,0,0.08);
+  --blue:#007AFF;--green:#30D158;--red:#FF453A;--orange:#FF9F0A;--yellow:#FFD60A;--purple:#BF5AF2;
+  --bg:#000;--surface:#1C1C1E;--surface2:#2C2C2E;--surface3:#3A3A3C;
+  --text:#fff;--text2:rgba(255,255,255,0.6);--text3:rgba(255,255,255,0.3);
+  --border:rgba(255,255,255,0.08);--radius:18px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
 }
-html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;height:100%;overflow:hidden;}
+html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
 
-/* LOGIN */
-#login-overlay{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:28px;}
-#btn-login{background:#2d2458;color:white;border:none;border-radius:16px;padding:20px 36px;font-size:20px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px;}
-#btn-login span{background:white;border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+/* ── APP SHELL ── */
+#app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);}
+#app-content{flex:1;overflow:hidden;position:relative;}
+.page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:90px;}
+.page{transform:translateX(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);opacity:0;pointer-events:none;}
+.page.active{transform:translateX(0);opacity:1;pointer-events:all;}
+.page.prev{transform:translateX(-30%);opacity:0;pointer-events:none;}
 
-/* HOME MENU */
-#home-menu{position:fixed;inset:0;background:#07080b;display:none;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:40px 28px;}
-#home-menu.active{display:flex;}
-.home-logo{font-size:48px;font-weight:700;color:#C4B0FF;letter-spacing:-2px;margin-bottom:8px;}
-.home-sub{font-size:16px;color:rgba(255,255,255,0.3);margin-bottom:48px;letter-spacing:1px;text-transform:uppercase;}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:480px;}
-.menu-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:32px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s;}
-.menu-card:active{background:rgba(255,255,255,0.12);transform:scale(0.97);}
-.menu-card-icon{font-size:44px;}
-.menu-card-label{font-size:18px;font-weight:600;color:white;text-align:center;}
-.menu-card-sub{font-size:13px;color:rgba(255,255,255,0.4);text-align:center;}
+/* ── LOGIN ── */
+#login-page{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
+#login-page.hidden{display:none;}
+.login-logo{font-size:52px;font-weight:800;color:#C4B0FF;letter-spacing:-2px;}
+.login-sub{font-size:15px;color:rgba(255,255,255,0.3);letter-spacing:2px;text-transform:uppercase;margin-top:-20px;}
+#btn-login{background:#1a1530;color:white;border:1px solid rgba(123,97,255,0.3);border-radius:16px;padding:18px 32px;font-size:17px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
+#btn-login:active{transform:scale(0.96);}
+#btn-login span{background:white;border-radius:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
-/* SCREEN WRAPPER */
-.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden;}
-.screen.active{display:flex;}
+/* ── TAB BAR ── */
+#tab-bar{flex-shrink:0;background:rgba(28,28,30,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe-bottom));z-index:100;}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border:none;background:none;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;}
+.tab-btn:active{transform:scale(0.88);}
+.tab-icon{font-size:26px;line-height:1;}
+.tab-label{font-size:11px;font-weight:500;color:var(--text3);}
+.tab-btn.active .tab-label{color:var(--blue);}
+.tab-btn.active .tab-icon{transform:scale(1.1);}
 
-/* BACK BUTTON */
-.back-btn{display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--blue);font-size:18px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;padding:0;}
+/* ── NAV HEADER ── */
+.nav-header{padding:calc(16px + var(--safe-top)) 20px 12px;background:var(--bg);position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.nav-title{font-size:32px;font-weight:800;letter-spacing:-0.5px;}
+.nav-subtitle{font-size:15px;color:var(--text2);margin-top:2px;}
+.nav-row{display:flex;align-items:flex-end;justify-content:space-between;}
 
-/* LIST VIEW */
-#list-view{background:var(--bg);}
-.list-header{background:var(--surface);padding:24px 22px 18px;border-bottom:0.5px solid var(--border);flex-shrink:0;}
-.list-header-top{display:flex;align-items:center;justify-content:space-between;}
-.list-title{font-size:32px;font-weight:700;letter-spacing:-0.5px;}
-.list-week{font-size:18px;color:var(--text2);margin-top:4px;}
-.hdr-btns{display:flex;gap:12px;margin-top:16px;}
-.hdr-btn{flex:1;padding:18px;border-radius:16px;border:none;font-size:19px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;}
-.hdr-btn.blue{background:var(--blue);color:white;}
-.hdr-btn.gray{background:var(--surface2);color:var(--text2);}
-.list-tabs{display:flex;background:var(--surface);border-bottom:0.5px solid var(--border);flex-shrink:0;}
-.list-tab{flex:1;padding:20px 0;text-align:center;font-size:19px;font-weight:500;color:var(--text2);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'Inter',sans-serif;}
-.list-tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:700;}
-.tab-panel{display:none;flex:1;overflow-y:auto;}
-.tab-panel.active{display:block;}
-.list-scroll{padding:18px;display:flex;flex-direction:column;gap:16px;padding-bottom:60px;}
+/* ── SECTION HEADER ── */
+.section-hd{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);padding:20px 20px 8px;}
 
-/* Day cards */
-.list-day{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:0.5px solid var(--border);cursor:pointer;}
-.list-day.is-today{border:2.5px solid var(--blue);}
-.list-day-header{display:flex;align-items:center;justify-content:space-between;padding:22px 22px 14px;}
-.list-day-name{font-size:26px;font-weight:700;}
-.list-day-name.today-color{color:var(--blue);}
-.list-day-date{font-size:17px;color:var(--text3);margin-top:4px;}
-.list-meals{padding:0 22px 22px;display:flex;flex-direction:column;gap:14px;}
-.list-meal-row{display:flex;align-items:center;gap:16px;}
-.list-meal-icon{font-size:26px;flex-shrink:0;}
-.list-meal-text{font-size:22px;font-weight:500;}
-.list-meal-text.empty{color:var(--text3);font-style:italic;font-size:20px;}
-.list-divider{height:0.5px;background:var(--border);}
+/* ── CARDS ── */
+.card{background:var(--surface);border-radius:var(--radius);margin:0 16px 12px;overflow:hidden;}
+.card-row{display:flex;align-items:center;padding:16px 18px;border-bottom:0.5px solid var(--border);}
+.card-row:last-child{border-bottom:none;}
+.card-row-label{font-size:17px;font-weight:500;flex:1;}
+.card-row-value{font-size:17px;color:var(--text2);}
+.card-row-icon{font-size:22px;margin-right:14px;flex-shrink:0;}
 
-/* IKEA LIGHTS VIEW */
-#lights-view{background:var(--bg);}
-.lights-header{background:var(--surface);padding:24px 22px 18px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:16px;}
-.lights-scroll{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:16px;padding-bottom:60px;}
-.lights-section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);padding:4px 4px 8px;}
-.light-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;display:flex;align-items:center;gap:16px;}
-.light-card.on{background:linear-gradient(135deg,#fffbf0,#fff8e0);}
-.light-icon{font-size:32px;flex-shrink:0;}
+/* ── MEALS ── */
+.day-card{background:var(--surface);border-radius:var(--radius);margin:0 16px 10px;cursor:pointer;overflow:hidden;transition:all 0.15s;}
+.day-card:active{transform:scale(0.98);opacity:0.9;}
+.day-card.today{border:2px solid var(--blue);}
+.day-top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;}
+.day-name{font-size:20px;font-weight:700;}
+.day-date{font-size:13px;color:var(--text3);margin-top:2px;}
+.day-arrow{color:var(--text3);font-size:20px;}
+.day-meals{padding:0 18px 16px;display:flex;flex-direction:column;gap:10px;}
+.meal-row{display:flex;align-items:center;gap:12px;}
+.meal-icon{font-size:20px;flex-shrink:0;}
+.meal-text{font-size:17px;font-weight:400;}
+.meal-empty{color:var(--text3);font-style:italic;font-size:16px;}
+.meal-divider{height:0.5px;background:var(--border);}
+
+/* PILL BUTTONS */
+.pill-btn{padding:10px 20px;border-radius:22px;border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:6px;}
+.pill-blue{background:var(--blue);color:white;}
+.pill-surface{background:var(--surface2);color:var(--text);}
+.pill-btn:active{transform:scale(0.94);}
+
+/* ── EDIT MODAL ── */
+#edit-modal{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;background:var(--bg);transform:translateY(100%);transition:transform 0.35s cubic-bezier(.4,0,.2,1);}
+#edit-modal.open{transform:translateY(0);}
+.modal-header{padding:calc(16px + var(--safe-top)) 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);}
+.modal-title{font-size:20px;font-weight:700;}
+.modal-close{background:var(--surface2);border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;}
+.modal-save-status{font-size:13px;color:var(--text3);}
+.modal-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px;}
+.modal-section{margin-bottom:20px;}
+.modal-section-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:10px;}
+.modal-input{width:100%;background:var(--surface);border:none;border-radius:14px;padding:16px 18px;font-size:19px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+.modal-input::placeholder{color:var(--text3);}
+.fav-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.fav-chip{padding:10px 18px;background:var(--surface2);border-radius:22px;font-size:15px;color:var(--text2);cursor:pointer;border:none;font-family:'Inter',sans-serif;}
+.fav-chip:active{background:var(--blue);color:white;}
+.bring-btn-row{margin-top:14px;}
+.bring-btn{width:100%;padding:16px;border-radius:14px;background:rgba(48,209,88,0.12);border:1.5px solid rgba(48,209,88,0.25);color:var(--green);font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+
+/* ── LIGHTS ── */
+.room-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);padding:20px 20px 8px;}
+.light-row{display:flex;align-items:center;padding:16px 18px;border-bottom:0.5px solid var(--border);}
+.light-row:last-child{border-bottom:none;}
+.light-emoji{font-size:28px;margin-right:14px;}
 .light-info{flex:1;}
-.light-name{font-size:20px;font-weight:600;}
-.light-status{font-size:15px;color:var(--text3);margin-top:3px;}
-.light-toggle{width:60px;height:34px;border-radius:17px;border:none;cursor:pointer;position:relative;transition:background 0.3s;flex-shrink:0;}
-.light-toggle.on{background:var(--green);}
-.light-toggle.off{background:rgba(120,120,128,0.3);}
-.light-toggle::after{content:'';position:absolute;width:28px;height:28px;border-radius:50%;background:white;top:3px;transition:left 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
-.light-toggle.on::after{left:29px;}
-.light-toggle.off::after{left:3px;}
-.brightness-row{margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border);}
-.brightness-label{font-size:14px;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between;}
-.brightness-slider{width:100%;height:6px;border-radius:3px;outline:none;-webkit-appearance:none;background:linear-gradient(to right,var(--yellow) 0%,var(--yellow) var(--val,50%),var(--surface2) var(--val,50%));}
-.brightness-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.2);cursor:pointer;}
-.scene-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-.scene-btn{padding:10px 18px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;}
-.scene-btn.active{border-color:var(--yellow);background:#fffbf0;color:#b8860b;}
-.list-meal-text{font-size:22px;font-weight:500;}
-.list-meal-text.empty{color:var(--text3);font-style:italic;font-size:20px;}
-.list-divider{height:0.5px;background:var(--border);}
+.light-name{font-size:17px;font-weight:500;}
+.light-status{font-size:14px;color:var(--text3);margin-top:2px;}
+.toggle{width:52px;height:32px;border-radius:16px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background 0.25s;}
+.toggle.on{background:var(--green);}
+.toggle.off{background:var(--surface3);}
+.toggle::after{content:'';position:absolute;width:26px;height:26px;border-radius:50%;background:white;top:3px;transition:left 0.25s;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+.toggle.on::after{left:23px;}
+.toggle.off::after{left:3px;}
+.brightness-wrap{padding:8px 18px 16px;border-bottom:0.5px solid var(--border);}
+.brightness-slider{width:100%;height:5px;border-radius:3px;outline:none;-webkit-appearance:none;background:var(--surface3);}
+.brightness-slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.3);cursor:pointer;}
 
-/* EDIT VIEW */
-#edit-view{position:fixed;inset:0;background:#000;display:none;flex-direction:column;}
-#edit-view.open{display:flex;}
-.edit-topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;background:#000;flex-shrink:0;}
-.edit-close{color:white;background:rgba(255,255,255,0.1);border:none;border-radius:22px;padding:14px 24px;font-size:18px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
-.save-status{font-size:16px;color:rgba(255,255,255,0.4);}
-.edit-day-dots{display:flex;gap:7px;align-items:center;}
-.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.25);}
-.dot.on{background:white;width:24px;border-radius:5px;}
-.swipe-wrap{flex:1;overflow:hidden;position:relative;}
-.swipe-track{display:flex;height:100%;transition:transform 0.32s cubic-bezier(.4,0,.2,1);}
-.swipe-card{min-width:100%;height:100%;overflow-y:auto;padding:24px 22px 60px;}
-.card-tag{font-size:16px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
-.card-dayname{font-size:48px;font-weight:700;color:white;margin-bottom:26px;letter-spacing:-1px;}
-.meal-block{background:rgba(255,255,255,0.07);border-radius:22px;padding:24px;margin-bottom:18px;}
-.meal-block-label{font-size:16px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;}
-.meal-block-input{width:100%;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:18px;font-size:22px;font-family:'Inter',sans-serif;color:white;outline:none;}
-.meal-block-input:focus{border-color:var(--blue);}
-.meal-block-input::placeholder{color:rgba(255,255,255,0.25);}
-/* TRACKER */
-.tracker-header{background:#07080b;padding:24px 22px 18px;flex-shrink:0;display:flex;align-items:center;gap:16px;}
-.tracker-scroll{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:16px;padding-bottom:120px;background:#07080b;}
-.tracker-date-strip{display:flex;gap:10px;overflow-x:auto;padding:14px 18px;scrollbar-width:none;background:#07080b;flex-shrink:0;}
-.tracker-date-btn{flex-shrink:0;padding:14px 18px;border-radius:18px;border:none;background:rgba(255,255,255,0.08);font-size:16px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;color:rgba(255,255,255,0.6);text-align:center;min-width:64px;}
-.tracker-date-btn.active{background:var(--blue);color:white;font-weight:700;}
-.tracker-section{background:rgba(255,255,255,0.06);border-radius:24px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;}
-.tracker-section-hd{padding:18px 22px 12px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:8px;}
-.tracker-row{display:flex;align-items:center;padding:18px 22px;border-bottom:0.5px solid rgba(255,255,255,0.06);gap:14px;}
-.tracker-row:last-child{border-bottom:none;}
-.tracker-label{font-size:22px;font-weight:500;color:white;flex:1;}
-.tracker-input{background:rgba(255,255,255,0.1);border:none;border-radius:14px;padding:14px 18px;font-size:22px;font-family:'Inter',sans-serif;color:white;outline:none;width:120px;text-align:right;}
-.tracker-input::placeholder{color:rgba(255,255,255,0.25);}
-.tracker-unit{font-size:18px;color:rgba(255,255,255,0.35);flex-shrink:0;width:32px;}
-.tracker-textarea{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px 18px;font-size:18px;font-family:'Inter',sans-serif;color:white;outline:none;resize:none;min-height:72px;}
-.tracker-textarea::placeholder{color:rgba(255,255,255,0.25);}
-.tracker-textarea:focus{border-color:rgba(0,122,255,0.5);}
-.save-tracker-btn{width:100%;padding:22px;border-radius:20px;background:var(--blue);color:white;border:none;font-size:22px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 20px rgba(0,122,255,0.3);}
-.water-btns{display:flex;gap:10px;padding:14px 22px 18px;}
-.water-btn{flex:1;padding:14px;border-radius:14px;background:rgba(0,122,255,0.15);border:1px solid rgba(0,122,255,0.25);font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--blue);text-align:center;}
-.tracker-food-row{padding:18px 22px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
-.tracker-food-row:last-child{border-bottom:none;}
-.tracker-food-label{font-size:17px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:10px;}
-.meal-input-wrap{position:relative;}
-.meal-dropdown{position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border-radius:16px;margin-top:6px;overflow:hidden;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:none;max-height:260px;overflow-y:auto;}
-.meal-dropdown.open{display:block;}
-.meal-dropdown-item{padding:16px 18px;font-size:19px;color:rgba(255,255,255,0.85);cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px;}
-.meal-dropdown-item:last-child{border-bottom:none;}
-.meal-dropdown-item:active{background:rgba(0,122,255,0.3);}
-.meal-dropdown-emoji{font-size:22px;}
-.meal-dropdown-empty{padding:16px 18px;font-size:16px;color:rgba(255,255,255,0.35);font-style:italic;}
-.fav-chip{padding:12px 20px;background:rgba(255,255,255,0.09);border-radius:24px;font-size:17px;color:rgba(255,255,255,0.75);cursor:pointer;border:1px solid rgba(255,255,255,0.12);}
-.fav-chip:active{background:var(--blue);}
-.bring-row{display:flex;gap:10px;margin-top:14px;}
-.bring-meal-btn{flex:1;padding:16px;border-radius:16px;background:rgba(52,199,89,0.12);border:1.5px solid rgba(52,199,89,0.25);color:#34C759;font-size:17px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;}
-.swipe-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:#000;flex-shrink:0;}
-.sw-arrow{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:white;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.sw-arrow:disabled{opacity:0.2;}
-.sw-info{text-align:center;}
-.sw-day{font-size:22px;font-weight:700;color:white;}
-.sw-date{font-size:15px;color:rgba(255,255,255,0.35);margin-top:3px;}
+/* ── TRACKER ── */
+.tracker-date-row{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 4px;scrollbar-width:none;flex-shrink:0;}
+.tracker-date-row::-webkit-scrollbar{display:none;}
+.date-pill{flex-shrink:0;padding:10px 16px;border-radius:20px;border:none;background:var(--surface);font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2);text-align:center;min-width:60px;transition:all 0.2s;}
+.date-pill.active{background:var(--blue);color:white;font-weight:700;}
+.date-pill:active{transform:scale(0.92);}
+.summary-card{margin:8px 16px 4px;background:linear-gradient(135deg,rgba(0,122,255,0.15),rgba(191,90,242,0.12));border:1px solid rgba(0,122,255,0.2);border-radius:22px;padding:20px;}
+.summary-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:16px;}
+.summary-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+.summary-metric{text-align:center;padding:0 8px;}
+.summary-metric+.summary-metric{border-left:0.5px solid var(--border);}
+.summary-value{font-size:28px;font-weight:700;}
+.summary-label{font-size:12px;color:var(--text3);margin-top:3px;}
+.summary-bottom{margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;}
+.summary-bottom-item{font-size:13px;color:var(--text3);}
+.tr-section{background:var(--surface);border-radius:var(--radius);margin:0 16px 12px;overflow:hidden;}
+.tr-section-hd{padding:14px 18px 10px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);}
+.tr-row{display:flex;align-items:center;padding:14px 18px;border-bottom:0.5px solid var(--border);gap:12px;}
+.tr-row:last-child{border-bottom:none;}
+.tr-label{font-size:18px;font-weight:500;flex:1;}
+.tr-input{background:var(--surface2);border:none;border-radius:12px;padding:12px 16px;font-size:18px;font-family:'Inter',sans-serif;color:var(--text);outline:none;width:110px;text-align:right;}
+.tr-input::placeholder{color:var(--text3);}
+.tr-unit{font-size:16px;color:var(--text3);width:28px;flex-shrink:0;}
+.water-row{display:flex;gap:8px;padding:10px 18px 16px;}
+.water-chip{flex:1;padding:12px 0;border-radius:12px;background:rgba(0,122,255,0.12);border:1px solid rgba(0,122,255,0.2);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--blue);text-align:center;}
+.water-chip:active{background:var(--blue);color:white;}
+.tr-food-block{padding:14px 18px;border-bottom:0.5px solid var(--border);}
+.tr-food-block:last-child{border-bottom:none;}
+.tr-food-label{font-size:14px;font-weight:600;color:var(--text3);margin-bottom:10px;}
+.tr-textarea{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:14px 16px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;min-height:56px;}
+.tr-textarea::placeholder{color:var(--text3);}
+.tr-textarea:focus{background:var(--surface3);}
+.save-indicator{text-align:center;font-size:13px;color:var(--text3);padding:8px;margin-bottom:8px;}
 
-/* BOTTOM SHEET */
-.sheet-overlay{display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;}
-.sheet-overlay.open{display:flex;}
-.sheet{background:var(--surface);border-radius:30px 30px 0 0;width:100%;max-width:600px;padding:26px 22px 54px;animation:slideUp 0.28s cubic-bezier(.4,0,.2,1);}
+/* ── BRING MODAL ── */
+#bring-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+#bring-modal.open{opacity:1;pointer-events:all;}
+.bring-sheet{background:var(--surface);border-radius:28px 28px 0 0;width:100%;max-width:540px;padding:20px 20px calc(20px + var(--safe-bottom));animation:slideUp 0.3s cubic-bezier(.4,0,.2,1);}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-.sheet-handle{width:44px;height:5px;background:var(--border);border-radius:3px;margin:0 auto 22px;}
-.sheet-title{font-size:26px;font-weight:700;margin-bottom:6px;}
-.sheet-sub{font-size:18px;color:var(--text2);margin-bottom:20px;}
-.bring-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:280px;overflow-y:auto;}
-.bring-item{display:flex;align-items:center;gap:14px;padding:16px 16px;background:var(--surface2);border-radius:16px;}
-.bring-chk{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.bring-chk.on{background:var(--green);border-color:var(--green);}
-.bring-chk.on::after{content:'✓';color:white;font-size:16px;font-weight:700;}
-.bring-item-input{font-size:20px;flex:1;background:none;border:none;outline:none;font-family:'Inter',sans-serif;color:var(--text);}
-.bring-item-del{color:var(--text3);font-size:22px;cursor:pointer;padding:4px 8px;}
-.sheet-input-row{display:flex;gap:10px;margin-bottom:16px;}
-.sheet-input{flex:1;background:var(--surface2);border:none;border-radius:16px;padding:18px;font-size:19px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
-.sheet-add-btn{padding:18px 22px;border-radius:16px;background:var(--green);color:white;border:none;font-size:24px;font-weight:700;cursor:pointer;}
-.sheet-confirm{width:100%;padding:20px;border-radius:18px;background:var(--green);color:white;border:none;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
-.sheet-cancel{width:100%;padding:18px;border-radius:18px;background:var(--surface2);color:var(--text2);border:none;font-size:18px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;margin-top:12px;}
+.bring-handle{width:36px;height:4px;background:var(--surface3);border-radius:2px;margin:0 auto 18px;}
+.bring-title{font-size:22px;font-weight:700;margin-bottom:16px;}
+.bring-items{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:220px;overflow-y:auto;}
+.bring-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border-radius:14px;}
+.bring-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--surface3);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.bring-check.on{background:var(--green);border-color:var(--green);}
+.bring-check.on::after{content:'✓';color:white;font-size:14px;font-weight:700;}
+.bring-item-input{font-size:17px;flex:1;background:none;border:none;outline:none;font-family:'Inter',sans-serif;color:var(--text);}
+.bring-item-del{color:var(--text3);font-size:18px;cursor:pointer;padding:4px 8px;}
+.bring-add-row{display:flex;gap:8px;margin-bottom:14px;}
+.bring-add-input{flex:1;background:var(--surface2);border:none;border-radius:12px;padding:14px 16px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
+.bring-add-plus{padding:14px 20px;border-radius:12px;background:var(--green);color:white;border:none;font-size:22px;font-weight:700;cursor:pointer;}
+.bring-confirm{width:100%;padding:18px;border-radius:16px;background:var(--green);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
+.bring-cancel{width:100%;padding:16px;border-radius:16px;background:var(--surface2);color:var(--text2);border:none;font-size:16px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;}
 
-/* FAVORITES */
-.fav-list-wrap{padding:18px;display:flex;flex-direction:column;gap:14px;padding-bottom:60px;}
-.fav-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-.fav-card-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px;}
-.fav-card-left{display:flex;align-items:center;gap:14px;}
-.fav-card-emoji{font-size:32px;}
-.fav-card-name{font-size:22px;font-weight:600;}
-.fav-card-type{font-size:16px;color:var(--text3);margin-top:3px;}
-.fav-card-del{width:38px;height:38px;border-radius:50%;background:#fce7f3;border:none;color:var(--red);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.fav-ingredients{padding:0 20px 16px;display:flex;flex-wrap:wrap;gap:8px;}
-.fav-ing-tag{padding:8px 16px;background:var(--surface2);border-radius:22px;font-size:16px;color:var(--text2);}
-.fav-ing-empty{font-size:16px;color:var(--text3);font-style:italic;padding:0 0 16px;}
-.fav-card-btns{display:flex;gap:10px;padding:0 20px 20px;}
-.fav-edit-ing-btn{flex:1;padding:14px;border-radius:16px;background:var(--surface2);border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--blue);}
-.fav-bring-btn{flex:1;padding:14px;border-radius:16px;background:rgba(52,199,89,0.1);border:1px solid rgba(52,199,89,0.3);font-size:17px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--green);}
-.add-fav-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;}
-.add-fav-title{font-size:22px;font-weight:700;margin-bottom:16px;}
-.add-fav-input{width:100%;background:var(--surface2);border:none;border-radius:16px;padding:18px;font-size:20px;font-family:'Inter',sans-serif;color:var(--text);outline:none;margin-bottom:12px;}
-.add-fav-types{display:flex;gap:10px;margin-bottom:14px;}
-.type-btn{flex:1;padding:14px 8px;border-radius:16px;border:2px solid var(--border);background:var(--surface);font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-align:center;}
-.type-btn.sel{border-color:var(--blue);background:#eff6ff;color:var(--blue);}
-.add-fav-btn{width:100%;padding:18px;border-radius:16px;background:var(--blue);color:white;border:none;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
+/* ── ING MODAL ── */
+#ing-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+#ing-modal.open{opacity:1;pointer-events:all;}
 
-/* INGREDIENT EDITOR */
-#ing-modal .sheet{max-height:85vh;overflow-y:auto;}
-.ing-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
-.ing-item{display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface2);border-radius:14px;}
-.ing-item-input{flex:1;background:none;border:none;outline:none;font-size:20px;font-family:'Inter',sans-serif;color:var(--text);}
-.ing-item-del{color:var(--text3);font-size:22px;cursor:pointer;padding:4px 8px;}
+/* ── FAVS ── */
+.fav-card{background:var(--surface);border-radius:var(--radius);margin:0 16px 10px;overflow:hidden;}
+.fav-card-top{display:flex;align-items:center;padding:16px 18px;gap:14px;}
+.fav-emoji-big{font-size:32px;}
+.fav-info{flex:1;}
+.fav-name-big{font-size:18px;font-weight:600;}
+.fav-type-small{font-size:14px;color:var(--text3);margin-top:2px;}
+.fav-del-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,69,58,0.12);border:none;color:var(--red);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.fav-ings{padding:0 18px 14px;display:flex;flex-wrap:wrap;gap:6px;}
+.fav-ing-tag{padding:6px 14px;background:var(--surface2);border-radius:20px;font-size:14px;color:var(--text2);}
+.fav-ing-empty{font-size:14px;color:var(--text3);font-style:italic;}
+.fav-btns{display:flex;gap:8px;padding:0 18px 16px;}
+.fav-edit-btn{flex:1;padding:12px;border-radius:12px;background:var(--surface2);border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--blue);}
+.fav-bring-btn{flex:1;padding:12px;border-radius:12px;background:rgba(48,209,88,0.12);border:1px solid rgba(48,209,88,0.2);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--green);}
+.add-fav-card{background:var(--surface);border-radius:var(--radius);margin:0 16px 20px;padding:20px;}
+.add-fav-input{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:16px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;margin-bottom:12px;}
+.add-fav-types{display:flex;gap:8px;margin-bottom:14px;}
+.type-pill{flex:1;padding:12px 6px;border-radius:12px;border:2px solid var(--surface3);background:var(--surface2);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-align:center;color:var(--text2);}
+.type-pill.sel{border-color:var(--blue);background:rgba(0,122,255,0.15);color:var(--blue);}
+.add-fav-submit{width:100%;padding:16px;border-radius:14px;background:var(--blue);color:white;border:none;font-size:17px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
 
-/* TOAST */
-.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#1c1c1e;color:white;padding:16px 28px;border-radius:28px;font-size:18px;font-weight:500;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(100px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:var(--surface2);color:var(--text);padding:12px 22px;border-radius:22px;font-size:15px;font-weight:500;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;border:0.5px solid var(--border);}
 .toast.show{opacity:1;}
+
+/* ── DROPDOWN ── */
+.meal-input-wrap{position:relative;}
+.meal-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface2);border-radius:16px;overflow:hidden;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.4);display:none;max-height:240px;overflow-y:auto;}
+.meal-dropdown.open{display:block;}
+.meal-dropdown-item{padding:14px 18px;font-size:17px;color:var(--text);cursor:pointer;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;}
+.meal-dropdown-item:last-child{border-bottom:none;}
+.meal-dropdown-item:active{background:rgba(0,122,255,0.2);}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-overlay">
-  <svg width="200" height="147" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="bg2" cx="50%" cy="45%" r="65%"><stop offset="0%" stop-color="#0e1117"/><stop offset="100%" stop-color="#07080b"/></radialGradient>
-      <radialGradient id="hl" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#7B61FF" stop-opacity="0.2"/><stop offset="100%" stop-color="#7B61FF" stop-opacity="0"/></radialGradient>
-    </defs>
-    <rect width="680" height="500" fill="url(#bg2)" rx="20"/>
-    <ellipse cx="340" cy="210" rx="260" ry="190" fill="url(#hl)"/>
-    <circle cx="340" cy="200" r="112" fill="#0b0a14" stroke="#2d2458" stroke-width="1.5"/>
-    <text x="340" y="224" text-anchor="middle" font-family="Inter,sans-serif" font-size="66" font-weight="700" fill="#C4B0FF" textLength="280" lengthAdjust="spacing">ALFIE</text>
-    <text x="340" y="318" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#9B85FF" textLength="200" lengthAdjust="spacing">HOME ASSISTANT</text>
-  </svg>
+<!-- APP SHELL -->
+<div id="login-page">
+  <div class="login-logo">ALFIE</div>
+  <div class="login-sub">Home Assistant</div>
   <button id="btn-login">
     <span><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg></span>
     Mit Google anmelden
   </button>
 </div>
 
-<!-- HOME MENU -->
-<div id="home-menu">
-  <div class="home-logo">ALFIE</div>
-  <div class="home-sub">Home Assistant</div>
-  <div class="menu-grid">
-    <div class="menu-card" onclick="showScreen('list-view')">
-      <div class="menu-card-icon">🍽️</div>
-      <div class="menu-card-label">Mahlzeiten</div>
-      <div class="menu-card-sub">Wochenplan & Favoriten</div>
-    </div>
-    <div class="menu-card" onclick="showScreen('lights-view');loadLights()">
-      <div class="menu-card-icon">💡</div>
-      <div class="menu-card-label">Lichter</div>
-      <div class="menu-card-sub">IKEA Dirigera</div>
-    </div>
-    <div class="menu-card" onclick="showScreen('tracker-view');loadTracker()" style="grid-column:1/-1;">
-      <div class="menu-card-icon">📊</div>
-      <div class="menu-card-label">Miriams Tracker</div>
-      <div class="menu-card-sub">Gewicht · Schritte · Wasser · Essen · Sport</div>
-    </div>
-  </div>
-</div>
+<div id="app">
+  <div id="app-content">
 
-<!-- MEAL PLANNER -->
-<div class="screen" id="list-view">
-  <div class="list-header">
-    <div class="list-header-top">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <button class="back-btn" onclick="showHome()">‹ Home</button>
-        <div>
-          <div class="list-title">🍽️ Mahlzeiten</div>
-          <div class="list-week" id="week-label">Laden...</div>
+    <!-- MEALS PAGE -->
+    <div class="page active" id="page-meals">
+      <div class="nav-header">
+        <div class="nav-row">
+          <div>
+            <div class="nav-title">🍽️ Mahlzeiten</div>
+            <div class="nav-subtitle" id="week-label">Laden...</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="pill-btn pill-surface" onclick="getMobileSuggestions()" style="padding:10px 16px;font-size:14px;">✨</button>
+            <button class="pill-btn pill-surface" onclick="copyLastWeek()" style="padding:10px 16px;font-size:14px;">📋</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button onclick="switchMealTab('week',this)" id="meal-tab-week" class="pill-btn pill-blue" style="font-size:14px;">Diese Woche</button>
+          <button onclick="switchMealTab('favs',this)" id="meal-tab-favs" class="pill-btn pill-surface" style="font-size:14px;">⭐ Favoriten</button>
+        </div>
+      </div>
+      <div id="days-list"></div>
+      <div id="favs-list" style="display:none;"></div>
+    </div>
+
+    <!-- LIGHTS PAGE -->
+    <div class="page" id="page-lights">
+      <div class="nav-header">
+        <div class="nav-title">💡 Lichter</div>
+        <div class="nav-subtitle">IKEA Dirigera</div>
+      </div>
+      <div id="lights-list"></div>
+    </div>
+
+    <!-- TRACKER PAGE -->
+    <div class="page" id="page-tracker">
+      <div class="nav-header">
+        <div class="nav-title">📊 Mein Tag</div>
+        <div class="nav-subtitle" id="tracker-date-label">Heute</div>
+      </div>
+      <div class="tracker-date-row" id="tracker-dates"></div>
+      <!-- Summary -->
+      <div class="summary-card" id="summary-card">
+        <div class="summary-title">Übersicht</div>
+        <div class="summary-metrics">
+          <div class="summary-metric"><div class="summary-value" id="sum-weight" style="color:var(--purple);">—</div><div class="summary-label">kg</div></div>
+          <div class="summary-metric"><div class="summary-value" id="sum-water" style="color:var(--blue);">—</div><div class="summary-label">L Wasser</div></div>
+          <div class="summary-metric"><div class="summary-value" id="sum-steps" style="color:var(--green);">—</div><div class="summary-label">Schritte</div></div>
+        </div>
+        <div class="summary-bottom">
+          <div class="summary-bottom-item" id="sum-meals">🍽️ 0/3 Mahlzeiten</div>
+          <div class="summary-bottom-item" id="sum-activity">🏃 Keine Aktivität</div>
+        </div>
+      </div>
+      <div class="save-indicator" id="save-indicator">✓ Alles gespeichert</div>
+      <!-- Body -->
+      <div class="tr-section">
+        <div class="tr-section-hd">⚖️ Körper</div>
+        <div class="tr-row">
+          <div class="tr-label">Gewicht</div>
+          <input class="tr-input" id="tr-weight" type="number" step="0.1" placeholder="—" oninput="triggerAutosaveTracker()">
+          <div class="tr-unit">kg</div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-label">Schritte</div>
+          <input class="tr-input" id="tr-steps" type="number" placeholder="—" oninput="triggerAutosaveTracker()">
+          <div class="tr-unit">👟</div>
+        </div>
+      </div>
+      <div class="tr-section">
+        <div class="tr-section-hd">💧 Wasser</div>
+        <div class="tr-row">
+          <div class="tr-label">Getrunken</div>
+          <input class="tr-input" id="tr-water" type="number" step="0.1" placeholder="0" oninput="triggerAutosaveTracker()">
+          <div class="tr-unit">L</div>
+        </div>
+        <div class="water-row">
+          <button class="water-chip" onclick="addWater(0.25)">+0.25</button>
+          <button class="water-chip" onclick="addWater(0.5)">+0.5</button>
+          <button class="water-chip" onclick="addWater(1)">+1L</button>
+          <button class="water-chip" onclick="addWater(-0.25)" style="background:rgba(255,69,58,0.1);border-color:rgba(255,69,58,0.2);color:var(--red);">-0.25</button>
+        </div>
+      </div>
+      <div class="tr-section">
+        <div class="tr-section-hd">🍽️ Essen</div>
+        <div class="tr-food-block">
+          <div class="tr-food-label">☀️ Frühstück</div>
+          <textarea class="tr-textarea" id="tr-breakfast" placeholder="Was hast du gefrühstückt?" oninput="triggerAutosaveTracker()"></textarea>
+        </div>
+        <div class="tr-food-block">
+          <div class="tr-food-label">🌤️ Mittagessen</div>
+          <textarea class="tr-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker()"></textarea>
+        </div>
+        <div class="tr-food-block">
+          <div class="tr-food-label">🌙 Abendessen</div>
+          <textarea class="tr-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan..." oninput="triggerAutosaveTracker()"></textarea>
+        </div>
+        <div class="tr-food-block">
+          <div class="tr-food-label">🍪 Snacks</div>
+          <textarea class="tr-textarea" id="tr-snacks" placeholder="Snacks..." oninput="triggerAutosaveTracker()"></textarea>
+        </div>
+      </div>
+      <div class="tr-section">
+        <div class="tr-section-hd">🏃 Aktivität</div>
+        <div class="tr-food-block">
+          <textarea class="tr-textarea" id="tr-activity" placeholder="z.B. Laufen 30 Min, Yoga 45 Min..." oninput="triggerAutosaveTracker()"></textarea>
+        </div>
+      </div>
+      <div class="tr-section" style="margin-bottom:20px;">
+        <div class="tr-section-hd">📝 Notizen</div>
+        <div class="tr-food-block">
+          <textarea class="tr-textarea" id="tr-notes" placeholder="Wie war dein Tag?" oninput="triggerAutosaveTracker()"></textarea>
         </div>
       </div>
     </div>
-    <div class="hdr-btns">
-      <button class="hdr-btn blue" onclick="getMobileSuggestions()">✨ Vorschläge</button>
-      <button class="hdr-btn gray" onclick="copyLastWeek()">📋 Letzte Woche</button>
-    </div>
+
   </div>
-  <div class="list-tabs">
-    <button class="list-tab active" onclick="switchTab('week',this)">Diese Woche</button>
-    <button class="list-tab" onclick="switchTab('favs',this)">⭐ Favoriten</button>
-  </div>
-  <div class="tab-panel active" id="panel-week">
-    <div class="list-scroll" id="days-list"></div>
-  </div>
-  <div class="tab-panel" id="panel-favs">
-    <div class="fav-list-wrap">
-      <div id="favs-list"></div>
-      <div class="add-fav-card">
-        <div class="add-fav-title">➕ Favorit hinzufügen</div>
-        <input class="add-fav-input" id="new-fav-name" placeholder="Mahlzeit (z.B. Spaghetti Carbonara)">
-        <div class="add-fav-types">
-          <button class="type-btn sel" id="type-lunch" onclick="selType('Mittagessen')">☀️ Mittag</button>
-          <button class="type-btn" id="type-dinner" onclick="selType('Abendessen')">🌙 Abend</button>
-          <button class="type-btn" id="type-both" onclick="selType('Beides')">🍽️ Beides</button>
-        </div>
-        <button class="add-fav-btn" onclick="addFavorite()">⭐ Favorit speichern</button>
-      </div>
-    </div>
+
+  <!-- TAB BAR -->
+  <div id="tab-bar">
+    <button class="tab-btn active" id="tab-meals" onclick="switchTab('meals')">
+      <div class="tab-icon">🍽️</div>
+      <div class="tab-label">Mahlzeiten</div>
+    </button>
+    <button class="tab-btn" id="tab-lights" onclick="switchTab('lights')">
+      <div class="tab-icon">💡</div>
+      <div class="tab-label">Lichter</div>
+    </button>
+    <button class="tab-btn" id="tab-tracker" onclick="switchTab('tracker')">
+      <div class="tab-icon">📊</div>
+      <div class="tab-label">Tracker</div>
+    </button>
   </div>
 </div>
 
-<!-- IKEA LIGHTS -->
-<div class="screen" id="lights-view">
-  <div class="lights-header">
-    <button class="back-btn" onclick="showHome()">‹ Home</button>
-    <div style="font-size:28px;font-weight:700;margin-left:8px;">💡 Lichter</div>
+<!-- EDIT MODAL (full screen slide up) -->
+<div id="edit-modal">
+  <div class="modal-header">
+    <button class="modal-close" onclick="closeEdit()">✕</button>
+    <div class="modal-title" id="edit-modal-title">Montag</div>
+    <div class="modal-save-status" id="modal-save-status">✓</div>
   </div>
-  <div class="lights-scroll" id="lights-list">
-    <div style="text-align:center;color:var(--text3);font-size:16px;padding:40px;">Laden...</div>
-  </div>
-</div>
-  <svg width="260" height="191" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="bg2" cx="50%" cy="45%" r="65%"><stop offset="0%" stop-color="#0e1117"/><stop offset="100%" stop-color="#07080b"/></radialGradient>
-      <radialGradient id="hl" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#7B61FF" stop-opacity="0.2"/><stop offset="100%" stop-color="#7B61FF" stop-opacity="0"/></radialGradient>
-    </defs>
-    <rect width="680" height="500" fill="url(#bg2)" rx="20"/>
-    <ellipse cx="340" cy="210" rx="260" ry="190" fill="url(#hl)"/>
-    <circle cx="340" cy="200" r="112" fill="#0b0a14" stroke="#2d2458" stroke-width="1.5"/>
-    <text x="340" y="224" text-anchor="middle" font-family="Inter,sans-serif" font-size="66" font-weight="700" fill="#C4B0FF" textLength="280" lengthAdjust="spacing">ALFIE</text>
-    <text x="340" y="318" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#9B85FF" textLength="200" lengthAdjust="spacing">HOME ASSISTANT</text>
-  </svg>
-  <button id="btn-login">
-    <span><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg></span>
-    Mit Google anmelden
-  </button>
-</div>
-
-<!-- LIST VIEW -->
-
-<!-- TRACKER -->
-<div class="screen" id="tracker-view" style="background:#07080b;">
-  <div class="tracker-header">
-    <button class="back-btn" onclick="showHome()" style="color:rgba(255,255,255,0.7);">‹ Home</button>
-    <div style="font-size:26px;font-weight:700;color:white;margin-left:8px;">📊 Mein Tag</div>
-  </div>
-  <div class="tracker-date-strip" id="tracker-dates"></div>
-  <div class="tracker-scroll">
-    <!-- SUMMARY CARD -->
-    <div style="background:linear-gradient(135deg,rgba(0,122,255,0.2),rgba(123,97,255,0.2));border:1px solid rgba(0,122,255,0.3);border-radius:22px;padding:18px 20px;">
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.4);margin-bottom:14px;">✨ Übersicht</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-        <div style="text-align:center;">
-          <div id="sum-weight" style="font-size:24px;font-weight:700;color:white;">—</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">kg</div>
-        </div>
-        <div style="text-align:center;border-left:1px solid rgba(255,255,255,0.1);border-right:1px solid rgba(255,255,255,0.1);">
-          <div id="sum-water" style="font-size:24px;font-weight:700;color:#60AAFF;">—</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">L Wasser</div>
-        </div>
-        <div style="text-align:center;">
-          <div id="sum-steps" style="font-size:24px;font-weight:700;color:#34C759;">—</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Schritte</div>
-        </div>
+  <div class="modal-body">
+    <div class="modal-section">
+      <div class="modal-section-label">☀️ Mittagessen</div>
+      <div class="meal-input-wrap">
+        <input class="modal-input" id="edit-lunch" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
+          oninput="triggerModalAutosave();showDrop('edit-lunch','drop-lunch','lunch')"
+          onfocus="showDrop('edit-lunch','drop-lunch','lunch')"
+          onblur="setTimeout(()=>hideDrop('drop-lunch'),250)">
+        <div class="meal-dropdown" id="drop-lunch"></div>
       </div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:16px;">
-        <div id="sum-activity" style="font-size:13px;color:rgba(255,255,255,0.5);flex:1;">🏃 —</div>
-        <div id="sum-meals" style="font-size:13px;color:rgba(255,255,255,0.5);flex:1;text-align:right;">🍽️ —</div>
+      <div class="bring-btn-row">
+        <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'lunch')">🛒 Zutaten zu Bring!</button>
       </div>
     </div>
-    <div class="tracker-section">
-      <div class="tracker-section-hd">⚖️ Körper</div>
-      <div class="tracker-row">
-        <div class="tracker-label">Gewicht</div>
-        <input class="tracker-input" id="tr-weight" type="number" step="0.1" placeholder="—">
-        <div class="tracker-unit">kg</div>
+    <div class="modal-section">
+      <div class="modal-section-label">🌙 Abendessen</div>
+      <div class="meal-input-wrap">
+        <input class="modal-input" id="edit-dinner" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
+          oninput="triggerModalAutosave();showDrop('edit-dinner','drop-dinner','dinner')"
+          onfocus="showDrop('edit-dinner','drop-dinner','dinner')"
+          onblur="setTimeout(()=>hideDrop('drop-dinner'),250)">
+        <div class="meal-dropdown" id="drop-dinner"></div>
       </div>
-      <div class="tracker-row">
-        <div class="tracker-label">Schritte</div>
-        <input class="tracker-input" id="tr-steps" type="number" placeholder="—">
-        <div class="tracker-unit">👟</div>
-      </div>
-    </div>
-    <!-- Water -->
-    <div class="tracker-section">
-      <div class="tracker-section-hd">💧 Wasser</div>
-      <div class="tracker-row">
-        <div class="tracker-label">Getrunken</div>
-        <input class="tracker-input" id="tr-water" type="number" step="0.1" placeholder="0">
-        <div class="tracker-unit">L</div>
-      </div>
-      <div class="water-btns">
-        <button class="water-btn" onclick="addWater(0.25)">+0.25</button>
-        <button class="water-btn" onclick="addWater(0.5)">+0.5</button>
-        <button class="water-btn" onclick="addWater(1)">+1L</button>
-        <button class="water-btn" onclick="addWater(-0.25)" style="background:rgba(255,59,48,0.1);border-color:rgba(255,59,48,0.2);color:var(--red);">-0.25</button>
+      <div class="bring-btn-row">
+        <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'dinner')">🛒 Zutaten zu Bring!</button>
       </div>
     </div>
-    <!-- Food -->
-    <div class="tracker-section">
-      <div class="tracker-section-hd">🍽️ Essen</div>
-      <div class="tracker-food-row">
-        <div class="tracker-food-label">☀️ Frühstück</div>
-        <textarea class="tracker-textarea" id="tr-breakfast" placeholder="Was hast du gefrühstückt?"></textarea>
-      </div>
-      <div class="tracker-food-row">
-        <div class="tracker-food-label">🌤️ Mittagessen</div>
-        <textarea class="tracker-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan..."></textarea>
-      </div>
-      <div class="tracker-food-row">
-        <div class="tracker-food-label">🌙 Abendessen</div>
-        <textarea class="tracker-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan..."></textarea>
-      </div>
-      <div class="tracker-food-row">
-        <div class="tracker-food-label">🍪 Snacks</div>
-        <textarea class="tracker-textarea" id="tr-snacks" placeholder="Snacks..."></textarea>
-      </div>
-    </div>
-    <!-- Activity -->
-    <div class="tracker-section">
-      <div class="tracker-section-hd">🏃 Aktivität</div>
-      <div class="tracker-food-row">
-        <div class="tracker-food-label">Sport / Aktivität</div>
-        <textarea class="tracker-textarea" id="tr-activity" placeholder="z.B. Laufen 30 Min, Yoga 45 Min..."></textarea>
-      </div>
-    </div>
-    <!-- Notes -->
-    <div class="tracker-section">
-      <div class="tracker-section-hd">📝 Notizen</div>
-      <div class="tracker-food-row">
-        <textarea class="tracker-textarea" id="tr-notes" placeholder="Wie war dein Tag?"></textarea>
-      </div>
-    </div>
-    <button class="save-tracker-btn" onclick="saveTracker()">💾 Speichern</button>
-  </div>
-</div>
-
-<!-- EDIT VIEW -->
-<div id="edit-view">
-  <div class="edit-topbar">
-    <button class="edit-close" onclick="closeEditView()">✕ Fertig</button>
-    <div class="edit-day-dots" id="day-dots"></div>
-    <div class="save-status" id="save-status">✓ Gespeichert</div>
-  </div>
-  <div class="swipe-wrap" id="swipe-wrap">
-    <div class="swipe-track" id="swipe-track"></div>
-  </div>
-  <div class="swipe-nav">
-    <button class="sw-arrow" id="prev-btn" onclick="prevDay()">‹</button>
-    <div class="sw-info">
-      <div class="sw-day" id="sw-day-label">—</div>
-      <div class="sw-date" id="sw-day-date">—</div>
-    </div>
-    <button class="sw-arrow" id="next-btn" onclick="nextDay()">›</button>
   </div>
 </div>
 
 <!-- BRING MODAL -->
-<div class="sheet-overlay" id="bring-modal" onclick="if(event.target===this)closeBring()">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="bring-title">🛒 Zutaten</div>
-    <div class="sheet-sub" id="bring-sub">Wähle was du brauchst</div>
-    <div class="bring-list" id="bring-list"></div>
-    <div class="sheet-input-row">
-      <input class="sheet-input" id="bring-new-item" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()">
-      <button class="sheet-add-btn" onclick="addBringItem()">+</button>
+<div id="bring-modal" onclick="if(event.target===this)closeBring()">
+  <div class="bring-sheet">
+    <div class="bring-handle"></div>
+    <div class="bring-title" id="bring-title">🛒 Zutaten</div>
+    <div class="bring-items" id="bring-items"></div>
+    <div class="bring-add-row">
+      <input class="bring-add-input" id="bring-new" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()">
+      <button class="bring-add-plus" onclick="addBringItem()">+</button>
     </div>
-    <button class="sheet-confirm" onclick="confirmBring()">✓ Zu Bring! hinzufügen</button>
-    <button class="sheet-cancel" onclick="closeBring()">Abbrechen</button>
+    <button class="bring-confirm" onclick="confirmBring()">✓ Zu Bring! hinzufügen</button>
+    <button class="bring-cancel" onclick="closeBring()">Abbrechen</button>
   </div>
 </div>
 
-<!-- INGREDIENT EDITOR MODAL -->
-<div class="sheet-overlay" id="ing-modal" onclick="if(event.target===this)closeIngModal()">
-  <div class="sheet" id="ing-modal-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="ing-modal-title">Zutaten bearbeiten</div>
-    <div class="sheet-sub" id="ing-modal-sub">Füge Zutaten für dieses Gericht hinzu</div>
-    <div class="ing-list" id="ing-list"></div>
-    <div class="sheet-input-row">
-      <input class="sheet-input" id="ing-new-item" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addIngItem()">
-      <button class="sheet-add-btn" onclick="addIngItem()">+</button>
+<!-- ING MODAL -->
+<div id="ing-modal" onclick="if(event.target===this)closeIng()">
+  <div class="bring-sheet">
+    <div class="bring-handle"></div>
+    <div class="bring-title" id="ing-title">✏️ Zutaten</div>
+    <div class="bring-items" id="ing-items"></div>
+    <div class="bring-add-row">
+      <input class="bring-add-input" id="ing-new" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addIngItem()">
+      <button class="bring-add-plus" onclick="addIngItem()">+</button>
     </div>
-    <button class="sheet-confirm" onclick="saveIngredients()">💾 Speichern</button>
-    <button class="sheet-cancel" onclick="closeIngModal()">Abbrechen</button>
+    <button class="bring-confirm" onclick="saveIng()">💾 Speichern</button>
+    <button class="bring-cancel" onclick="closeIng()">Abbrechen</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const CONFIG={
-  GCAL_CLIENT_ID:'438929727680-b8qi3q72guf6a44u0h3g2adst8n378tv.apps.googleusercontent.com',
-  SHEETS_API_KEY:'AIzaSyCjaHl6Sj0iTn9RFHl4JIP5ZsDzGV-wZKE',
-  SHEETS_ID:'1cc79Ey2ovmerwijlfcaZc171KFYI6l-Id47lEAjEjoM',
-  HA_URL:'https://ha.ha-cruz.com',
-  HA_TOKEN:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1MTI2MmRkYTlmMjI0MWYxYmE2MzQ2MzA4YjJlZGZlZiIsImlhdCI6MTc3ODMxNzk5NywiZXhwIjoyMDkzNjc3OTk3fQ.rHHRurKg5F4gfxEaHvVVs4ml-yWCZv0-OjBp5H9ppck',
-  BRING_ENTITY:'todo.pavia_cruz_home_assistent',
+// ── CONFIG ──
+const CONFIG = {
+  GCAL_CLIENT_ID: '438929727680-b8qi3q72guf6a44u0h3g2adst8n378tv.apps.googleusercontent.com',
+  SHEETS_API_KEY: 'AIzaSyCjaHl6Sj0iTn9RFHl4JIP5ZsDzGV-wZKE',
+  SHEETS_ID: '1cc79Ey2ovmerwijlfcaZc171KFYI6l-Id47lEAjEjoM',
+  TRACKER_SHEET_ID: '1w0cGk__mlyKh5P7y5f-QVEijID2jakNS4qJ8uRqnEHU',
+  HA_URL: 'https://ha.ha-cruz.com',
+  HA_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1MTI2MmRkYTlmMjI0MWYxYmE2MzQ2MzA4YjJlZGZlZiIsImlhdCI6MTc3ODMxNzk5NywiZXhwIjoyMDkzNjc3OTk3fQ.rHHRurKg5F4gfxEaHvVVs4ml-yWCZv0-OjBp5H9ppck',
+  BRING_ENTITY: 'todo.pavia_cruz_home_assistent',
 };
-const HA_HEADERS={'Authorization':`Bearer ${CONFIG.HA_TOKEN}`,'Content-Type':'application/json'};
-const DAYS=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
-const DAY_JS=[1,2,3,4,5,6,0];
+const HA_H = {'Authorization':`Bearer ${CONFIG.HA_TOKEN}`,'Content-Type':'application/json'};
+const DAYS = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+const DAY_JS = [1,2,3,4,5,6,0];
 
-let oauthToken=null,mealData=[],favorites=[],currentDayIdx=0;
-let bringItems=[],editingFavIdx=null,tempIngredients=[],selFavType='Mittagessen';
-let autoSaveTimer=null;
+let oauthToken=null, mealData=[], favorites=[], lightStates={};
+let editingDayIdx=null, bringItems=[], ingItems=[], editingFavIdx=null;
+let selFavType='Mittagessen', trackerDate=new Date().toISOString().split('T')[0];
+let modalAutoSaveTimer=null, trackerAutoSaveTimer=null;
 
 // ── AUTH ──
-function initOAuth(){
-  const hash = window.location.hash.substring(1);
-  const params = new URLSearchParams(hash);
-  const token = params.get('access_token');
+function initAuth(){
+  const hash=window.location.hash.substring(1);
+  const params=new URLSearchParams(hash);
+  const token=params.get('access_token');
   if(token){
-    oauthToken = token;
+    oauthToken=token;
     window.history.replaceState({},document.title,window.location.pathname);
-    afterLogin();
-    return;
+    onLogin();return;
   }
   document.getElementById('btn-login').onclick=()=>{
     const scope=encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');
     const redirect=encodeURIComponent('https://cruz170699.github.io/home-dashboard/mobile.html');
-    const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
-    window.location.href=url;
+    window.location.href=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
   };
 }
-window.addEventListener('load',()=>initOAuth());
 
-function afterLogin(){
-  document.getElementById('login-overlay').style.display='none';
-  showHome();
-  loadAll();
+function onLogin(){
+  document.getElementById('login-page').classList.add('hidden');
+  loadMeals();
+  loadFavorites();
 }
 
-async function loadAll(){await loadMeals();await loadFavorites();}
+window.addEventListener('load',()=>initAuth());
 
-// ── TRACKER ──
-const TRACKER_SHEET_ID = '1w0cGk__mlyKh5P7y5f-QVEijID2jakNS4qJ8uRqnEHU';
-let trackerDate = new Date().toISOString().split('T')[0];
-
-function renderDateStrip() {
-  const strip = document.getElementById('tracker-dates');
-  strip.innerHTML = '';
-  const today = new Date();
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const ds = d.toISOString().split('T')[0];
-    const dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
-    const btn = document.createElement('button');
-    btn.className = 'tracker-date-btn' + (ds === trackerDate ? ' active' : '');
-    btn.innerHTML = `<div>${dayNames[d.getDay()]}</div><div style="font-size:12px;">${d.getDate()}.${d.getMonth()+1}</div>`;
-    btn.onclick = () => { trackerDate = ds; renderDateStrip(); loadTracker(); };
-    strip.appendChild(btn);
-  }
+// ── TAB NAVIGATION ──
+let currentTab='meals';
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>{
+    if(p.id==='page-'+tab){p.classList.remove('prev');p.classList.add('active');}
+    else{p.classList.remove('active');p.classList.add('prev');}
+  });
+  currentTab=tab;
+  if(tab==='lights')loadLights();
+  if(tab==='tracker'){loadTracker();renderDateStrip();}
 }
 
-async function loadTracker() {
-  renderDateStrip();
-  // Load today's meals from meal planner
-  if (mealData.length) {
-    const today = new Date();
-    const todayDay = today.getDay();
-    const DAY_JS = [1,2,3,4,5,6,0];
-    const todayMeal = mealData.find(m => m.jsDay === todayDay);
-    if (todayMeal && trackerDate === today.toISOString().split('T')[0]) {
-      if (todayMeal.lunch && todayMeal.lunch !== '—') document.getElementById('tr-lunch').placeholder = todayMeal.lunch;
-      if (todayMeal.dinner && todayMeal.dinner !== '—') document.getElementById('tr-dinner').placeholder = todayMeal.dinner;
-    }
-  }
-  // Load from sheets
-  try {
-    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A:K`, {
-      headers: { 'Authorization': `Bearer ${oauthToken}` }
-    });
-    const d = await r.json();
-    const rows = d.values || [];
-    const row = rows.find(r => r[0] === trackerDate);
-    if (row) {
-      document.getElementById('tr-weight').value = row[1] || '';
-      document.getElementById('tr-steps').value = row[2] || '';
-      document.getElementById('tr-water').value = row[3] || '';
-      document.getElementById('tr-breakfast').value = row[4] || '';
-      document.getElementById('tr-lunch').value = row[5] || '';
-      document.getElementById('tr-dinner').value = row[6] || '';
-      document.getElementById('tr-snacks').value = row[7] || '';
-      document.getElementById('tr-activity').value = row[8] || '';
-      document.getElementById('tr-notes').value = row[9] || '';
-      // Update summary
-      document.getElementById('sum-weight').textContent = row[1] || '—';
-      document.getElementById('sum-water').textContent = row[3] || '—';
-      document.getElementById('sum-steps').textContent = row[2] ? parseInt(row[2]).toLocaleString('de-CH') : '—';
-      document.getElementById('sum-activity').textContent = row[8] ? `🏃 ${row[8].substring(0,25)}` : '🏃 Keine Aktivität';
-      const meals = [row[4],row[5],row[6]].filter(x=>x).length;
-      document.getElementById('sum-meals').textContent = `🍽️ ${meals}/3 Mahlzeiten`;
-    } else {
-      ['tr-weight','tr-steps','tr-water','tr-breakfast','tr-lunch','tr-dinner','tr-snacks','tr-activity','tr-notes'].forEach(id => {
-        document.getElementById(id).value = '';
-      });
-      document.getElementById('sum-weight').textContent = '—';
-      document.getElementById('sum-water').textContent = '—';
-      document.getElementById('sum-steps').textContent = '—';
-      document.getElementById('sum-activity').textContent = '🏃 Keine Aktivität';
-      document.getElementById('sum-meals').textContent = '🍽️ 0/3 Mahlzeiten';
-    }
-  } catch(e) {}
-}
-
-async function saveTracker() {
-  const row = [
-    trackerDate,
-    document.getElementById('tr-weight').value,
-    document.getElementById('tr-steps').value,
-    document.getElementById('tr-water').value,
-    document.getElementById('tr-breakfast').value,
-    document.getElementById('tr-lunch').value,
-    document.getElementById('tr-dinner').value,
-    document.getElementById('tr-snacks').value,
-    document.getElementById('tr-activity').value,
-    document.getElementById('tr-notes').value,
-  ];
-  try {
-    // First ensure header row exists
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A1:J1?valueInputOption=RAW`, {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ values: [['Datum','Gewicht','Schritte','Wasser','Frühstück','Mittagessen','Abendessen','Snacks','Aktivität','Notizen']] })
-    });
-    // Check if row for this date exists
-    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A:A`, {
-      headers: { 'Authorization': `Bearer ${oauthToken}` }
-    });
-    const d = await r.json();
-    const rows = d.values || [];
-    const rowIdx = rows.findIndex(r => r[0] === trackerDate);
-    if (rowIdx > 0) {
-      // Update existing row
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A${rowIdx+1}:J${rowIdx+1}?valueInputOption=RAW`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ values: [row] })
-      });
-    } else {
-      // Append new row
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${TRACKER_SHEET_ID}/values/Tracker!A:J:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${oauthToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ values: [row] })
-      });
-    }
-    showToast('✅ Gespeichert!');
-  } catch(e) { showToast('Fehler beim Speichern'); }
-}
-
-function addWater(amount) {
-  const input = document.getElementById('tr-water');
-  const current = parseFloat(input.value) || 0;
-  input.value = Math.max(0, Math.round((current + amount) * 100) / 100);
-}
-function showHome(){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('home-menu').classList.add('active');
-}
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('home-menu').classList.remove('active');
-  document.getElementById(id).classList.add('active');
-}
-
-// ── IKEA LIGHTS ──
-const LIGHTS=[
-  {id:'light.reading',name:'Reading Light',room:'Schlafzimmer',icon:'🛏️'},
-  {id:'light.licht_zimmer',name:'Zimmer Licht',room:'Schlafzimmer',icon:'🛏️'},
-  {id:'switch.mirror',name:'Mirror',room:'Schlafzimmer',icon:'🪞'},
-  {id:'light.stube_lampe',name:'Stube Lampe',room:'Stube',icon:'🛋️'},
-  {id:'switch.balkon_light',name:'Balkon',room:'Stube',icon:'🌿'},
-  {id:'switch.mood_light',name:'Mood Light',room:'Stube',icon:'✨'},
-];
-let lightStates={};
-
-async function loadLights(){
-  const list=document.getElementById('lights-list');
-  list.innerHTML='<div style="text-align:center;color:var(--text3);font-size:16px;padding:40px;">Laden...</div>';
-  try{
-    const promises=LIGHTS.map(l=>fetch(`${CONFIG.HA_URL}/api/states/${l.id}`,{headers:HA_HEADERS}).then(r=>r.json()).catch(()=>null));
-    const states=await Promise.all(promises);
-    states.forEach((s,i)=>{if(s)lightStates[LIGHTS[i].id]=s;});
-    renderLights();
-  }catch(e){list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;">Verbindungsfehler</div>';}
-}
-
-function renderLights(){
-  const list=document.getElementById('lights-list');
-  const rooms=[...new Set(LIGHTS.map(l=>l.room))];
-  list.innerHTML=rooms.map(room=>{
-    const roomLights=LIGHTS.filter(l=>l.room===room);
-    return `<div class="lights-section-title">${room}</div>${roomLights.map(l=>{
-      const state=lightStates[l.id];
-      const isOn=state?.state==='on';
-      const brightness=state?.attributes?.brightness?Math.round(state.attributes.brightness/255*100):100;
-      const isSwitch=l.id.startsWith('switch.');
-      return `<div class="light-card ${isOn?'on':''}">
-        <div class="light-icon">${l.icon}</div>
-        <div class="light-info">
-          <div class="light-name">${l.name}</div>
-          <div class="light-status">${isOn?'● Ein':'○ Aus'}</div>
-          ${isOn&&!isSwitch?`<div class="brightness-row">
-            <div class="brightness-label"><span>Helligkeit</span><span>${brightness}%</span></div>
-            <input type="range" class="brightness-slider" min="1" max="100" value="${brightness}" style="--val:${brightness}%"
-              oninput="this.style.setProperty('--val',this.value+'%');this.previousElementSibling.lastElementChild.textContent=this.value+'%'"
-              onchange="setBrightness('${l.id}',this.value)">
-          </div>`:''}
-        </div>
-        <button class="light-toggle ${isOn?'on':'off'}" onclick="toggleLight('${l.id}','${isOn?'turn_off':'turn_on'}')"></button>
-      </div>`;
-    }).join('')}`;
-  }).join('');
-}
-
-async function toggleLight(entityId,service){
-  const domain=entityId.split('.')[0];
-  try{
-    await fetch(`${CONFIG.HA_URL}/api/services/${domain}/${service}`,{method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:entityId})});
-    setTimeout(loadLights,600);
-  }catch(e){showToast('Fehler!');}
-}
-
-async function setBrightness(entityId,pct){
-  try{await fetch(`${CONFIG.HA_URL}/api/services/light/turn_on`,{method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:entityId,brightness_pct:parseInt(pct)})});}catch(e){}
+// ── MEAL TAB SWITCH ──
+function switchMealTab(tab,btn){
+  document.getElementById('meal-tab-week').className='pill-btn pill-surface';
+  document.getElementById('meal-tab-favs').className='pill-btn pill-surface';
+  btn.className='pill-btn pill-blue';
+  document.getElementById('days-list').style.display=tab==='week'?'block':'none';
+  document.getElementById('favs-list').style.display=tab==='favs'?'block':'none';
+  if(tab==='favs')renderFavsList();
 }
 
 // ── MEALS ──
@@ -732,360 +510,123 @@ async function loadMeals(){
       const date=new Date(mon);date.setDate(mon.getDate()+i);
       return{day,jsDay:DAY_JS[i],col:String.fromCharCode(66+i),lunch:rows[1]?.[i+1]||'—',dinner:rows[2]?.[i+1]||'—',date};
     });
-    renderList();
+    renderDays();
     const s=mealData[0].date,e=mealData[6].date;
     document.getElementById('week-label').textContent=`${s.getDate()}.${s.getMonth()+1} – ${e.getDate()}.${e.getMonth()+1}.${e.getFullYear()}`;
-  }catch(err){showToast('Fehler beim Laden');}
+  }catch(e){}
 }
 
-function renderList(){
+function renderDays(){
   const c=document.getElementById('days-list');c.innerHTML='';
   const today=new Date();
   mealData.forEach((m,i)=>{
     const isToday=m.date.toDateString()===today.toDateString();
     const el=document.createElement('div');
-    el.className='list-day'+(isToday?' is-today':'');
-    el.style.cursor='pointer';
-    el.onclick=()=>openEditView(i);
+    el.className='day-card'+(isToday?' today':'');
+    el.onclick=()=>openEdit(i);
     el.innerHTML=`
-      <div class="list-day-header">
+      <div class="day-top">
         <div>
-          <div class="list-day-name ${isToday?'today-color':''}">${isToday?'📍 Heute':m.day}</div>
-          <div class="list-day-date">${m.date.getDate()}.${m.date.getMonth()+1}.</div>
+          <div class="day-name" style="${isToday?'color:var(--blue);':''}">${isToday?'📍 Heute':m.day}</div>
+          <div class="day-date">${m.date.getDate()}.${m.date.getMonth()+1}.</div>
         </div>
-        <div style="font-size:20px;color:var(--text3);">›</div>
+        <div class="day-arrow">›</div>
       </div>
-      <div class="list-meals">
-        <div class="list-meal-row">
-          <div class="list-meal-icon">☀️</div>
-          <div class="list-meal-text ${!m.lunch||m.lunch==='—'?'empty':''}">${!m.lunch||m.lunch==='—'?'Noch nicht geplant':m.lunch}</div>
-        </div>
-        <div class="list-divider"></div>
-        <div class="list-meal-row" style="margin-top:10px;">
-          <div class="list-meal-icon">🌙</div>
-          <div class="list-meal-text ${!m.dinner||m.dinner==='—'?'empty':''}">${!m.dinner||m.dinner==='—'?'Noch nicht geplant':m.dinner}</div>
-        </div>
+      <div class="day-meals">
+        <div class="meal-row"><div class="meal-icon">☀️</div><div class="${!m.lunch||m.lunch==='—'?'meal-empty':'meal-text'}">${!m.lunch||m.lunch==='—'?'Noch nicht geplant':m.lunch}</div></div>
+        <div class="meal-divider"></div>
+        <div class="meal-row"><div class="meal-icon">🌙</div><div class="${!m.dinner||m.dinner==='—'?'meal-empty':'meal-text'}">${!m.dinner||m.dinner==='—'?'Noch nicht geplant':m.dinner}</div></div>
       </div>`;
     c.appendChild(el);
   });
 }
 
-// ── EDIT VIEW ──
-function openEditView(startIdx){
-  currentDayIdx=startIdx;
-  buildCards();
-  updateNav();
-  document.getElementById('edit-view').classList.add('open');
+// ── EDIT ──
+function openEdit(idx){
+  editingDayIdx=idx;
+  const m=mealData[idx];
+  document.getElementById('edit-modal-title').textContent=m.day;
+  document.getElementById('edit-lunch').value=m.lunch==='—'?'':m.lunch;
+  document.getElementById('edit-dinner').value=m.dinner==='—'?'':m.dinner;
+  document.getElementById('modal-save-status').textContent='✓';
+  document.getElementById('edit-modal').classList.add('open');
 }
 
-function closeEditView(){
-  document.getElementById('edit-view').classList.remove('open');
-  renderList();
+function closeEdit(){
+  document.getElementById('edit-modal').classList.remove('open');
+  editingDayIdx=null;
+  renderDays();
 }
 
-function buildCards(){
-  const track=document.getElementById('swipe-track');track.innerHTML='';
-  mealData.forEach((m,i)=>{
-    const lf=favorites.filter(f=>f.type==='Mittagessen'||f.type==='Beides');
-    const df=favorites.filter(f=>f.type==='Abendessen'||f.type==='Beides');
-    const card=document.createElement('div');card.className='swipe-card';
-    card.innerHTML=`
-      <div class="card-tag">Tag ${i+1} von 7</div>
-      <div class="card-dayname">${m.day}</div>
-      <div class="meal-block">
-        <div class="meal-block-label">☀️ Mittagessen</div>
-        <div class="meal-input-wrap">
-          <input class="meal-block-input" id="lunch-${i}" placeholder="Suchen oder neu eingeben..." value="${m.lunch==='—'?'':m.lunch}"
-            oninput="triggerAutosave();showDropdown('lunch-${i}','drop-lunch-${i}','lunch')"
-            onfocus="showDropdown('lunch-${i}','drop-lunch-${i}','lunch')"
-            onblur="setTimeout(()=>hideDropdown('drop-lunch-${i}'),250)"
-            autocomplete="off" autocorrect="off">
-          <div class="meal-dropdown" id="drop-lunch-${i}"></div>
-        </div>
-        <div class="bring-row">
-          <button class="bring-meal-btn" onclick="openBringForInput(${i},'lunch')">🛒 Zutaten zu Bring!</button>
-        </div>
-      </div>
-      <div class="meal-block">
-        <div class="meal-block-label">🌙 Abendessen</div>
-        <div class="meal-input-wrap">
-          <input class="meal-block-input" id="dinner-${i}" placeholder="Suchen oder neu eingeben..." value="${m.dinner==='—'?'':m.dinner}"
-            oninput="triggerAutosave();showDropdown('dinner-${i}','drop-dinner-${i}','dinner')"
-            onfocus="showDropdown('dinner-${i}','drop-dinner-${i}','dinner')"
-            onblur="setTimeout(()=>hideDropdown('drop-dinner-${i}'),250)"
-            autocomplete="off" autocorrect="off">
-          <div class="meal-dropdown" id="drop-dinner-${i}"></div>
-        </div>
-        <div class="bring-row">
-          <button class="bring-meal-btn" onclick="openBringForInput(${i},'dinner')">🛒 Zutaten zu Bring!</button>
-        </div>
-      </div>`;
-    track.appendChild(card);
-  });
-  // dots
-  const dots=document.getElementById('day-dots');dots.innerHTML='';
-  mealData.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.id=`dot-${i}`;dots.appendChild(d);});
-  goTo(currentDayIdx,false);
-}
-
-function goTo(idx,animate=true){
-  currentDayIdx=idx;
-  const track=document.getElementById('swipe-track');
-  if(!animate){track.style.transition='none';setTimeout(()=>track.style.transition='',50);}
-  track.style.transform=`translateX(-${idx*100}%)`;
-  updateNav();
-}
-
-function updateNav(){
-  const m=mealData[currentDayIdx];
-  document.getElementById('sw-day-label').textContent=m.day;
-  document.getElementById('sw-day-date').textContent=`${m.date.getDate()}.${m.date.getMonth()+1}.`;
-  document.getElementById('prev-btn').disabled=currentDayIdx===0;
-  document.getElementById('next-btn').disabled=currentDayIdx===6;
-  document.querySelectorAll('.dot').forEach((d,i)=>d.className='dot'+(i===currentDayIdx?' on':''));
-}
-
-function prevDay(){if(currentDayIdx>0)goTo(currentDayIdx-1);}
-function nextDay(){if(currentDayIdx<6)goTo(currentDayIdx+1);}
-
-// Touch swipe
-let tx=0;
-document.getElementById('swipe-wrap').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
-document.getElementById('swipe-wrap').addEventListener('touchend',e=>{
-  const diff=tx-e.changedTouches[0].clientX;
-  if(Math.abs(diff)>60){if(diff>0)nextDay();else prevDay();}
-},{passive:true});
-
-// Autosave
-function triggerAutosave(){
-  const s=document.getElementById('save-status');
-  s.textContent='...';s.style.color='rgba(255,255,255,0.25)';
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer=setTimeout(async()=>{
-    const i=currentDayIdx;
-    const lunch=document.getElementById(`lunch-${i}`)?.value.trim()||'—';
-    const dinner=document.getElementById(`dinner-${i}`)?.value.trim()||'—';
+function triggerModalAutosave(){
+  document.getElementById('modal-save-status').textContent='...';
+  clearTimeout(modalAutoSaveTimer);
+  modalAutoSaveTimer=setTimeout(async()=>{
+    if(editingDayIdx===null)return;
+    const i=editingDayIdx;
+    const lunch=document.getElementById('edit-lunch').value.trim()||'—';
+    const dinner=document.getElementById('edit-dinner').value.trim()||'—';
     mealData[i].lunch=lunch;mealData[i].dinner=dinner;
     try{
       await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${mealData[i].col}2:${mealData[i].col}3?valueInputOption=RAW`,{
         method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[[lunch],[dinner]]})
       });
-      s.textContent='✓ Gespeichert';s.style.color='rgba(255,255,255,0.4)';
-    }catch(e){s.textContent='Fehler';s.style.color='var(--red)';}
+      document.getElementById('modal-save-status').textContent='✓';
+    }catch(e){document.getElementById('modal-save-status').textContent='!';}
   },800);
 }
 
-// ── DROPDOWN SEARCH ──
-function showDropdown(inputId, dropId, mealType){
-  const input = document.getElementById(inputId);
-  const drop = document.getElementById(dropId);
-  if(!input || !drop) return;
-  const query = input.value.trim().toLowerCase();
-  const filtered = favorites.filter(f => {
-    const matchType = mealType==='lunch' ? (f.type==='Mittagessen'||f.type==='Beides') : (f.type==='Abendessen'||f.type==='Beides');
-    const matchName = !query || f.name.toLowerCase().includes(query);
-    return matchType && matchName;
+// ── DROPDOWN ──
+function showDrop(inputId,dropId,type){
+  const input=document.getElementById(inputId);
+  const drop=document.getElementById(dropId);
+  const q=input.value.trim().toLowerCase();
+  const filtered=favorites.filter(f=>{
+    const t=type==='lunch'?(f.type==='Mittagessen'||f.type==='Beides'):(f.type==='Abendessen'||f.type==='Beides');
+    return t&&(!q||f.name.toLowerCase().includes(q));
   });
-  if(!filtered.length){
-    drop.innerHTML = query ? `<div class="meal-dropdown-empty">Kein Favorit gefunden — einfach eingeben!</div>` : '';
-    drop.className = query ? 'meal-dropdown open' : 'meal-dropdown';
-    return;
-  }
-  drop.innerHTML = filtered.map(f =>
-    `<div class="meal-dropdown-item" onmousedown="selectMeal('${inputId}','${dropId}','${f.name.replace(/'/g,"\\'")}')">
-      <span class="meal-dropdown-emoji">${f.emoji}</span>${f.name}
-    </div>`
-  ).join('');
-  drop.className = 'meal-dropdown open';
+  if(!filtered.length){drop.className='meal-dropdown';return;}
+  drop.innerHTML=filtered.map(f=>`<div class="meal-dropdown-item" onmousedown="pickMeal('${inputId}','${dropId}','${f.name.replace(/'/g,"\\'")}')"><span>${f.emoji}</span>${f.name}</div>`).join('');
+  drop.className='meal-dropdown open';
 }
 
-function hideDropdown(dropId){
-  const drop = document.getElementById(dropId);
-  if(drop) drop.className = 'meal-dropdown';
+function hideDrop(dropId){document.getElementById(dropId).className='meal-dropdown';}
+
+function pickMeal(inputId,dropId,name){
+  document.getElementById(inputId).value=name;
+  hideDrop(dropId);
+  triggerModalAutosave();
 }
 
-function selectMeal(inputId, dropId, name){
-  const input = document.getElementById(inputId);
-  if(input){ input.value = name; triggerAutosave(); }
-  hideDropdown(dropId);
-}
-
-// ── BRING ──
-function openBringForInput(dayIdx, mealType){
-  const m=mealData[dayIdx];
-  const mealName=mealType==='lunch'
-    ?(document.getElementById(`lunch-${dayIdx}`)?.value.trim()||m.lunch)
-    :(document.getElementById(`dinner-${dayIdx}`)?.value.trim()||m.dinner);
-  if(!mealName||mealName==='—'){showToast('Kein Gericht eingetragen');return;}
-  // Check if this meal is a favorite with saved ingredients
-  const fav=favorites.find(f=>f.name.toLowerCase()===mealName.toLowerCase());
-  if(fav&&fav.ingredients&&fav.ingredients.length>0){
-    bringItems=fav.ingredients.map(name=>({name,checked:true}));
-  } else {
-    bringItems=[{name:mealName,checked:true}];
-  }
-  document.getElementById('bring-title').textContent=`🛒 ${mealName}`;
-  document.getElementById('bring-sub').textContent=fav?.ingredients?.length?`${fav.ingredients.length} Zutaten aus Favoriten`:'Zutaten hinzufügen';
-  renderBringList();
-  document.getElementById('bring-modal').classList.add('open');
-}
-
-function renderBringList(){
-  document.getElementById('bring-list').innerHTML=bringItems.map((item,i)=>`
-    <div class="bring-item">
-      <div class="bring-chk ${item.checked?'on':''}" onclick="toggleBring(${i})"></div>
-      <input class="bring-item-input" value="${item.name}" oninput="bringItems[${i}].name=this.value">
-      <div class="bring-item-del" onclick="bringItems.splice(${i},1);renderBringList()">✕</div>
-    </div>`).join('');
-}
-
-function toggleBring(i){bringItems[i].checked=!bringItems[i].checked;renderBringList();}
-
-function addBringItem(){
-  const input=document.getElementById('bring-new-item');
-  const val=input.value.trim();if(!val)return;
-  bringItems.push({name:val,checked:true});input.value='';renderBringList();
-}
-
-async function confirmBring(){
-  const toAdd=bringItems.filter(i=>i.checked);if(!toAdd.length){closeBring();return;}
-  let added=0;
-  for(const item of toAdd){
-    try{await fetch(`${CONFIG.HA_URL}/api/services/todo/add_item`,{method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:CONFIG.BRING_ENTITY,item:item.name})});added++;}catch(e){}
-  }
-  closeBring();showToast(`🛒 ${added} Zutaten zu Bring! hinzugefügt!`);
-}
-
-function closeBring(){document.getElementById('bring-modal').classList.remove('open');bringItems=[];}
-
-// ── FAVORITES ──
-async function loadFavorites(){
+// ── AI SUGGESTIONS ──
+async function getMobileSuggestions(){
+  showToast('✨ KI denkt nach...');
   try{
-    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Favorites!A:D`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
-    const d=await r.json();
-    if(d.error){await createFavSheet();favorites=[];}
-    else{
-      favorites=(d.values||[]).filter(r=>r[0]).map(r=>({
-        name:r[0],type:r[1]||'Beides',emoji:r[2]||'🍽️',
-        ingredients:r[3]?r[3].split('|').filter(x=>x):[],
-      }));
-    }
-    renderFavs();
-  }catch(e){favorites=[];renderFavs();}
-}
-
-async function createFavSheet(){
-  try{await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}:batchUpdate`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({requests:[{addSheet:{properties:{title:'Favorites'}}}]})});}catch(e){}
-}
-
-async function saveFavorites(){
-  try{
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Favorites!A:D?valueInputOption=RAW`,{
-      method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
-      body:JSON.stringify({values:favorites.map(f=>[f.name,f.type,f.emoji,f.ingredients.join('|')])})
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:`Mahlzeiten für Schweizer Pärchen. Nur JSON:\n{"montag":{"lunch":"...","dinner":"..."},"dienstag":{"lunch":"...","dinner":"..."},"mittwoch":{"lunch":"...","dinner":"..."},"donnerstag":{"lunch":"...","dinner":"..."},"freitag":{"lunch":"...","dinner":"..."},"samstag":{"lunch":"...","dinner":"..."},"sonntag":{"lunch":"...","dinner":"..."}}\nFavoriten: ${favorites.map(f=>f.name).join(', ')}`}]})
     });
-  }catch(e){}
+    const data=await resp.json();
+    const json=JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
+    const keys=['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
+    for(let i=0;i<7;i++){
+      if(json[keys[i]]){mealData[i].lunch=json[keys[i]].lunch;mealData[i].dinner=json[keys[i]].dinner;}
+    }
+    renderDays();showToast('✨ Vorschläge geladen!');
+  }catch(e){showToast('Fehler');}
 }
 
-async function addFavorite(){
-  const name=document.getElementById('new-fav-name').value.trim();if(!name)return;
-  const emojis={'Mittagessen':'☀️','Abendessen':'🌙','Beides':'🍽️'};
-  favorites.push({name,type:selFavType,emoji:emojis[selFavType],ingredients:[]});
-  document.getElementById('new-fav-name').value='';
-  renderFavs();await saveFavorites();showToast('⭐ Favorit gespeichert!');
-  // Immediately open ingredient editor
-  openIngModal(favorites.length-1);
-}
-
-async function deleteFav(idx){favorites.splice(idx,1);renderFavs();await saveFavorites();showToast('Gelöscht');}
-
-function renderFavs(){
-  const c=document.getElementById('favs-list');c.innerHTML='';
-  if(!favorites.length){c.innerHTML='<div style="padding:16px 4px;color:var(--text3);font-size:16px;">Noch keine Favoriten — füge deine Lieblingsgerichte hinzu!</div>';return;}
-  favorites.forEach((f,i)=>{
-    const el=document.createElement('div');el.className='fav-card';
-    el.innerHTML=`
-      <div class="fav-card-header">
-        <div class="fav-card-left">
-          <div class="fav-card-emoji">${f.emoji}</div>
-          <div><div class="fav-card-name">${f.name}</div><div class="fav-card-type">${f.type}</div></div>
-        </div>
-        <button class="fav-card-del" onclick="deleteFav(${i})">✕</button>
-      </div>
-      <div class="fav-ingredients">
-        ${f.ingredients.length?f.ingredients.map(ing=>`<span class="fav-ing-tag">${ing}</span>`).join(''):`<span class="fav-ing-empty">Noch keine Zutaten</span>`}
-      </div>
-      <div class="fav-card-btns">
-        <button class="fav-edit-ing-btn" onclick="openIngModal(${i})">✏️ Zutaten bearbeiten</button>
-        ${f.ingredients.length?`<button class="fav-bring-btn" onclick="openBringFromFav(${i})">🛒 Zu Bring!</button>`:''}
-      </div>`;
-    c.appendChild(el);
-  });
-}
-
-// ── INGREDIENT EDITOR ──
-function openIngModal(favIdx){
-  editingFavIdx=favIdx;
-  const f=favorites[favIdx];
-  tempIngredients=[...f.ingredients];
-  document.getElementById('ing-modal-title').textContent=`✏️ ${f.name}`;
-  document.getElementById('ing-modal-sub').textContent='Zutaten für dieses Gericht';
-  renderIngList();
-  document.getElementById('ing-modal').classList.add('open');
-}
-
-function closeIngModal(){document.getElementById('ing-modal').classList.remove('open');editingFavIdx=null;tempIngredients=[];}
-
-function renderIngList(){
-  document.getElementById('ing-list').innerHTML=tempIngredients.map((ing,i)=>`
-    <div class="ing-item">
-      <input class="ing-item-input" value="${ing}" oninput="tempIngredients[${i}]=this.value">
-      <div class="ing-item-del" onclick="tempIngredients.splice(${i},1);renderIngList()">✕</div>
-    </div>`).join('');
-}
-
-function addIngItem(){
-  const input=document.getElementById('ing-new-item');
-  const val=input.value.trim();if(!val)return;
-  tempIngredients.push(val);input.value='';renderIngList();
-}
-
-async function saveIngredients(){
-  if(editingFavIdx===null)return;
-  favorites[editingFavIdx].ingredients=[...tempIngredients.filter(x=>x.trim())];
-  closeIngModal();renderFavs();
-  await saveFavorites();showToast('✅ Zutaten gespeichert!');
-}
-
-// Open bring directly from favorites tab
-function openBringFromFav(idx){
-  const f=favorites[idx];
-  bringItems=f.ingredients.map(name=>({name,checked:true}));
-  document.getElementById('bring-title').textContent=`🛒 ${f.name}`;
-  document.getElementById('bring-sub').textContent=`${f.ingredients.length} Zutaten`;
-  renderBringList();
-  document.getElementById('bring-modal').classList.add('open');
-}
-
-function selType(type){
-  selFavType=type;
-  document.getElementById('type-lunch').className='type-btn'+(type==='Mittagessen'?' sel':'');
-  document.getElementById('type-dinner').className='type-btn'+(type==='Abendessen'?' sel':'');
-  document.getElementById('type-both').className='type-btn'+(type==='Beides'?' sel':'');
-}
-
-// ── COPY LAST WEEK ──
 async function copyLastWeek(){
-  showToast('📋 Lade letzte Woche...');
+  showToast('📋 Laden...');
   try{
     const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/History!A:O`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d=await r.json();const rows=d.values||[];
-    if(rows.length<2){showToast('Keine Daten gefunden');return;}
+    if(rows.length<2){showToast('Keine Daten');return;}
     const last=rows[rows.length-1];
     for(let i=0;i<7;i++){
-      const col=String.fromCharCode(66+i);
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${col}2:${col}3?valueInputOption=RAW`,{
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${String.fromCharCode(66+i)}2:${String.fromCharCode(66+i)}3?valueInputOption=RAW`,{
         method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[[last[1+i*2]||'—'],[last[2+i*2]||'—']]})
       });
@@ -1094,45 +635,289 @@ async function copyLastWeek(){
   }catch(e){showToast('Fehler');}
 }
 
-// ── AI SUGGESTIONS ──
-async function getMobileSuggestions(){
-  showToast('✨ Vorschläge werden geladen...');
+// ── FAVORITES ──
+async function loadFavorites(){
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:800,
-        messages:[{role:'user',content:`Schlage Mahlzeiten für ein Schweizer Pärchen vor. Nur JSON:\n{"montag":{"lunch":"...","dinner":"..."},"dienstag":{"lunch":"...","dinner":"..."},"mittwoch":{"lunch":"...","dinner":"..."},"donnerstag":{"lunch":"...","dinner":"..."},"freitag":{"lunch":"...","dinner":"..."},"samstag":{"lunch":"...","dinner":"..."},"sonntag":{"lunch":"...","dinner":"..."}}\nFavoriten: ${favorites.map(f=>f.name).join(', ')}\nAktuelle Woche: ${mealData.map(m=>`${m.day}: M=${m.lunch}, A=${m.dinner}`).join(', ')}`}]
-      })
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Favorites!A:D`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const d=await r.json();
+    if(d.error){await createFavSheet();favorites=[];}
+    else{favorites=(d.values||[]).filter(r=>r[0]).map(r=>({name:r[0],type:r[1]||'Beides',emoji:r[2]||'🍽️',ingredients:r[3]?r[3].split('|').filter(x=>x):[]}));}
+  }catch(e){favorites=[];}
+}
+
+async function createFavSheet(){
+  try{await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}:batchUpdate`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({requests:[{addSheet:{properties:{title:'Favorites'}}}]})});}catch(e){}
+}
+
+async function saveFavorites(){
+  try{await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Favorites!A:D?valueInputOption=RAW`,{method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({values:favorites.map(f=>[f.name,f.type,f.emoji,f.ingredients.join('|')])})});}catch(e){}
+}
+
+function renderFavsList(){
+  const c=document.getElementById('favs-list');c.innerHTML='';
+  if(!favorites.length){
+    c.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px 20px;font-size:17px;">Noch keine Favoriten</div>';
+  } else {
+    favorites.forEach((f,i)=>{
+      const el=document.createElement('div');el.className='fav-card';
+      el.innerHTML=`
+        <div class="fav-card-top">
+          <div class="fav-emoji-big">${f.emoji}</div>
+          <div class="fav-info"><div class="fav-name-big">${f.name}</div><div class="fav-type-small">${f.type}</div></div>
+          <button class="fav-del-btn" onclick="deleteFav(${i})">✕</button>
+        </div>
+        <div class="fav-ings">${f.ingredients.length?f.ingredients.map(ing=>`<span class="fav-ing-tag">${ing}</span>`).join(''):'<span class="fav-ing-empty">Keine Zutaten</span>'}</div>
+        <div class="fav-btns">
+          <button class="fav-edit-btn" onclick="openIng(${i})">✏️ Zutaten</button>
+          ${f.ingredients.length?`<button class="fav-bring-btn" onclick="openBringFromFav(${i})">🛒 Bring!</button>`:''}
+        </div>`;
+      c.appendChild(el);
     });
-    const data=await resp.json();
-    const json=JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
-    const keys=['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
-    for(let i=0;i<7;i++){
-      if(json[keys[i]]){
-        mealData[i].lunch=json[keys[i]].lunch;
-        mealData[i].dinner=json[keys[i]].dinner;
-        // Save to sheet
-        await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/${mealData[i].col}2:${mealData[i].col}3?valueInputOption=RAW`,{
-          method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
-          body:JSON.stringify({values:[[mealData[i].lunch],[mealData[i].dinner]]})
-        });
+  }
+  // Add fav form
+  const form=document.createElement('div');form.className='add-fav-card';
+  form.innerHTML=`
+    <div style="font-size:18px;font-weight:700;margin-bottom:14px;">➕ Favorit hinzufügen</div>
+    <input class="add-fav-input" id="new-fav-name" placeholder="Mahlzeit eingeben...">
+    <div class="add-fav-types">
+      <button class="type-pill sel" id="type-lunch" onclick="selFavType('Mittagessen')">☀️ Mittag</button>
+      <button class="type-pill" id="type-dinner" onclick="selFavType('Abendessen')">🌙 Abend</button>
+      <button class="type-pill" id="type-both" onclick="selFavType('Beides')">🍽️ Beides</button>
+    </div>
+    <button class="add-fav-submit" onclick="addFav()">⭐ Speichern</button>`;
+  c.appendChild(form);
+}
+
+function selFavType(type){
+  selFavType=type;
+  ['type-lunch','type-dinner','type-both'].forEach(id=>document.getElementById(id)?.classList.remove('sel'));
+  const map={'Mittagessen':'type-lunch','Abendessen':'type-dinner','Beides':'type-both'};
+  document.getElementById(map[type])?.classList.add('sel');
+}
+
+async function addFav(){
+  const name=document.getElementById('new-fav-name').value.trim();if(!name)return;
+  const emojis={'Mittagessen':'☀️','Abendessen':'🌙','Beides':'🍽️'};
+  favorites.push({name,type:selFavType,emoji:emojis[selFavType],ingredients:[]});
+  document.getElementById('new-fav-name').value='';
+  renderFavsList();await saveFavorites();showToast('⭐ Gespeichert!');
+}
+
+async function deleteFav(idx){favorites.splice(idx,1);renderFavsList();await saveFavorites();showToast('Gelöscht');}
+
+// ── INGREDIENT EDITOR ──
+function openIng(idx){
+  editingFavIdx=idx;
+  ingItems=[...favorites[idx].ingredients];
+  document.getElementById('ing-title').textContent=`✏️ ${favorites[idx].name}`;
+  renderIngItems();
+  document.getElementById('ing-modal').classList.add('open');
+}
+function closeIng(){document.getElementById('ing-modal').classList.remove('open');editingFavIdx=null;ingItems=[];}
+function renderIngItems(){
+  document.getElementById('ing-items').innerHTML=ingItems.map((ing,i)=>`
+    <div class="bring-item">
+      <input class="bring-item-input" value="${ing}" oninput="ingItems[${i}]=this.value">
+      <div class="bring-item-del" onclick="ingItems.splice(${i},1);renderIngItems()">✕</div>
+    </div>`).join('');
+}
+function addIngItem(){const v=document.getElementById('ing-new').value.trim();if(!v)return;ingItems.push(v);document.getElementById('ing-new').value='';renderIngItems();}
+async function saveIng(){
+  if(editingFavIdx===null)return;
+  favorites[editingFavIdx].ingredients=[...ingItems.filter(x=>x.trim())];
+  closeIng();renderFavsList();await saveFavorites();showToast('✅ Zutaten gespeichert!');
+}
+
+// ── BRING ──
+function openBringForInput(idx,type){
+  if(idx===null)return;
+  const m=mealData[idx];
+  const meal=type==='lunch'?(document.getElementById('edit-lunch')?.value.trim()||m.lunch):(document.getElementById('edit-dinner')?.value.trim()||m.dinner);
+  if(!meal||meal==='—'){showToast('Kein Gericht');return;}
+  const fav=favorites.find(f=>f.name.toLowerCase()===meal.toLowerCase());
+  bringItems=fav?.ingredients?.length?fav.ingredients.map(n=>({name:n,checked:true})):[{name:meal,checked:true}];
+  document.getElementById('bring-title').textContent=`🛒 ${meal}`;
+  renderBringItems();document.getElementById('bring-modal').classList.add('open');
+}
+function openBringFromFav(idx){
+  const f=favorites[idx];
+  bringItems=f.ingredients.map(n=>({name:n,checked:true}));
+  document.getElementById('bring-title').textContent=`🛒 ${f.name}`;
+  renderBringItems();document.getElementById('bring-modal').classList.add('open');
+}
+function renderBringItems(){
+  document.getElementById('bring-items').innerHTML=bringItems.map((item,i)=>`
+    <div class="bring-item">
+      <div class="bring-check ${item.checked?'on':''}" onclick="bringItems[${i}].checked=!bringItems[${i}].checked;renderBringItems()"></div>
+      <input class="bring-item-input" value="${item.name}" oninput="bringItems[${i}].name=this.value">
+      <div class="bring-item-del" onclick="bringItems.splice(${i},1);renderBringItems()">✕</div>
+    </div>`).join('');
+}
+function addBringItem(){const v=document.getElementById('bring-new').value.trim();if(!v)return;bringItems.push({name:v,checked:true});document.getElementById('bring-new').value='';renderBringItems();}
+async function confirmBring(){
+  const toAdd=bringItems.filter(i=>i.checked);if(!toAdd.length){closeBring();return;}
+  let n=0;
+  for(const item of toAdd){try{await fetch(`${CONFIG.HA_URL}/api/services/todo/add_item`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:CONFIG.BRING_ENTITY,item:item.name})});n++;}catch(e){}}
+  closeBring();showToast(`🛒 ${n} Zutaten zu Bring!`);
+}
+function closeBring(){document.getElementById('bring-modal').classList.remove('open');bringItems=[];}
+
+// ── LIGHTS ──
+const LIGHTS=[
+  {id:'light.reading',name:'Reading Light',room:'Schlafzimmer',icon:'🛏️'},
+  {id:'light.licht_zimmer',name:'Zimmer Licht',room:'Schlafzimmer',icon:'💡'},
+  {id:'switch.mirror',name:'Mirror',room:'Schlafzimmer',icon:'🪞'},
+  {id:'light.stube_lampe',name:'Stube Lampe',room:'Stube',icon:'🛋️'},
+  {id:'switch.balkon_light',name:'Balkon',room:'Stube',icon:'🌿'},
+  {id:'switch.mood_light',name:'Mood Light',room:'Stube',icon:'✨'},
+];
+
+async function loadLights(){
+  const list=document.getElementById('lights-list');
+  list.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px;font-size:17px;">Laden...</div>';
+  try{
+    const states=await Promise.all(LIGHTS.map(l=>fetch(`${CONFIG.HA_URL}/api/states/${l.id}`,{headers:HA_H}).then(r=>r.json()).catch(()=>null)));
+    states.forEach((s,i)=>{if(s)lightStates[LIGHTS[i].id]=s;});
+    renderLights();
+  }catch(e){list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;">Verbindungsfehler</div>';}
+}
+
+function renderLights(){
+  const list=document.getElementById('lights-list');list.innerHTML='';
+  const rooms=[...new Set(LIGHTS.map(l=>l.room))];
+  rooms.forEach(room=>{
+    const label=document.createElement('div');label.className='room-label';label.textContent=room;list.appendChild(label);
+    const card=document.createElement('div');card.className='card';
+    LIGHTS.filter(l=>l.room===room).forEach(l=>{
+      const state=lightStates[l.id];
+      const isOn=state?.state==='on';
+      const brightness=state?.attributes?.brightness?Math.round(state.attributes.brightness/255*100):100;
+      const isSwitch=l.id.startsWith('switch.');
+      const row=document.createElement('div');row.className='light-row';
+      row.innerHTML=`
+        <div class="light-emoji">${l.icon}</div>
+        <div class="light-info">
+          <div class="light-name">${l.name}</div>
+          <div class="light-status">${isOn?'● Ein':'○ Aus'}</div>
+        </div>
+        <button class="toggle ${isOn?'on':'off'}" onclick="toggleLight('${l.id}','${isOn?'turn_off':'turn_on'}')"></button>`;
+      card.appendChild(row);
+      if(isOn&&!isSwitch){
+        const brRow=document.createElement('div');brRow.className='brightness-wrap';
+        brRow.innerHTML=`<input type="range" class="brightness-slider" min="1" max="100" value="${brightness}" onchange="setBrightness('${l.id}',this.value)">`;
+        card.appendChild(brRow);
+      }
+    });
+    list.appendChild(card);
+  });
+}
+
+async function toggleLight(id,service){
+  const domain=id.split('.')[0];
+  try{await fetch(`${CONFIG.HA_URL}/api/services/${domain}/${service}`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:id})});setTimeout(loadLights,600);}catch(e){}
+}
+async function setBrightness(id,pct){
+  try{await fetch(`${CONFIG.HA_URL}/api/services/light/turn_on`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:id,brightness_pct:parseInt(pct)})});}catch(e){}
+}
+
+// ── TRACKER ──
+function renderDateStrip(){
+  const strip=document.getElementById('tracker-dates');strip.innerHTML='';
+  const today=new Date();
+  for(let i=6;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const dayNames=['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const btn=document.createElement('button');
+    btn.className='date-pill'+(ds===trackerDate?' active':'');
+    btn.innerHTML=`<div style="font-weight:600;">${dayNames[d.getDay()]}</div><div style="font-size:13px;opacity:0.7;">${d.getDate()}.${d.getMonth()+1}</div>`;
+    btn.onclick=()=>{trackerDate=ds;renderDateStrip();loadTracker();};
+    strip.appendChild(btn);
+  }
+  setTimeout(()=>strip.scrollLeft=strip.scrollWidth,50);
+
+  // Midnight auto-refresh
+  if(!window._midnightScheduled){
+    window._midnightScheduled=true;
+    const now=new Date();
+    const midnight=new Date(now);midnight.setDate(now.getDate()+1);midnight.setHours(0,0,5,0);
+    setTimeout(()=>{trackerDate=new Date().toISOString().split('T')[0];renderDateStrip();loadTracker();},midnight-now);
+  }
+}
+
+async function loadTracker(){
+  document.getElementById('tracker-date-label').textContent=trackerDate===new Date().toISOString().split('T')[0]?'Heute':trackerDate;
+  try{
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:J`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const d=await r.json();
+    const rows=d.values||[];
+    const row=rows.find(r=>r[0]===trackerDate);
+    const ids=['tr-weight','tr-steps','tr-water','tr-breakfast','tr-lunch','tr-dinner','tr-snacks','tr-activity','tr-notes'];
+    ids.forEach((id,i)=>document.getElementById(id).value=row?.[i+1]||'');
+    updateSummary(row);
+    // Pre-fill meals from meal planner
+    if(!row?.[5]&&mealData.length){
+      const d2=new Date(trackerDate);
+      const tm=mealData.find(m=>m.date.toDateString()===d2.toDateString());
+      if(tm){
+        if(tm.lunch&&tm.lunch!=='—')document.getElementById('tr-lunch').placeholder=tm.lunch;
+        if(tm.dinner&&tm.dinner!=='—')document.getElementById('tr-dinner').placeholder=tm.dinner;
       }
     }
-    renderList();showToast('✨ Wochenplan wurde gefüllt!');
-  }catch(e){showToast('Fehler bei Vorschlägen');}
+  }catch(e){['tr-weight','tr-steps','tr-water','tr-breakfast','tr-lunch','tr-dinner','tr-snacks','tr-activity','tr-notes'].forEach(id=>document.getElementById(id).value='');updateSummary(null);}
+}
+
+function updateSummary(row){
+  document.getElementById('sum-weight').textContent=row?.[1]||'—';
+  document.getElementById('sum-water').textContent=row?.[3]||'—';
+  document.getElementById('sum-steps').textContent=row?.[2]?parseInt(row[2]).toLocaleString('de-CH'):'—';
+  const meals=[row?.[4],row?.[5],row?.[6]].filter(x=>x).length;
+  document.getElementById('sum-meals').textContent=`🍽️ ${meals}/3 Mahlzeiten`;
+  document.getElementById('sum-activity').textContent=row?.[8]?`🏃 ${row[8].substring(0,20)}...`:'🏃 Keine Aktivität';
+}
+
+function triggerAutosaveTracker(){
+  document.getElementById('save-indicator').textContent='💾 Speichern...';
+  clearTimeout(trackerAutoSaveTimer);
+  trackerAutoSaveTimer=setTimeout(()=>saveTracker(),1000);
+}
+
+async function saveTracker(){
+  const row=[
+    trackerDate,
+    document.getElementById('tr-weight').value,
+    document.getElementById('tr-steps').value,
+    document.getElementById('tr-water').value,
+    document.getElementById('tr-breakfast').value,
+    document.getElementById('tr-lunch').value,
+    document.getElementById('tr-dinner').value,
+    document.getElementById('tr-snacks').value,
+    document.getElementById('tr-activity').value,
+    document.getElementById('tr-notes').value,
+  ];
+  try{
+    // Ensure header
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:J1?valueInputOption=RAW`,{method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({values:[['Datum','Gewicht','Schritte','Wasser','Frühstück','Mittagessen','Abendessen','Snacks','Aktivität','Notizen']]})});
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:A`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const d=await r.json();const rows=d.values||[];
+    const idx=rows.findIndex(r=>r[0]===trackerDate);
+    if(idx>0){
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:J${idx+1}?valueInputOption=RAW`,{method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({values:[row]})});
+    } else {
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:J:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify({values:[row]})});
+    }
+    document.getElementById('save-indicator').textContent='✓ Gespeichert';
+    updateSummary(row);
+  }catch(e){document.getElementById('save-indicator').textContent='⚠️ Fehler';}
+}
+
+function addWater(amount){
+  const input=document.getElementById('tr-water');
+  input.value=Math.max(0,Math.round((parseFloat(input.value)||0+amount)*100)/100);
+  triggerAutosaveTracker();
 }
 
 // ── HELPERS ──
-function switchTab(tab,btn){
-  document.querySelectorAll('.list-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('panel-'+tab).classList.add('active');
-  if(tab==='favs')renderFavs();
-}
-
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
