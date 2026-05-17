@@ -1046,7 +1046,7 @@ async function loadTracker(){
   ['breakfast','lunch','dinner','snacks'].forEach(m => renderFoodList(m));
   updateNutritionBars();
   try{
-    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:J`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:K`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d=await r.json();
     const rows=d.values||[];
     const row=rows.find(r=>r[0]===trackerDate);
@@ -1089,45 +1089,45 @@ function triggerAutosaveTracker(){
 }
 
 async function saveTracker(){
+  if(!oauthToken){ document.getElementById('save-indicator').textContent='⚠️ Nicht eingeloggt'; return; }
   const row=[
     trackerDate,
     document.getElementById('tr-weight').value,
     document.getElementById('tr-steps').value,
     document.getElementById('tr-water').value,
-    '', '', '', '', // breakfast/lunch/dinner/snacks (legacy - now in foodLog)
+    '','','','', // legacy columns
     document.getElementById('tr-activity').value,
     document.getElementById('tr-notes').value,
-    JSON.stringify(foodLog), // column K - food log
+    JSON.stringify(foodLog),
   ];
   try{
     // Ensure Tracker sheet exists
-    try {
+    try{
       await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}:batchUpdate`,{
         method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({requests:[{addSheet:{properties:{title:'Tracker'}}}]})
       });
-    } catch(e) {} // Sheet may already exist
+    }catch(e){}
 
-    // Ensure header row
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:J1?valueInputOption=RAW`,{
+    // Write header row A1:K1
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:K1?valueInputOption=RAW`,{
       method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
-      body:JSON.stringify({values:[['Datum','Gewicht','Schritte','Wasser','Frühstück','Mittagessen','Abendessen','Snacks','Aktivität','Notizen']]})
+      body:JSON.stringify({values:[['Datum','Gewicht','Schritte','Wasser','B','M','A','S','Aktivität','Notizen','FoodLog']]})
     });
 
-    // Find existing row for this date
+    // Find existing row
     const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:A`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
-    const d=await r.json();const rows=d.values||[];
+    const d=await r.json();
+    const rows=d.values||[];
     const idx=rows.findIndex(r=>r[0]===trackerDate);
 
     if(idx>0){
-      // Update existing
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:J${idx+1}?valueInputOption=RAW`,{
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:K${idx+1}?valueInputOption=RAW`,{
         method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[row]})
       });
     } else {
-      // Append new row
-      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:K:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
         method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[row]})
       });
@@ -1136,7 +1136,7 @@ async function saveTracker(){
     updateSummary(row);
   }catch(e){
     console.error('Save error:',e);
-    document.getElementById('save-indicator').textContent='⚠️ Fehler';
+    document.getElementById('save-indicator').textContent='⚠️ Fehler: '+e.message;
   }
 }
 
@@ -1180,36 +1180,59 @@ function debounceSearch(query) {
 
 async function searchFood(query) {
   try {
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10&fields=product_name,brands,nutriments,serving_size`;
-    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-    const wrapper = await r.json();
-    const d = JSON.parse(wrapper.contents);
-    const products = (d?.products || []).filter(p => p.product_name && p.nutriments);
+    document.getElementById('food-search-results').innerHTML = '';
+    // Use search-a-licious API - better CORS support
+    const url = `https://search.openfoodfacts.org/search?q=${encodeURIComponent(query)}&langs=de,fr,en&page_size=10&fields=product_name,brands,nutriments,serving_size`;
+    const r = await fetch(url);
+    const d = await r.json();
+    const products = (d?.hits || []).filter(p => p.product_name && p.nutriments);
 
     if (!products.length) {
-      document.getElementById('food-search-status').textContent = 'Keine Ergebnisse gefunden';
+      document.getElementById('food-search-status').textContent = 'Keine Ergebnisse — versuche Englisch';
       document.getElementById('food-search-results').innerHTML = '';
       return;
     }
 
     document.getElementById('food-search-status').textContent = `${products.length} Ergebnisse`;
     document.getElementById('food-search-results').innerHTML = products.map((p, i) => {
-      const kcal = Math.round(p.nutriments['energy-kcal_100g'] || p.nutriments['energy-kcal'] || 0);
-      const protein = Math.round((p.nutriments['proteins_100g'] || 0) * 10) / 10;
-      const fat = Math.round((p.nutriments['fat_100g'] || 0) * 10) / 10;
-      const carbs = Math.round((p.nutriments['carbohydrates_100g'] || 0) * 10) / 10;
+      const kcal = Math.round(p.nutriments?.['energy-kcal_100g'] || p.nutriments?.['energy-kcal'] || 0);
+      const protein = Math.round((p.nutriments?.['proteins_100g'] || 0) * 10) / 10;
+      const fat = Math.round((p.nutriments?.['fat_100g'] || 0) * 10) / 10;
+      const carbs = Math.round((p.nutriments?.['carbohydrates_100g'] || 0) * 10) / 10;
       const brand = p.brands ? p.brands.split(',')[0].trim() : '';
       return `<div class="food-search-result" onclick="addFoodItem(${i})">
         <div class="food-result-name">${p.product_name}</div>
         ${brand ? `<div class="food-result-brand">${brand}</div>` : ''}
-        <div class="food-result-nut">🔥 ${kcal} kcal · 💪 ${protein}g Protein · 🍞 ${carbs}g Kohlenhydrate · 🧈 ${fat}g Fett <span style="color:var(--text3);font-size:11px;">pro 100g</span></div>
+        <div class="food-result-nut">🔥 ${kcal} kcal · 💪 ${protein}g · 🍞 ${carbs}g · 🧈 ${fat}g <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>
       </div>`;
     }).join('');
 
-    // Store results for onclick
     window._foodResults = products;
   } catch(e) {
-    document.getElementById('food-search-status').textContent = '⚠️ Fehler bei der Suche';
+    // Fallback to allorigins proxy
+    try {
+      const url2 = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10`;
+      const r2 = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url2)}`);
+      const wrapper = await r2.json();
+      const d2 = JSON.parse(wrapper.contents);
+      const products2 = (d2?.products || []).filter(p => p.product_name && p.nutriments);
+      if(products2.length) {
+        document.getElementById('food-search-status').textContent = `${products2.length} Ergebnisse`;
+        document.getElementById('food-search-results').innerHTML = products2.map((p,i) => {
+          const kcal = Math.round(p.nutriments?.['energy-kcal_100g'] || 0);
+          const protein = Math.round((p.nutriments?.['proteins_100g'] || 0)*10)/10;
+          return `<div class="food-search-result" onclick="addFoodItem(${i})">
+            <div class="food-result-name">${p.product_name}</div>
+            <div class="food-result-nut">🔥 ${kcal} kcal · 💪 ${protein}g Protein / 100g</div>
+          </div>`;
+        }).join('');
+        window._foodResults = products2;
+      } else {
+        document.getElementById('food-search-status').textContent = 'Keine Ergebnisse gefunden';
+      }
+    } catch(e2) {
+      document.getElementById('food-search-status').textContent = '⚠️ Verbindungsfehler';
+    }
   }
 }
 
