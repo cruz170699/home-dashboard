@@ -267,13 +267,12 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Inter',-apple-syst
       <div id="pin-name" style="font-size:22px;font-weight:700;color:white;"></div>
     </div>
     <div id="pin-dots" style="display:flex;gap:14px;"></div>
+    <input id="pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10"
+      style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:16px;padding:18px;font-size:28px;color:white;text-align:center;outline:none;font-family:Inter,sans-serif;letter-spacing:8px;"
+      placeholder="••••" oninput="onPinInput(this.value)" onkeydown="if(event.key==='Enter')checkPin()">
     <div id="pin-error" style="font-size:14px;color:var(--red);height:18px;"></div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;">
-      ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`
-        <button onclick="pinKey('${k}')" style="padding:20px;border-radius:18px;background:${k===''?'transparent':'rgba(255,255,255,0.08)'};border:none;color:white;font-size:24px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;${k===''?'pointer-events:none;':''}">${k}</button>
-      `).join('')}
-    </div>
-    <button onclick="resetPin()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;">← Zurück</button>
+    <button onclick="checkPin()" style="width:100%;padding:16px;border-radius:16px;background:var(--blue);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Weiter →</button>
+    <button onclick="resetPin()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;font-family:Inter,sans-serif;">← Zurück</button>
   </div>
 </div>
 
@@ -860,16 +859,20 @@ function selectUser(user){
   pinEntry = '';
   const saved = localStorage.getItem(`alfie_pic_${user}`);
   const pinPic = document.getElementById('pin-pic');
-  if(saved){
-    pinPic.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
-  } else {
-    pinPic.innerHTML = user==='sergio' ? '👨' : '👩';
-  }
+  if(saved) pinPic.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
+  else pinPic.innerHTML = user==='sergio' ? '👨' : '👩';
   document.getElementById('pin-name').textContent = user==='sergio' ? 'Sérgio' : 'Miriam';
   document.getElementById('pin-error').textContent = '';
+  document.getElementById('pin-input').value = '';
   const pinLen = PINS[user].length;
   document.getElementById('pin-dots').innerHTML = Array(pinLen).fill('<div class="pin-dot"></div>').join('');
   document.getElementById('pin-entry').style.display='flex';
+  setTimeout(()=>document.getElementById('pin-input').focus(), 300);
+}
+
+function onPinInput(val){
+  pinEntry = val;
+  updatePinDots();
 }
 
 function pinKey(key){
