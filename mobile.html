@@ -29,7 +29,7 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
 
 /* ── APP SHELL ── */
 #app{background:var(--bg);}
-#app-content{display:block;}
+#app-content{display:block;position:relative;}
 .page{display:none;padding-bottom:80px;background:var(--bg);}
 .page.active{display:block;}
 
@@ -1074,9 +1074,14 @@ function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.page').forEach(p=>{
-    p.style.display = p.id==='page-'+tab ? 'block' : 'none';
+    p.classList.remove('active');
+    p.style.display='none';
   });
+  const activePage = document.getElementById('page-'+tab);
+  if(activePage){ activePage.style.display='block'; activePage.classList.add('active'); }
   window.scrollTo(0,0);
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
   currentTab=tab;
   if(tab==='lights')loadLights();
   if(tab==='tracker'){loadTracker();renderDateStrip();}
