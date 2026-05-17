@@ -118,22 +118,29 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
 .meal-block-input:focus{border-color:var(--blue);}
 .meal-block-input::placeholder{color:rgba(255,255,255,0.25);}
 /* TRACKER */
-.tracker-scroll{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;padding-bottom:80px;}
-.tracker-section{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-.tracker-section-hd{padding:14px 18px;background:var(--surface2);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);display:flex;align-items:center;gap:8px;}
-.tracker-row{display:flex;align-items:center;padding:14px 18px;border-bottom:0.5px solid var(--border);gap:12px;}
+.tracker-header{background:#07080b;padding:20px 22px 16px;flex-shrink:0;display:flex;align-items:center;gap:16px;}
+.tracker-scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:100px;background:#07080b;}
+.tracker-date-strip{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none;background:#07080b;flex-shrink:0;}
+.tracker-date-btn{flex-shrink:0;padding:10px 14px;border-radius:16px;border:none;background:rgba(255,255,255,0.08);font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;color:rgba(255,255,255,0.6);text-align:center;min-width:52px;}
+.tracker-date-btn.active{background:var(--blue);color:white;font-weight:700;}
+.tracker-section{background:rgba(255,255,255,0.06);border-radius:20px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;}
+.tracker-section-hd{padding:14px 18px 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:8px;}
+.tracker-row{display:flex;align-items:center;padding:10px 18px;border-bottom:0.5px solid rgba(255,255,255,0.06);gap:12px;}
 .tracker-row:last-child{border-bottom:none;}
-.tracker-label{font-size:17px;font-weight:500;flex:1;}
-.tracker-input{background:var(--surface2);border:none;border-radius:10px;padding:10px 14px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;width:110px;text-align:right;}
-.tracker-unit{font-size:15px;color:var(--text3);flex-shrink:0;width:30px;}
-.tracker-textarea{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:12px 14px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;min-height:60px;}
+.tracker-label{font-size:17px;font-weight:500;color:white;flex:1;}
+.tracker-input{background:rgba(255,255,255,0.1);border:none;border-radius:10px;padding:10px 14px;font-size:17px;font-family:'Inter',sans-serif;color:white;outline:none;width:100px;text-align:right;}
+.tracker-input::placeholder{color:rgba(255,255,255,0.25);}
+.tracker-unit{font-size:15px;color:rgba(255,255,255,0.35);flex-shrink:0;width:28px;}
+.tracker-textarea{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;font-size:16px;font-family:'Inter',sans-serif;color:white;outline:none;resize:none;min-height:52px;}
+.tracker-textarea::placeholder{color:rgba(255,255,255,0.25);}
+.tracker-textarea:focus{border-color:rgba(0,122,255,0.5);}
 .tracker-date-strip{display:flex;gap:8px;overflow-x:auto;padding:14px 18px;scrollbar-width:none;}
-.tracker-date-btn{flex-shrink:0;padding:8px 16px;border-radius:20px;border:none;background:var(--surface2);font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;}
-.tracker-date-btn.active{background:var(--blue);color:white;}
-.save-tracker-btn{width:100%;padding:18px;border-radius:16px;background:var(--blue);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
-.water-btns{display:flex;gap:8px;flex-wrap:wrap;padding:8px 18px 14px;}
-.water-btn{padding:8px 14px;border-radius:20px;background:var(--surface2);border:none;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;}
-.water-btn.active{background:#eff6ff;color:var(--blue);font-weight:600;}
+.save-tracker-btn{width:100%;padding:18px;border-radius:18px;background:var(--blue);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 20px rgba(0,122,255,0.3);}
+.water-btns{display:flex;gap:8px;padding:10px 18px 14px;}
+.water-btn{flex:1;padding:10px;border-radius:12px;background:rgba(0,122,255,0.15);border:1px solid rgba(0,122,255,0.25);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--blue);text-align:center;}
+.tracker-food-row{padding:12px 18px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.tracker-food-row:last-child{border-bottom:none;}
+.tracker-food-label{font-size:14px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:8px;}
 .meal-input-wrap{position:relative;}
 .meal-dropdown{position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border-radius:16px;margin-top:6px;overflow:hidden;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:none;max-height:260px;overflow-y:auto;}
 .meal-dropdown.open{display:block;}
@@ -324,12 +331,11 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
 <!-- LIST VIEW -->
 
 <!-- TRACKER -->
-<div class="screen" id="tracker-view">
-  <div class="lights-header">
-    <button class="back-btn" onclick="showHome()">‹ Home</button>
-    <div style="font-size:26px;font-weight:700;margin-left:8px;">📊 Mein Tag</div>
+<div class="screen" id="tracker-view" style="background:#07080b;">
+  <div class="tracker-header">
+    <button class="back-btn" onclick="showHome()" style="color:rgba(255,255,255,0.7);">‹ Home</button>
+    <div style="font-size:26px;font-weight:700;color:white;margin-left:8px;">📊 Mein Tag</div>
   </div>
-  <!-- Date strip -->
   <div class="tracker-date-strip" id="tracker-dates"></div>
   <div class="tracker-scroll">
     <!-- Body -->
@@ -351,48 +357,48 @@ html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);colo
       <div class="tracker-section-hd">💧 Wasser</div>
       <div class="tracker-row">
         <div class="tracker-label">Getrunken</div>
-        <input class="tracker-input" id="tr-water" type="number" step="0.1" placeholder="—">
+        <input class="tracker-input" id="tr-water" type="number" step="0.1" placeholder="0">
         <div class="tracker-unit">L</div>
       </div>
       <div class="water-btns">
-        <button class="water-btn" onclick="addWater(0.25)">+0.25L</button>
-        <button class="water-btn" onclick="addWater(0.5)">+0.5L</button>
+        <button class="water-btn" onclick="addWater(0.25)">+0.25</button>
+        <button class="water-btn" onclick="addWater(0.5)">+0.5</button>
         <button class="water-btn" onclick="addWater(1)">+1L</button>
-        <button class="water-btn" onclick="addWater(-0.25)">-0.25L</button>
+        <button class="water-btn" onclick="addWater(-0.25)" style="background:rgba(255,59,48,0.1);border-color:rgba(255,59,48,0.2);color:var(--red);">-0.25</button>
       </div>
     </div>
     <!-- Food -->
     <div class="tracker-section">
       <div class="tracker-section-hd">🍽️ Essen</div>
-      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
-        <div style="font-size:14px;font-weight:600;color:var(--text2);">☀️ Frühstück</div>
+      <div class="tracker-food-row">
+        <div class="tracker-food-label">☀️ Frühstück</div>
         <textarea class="tracker-textarea" id="tr-breakfast" placeholder="Was hast du gefrühstückt?"></textarea>
       </div>
-      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
-        <div style="font-size:14px;font-weight:600;color:var(--text2);">🌤️ Mittagessen</div>
-        <textarea class="tracker-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan oder eingeben..."></textarea>
+      <div class="tracker-food-row">
+        <div class="tracker-food-label">🌤️ Mittagessen</div>
+        <textarea class="tracker-textarea" id="tr-lunch" placeholder="Vom Mahlzeiten-Plan..."></textarea>
       </div>
-      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
-        <div style="font-size:14px;font-weight:600;color:var(--text2);">🌙 Abendessen</div>
-        <textarea class="tracker-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan oder eingeben..."></textarea>
+      <div class="tracker-food-row">
+        <div class="tracker-food-label">🌙 Abendessen</div>
+        <textarea class="tracker-textarea" id="tr-dinner" placeholder="Vom Mahlzeiten-Plan..."></textarea>
       </div>
-      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
-        <div style="font-size:14px;font-weight:600;color:var(--text2);">🍪 Snacks</div>
+      <div class="tracker-food-row">
+        <div class="tracker-food-label">🍪 Snacks</div>
         <textarea class="tracker-textarea" id="tr-snacks" placeholder="Snacks..."></textarea>
       </div>
     </div>
     <!-- Activity -->
     <div class="tracker-section">
       <div class="tracker-section-hd">🏃 Aktivität</div>
-      <div class="tracker-row" style="flex-direction:column;align-items:stretch;gap:8px;">
-        <div style="font-size:14px;font-weight:600;color:var(--text2);">Sport / Aktivität</div>
+      <div class="tracker-food-row">
+        <div class="tracker-food-label">Sport / Aktivität</div>
         <textarea class="tracker-textarea" id="tr-activity" placeholder="z.B. Laufen 30 Min, Yoga 45 Min..."></textarea>
       </div>
     </div>
     <!-- Notes -->
     <div class="tracker-section">
       <div class="tracker-section-hd">📝 Notizen</div>
-      <div class="tracker-row" style="flex-direction:column;align-items:stretch;">
+      <div class="tracker-food-row">
         <textarea class="tracker-textarea" id="tr-notes" placeholder="Wie war dein Tag?"></textarea>
       </div>
     </div>
