@@ -447,6 +447,13 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
         </div>
       </div>
       <div class="save-indicator" id="save-indicator">✓ Alles gespeichert</div>
+      
+      <!-- Streaks & Achievements -->
+      <div id="streaks-container" style="margin:8px 16px 12px;"></div>
+      
+      <!-- Weekly Summary (Sundays only) -->
+      <div id="weekly-summary" style="margin:8px 16px 12px;display:none;"></div>
+      
       <!-- Body -->
       <div class="tr-section">
         <div class="tr-section-hd">⚖️ Körper</div>
@@ -1522,10 +1529,17 @@ async function loadLights(){
   const list=document.getElementById('lights-list');
   list.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px;font-size:17px;">Laden...</div>';
   try{
-    const states=await Promise.all(LIGHTS.map(l=>fetch(`${CONFIG.HA_URL}/api/states/${l.id}`,{headers:HA_H}).then(r=>r.json()).catch(()=>null)));
+    const states=await Promise.all(LIGHTS.map(l=>fetch(`${CONFIG.HA_URL}/api/states/${l.id}`,{headers:HA_H}).then(r=>{
+      if(!r.ok) throw new Error(`HA ${r.status}`);
+      return r.json();
+    }).catch(err=>{console.warn('Light error',l.id,err.message);return null;})));
     states.forEach((s,i)=>{if(s)lightStates[LIGHTS[i].id]=s;});
+    if(states.every(s=>s===null)){
+      list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;font-size:15px;">⚠️ Keine Verbindung zu Home Assistant<br><span style="font-size:13px;color:var(--text3);">Prüfe ob ha.ha-cruz.com erreichbar ist</span></div>';
+      return;
+    }
     renderLights();
-  }catch(e){list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;">Verbindungsfehler</div>';}
+  }catch(e){list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;">Verbindungsfehler: '+e.message+'</div>';}
 }
 
 function renderLights(){
@@ -1560,10 +1574,28 @@ function renderLights(){
 
 async function toggleLight(id,service){
   const domain=id.split('.')[0];
-  try{await fetch(`${CONFIG.HA_URL}/api/services/${domain}/${service}`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:id})});setTimeout(loadLights,600);}catch(e){}
+  // Optimistic update
+  if(lightStates[id]){
+    lightStates[id].state = service==='turn_on' ? 'on' : 'off';
+    renderLights();
+  }
+  try{
+    const r=await fetch(`${CONFIG.HA_URL}/api/services/${domain}/${service}`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:id})});
+    if(!r.ok) throw new Error('HA error');
+    setTimeout(loadLights,1200);
+  }catch(e){
+    showToast('❌ Verbindung zu HA fehlgeschlagen');
+    // Revert
+    if(lightStates[id]){
+      lightStates[id].state = service==='turn_on' ? 'off' : 'on';
+      renderLights();
+    }
+  }
 }
 async function setBrightness(id,pct){
-  try{await fetch(`${CONFIG.HA_URL}/api/services/light/turn_on`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:id,brightness_pct:parseInt(pct)})});}catch(e){}
+  try{
+    await fetch(`${CONFIG.HA_URL}/api/services/light/turn_on`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:id,brightness_pct:parseInt(pct)})});
+  }catch(e){showToast('❌ Helligkeit fehlgeschlagen');}
 }
 
 // ── TRACKER ──
@@ -1629,6 +1661,7 @@ async function loadTracker(){
       }
     }
   }catch(e){['tr-weight','tr-steps','tr-water','tr-activity-name','tr-activity-mins','tr-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });updateSummary(null);}
+  loadStreaks();
 }
 
 function updateSummary(row){
@@ -1732,6 +1765,139 @@ function loadGoals() {
     document.getElementById('goal-steps').value = 10000;
     document.getElementById('goal-water').value = 2.5;
   }
+}
+
+// ── STREAKS & ACHIEVEMENTS ──
+async function loadStreaks() {
+  if(!oauthToken) return;
+  try {
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Tracker!A:K`, {headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const d = await r.json();
+    if(d.error) { renderStreaks([]); return; }
+    const rows = (d.values||[]).slice(1);
+    const goals = JSON.parse(localStorage.getItem('alfie_goals')||'{}');
+    const goalKcal = parseInt(goals.kcal)||1800;
+    const goalProtein = parseInt(goals.protein)||120;
+    const goalSteps = parseInt(goals.steps)||10000;
+    const goalWater = parseFloat(goals.water)||2.5;
+    
+    // Sort rows by date desc
+    rows.sort((a,b)=> (b[0]||'').localeCompare(a[0]||''));
+    
+    // Calculate streaks (consecutive days from today backwards)
+    const today = new Date(); today.setHours(0,0,0,0);
+    const streaks = {water:0,steps:0,activity:0,allGoals:0};
+    
+    for(let i=0;i<rows.length;i++) {
+      const row = rows[i];
+      const expectedDate = new Date(today); expectedDate.setDate(today.getDate()-i);
+      const rowDate = row[0];
+      const expectedStr = expectedDate.toISOString().split('T')[0];
+      if(rowDate !== expectedStr) break; // streak broken (missing day)
+      
+      const water = parseFloat(row[3])||0;
+      const steps = parseInt(row[2])||0;
+      const activity = row[4] && row[4]!=='';
+      
+      // Food log totals
+      let kcal=0, protein=0;
+      try{ const fl=JSON.parse(row[10]||'{}');
+        Object.values(fl).forEach(meal=>{ if(Array.isArray(meal)) meal.forEach(f=>{kcal+=f.kcal||0;protein+=f.protein||0;});});
+      }catch(e){}
+      
+      if(water >= goalWater) streaks.water++; else if(streaks.water===i) break;
+      if(steps >= goalSteps) streaks.steps++; else if(streaks.steps===i) break;
+      if(activity) streaks.activity++; else if(streaks.activity===i) break;
+      if(water>=goalWater && steps>=goalSteps && kcal<=goalKcal && protein>=goalProtein) streaks.allGoals++;
+    }
+    
+    renderStreaks(streaks, rows.length);
+    // Show weekly summary on Sundays
+    if(new Date().getDay()===0) renderWeeklySummary(rows, {goalKcal,goalProtein,goalSteps,goalWater});
+  } catch(e) { renderStreaks({water:0,steps:0,activity:0,allGoals:0}, 0); }
+}
+
+function renderStreaks(s, totalDays) {
+  const c = document.getElementById('streaks-container'); if(!c) return;
+  const items = [];
+  
+  if(s.water>0) items.push({emoji:'💧',label:`${s.water} Tag${s.water>1?'e':''} Wasserziel`,color:'var(--blue)',milestone:checkMilestone(s.water)});
+  if(s.steps>0) items.push({emoji:'👟',label:`${s.steps} Tag${s.steps>1?'e':''} Schritteziel`,color:'var(--green)',milestone:checkMilestone(s.steps)});
+  if(s.activity>0) items.push({emoji:'🏃',label:`${s.activity} Tag${s.activity>1?'e':''} aktiv`,color:'var(--orange)',milestone:checkMilestone(s.activity)});
+  if(s.allGoals>=3) items.push({emoji:'🏆',label:`${s.allGoals} Tage alle Ziele!`,color:'var(--purple)',milestone:'⭐'});
+  
+  if(items.length===0) {
+    c.innerHTML = '';
+    return;
+  }
+  
+  c.innerHTML = `
+    <div style="background:linear-gradient(135deg,rgba(255,159,10,0.15),rgba(255,45,85,0.1));border:1px solid rgba(255,159,10,0.25);border-radius:18px;padding:14px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px;">🔥 Streaks</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${items.map(i=>`
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:22px;">${i.emoji}</span>
+            <span style="flex:1;font-size:14px;color:var(--text);font-weight:600;">${i.label}</span>
+            ${i.milestone?`<span style="font-size:18px;">${i.milestone}</span>`:''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function checkMilestone(days) {
+  if(days>=100) return '💯';
+  if(days>=30) return '🏆';
+  if(days>=14) return '⭐';
+  if(days>=7) return '✨';
+  return '';
+}
+
+function renderWeeklySummary(rows, goals) {
+  const c = document.getElementById('weekly-summary'); if(!c) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const weekAgo = new Date(today); weekAgo.setDate(today.getDate()-6);
+  
+  const weekRows = rows.filter(r => {
+    if(!r[0]) return false;
+    const d = new Date(r[0]);
+    return d >= weekAgo && d <= today;
+  });
+  
+  if(weekRows.length===0) { c.style.display='none'; return; }
+  
+  let totalWater=0, totalSteps=0, activityDays=0, allGoalDays=0, totalKcal=0;
+  weekRows.forEach(row=>{
+    totalWater += parseFloat(row[3])||0;
+    totalSteps += parseInt(row[2])||0;
+    if(row[4]) activityDays++;
+    let kcal=0, protein=0;
+    try{ const fl=JSON.parse(row[10]||'{}');
+      Object.values(fl).forEach(meal=>{ if(Array.isArray(meal)) meal.forEach(f=>{kcal+=f.kcal||0;protein+=f.protein||0;});});
+    }catch(e){}
+    totalKcal+=kcal;
+    const water=parseFloat(row[3])||0, steps=parseInt(row[2])||0;
+    if(water>=goals.goalWater && steps>=goals.goalSteps) allGoalDays++;
+  });
+  
+  c.style.display = 'block';
+  c.innerHTML = `
+    <div style="background:linear-gradient(135deg,rgba(191,90,242,0.18),rgba(0,122,255,0.12));border:1px solid rgba(191,90,242,0.3);border-radius:18px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;">📊 Wochenrückblick</div>
+      <div style="font-size:15px;color:var(--text);line-height:1.7;">
+        💧 <b>${totalWater.toFixed(1)}L</b> Wasser getrunken<br>
+        👟 <b>${totalSteps.toLocaleString('de-CH')}</b> Schritte gesamt<br>
+        🏃 <b>${activityDays}/7</b> Tage aktiv<br>
+        🔥 <b>${totalKcal.toLocaleString('de-CH')} kcal</b> gegessen<br>
+        🏆 <b>${allGoalDays}/7</b> Tage alle Ziele erreicht
+      </div>
+      <div style="margin-top:12px;font-size:14px;color:var(--text2);font-style:italic;">
+        ${allGoalDays>=5?'🎉 Super Woche! Weiter so!':allGoalDays>=3?'💪 Solide Woche!':activityDays>=4?'👏 Schön aktiv geblieben!':'🌱 Neue Woche, neue Chance!'}
+      </div>
+    </div>
+  `;
 }
 
 function updateStepBar() {
