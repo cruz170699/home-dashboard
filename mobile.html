@@ -30,8 +30,8 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
 /* ── APP SHELL ── */
 #app{background:var(--bg);}
 #app-content{display:block;position:relative;}
-.page{display:none;padding-bottom:80px;background:var(--bg);}
-.page.active{display:block;}
+.page{display:none !important;padding-bottom:80px;background:var(--bg);}
+.page.active{display:block !important;}
 
 /* ── LOGIN ── */
 #login-page{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
@@ -131,7 +131,7 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
 .date-pill{flex-shrink:0;padding:10px 16px;border-radius:20px;border:none;background:var(--surface);font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2);text-align:center;min-width:60px;transition:all 0.2s;}
 .date-pill.active{background:var(--blue);color:white;font-weight:700;}
 .date-pill:active{transform:scale(0.92);}
-.summary-card{margin:8px 16px 4px;background:linear-gradient(135deg,rgba(0,122,255,0.15),rgba(191,90,242,0.12));border:1px solid rgba(0,122,255,0.2);border-radius:22px;padding:20px;}
+.summary-card{margin:8px 16px 8px;background:linear-gradient(135deg,rgba(0,122,255,0.15),rgba(191,90,242,0.12));border:1px solid rgba(0,122,255,0.2);border-radius:22px;padding:20px;}
 .summary-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:16px;}
 .summary-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
 .summary-metric{text-align:center;padding:0 8px;}
@@ -159,7 +159,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
 .tr-textarea{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:14px 16px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;min-height:56px;}
 .tr-textarea::placeholder{color:var(--text3);}
 .tr-textarea:focus{background:var(--surface3);}
-.save-indicator{text-align:center;font-size:13px;color:var(--text3);padding:4px;margin:0;}
+.save-indicator{text-align:center;font-size:11px;color:var(--text3);padding:2px;margin:0;}
 
 /* ── BRING MODAL ── */
 #bring-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
@@ -351,7 +351,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
   <div id="app-content">
 
     <!-- MEALS PAGE -->
-    <div class="page" id="page-meals" style="display:block;">
+    <div class="page active" id="page-meals">
       <div class="nav-header">
         <div class="nav-row">
           <div>
@@ -422,7 +422,6 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
               <div id="protein-bar" style="height:100%;width:0%;background:var(--blue);border-radius:3px;transition:width 0.4s;"></div>
             </div>
           </div>
-        </div>
           <div>
             <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
               <span style="font-size:13px;color:var(--text2);">👟 Schritte</span>
@@ -1075,10 +1074,10 @@ function switchTab(tab){
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.page').forEach(p=>{
     p.classList.remove('active');
-    p.style.display='none';
+    p.style.removeProperty('display');
   });
   const activePage = document.getElementById('page-'+tab);
-  if(activePage){ activePage.style.display='block'; activePage.classList.add('active'); }
+  if(activePage){ activePage.classList.add('active'); }
   window.scrollTo(0,0);
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
