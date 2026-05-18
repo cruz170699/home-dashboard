@@ -1029,9 +1029,12 @@ function setUser(user){
   document.getElementById('tab-settings').style.display='flex';
   const trackerCard=document.getElementById('home-tracker-card');
   if(trackerCard) trackerCard.style.display=user==='sergio'?'none':'flex';
-  loadTheme(user);
-  const savedPin=localStorage.getItem(`alfie_pin_${user}`);
-  if(savedPin) PINS[user]=savedPin;
+  // Load settings from cloud, then apply theme
+  loadUserSettings(user).then(()=>{
+    loadTheme(user);
+    const savedPin=localStorage.getItem(`alfie_pin_${user}`);
+    if(savedPin) PINS[user]=savedPin;
+  });
   document.getElementById('home-screen').style.display='flex';
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-home').classList.add('active');
@@ -1973,7 +1976,6 @@ function setTheme(themeId){
   document.documentElement.style.setProperty('--blue',t.accent);
   document.documentElement.style.setProperty('--accent',t.accent);
   document.documentElement.style.setProperty('--green',themeId==='neon'?'#39FF14':'#30D158');
-  // Apply bg to body directly
   document.body.style.background = t.bg;
   document.getElementById('app').style.background = t.bg;
   localStorage.setItem(`alfie_theme_${currentUser}`,themeId);
@@ -1981,6 +1983,58 @@ function setTheme(themeId){
   const sel=document.getElementById(`theme-${themeId}`);
   if(sel){sel.style.borderColor=t.accent;sel.style.background='rgba(255,255,255,0.05)';}
   showToast(`🎨 ${themeId.charAt(0).toUpperCase()+themeId.slice(1)} aktiviert`);
+  saveUserSettings();
+}
+
+async function saveUserSettings(){
+  if(!oauthToken||!currentUser)return;
+  const theme=localStorage.getItem(`alfie_theme_${currentUser}`)||'midnight';
+  const name=localStorage.getItem(`alfie_name_${currentUser}`)||'';
+  const pin=localStorage.getItem(`alfie_pin_${currentUser}`)||'';
+  const pic=localStorage.getItem(`alfie_pic_${currentUser}`)||'';
+  const notif=localStorage.getItem(`alfie_notif_${currentUser}`)||'false';
+  try{
+    // Make sure Settings sheet exists, then write user row
+    const row=currentUser==='sergio'?2:3;
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Settings!A${row}:F${row}?valueInputOption=RAW`,{
+      method:'PUT',
+      headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+      body:JSON.stringify({values:[[currentUser,theme,name,pin,notif,pic.substring(0,49000)]]})
+    });
+  }catch(e){
+    // Try to create Settings sheet if it doesn't exist
+    try{
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}:batchUpdate`,{
+        method:'POST',
+        headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({requests:[{addSheet:{properties:{title:'Settings'}}}]})
+      });
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Settings!A1:F1?valueInputOption=RAW`,{
+        method:'PUT',
+        headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({values:[['user','theme','name','pin','notif','pic']]})
+      });
+      saveUserSettings();
+    }catch(e2){}
+  }
+}
+
+async function loadUserSettings(user){
+  if(!oauthToken)return;
+  try{
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Settings!A:F`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const d=await r.json();
+    if(d.error)return;
+    const rows=d.values||[];
+    const row=rows.find(r=>r[0]===user);
+    if(row){
+      if(row[1]) localStorage.setItem(`alfie_theme_${user}`,row[1]);
+      if(row[2]) localStorage.setItem(`alfie_name_${user}`,row[2]);
+      if(row[3]) localStorage.setItem(`alfie_pin_${user}`,row[3]);
+      if(row[4]) localStorage.setItem(`alfie_notif_${user}`,row[4]);
+      if(row[5]) localStorage.setItem(`alfie_pic_${user}`,row[5]);
+    }
+  }catch(e){}
 }
 
 function loadTheme(user){
@@ -2039,6 +2093,7 @@ function saveName(name){
   document.getElementById('settings-username').textContent = name.trim();
   document.getElementById('nav-subtitle-meals') && (document.getElementById('nav-subtitle-meals').textContent = name.trim());
   showToast('✅ Name gespeichert!');
+  saveUserSettings();
 }
 
 function getUserName(user){
@@ -2057,6 +2112,7 @@ function changePin(){
   document.getElementById('new-pin-confirm').value='';
   msg.style.color='var(--green)';msg.textContent='✅ PIN gespeichert!';
   setTimeout(()=>msg.textContent='',2000);
+  saveUserSettings();
 }
 
 let notifEnabled=false;
@@ -2065,6 +2121,7 @@ function toggleNotif(){
   localStorage.setItem(`alfie_notif_${currentUser}`,notifEnabled);
   updateNotifToggle(notifEnabled);
   if(notifEnabled&&Notification.permission!=='granted') Notification.requestPermission();
+  saveUserSettings();
 }
 function updateNotifToggle(on){
   notifEnabled=on;
