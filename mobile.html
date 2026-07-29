@@ -7,6 +7,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#07080b">
 <title>ALFIE</title>
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -25,7 +29,27 @@
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
-html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;background:#07080b;color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* Center & cap width on wide screens (Fold unfolded, tablets, desktop) */
+@media (min-width: 500px) {
+  body{background:#000;}
+  #app{max-width:500px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,0.8);}
+  #login-page, #pin-screen, #home-screen{
+    max-width:500px;
+    margin:0 auto;
+    left:0 !important;
+    right:0 !important;
+  }
+  #tab-bar{max-width:500px;left:50% !important;right:auto !important;transform:translateX(-50%);}
+  #food-modal, #edit-modal, #bring-modal, #ing-modal{
+    max-width:500px;
+    margin:0 auto;
+    left:0 !important;
+    right:0 !important;
+  }
+  #toast{max-width:500px;left:50% !important;right:auto !important;transform:translateX(-50%);}
+}
 
 /* ── APP SHELL ── */
 #app{background:var(--bg);}
@@ -860,6 +884,13 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
 <div class="toast" id="toast"></div>
 
 <script>
+// ── REGISTER SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW failed:', err));
+  });
+}
+
 // ── CONFIG ──
 const CONFIG = {
   GCAL_CLIENT_ID: '438929727680-b8qi3q72guf6a44u0h3g2adst8n378tv.apps.googleusercontent.com',
@@ -867,7 +898,7 @@ const CONFIG = {
   SHEETS_ID: '1cc79Ey2ovmerwijlfcaZc171KFYI6l-Id47lEAjEjoM',
   TRACKER_SHEET_ID: '1w0cGk__mlyKh5P7y5f-QVEijID2jakNS4qJ8uRqnEHU',
   HA_URL: 'https://ha.ha-cruz.com',
-  HA_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1MTI2MmRkYTlmMjI0MWYxYmE2MzQ2MzA4YjJlZGZlZiIsImlhdCI6MTc3ODMxNzk5NywiZXhwIjoyMDkzNjc3OTk3fQ.rHHRurKg5F4gfxEaHvVVs4ml-yWCZv0-OjBp5H9ppck',
+  HA_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZWQ4ODI0ZTRhY2M0NTJkYTQyODliNjRhOGY1YmRiYiIsImlhdCI6MTc4NTM1OTg0NiwiZXhwIjoyMTAwNzE5ODQ2fQ.IlGIrbitOtiPtuGvlLwTosu8crCneErG6mSTW_Az6oE',
   BRING_ENTITY: 'todo.pavia_cruz_home_assistent',
 };
 const HA_H = {'Authorization':`Bearer ${CONFIG.HA_TOKEN}`,'Content-Type':'application/json'};
@@ -1637,6 +1668,15 @@ async function loadTracker(){
     const row=rows.find(r=>r[0]===trackerDate);
     const ids=['tr-weight','tr-steps','tr-water','tr-activity-name','tr-activity-mins','tr-notes'];
     ids.forEach((id,i)=>{ const el=document.getElementById(id); if(el) el.value=row?.[i+1]||''; });
+    
+    // Carry over Gewicht from last known entry (if today is empty)
+    if(!row || !row[1]){
+      const lastWeight = [...rows].reverse().find(r=>r[1] && r[0]<=trackerDate);
+      if(lastWeight){
+        document.getElementById('tr-weight').value = lastWeight[1];
+        document.getElementById('tr-weight').placeholder = lastWeight[1];
+      }
+    }
     // Show duration row if activity exists
     if(row?.[4]) document.getElementById('workout-duration-row').style.display='flex';
     // Restore food log
