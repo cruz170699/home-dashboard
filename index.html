@@ -734,7 +734,7 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
     </div>
 
     <div class="card kc-essen">
-      <div class="kc-head"><span class="kc-label">Essen</span><span class="kc-mini" onclick="loadMeals()">↻</span></div>
+      <div class="kc-head"><span class="kc-label">ALFIE Meals</span><span class="kc-mini" onclick="loadMeals()">↻</span></div>
       <div class="meal-strip" id="meal-strip"></div>
       <button class="kpill clay" onclick="openMealWeekPopup()">Woche planen</button>
     </div>
@@ -867,25 +867,58 @@ async function loadBring() {
   }
 }
 
-const BRING_EMOJI={
-  milch:'\U0001F95B',brot:'\U0001F35E',eier:'\U0001F95A',butter:'\U0001F9C8',kaese:'\U0001F9C0',
-  apfel:'\U0001F34E',banane:'\U0001F34C',tomaten:'\U0001F345',kartoffeln:'\U0001F954',zwiebeln:'\U0001F9C5',
-  salat:'\U0001F957',karotten:'\U0001F955',reis:'\U0001F35A',pasta:'\U0001F35D',nudeln:'\U0001F35D',
-  poulet:'\U0001F357',fleisch:'\U0001F969',fisch:'\U0001F41F',kaffee:'\u2615',tee:'\U0001F375',
-  bier:'\U0001F37A',wein:'\U0001F377',wasser:'\U0001F4A7',schokolade:'\U0001F36B',zucker:'\U0001F36C',
-  mehl:'\U0001F33E',oel:'\U0001FAD2',pizza:'\U0001F355',joghurt:'\U0001F368',honig:'\U0001F36F',
-  papier:'\U0001F9FB',seife:'\U0001F9FC',shampoo:'\U0001F9F4',zahnpasta:'\U0001FAA5',
+const BRING_ICONS={
+  dairy:'<path d="M8 2h8M9 2v3l-3 4v13h12V9l-3-4V2"/><path d="M6 13h12"/>',
+  bakery:'<path d="M4 15a8 5 0 0 1 16 0v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 11v7M15 11v7"/>',
+  fruit:'<path d="M12 8c-4 0-6 3-6 6s3 6 6 6 6-2 6-6-2-6-6-6z"/><path d="M12 8V5M12 5c0-2 2-3 3-3"/>',
+  veg:'<path d="M11 6l7 7-7 6-6-6z"/><path d="M13 4c2-1 4-1 5 0s1 3 0 5"/>',
+  meat:'<path d="M4 14a6 6 0 0 1 10-4l5 5a5 5 0 0 1-7 7l-5-5A5 5 0 0 1 4 14z"/><path d="M9 12l4 4"/>',
+  fish:'<path d="M3 12c3-5 8-6 12-4 2 1 4 2 6 4-2 2-4 3-6 4-4 2-9 1-12-4z"/><circle cx="16" cy="11" r="1"/>',
+  drink:'<path d="M6 4h12l-1.5 16a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1z"/><path d="M6.6 11h10.8"/>',
+  sweet:'<circle cx="12" cy="12" r="8"/><circle cx="10" cy="10" r="1"/><circle cx="14" cy="13" r="1"/><circle cx="10.5" cy="15" r="1"/>',
+  pantry:'<path d="M6 3h12v18H6z"/><path d="M9 7h6M9 11h6"/>',
+  household:'<path d="M9 3h5v4H9z"/><path d="M8 7h7l1 14H7z"/><path d="M10 12h3"/>',
+  hygiene:'<path d="M12 3s6 6.5 6 10.5A6 6 0 0 1 6 13.5C6 9.5 12 3 12 3z"/>',
+  blade:'<path d="M4 8h16v4H4z"/><path d="M8 12v6a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-6"/><path d="M7 8V5h10v3"/>',
+  paper:'<circle cx="12" cy="12" r="8"/><ellipse cx="12" cy="12" rx="3" ry="8"/>',
+  basket:'<path d="M4 8h16l-2 12H6z"/><path d="M9 8l3-5 3 5"/>',
 };
+const BRING_MAP=[
+  ['dairy',['milch','rahm','sahne','joghurt','quark','kaese','butter','ei','eier','mozzarella','fondue','raclette']],
+  ['bakery',['brot','broetchen','gipfeli','croissant','toast','zopf','baguette','weggli','waffel','waffeln']],
+  ['fruit',['apfel','aepfel','banane','orange','zitrone','beere','erdbeer','traube','melone','birne','pfirsich','kirsche','ananas','avocado','kiwi','mango','obst','frucht']],
+  ['veg',['tomate','gurke','salat','karotte','ruebli','kartoffel','zwiebel','knoblauch','broccoli','brokkoli','mais','pilz','paprika','peperoni','aubergine','zucchini','spinat','lauch','gemuese','kraut','petersilie','basilikum']],
+  ['meat',['poulet','huhn','fleisch','hack','speck','wurst','schinken','cervelat','steak','schnitzel','salami']],
+  ['fish',['fisch','lachs','thon','thunfisch','crevette','shrimp']],
+  ['drink',['kaffee','tee','wasser','saft','bier','wein','cola','sirup','milchdrink','getraenk','rivella','energy']],
+  ['sweet',['schoggi','schokolade','zucker','keks','guetzli','kuchen','glace','eis','bonbon','honig','konfi','marmelade','dessert','chips','nuss','mandel','snack']],
+  ['pantry',['reis','pasta','nudel','spaghetti','mehl','oel','essig','senf','ketchup','salz','pfeffer','gewuerz','konserve','buechse','suppe','sauce','mueesli','cornflakes','haferflocken']],
+  ['blade',['rasier','razor','klinge','blade','scher']],
+  ['paper',['papier','wc','haushaltpapier','taschentuch','servietten','kuechenrolle']],
+  ['hygiene',['seife','shampoo','duschgel','zahnpasta','deo','creme','lotion','buerste','zahnbuerste']],
+  ['household',['waschmittel','putzmittel','spuelmittel','schwamm','muellsack','abfallsack','reiniger','weichspueler','kerze','batterie','gluehbirne']],
+];
 function bringSlug(n){
-  return n.toLowerCase().trim()
+  return (n||'').toLowerCase().trim()
     .replace(/\u00e4/g,'ae').replace(/\u00f6/g,'oe').replace(/\u00fc/g,'ue').replace(/\u00df/g,'ss')
     .replace(/[^a-z0-9]+/g,'');
 }
-function bringEmoji(n){
+function bringIconKey(n){
   const k=bringSlug(n);
-  if(BRING_EMOJI[k]) return BRING_EMOJI[k];
-  for(const key in BRING_EMOJI){ if(k.includes(key)) return BRING_EMOJI[key]; }
-  return null;
+  if(!k) return 'basket';
+  let best=null,bestLen=0,bestCat='basket';
+  for(const [cat,words] of BRING_MAP){
+    for(const w of words){
+      if(k.includes(w) && w.length>bestLen){ bestLen=w.length; bestCat=cat; }
+    }
+  }
+  return bestCat;
+}
+function bringIconSVG(n){
+  const key=bringIconKey(n);
+  return '<svg class="bt-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+    'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+
+    (BRING_ICONS[key]||BRING_ICONS.basket)+'</svg>';
 }
 
 function renderBring() {
@@ -900,18 +933,10 @@ function renderBring() {
     const el = document.createElement('div');
     el.className = 'bring-tag';
 
-    const img = document.createElement('img');
-    img.className = 'bt-img';
-    img.alt = '';
-    img.src = 'https://web.getbring.com/assets/images/items/' + bringSlug(item.name) + '.png';
-    img.onerror = function(){
-      const emo = bringEmoji(item.name);
-      const rep = document.createElement('span');
-      if (emo) { rep.className = 'bt-emo'; rep.textContent = emo; }
-      else { rep.className = 'bt-dot'; }
-      if (this.parentNode) this.parentNode.replaceChild(rep, this);
-    };
-    el.appendChild(img);
+    const ico = document.createElement('span');
+    ico.className = 'bt-ico';
+    ico.innerHTML = bringIconSVG(item.name);
+    el.appendChild(ico);
 
     const nm = document.createElement('span');
     nm.className = 'bt-n';
