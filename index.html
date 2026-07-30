@@ -1198,24 +1198,46 @@ async function loadSPQueue(body) {
   });
 }
 
+const MA_TARGETS = [
+  {id:'spotify', name:'Spotify', icon:'\ud83c\udfa7'},
+  {id:'media_player.living_room_speaker_2', name:'Living Room', icon:'\ud83d\udd0a'},
+  {id:'media_player.lights_display_2', name:'Nest Hub', icon:'\ud83d\udcfa'},
+];
+let spTarget = localStorage.getItem('sp_target') || 'spotify';
+
+function setSpTarget(id) {
+  spTarget = id;
+  localStorage.setItem('sp_target', id);
+  loadSPTab('playlists');
+}
+
+function spTargetPickerHTML() {
+  return `<div style="display:flex;gap:6px;padding:2px 2px 12px;flex-wrap:wrap;">` +
+    MA_TARGETS.map(t => `<button onclick="setSpTarget('${t.id}')" style="
+      flex:1;min-width:90px;padding:7px 8px;border-radius:10px;border:none;cursor:pointer;
+      font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+      background:${spTarget===t.id?'#1DB954':'rgba(255,255,255,0.08)'};
+      color:${spTarget===t.id?'white':'rgba(255,255,255,0.6)'};">${t.icon} ${t.name}</button>`).join('') +
+    `</div>`;
+}
+
 async function loadSPPlaylists(body) {
   if (!spToken) { body.innerHTML = spConnectHTML(); return; }
   const d = await spFetch('https://api.spotify.com/v1/me/playlists?limit=30');
-  if (!d || !d.items) { body.innerHTML = '<div class="sp-loading">Keine Playlists</div>'; return; }
-  body.innerHTML = '';
+  body.innerHTML = spTargetPickerHTML();
+  if (!d || !d.items) {
+    body.innerHTML += '<div class="sp-loading">Keine Playlists</div>';
+    return;
+  }
   d.items.forEach(pl => {
     const el = document.createElement('div');
     el.className = 'sp-item';
-    el.innerHTML = `<div class="sp-item-art">${pl.images?.[0] ? `<img src="${pl.images[0].url}">` : '🎵'}</div><div class="sp-item-info"><div class="sp-item-name">${pl.name}</div><div class="sp-item-sub">${pl.tracks?.total} Tracks</div></div>`;
+    el.innerHTML = `<div class="sp-item-art">${pl.images?.[0] ? `<img src="${pl.images[0].url}">` : '\ud83c\udfb5'}</div><div class="sp-item-info"><div class="sp-item-name">${pl.name}</div><div class="sp-item-sub">${pl.tracks?.total} Tracks</div></div>`;
     el.onclick = () => playPlaylist(pl.uri);
     body.appendChild(el);
   });
 }
 
-const CAST_SPEAKERS = [
-  {id:'media_player.living_room_speaker', name:'Living Room speaker', icon:'\ud83d\udd0a'},
-  {id:'media_player.lights_display', name:'Lights display', icon:'\ud83d\udcfa'},
-];
 
 async function loadSPDevices(body) {
   body.innerHTML = '';
@@ -1309,6 +1331,19 @@ async function castVolume(id, pct) {
 
 
 async function playPlaylist(uri) {
+  if (spTarget && spTarget !== 'spotify') {
+    try {
+      const r = await fetch(`${CONFIG.HA_URL}/api/services/media_player/play_media`, {
+        method:'POST', headers:HA_HEADERS,
+        body: JSON.stringify({entity_id: spTarget, media_content_id: uri, media_content_type: 'music'})
+      });
+      if (!r.ok) throw new Error('HA ' + r.status);
+    } catch(e) {
+      console.error('Music Assistant play error:', e);
+    }
+    setTimeout(() => loadSPTab('devices'), 1200);
+    return;
+  }
   if (!spToken) return;
   await spFetch('https://api.spotify.com/v1/me/player/play', {method:'PUT', body:JSON.stringify({context_uri: uri})});
   setTimeout(() => { loadSpotify(); loadSPTab('queue'); }, 800);
