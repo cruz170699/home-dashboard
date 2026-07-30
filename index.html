@@ -929,25 +929,32 @@ const TRAFFIC_CONFIG = {
   ORIGIN: 'Fadackerstrasse 5, 8305 Dietlikon, Switzerland',
   DEST: 'Industriestrasse 25, 8604 Volketswil, Switzerland',
   ARRIVAL: '06:20',
+  SENSOR: 'sensor.google_travel_time',
 };
 
 async function loadTraffic() {
   try {
     const now = new Date();
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(TRAFFIC_CONFIG.ORIGIN)}&destinations=${encodeURIComponent(TRAFFIC_CONFIG.DEST)}&mode=driving&departure_time=now&traffic_model=best_guess&key=${TRAFFIC_CONFIG.MAPS_KEY}`;
+    // Read from Home Assistant's Google Maps Travel Time sensor (no CORS proxy needed)
+    const r = await fetch(`${CONFIG.HA_URL}/api/states/${TRAFFIC_CONFIG.SENSOR}`, {headers: HA_HEADERS});
+    if (!r.ok) throw new Error('HA ' + r.status);
+    const st = await r.json();
+    if (!st || st.state === 'unknown' || st.state === 'unavailable') throw new Error('No data');
 
-    // Use allorigins proxy to avoid CORS
-    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-    const wrapper = await r.json();
-    const d = JSON.parse(wrapper.contents);
+    const toMins = (v) => {
+      if (v === undefined || v === null) return null;
+      if (typeof v === 'number') return v;
+      const m = String(v).match(/[\d.]+/);
+      return m ? parseFloat(m[0]) : null;
+    };
 
-    const element = d?.rows?.[0]?.elements?.[0];
-    if (!element || element.status !== 'OK') throw new Error('No data');
+    const liveMins = toMins(st.attributes?.duration_in_traffic) ?? toMins(st.state);
+    const baseMins = toMins(st.attributes?.duration) ?? liveMins;
+    if (liveMins === null) throw new Error('No data');
 
-    const durationSecs = element.duration_in_traffic?.value || element.duration?.value;
-    const normalSecs = element.duration?.value;
-    const durationMins = Math.ceil(durationSecs / 60);
-    const normalMins = Math.ceil(normalSecs / 60);
+    const durationMins = Math.ceil(liveMins);
+    const normalMins = Math.ceil(baseMins);
+    const durationSecs = durationMins * 60;
     const delay = durationMins - normalMins;
 
     // Color status
