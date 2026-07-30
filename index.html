@@ -433,6 +433,27 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .bring-input-row{margin-top:10px;}
 .meal-strip{align-items:stretch!important;}
 .meal-pill{width:100%;}
+
+.kmeal{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--k-line);cursor:pointer;}
+.kmeal:last-child{border-bottom:none;}
+.kmeal-d{font-size:10px;font-weight:600;color:var(--k-mute);width:38px;flex-shrink:0;}
+.kmeal.today .kmeal-d{color:var(--k-clay);}
+.kmeal-b{display:flex;flex-direction:column;min-width:0;flex:1;}
+.kmeal-m{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kmeal-m.none{color:var(--k-mute);font-weight:400;font-style:italic;}
+.kmeal-s{font-size:10.5px;color:var(--k-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.meal-strip{display:flex!important;flex-direction:column;justify-content:flex-start;flex:1;min-height:0;overflow:hidden;}
+.sbb-times{display:flex!important;flex-direction:column;justify-content:flex-start;}
+.kdep{flex-shrink:0;}
+.kc-player .sp-now{flex-shrink:0;gap:14px;}
+.kc-player .sp-art{width:74px;height:74px;font-size:26px;display:flex;align-items:center;justify-content:center;}
+.kc-player .sp-info{min-width:0;}
+.kc-player .sp-track{font-size:17px;}
+.kc-player .sp-progress{margin-top:auto;margin-bottom:14px;}
+.kc-player .sp-controls{margin-bottom:2px;}
+.kc-player .sp-btn{width:38px;height:38px;border-radius:50%;font-size:13px;}
+.kc-player .sp-play{width:50px;height:50px;font-size:16px;}
+.dashboard{grid-template-rows:62px 200px 1fr!important;}
 </style>
 
 </head>
@@ -1074,7 +1095,29 @@ setInterval(loadWeather, 600000);
 const DAYS_SHEET=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
 let mealData=[];
 async function loadMeals(){try{const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/A1:H3?key=${CONFIG.SHEETS_API_KEY}`);const d=await r.json();const rows=d.values;mealData=[];for(let i=0;i<7;i++){mealData.push({day:DAYS_SHEET[i],jsDay:i===6?0:i+1,colIdx:i+1,lunch:rows?.[1]?.[i+1]||'—',dinner:rows?.[2]?.[i+1]||'—'});}renderMealStrip();autoSaveMealHistory();}catch(e){}}
-function renderMealStrip(){const strip=document.getElementById('meal-strip');strip.innerHTML='';const todayJS=new Date().getDay();const todayIdx=mealData.findIndex(m=>m.jsDay===todayJS);const toShow=[];for(let i=0;i<4;i++)toShow.push(mealData[(todayIdx+i)%7]);toShow.forEach((m,i)=>{const isToday=i===0;const el=document.createElement('div');el.className='meal-pill'+(isToday?' today':'');el.style.cursor='pointer';el.innerHTML=`<div class="meal-pill-day">${isToday?'HEUTE':m.day.slice(0,2).toUpperCase()}</div><div class="meal-pill-main">${m.lunch}</div><div class="meal-pill-sub">${m.dinner}</div>`;el.onclick=()=>openMealWeekPopup();strip.appendChild(el);});}
+function renderMealStrip(){
+  const strip=document.getElementById('meal-strip');
+  if(!strip) return;
+  strip.innerHTML='';
+  const todayJS=new Date().getDay();
+  const todayIdx=mealData.findIndex(m=>m.jsDay===todayJS);
+  if(todayIdx<0) return;
+  for(let i=0;i<5;i++){
+    const m=mealData[(todayIdx+i)%7];
+    const isToday=i===0;
+    const row=document.createElement('div');
+    row.className='kmeal'+(isToday?' today':'');
+    const lunch=(m.lunch&&m.lunch!=='\u2014')?m.lunch:null;
+    const dinner=(m.dinner&&m.dinner!=='\u2014')?m.dinner:null;
+    const main=lunch||dinner||'Nichts geplant';
+    const sub=lunch&&dinner?('Mittag \u00b7 '+dinner+' am Abend'):(lunch?'Mittag':(dinner?'Abend':''));
+    row.innerHTML=`<span class="kmeal-d">${isToday?'Heute':m.day.slice(0,2)}</span>`+
+      `<span class="kmeal-b"><span class="kmeal-m${(!lunch&&!dinner)?' none':''}">${main}</span>`+
+      `<span class="kmeal-s">${sub}</span></span>`;
+    row.onclick=()=>openMealPopup(m,isToday);
+    strip.appendChild(row);
+  }
+}
 loadMeals();
 let currentMealColIdx=null;
 function openMealPopup(meal,isToday){document.getElementById('meal-popup-day').textContent=isToday?'Heute — '+meal.day:meal.day;document.getElementById('meal-edit-lunch').value=meal.lunch==='—'?'':meal.lunch;document.getElementById('meal-edit-dinner').value=meal.dinner==='—'?'':meal.dinner;currentMealColIdx=meal.colIdx;document.getElementById('meal-popup').classList.add('open');setTimeout(()=>document.getElementById('meal-edit-lunch').focus(),100);}
@@ -1091,7 +1134,7 @@ async function loadSBB(){
   const c=document.getElementById('sbb-times');
   if(!c) return;
   try{
-    const r=await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=4');
+    const r=await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=6');
     if(!r.ok) throw new Error('http');
     const d=await r.json();
     c.innerHTML='';
