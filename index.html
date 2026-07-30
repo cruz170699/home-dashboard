@@ -1270,6 +1270,7 @@ async function loadSPDevices(body) {
     const off = (state === 'off' || state === 'unavailable' || state === 'standby');
     const playing = (state === 'playing');
     const vol = Math.round((st.attributes?.volume_level ?? 0) * 100);
+    const ctrl = (state === 'playing' || state === 'paused');
     const title = st.attributes?.media_title || (off ? 'Aus' : 'Bereit');
     wrap.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
@@ -1278,7 +1279,9 @@ async function loadSPDevices(body) {
           <div style="font-size:13px;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sp.name}</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title}</div>
         </div>
-        <button onclick="castPlayPause('${sp.id}')" style="width:32px;height:32px;border-radius:50%;border:none;background:#1DB954;color:white;font-size:13px;cursor:pointer;flex-shrink:0;">${playing?'\u23f8':'\u25b6'}</button>
+        ${ctrl
+          ? `<button onclick="castPlayPause('${sp.id}')" style="width:32px;height:32px;border-radius:50%;border:none;background:#1DB954;color:white;font-size:13px;cursor:pointer;flex-shrink:0;">${playing?'\u23f8':'\u25b6'}</button>`
+          : `<div title="Nichts wird abgespielt" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">\u25b6</div>`}
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-size:11px;color:rgba(255,255,255,0.4);width:26px;flex-shrink:0;">${vol}%</span>
