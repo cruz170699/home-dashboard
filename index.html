@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pavia Cruz — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -284,6 +284,114 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 .meal-week-lunch{color:var(--text);font-weight:500;}
 .meal-week-dinner{color:var(--text2);}
 </style>
+<style>
+:root{
+  --k-bg:#EDE7DC; --k-card:#ffffff; --k-tile:#F5F1EA; --k-tile2:#EDE7DC;
+  --k-ink:#221E19; --k-mute:#8C8378; --k-line:rgba(34,30,25,0.07);
+  --k-clay:#D9603C; --k-moss:#3B5129; --k-sage:#DCE5D2; --k-peach:#F3DBD1; --k-amber:#F0B33F;
+}
+html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--k-bg);color:var(--k-ink);}
+.dashboard{padding:14px;gap:12px;}
+.topbar,.card{background:var(--k-card)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  border:none!important;box-shadow:none!important;border-radius:22px!important;}
+.topbar{padding:0 22px;gap:20px;}
+.card{padding:16px 18px;}
+.clock-time{font-size:28px;font-weight:600;letter-spacing:-1.2px;}
+.clock-date,.weather-loc{font-size:11px;color:var(--k-mute);}
+.weather-temp{font-size:20px;font-weight:600;}
+.vdivider{background:var(--k-line);}
+.card-label{font-size:12px;font-weight:600;color:var(--k-mute);letter-spacing:0.2px;}
+.card-icon{background:transparent!important;}
+.pill-btn{border-radius:20px!important;font-weight:600;}
+.cal-cell{background:var(--k-tile);border-radius:14px;border:none;}
+.cal-cell.other-month{background:transparent;opacity:0.35;}
+.cal-cell.today{background:var(--k-clay);color:#fff;}
+.cal-cell.today .cal-day-num{color:#fff;}
+.cal-day-num{font-size:13px;font-weight:600;}
+.cal-ev{border-radius:6px;font-size:9px;padding:2px 5px;}
+.cal-ev.green{background:var(--k-sage);color:var(--k-moss);}
+.cal-ev.pink{background:var(--k-peach);color:#8A3A1D;}
+.cal-ev.blue{background:#DCE4F0;color:#2A4468;}
+.bring-tag{background:var(--k-tile)!important;border-radius:20px!important;border:none!important;font-size:12.5px;padding:7px 13px;}
+.meal-pill{background:var(--k-tile)!important;border-radius:14px!important;border:none!important;}
+.meal-pill.today{background:var(--k-clay)!important;color:#fff!important;}
+.sbb-time-block,.sbb-time{font-weight:600;}
+
+.lights-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex:1;min-height:0;}
+.ktile{position:relative;border-radius:15px;overflow:hidden;background:var(--k-tile);color:var(--k-ink);
+  cursor:pointer;user-select:none;touch-action:none;min-height:0;}
+.ktile-fill{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--k-amber);
+  transition:height 0.18s cubic-bezier(.4,0,.2,1);}
+.ktile-fill.sw{background:var(--k-sage);}
+.ktile-in{position:relative;z-index:2;height:100%;padding:9px 10px;display:flex;flex-direction:column;justify-content:space-between;}
+.ktile-ico{font-size:15px;opacity:0.45;line-height:1;}
+.ktile.on .ktile-ico{opacity:1;}
+.ktile-nm{font-size:11.5px;font-weight:600;line-height:1.2;}
+.ktile-st{font-size:9.5px;opacity:0.55;margin-top:1px;}
+.ktile-grip{position:absolute;top:8px;right:9px;z-index:2;width:15px;height:3px;border-radius:2px;background:rgba(34,30,25,0.18);}
+.ktile.dragging{outline:2px solid var(--k-clay);outline-offset:-2px;}
+
+#sleep-bg{background-color:#191410;}
+#sleep-bg::after{background:linear-gradient(135deg,rgba(25,20,16,0.35) 0%,rgba(25,20,16,0.68) 100%);}
+#sleep-content{color:#F2E9DC;}
+#sleep-time{font-weight:300;color:#F2E9DC;text-shadow:0 2px 40px rgba(25,20,16,0.5);}
+#sleep-date{color:rgba(242,233,220,0.72);}
+#sleep-weather{background:rgba(36,29,23,0.55);}
+#sleep-weather-temp{color:#F2E9DC;}
+#sleep-weather-desc{color:rgba(242,233,220,0.6);}
+.sleep-panel{background:rgba(36,29,23,0.55);}
+.sleep-panel-title{color:#E9A23B;letter-spacing:1.4px;}
+.sleep-event-time{color:rgba(242,233,220,0.5);}
+#sleep-spotify{background:rgba(36,29,23,0.55);}
+#sleep-sp-art{background:rgba(233,162,59,0.28);}
+#sleep-sp-artist{color:rgba(242,233,220,0.6);}
+#sleep-sp-icon{color:#E9A23B;filter:drop-shadow(0 0 8px rgba(233,162,59,0.35));}
+#sleep-bible{background:rgba(36,29,23,0.5);}
+#sleep-bible-label{color:#E9A23B;}
+#sleep-verse-text{color:rgba(242,233,220,0.94);}
+#sleep-verse-ref{color:rgba(242,233,220,0.45);}
+#sleep-hint{color:rgba(242,233,220,0.22);}
+
+.main{background:var(--k-card)!important;border-radius:22px!important;border:none!important;box-shadow:none!important;padding:15px 18px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:flex;flex-direction:column;}
+.dashboard{grid-template-rows:62px 176px 1fr!important;}
+.bottom{grid-template-columns:1.15fr 1.15fr 1fr!important;grid-template-rows:1fr 1fr!important;}
+.cal-header{margin-bottom:12px;}
+#cal-strip-label{font-size:15px;font-weight:600;}
+.kdark{background:var(--k-ink)!important;color:#fff!important;}
+.cal-strip{display:grid;grid-template-columns:repeat(14,1fr);gap:6px;flex:1;min-height:0;}
+.kday{background:var(--k-tile);border-radius:14px;padding:8px 7px;display:flex;flex-direction:column;gap:4px;overflow:hidden;cursor:pointer;}
+.kday.we{background:var(--k-tile2);}
+.kday.today{background:var(--k-clay);color:#fff;}
+.kday-n{font-size:9px;color:var(--k-mute);letter-spacing:0.5px;}
+.kday.today .kday-n{color:rgba(255,255,255,0.82);}
+.kday-d{font-size:19px;font-weight:600;line-height:1;}
+.kev{font-size:8.5px;border-radius:6px;padding:2px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.kev.green{background:var(--k-sage);color:var(--k-moss);}
+.kev.pink{background:var(--k-peach);color:#8A3A1D;}
+.kev.blue{background:#DCE4F0;color:#2A4468;}
+.kev.more{background:transparent;color:var(--k-mute);padding-left:2px;}
+.kday.today .kev.more{color:rgba(255,255,255,0.8);}
+.kpres{margin-left:auto;display:flex;gap:8px;}
+.kper{display:flex;align-items:center;gap:7px;background:var(--k-tile);border-radius:20px;padding:6px 13px 6px 7px;}
+.kav{width:24px;height:24px;border-radius:50%;background:var(--k-moss);color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.kav.out{background:#C9C2B6;}
+.kpn{font-size:11.5px;font-weight:500;line-height:1.15;}
+.kps{font-size:9.5px;color:var(--k-mute);}
+.kpill{margin-top:auto;align-self:flex-start;border:none;cursor:pointer;font-family:'Outfit',sans-serif;
+  font-size:11.5px;font-weight:600;padding:7px 13px;border-radius:20px;background:var(--k-moss);color:#fff;}
+.kpill.clay{background:var(--k-clay);}
+.meal-strip{display:flex!important;flex-direction:column;gap:5px;overflow:hidden;}
+.meal-pill{padding:7px 11px!important;display:flex;align-items:baseline;gap:8px;}
+.meal-pill-day{font-size:9.5px;font-weight:600;opacity:0.5;width:34px;flex-shrink:0;}
+.meal-pill-main{font-size:13px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.meal-pill-sub{font-size:10.5px;opacity:0.5;white-space:nowrap;}
+#cal-month-popup{display:none;position:fixed;inset:0;z-index:997;background:rgba(34,30,25,0.45);align-items:center;justify-content:center;}
+#cal-month-popup.open{display:flex;}
+.kmonth-card{background:var(--k-card);border-radius:24px;width:1080px;max-width:94vw;height:78vh;padding:22px 26px;display:flex;flex-direction:column;}
+.kmonth-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.kmonth-card .cal-grid{flex:1;min-height:0;}
+</style>
+
 </head>
 <body>
 
@@ -456,25 +564,9 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
       <span class="weather-icon" id="weather-icon">⛅</span>
       <div><div class="weather-temp" id="weather-temp">—°C</div><div class="weather-loc">Dietlikon</div></div>
     </div>
-    <div class="vdivider"></div>
-    <div class="meal-strip" id="meal-strip"></div>
-    <div class="vdivider"></div>
-    <div class="sbb-block" onclick="openSBBPopup()">
-      <div>
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;">
-          <img src="sbb.png" height="16" style="display:block;border-radius:2px;">
-          <div class="sbb-route">Dietlikon → Zürich HB</div>
-        </div>
-        <div class="sbb-times" id="sbb-times">
-          <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-          <div class="sbb-dot"></div>
-          <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-          <div class="sbb-dot"></div>
-          <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-          <div class="sbb-dot"></div>
-          <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-        </div>
-      </div>
+    <div class="kpres">
+      <div class="kper" id="pres-sergio"><div class="kav">S</div><div><div class="kpn">Sérgio</div><div class="kps">—</div></div></div>
+      <div class="kper" id="pres-miriam"><div class="kav out">M</div><div><div class="kpn">Miriam</div><div class="kps">—</div></div></div>
     </div>
     <div class="vdivider"></div>
     <div class="cal-toggles">
@@ -488,19 +580,13 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
 
   <div class="main">
     <div class="cal-header">
-      <div class="cal-month-label" id="cal-month-label">Mai 2026</div>
+      <div class="cal-month-label" id="cal-strip-label">Nächste zwei Wochen</div>
       <div class="cal-nav-group">
-        <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
-        <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
-        <button class="cal-today-btn" onclick="goToday()">Heute</button>
-        <button class="cal-today-btn" style="background:var(--blue);color:white;" onclick="openNewEvent('')">+ Event</button>
+        <button class="cal-today-btn" onclick="openNewEvent('')">+ Event</button>
+        <button class="cal-today-btn kdark" onclick="openMonthPopup()">Ganzer Monat</button>
       </div>
     </div>
-    <div class="cal-weekdays">
-      <div class="cal-weekday">Mo</div><div class="cal-weekday">Di</div><div class="cal-weekday">Mi</div>
-      <div class="cal-weekday">Do</div><div class="cal-weekday">Fr</div><div class="cal-weekday">Sa</div><div class="cal-weekday">So</div>
-    </div>
-    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-strip" id="cal-strip"></div>
   </div>
 
   <div class="bottom">
@@ -538,6 +624,30 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
       </div>
     </div>
 
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-row"><div class="card-icon blue"><img src="sbb.png" style="width:18px;height:18px;object-fit:contain;border-radius:3px;"></div><span class="card-label">Dietlikon → Zürich HB</span></div>
+        <button class="pill-btn gray" onclick="loadSBB()" style="font-size:14px;padding:4px 10px;">↻</button>
+      </div>
+      <div class="sbb-times" id="sbb-times">
+        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
+        <div class="sbb-dot"></div>
+        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
+        <div class="sbb-dot"></div>
+        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
+        <div class="sbb-dot"></div>
+        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
+      </div>
+      <button class="kpill" onclick="openSBBPopup()">Verbindung suchen</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-row"><div class="card-icon green">🍽️</div><span class="card-label">Essen</span></div>
+        <button class="pill-btn gray" onclick="loadMeals()" style="font-size:14px;padding:4px 10px;">↻</button>
+      </div>
+      <div class="meal-strip" id="meal-strip"></div>
+      <button class="kpill clay" onclick="openMealWeekPopup()">Woche planen</button>
+    </div>
     <div class="card" style="cursor:pointer;" onclick="openSPPopup()">
       <div class="card-header">
         <div class="card-title-row"><div class="card-icon green"><img src="spotify.png" style="width:18px;height:18px;object-fit:contain;border-radius:3px;"></div><span class="card-label">Player</span></div>
@@ -567,21 +677,27 @@ html,body{height:100%;width:100%;font-family:'Inter',-apple-system,BlinkMacSyste
         <div class="card-title-row"><div class="card-icon yellow">💡</div><span class="card-label">Lichter</span></div>
         <button class="pill-btn orange" onclick="toggleAllLights()">Alle</button>
       </div>
-      <div class="lights-tabs">
-        <button class="lights-tab active" id="tab-schlaf" onclick="switchLightTab('schlaf')"><span class="tab-dot" id="dot-schlaf"></span>🛏️ Schlafzimmer</button>
-        <button class="lights-tab" id="tab-stube" onclick="switchLightTab('stube')"><span class="tab-dot" id="dot-stube"></span>🏠 Stube/Balkon</button>
-      </div>
-      <div class="lights-panel active" id="panel-schlaf">
-        <div class="light-row"><div class="light-name-row"><div class="light-bulb" id="bulb-0"></div><span class="light-name">Reading</span></div><div style="display:flex;align-items:center;gap:7px;"><span class="light-state" id="lst-0">Aus</span><button class="ios-toggle" id="tog-0" onclick="toggleLight(0)"></button></div></div>
-        <div class="light-row"><div class="light-name-row"><div class="light-bulb" id="bulb-1"></div><span class="light-name">Licht Zimmer</span></div><div style="display:flex;align-items:center;gap:7px;"><span class="light-state" id="lst-1">Aus</span><button class="ios-toggle" id="tog-1" onclick="toggleLight(1)"></button></div></div>
-        <div class="light-row"><div class="light-name-row"><div class="light-bulb" id="bulb-2"></div><span class="light-name">Mirror</span></div><div style="display:flex;align-items:center;gap:7px;"><span class="light-state" id="lst-2">Aus</span><button class="ios-toggle" id="tog-2" onclick="toggleLight(2)"></button></div></div>
-      </div>
-      <div class="lights-panel" id="panel-stube">
-        <div class="light-row"><div class="light-name-row"><div class="light-bulb" id="bulb-3"></div><span class="light-name">Stube Lampe</span></div><div style="display:flex;align-items:center;gap:7px;"><span class="light-state" id="lst-3">Aus</span><button class="ios-toggle" id="tog-3" onclick="toggleLight(3)"></button></div></div>
-        <div class="light-row"><div class="light-name-row"><div class="light-bulb" id="bulb-4"></div><span class="light-name">Balkon Light</span></div><div style="display:flex;align-items:center;gap:7px;"><span class="light-state" id="lst-4">Aus</span><button class="ios-toggle" id="tog-4" onclick="toggleLight(4)"></button></div></div>
-        <div class="light-row"><div class="light-name-row"><div class="light-bulb" id="bulb-5"></div><span class="light-name">Mood Light</span></div><div style="display:flex;align-items:center;gap:7px;"><span class="light-state" id="lst-5">Aus</span><button class="ios-toggle" id="tog-5" onclick="toggleLight(5)"></button></div></div>
+      <div class="lights-grid" id="lights-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="cal-month-popup" onclick="if(event.target===this)closeMonthPopup()">
+  <div class="kmonth-card">
+    <div class="kmonth-head">
+      <div class="cal-month-label" id="cal-month-label">—</div>
+      <div class="cal-nav-group">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+        <button class="cal-today-btn" onclick="goToday()">Heute</button>
+        <button class="cal-today-btn kdark" onclick="closeMonthPopup()">Schliessen</button>
       </div>
     </div>
+    <div class="cal-weekdays">
+      <div class="cal-weekday">Mo</div><div class="cal-weekday">Di</div><div class="cal-weekday">Mi</div>
+      <div class="cal-weekday">Do</div><div class="cal-weekday">Fr</div><div class="cal-weekday">Sa</div><div class="cal-weekday">So</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
   </div>
 </div>
 
@@ -709,20 +825,127 @@ setInterval(loadBring, 60000);
 
 // ── LIGHTS ──
 const LIGHTS=[
-  {id:'light.reading',type:'light',tab:'schlaf'},
-  {id:'light.licht_zimmer',type:'light',tab:'schlaf'},
-  {id:'switch.mirror',type:'switch',tab:'schlaf'},
-  {id:'light.stube_light',type:'light',tab:'stube'},
-  {id:'switch.balkon_balkon_light',type:'switch',tab:'stube'},
-  {id:'switch.balkon_mood_light',type:'switch',tab:'stube'},
+  {id:'light.reading',      type:'light',  name:'Reading', dim:true},
+  {id:'light.licht_zimmer', type:'light',  name:'Zimmer',  dim:true},
+  {id:'switch.mirror',      type:'switch', name:'Mirror',  dim:false},
+  {id:'light.stube_light',  type:'light',  name:'Stube',   dim:true},
+  {id:'switch.balkon_balkon_light', type:'switch', name:'Balkon', dim:false},
+  {id:'switch.balkon_mood_light',   type:'switch', name:'Mood',   dim:false},
 ];
-let lightStates=[false,false,false,false,false,false];
-function switchLightTab(tab){document.querySelectorAll('.lights-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.lights-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');document.getElementById('panel-'+tab).classList.add('active');}
-function updateTabDots(){const schlafOn=LIGHTS.some((l,i)=>l.tab==='schlaf'&&lightStates[i]);const stubeOn=LIGHTS.some((l,i)=>l.tab==='stube'&&lightStates[i]);document.getElementById('dot-schlaf').className='tab-dot'+(schlafOn?' any-on':'');document.getElementById('dot-stube').className='tab-dot'+(stubeOn?' any-on':'');}
-async function loadLights(){for(let i=0;i<LIGHTS.length;i++){try{const r=await fetch(`${CONFIG.HA_URL}/api/states/${LIGHTS[i].id}`,{headers:HA_HEADERS});const d=await r.json();lightStates[i]=d.state==='on';updateLightUI(i);}catch(e){}}updateTabDots();}
-function updateLightUI(i){const tog=document.getElementById('tog-'+i),bulb=document.getElementById('bulb-'+i),lst=document.getElementById('lst-'+i);if(!tog)return;if(lightStates[i]){tog.classList.add('on');bulb.classList.add('on');lst.textContent='An';}else{tog.classList.remove('on');bulb.classList.remove('on');lst.textContent='Aus';}updateTabDots();}
-async function toggleLight(i){lightStates[i]=!lightStates[i];updateLightUI(i);try{await fetch(`${CONFIG.HA_URL}/api/services/${LIGHTS[i].type}/turn_${lightStates[i]?'on':'off'}`,{method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:LIGHTS[i].id})});}catch(e){}}
-function toggleAllLights(){const anyOn=lightStates.some(s=>s);lightStates=lightStates.map(()=>!anyOn);lightStates.forEach((_,i)=>{updateLightUI(i);fetch(`${CONFIG.HA_URL}/api/services/${LIGHTS[i].type}/turn_${lightStates[i]?'on':'off'}`,{method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:LIGHTS[i].id})}).catch(()=>{});});}
+let lightStates = LIGHTS.map(() => ({on:false, br:100}));
+
+function lightIcon(st, dim){
+  if(!st.on) return '\u25CB';
+  if(!dim) return '\u23FB';
+  if(st.br >= 88) return '\u25CF';
+  if(st.br >= 63) return '\u25D5';
+  if(st.br >= 38) return '\u25D1';
+  return '\u25D4';
+}
+
+function renderLights(){
+  const g = document.getElementById('lights-grid');
+  if(!g) return;
+  g.innerHTML = '';
+  LIGHTS.forEach((l, i) => {
+    const st = lightStates[i];
+    const t = document.createElement('div');
+    t.className = 'ktile' + (st.on ? ' on' : '');
+    t.dataset.idx = i;
+    const pct = st.on ? (l.dim ? st.br : 100) : 0;
+    const label = !st.on ? 'Aus' : (l.dim ? st.br + ' %' : 'Ein');
+    t.innerHTML = `<div class="ktile-fill${l.dim?'':' sw'}" style="height:${pct}%"></div>` +
+      (l.dim && st.on ? '<div class="ktile-grip"></div>' : '') +
+      `<div class="ktile-in"><div class="ktile-ico">${lightIcon(st,l.dim)}</div>` +
+      `<div><div class="ktile-nm">${l.name}</div><div class="ktile-st">${label}</div></div></div>`;
+    attachTile(t, i);
+    g.appendChild(t);
+  });
+}
+
+function attachTile(el, i){
+  const l = LIGHTS[i];
+  let startY = 0, dragging = false, pending = null;
+  el.addEventListener('pointerdown', e => {
+    startY = e.clientY; dragging = false;
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove', e => {
+    if(!l.dim || !lightStates[i].on) return;
+    if(!dragging && Math.abs(e.clientY - startY) < 7) return;
+    dragging = true;
+    el.classList.add('dragging');
+    const r = el.getBoundingClientRect();
+    let pct = Math.round((1 - (e.clientY - r.top) / r.height) * 100);
+    pct = Math.max(5, Math.min(100, pct));
+    lightStates[i].br = pct;
+    pending = pct;
+    const fill = el.querySelector('.ktile-fill');
+    const stx = el.querySelector('.ktile-st');
+    const ico = el.querySelector('.ktile-ico');
+    if(fill){ fill.style.transition = 'none'; fill.style.height = pct + '%'; }
+    if(stx) stx.textContent = pct + ' %';
+    if(ico) ico.textContent = lightIcon(lightStates[i], true);
+  });
+  el.addEventListener('pointerup', e => {
+    el.classList.remove('dragging');
+    if(dragging){
+      if(pending !== null) applyBrightness(i, pending);
+      pending = null;
+    } else {
+      toggleLight(i);
+    }
+    dragging = false;
+  });
+  el.addEventListener('pointercancel', () => { el.classList.remove('dragging'); dragging = false; });
+}
+
+async function loadLights(){
+  for(let i=0;i<LIGHTS.length;i++){
+    try{
+      const r = await fetch(`${CONFIG.HA_URL}/api/states/${LIGHTS[i].id}`, {headers:HA_HEADERS});
+      if(!r.ok) continue;
+      const d = await r.json();
+      lightStates[i].on = d.state === 'on';
+      const b = d.attributes?.brightness;
+      if(typeof b === 'number') lightStates[i].br = Math.max(1, Math.round(b/255*100));
+    }catch(e){}
+  }
+  renderLights();
+}
+
+async function toggleLight(i){
+  const l = LIGHTS[i];
+  lightStates[i].on = !lightStates[i].on;
+  renderLights();
+  try{
+    await fetch(`${CONFIG.HA_URL}/api/services/${l.type}/turn_${lightStates[i].on?'on':'off'}`,
+      {method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:l.id})});
+  }catch(e){}
+  setTimeout(loadLights, 1200);
+}
+
+async function applyBrightness(i, pct){
+  const l = LIGHTS[i];
+  if(!l.dim) return;
+  try{
+    await fetch(`${CONFIG.HA_URL}/api/services/light/turn_on`,
+      {method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:l.id, brightness_pct:pct})});
+  }catch(e){}
+  setTimeout(loadLights, 1200);
+}
+
+function toggleAllLights(){
+  const anyOn = lightStates.some(s => s.on);
+  LIGHTS.forEach((l,i) => {
+    lightStates[i].on = !anyOn;
+    fetch(`${CONFIG.HA_URL}/api/services/${l.type}/turn_${!anyOn?'on':'off'}`,
+      {method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:l.id})}).catch(()=>{});
+  });
+  renderLights();
+  setTimeout(loadLights, 1400);
+}
+
 loadLights();setInterval(loadLights,30000);
 
 // ── OAUTH ──
@@ -858,7 +1081,50 @@ let calDate=new Date(),calEvents=[],hiddenCals=new Set();
 const MONTH_NAMES=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 function toggleCal(name,btn){if(hiddenCals.has(name)){hiddenCals.delete(name);btn.classList.add('active');}else{hiddenCals.add(name);btn.classList.remove('active');}renderCalendar();}
 async function loadCalendarEvents(){calEvents=[];const firstDay=new Date(calDate.getFullYear(),calDate.getMonth(),1).toISOString();const lastDay=new Date(calDate.getFullYear(),calDate.getMonth()+1,0,23,59,59).toISOString();const cals=[{id:CONFIG.GCAL_ID_SERGIO,color:'green',key:'sergio'},{id:CONFIG.GCAL_ID_MIRIAM,color:'pink',key:'miriam'},{id:CONFIG.GCAL_ID_FAMILIE,color:'blue',key:'familie'}];for(const cal of cals){try{const r=await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events?timeMin=${firstDay}&timeMax=${lastDay}&singleEvents=true&orderBy=startTime&maxResults=50&fields=items(id,summary,start,end,reminders)`,{headers:{'Authorization':`Bearer ${oauthToken}`}});const d=await r.json();if(d.items)d.items.forEach(ev=>{const start=ev.start?.date||ev.start?.dateTime;if(!start)return;const dateStr=start.split('T')[0];const time=ev.start?.dateTime?new Date(ev.start.dateTime).toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'}):'';const title=ev.summary||'(Kein Titel)';const reminders=ev.reminders?.overrides||(ev.reminders?.useDefault?[{method:'popup',minutes:30}]:[]);calEvents.push({date:dateStr,title:time?`${time} ${title}`:title,rawTitle:title,time,color:cal.color,calKey:cal.key,eventId:ev.id,calId:cal.id,reminders,startDateTime:ev.start?.dateTime||null});});}catch(e){}}renderCalendar();}
-function renderCalendar(){const year=calDate.getFullYear(),month=calDate.getMonth();document.getElementById('cal-month-label').textContent=`${MONTH_NAMES[month]} ${year}`;const firstDay=new Date(year,month,1).getDay();const startOffset=firstDay===0?6:firstDay-1;const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();const today=new Date();const grid=document.getElementById('cal-grid');grid.innerHTML='';const total=Math.ceil((startOffset+daysInMonth)/7)*7;for(let i=0;i<total;i++){let dayNum,cellDate,isOther=false;if(i<startOffset){dayNum=daysInPrev-startOffset+i+1;cellDate=new Date(year,month-1,dayNum);isOther=true;}else if(i>=startOffset+daysInMonth){dayNum=i-startOffset-daysInMonth+1;cellDate=new Date(year,month+1,dayNum);isOther=true;}else{dayNum=i-startOffset+1;cellDate=new Date(year,month,dayNum);}const isToday=cellDate.toDateString()===today.toDateString();const cell=document.createElement('div');cell.className='cal-cell'+(isOther?' other-month':'')+(isToday?' today':'');const numEl=document.createElement('div');numEl.className='cal-day-num';numEl.textContent=dayNum;cell.appendChild(numEl);const dateStr=`${cellDate.getFullYear()}-${String(cellDate.getMonth()+1).padStart(2,'0')}-${String(cellDate.getDate()).padStart(2,'0')}`;const evs=calEvents.filter(e=>e.date===dateStr&&!hiddenCals.has(e.calKey));if(evs.length){const evc=document.createElement('div');evc.className='cal-cell-events';evs.slice(0,3).forEach(ev=>{const el=document.createElement('div');el.className=`cal-ev ${ev.color}`;el.textContent=ev.title;el.style.cursor='pointer';el.onclick=(e)=>{e.stopPropagation();showEventDetail(ev);};evc.appendChild(el);});if(evs.length>3){const m=document.createElement('div');m.style.cssText='font-size:9px;color:var(--text3);padding:0 4px;cursor:pointer;';m.textContent=`+${evs.length-3} mehr`;m.onclick=(e)=>{e.stopPropagation();showDayEvents(dateStr,evs);};evc.appendChild(m);}cell.appendChild(evc);}cell.onclick=()=>openNewEvent(dateStr);grid.appendChild(cell);}}
+function renderCalendar(){const year=calDate.getFullYear(),month=calDate.getMonth();document.getElementById('cal-month-label').textContent=`${MONTH_NAMES[month]} ${year}`;const firstDay=new Date(year,month,1).getDay();const startOffset=firstDay===0?6:firstDay-1;const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();const today=new Date();const grid=document.getElementById('cal-grid');if(!grid){renderTwoWeeks();return;}grid.innerHTML='';const total=Math.ceil((startOffset+daysInMonth)/7)*7;for(let i=0;i<total;i++){let dayNum,cellDate,isOther=false;if(i<startOffset){dayNum=daysInPrev-startOffset+i+1;cellDate=new Date(year,month-1,dayNum);isOther=true;}else if(i>=startOffset+daysInMonth){dayNum=i-startOffset-daysInMonth+1;cellDate=new Date(year,month+1,dayNum);isOther=true;}else{dayNum=i-startOffset+1;cellDate=new Date(year,month,dayNum);}const isToday=cellDate.toDateString()===today.toDateString();const cell=document.createElement('div');cell.className='cal-cell'+(isOther?' other-month':'')+(isToday?' today':'');const numEl=document.createElement('div');numEl.className='cal-day-num';numEl.textContent=dayNum;cell.appendChild(numEl);const dateStr=`${cellDate.getFullYear()}-${String(cellDate.getMonth()+1).padStart(2,'0')}-${String(cellDate.getDate()).padStart(2,'0')}`;const evs=calEvents.filter(e=>e.date===dateStr&&!hiddenCals.has(e.calKey));if(evs.length){const evc=document.createElement('div');evc.className='cal-cell-events';evs.slice(0,3).forEach(ev=>{const el=document.createElement('div');el.className=`cal-ev ${ev.color}`;el.textContent=ev.title;el.style.cursor='pointer';el.onclick=(e)=>{e.stopPropagation();showEventDetail(ev);};evc.appendChild(el);});if(evs.length>3){const m=document.createElement('div');m.style.cssText='font-size:9px;color:var(--text3);padding:0 4px;cursor:pointer;';m.textContent=`+${evs.length-3} mehr`;m.onclick=(e)=>{e.stopPropagation();showDayEvents(dateStr,evs);};evc.appendChild(m);}cell.appendChild(evc);}cell.onclick=()=>openNewEvent(dateStr);grid.appendChild(cell);}renderTwoWeeks();}
+
+const KDAYS=['So','Mo','Di','Mi','Do','Fr','Sa'];
+function kDateStr(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function renderTwoWeeks(){
+  const strip=document.getElementById('cal-strip');
+  if(!strip) return;
+  strip.innerHTML='';
+  const today=new Date(); today.setHours(0,0,0,0);
+  for(let i=0;i<14;i++){
+    const d=new Date(today); d.setDate(today.getDate()+i);
+    const ds=kDateStr(d);
+    const dow=d.getDay();
+    const cell=document.createElement('div');
+    cell.className='kday'+((dow===0||dow===6)?' we':'')+(i===0?' today':'');
+    cell.innerHTML=`<div class="kday-n">${KDAYS[dow]}</div><div class="kday-d">${d.getDate()}</div>`;
+    const evs=calEvents.filter(e=>e.date===ds&&!hiddenCals.has(e.calKey));
+    evs.slice(0,3).forEach(ev=>{
+      const el=document.createElement('div');
+      el.className=`kev ${ev.color}`;
+      el.textContent=ev.title;
+      el.onclick=(e)=>{e.stopPropagation();showEventDetail(ev);};
+      cell.appendChild(el);
+    });
+    if(evs.length>3){
+      const m=document.createElement('div');
+      m.className='kev more';
+      m.textContent=`+${evs.length-3}`;
+      m.onclick=(e)=>{e.stopPropagation();showDayEvents(ds,evs);};
+      cell.appendChild(m);
+    }
+    cell.onclick=()=>openNewEvent(ds);
+    strip.appendChild(cell);
+  }
+}
+
+function openMonthPopup(){
+  calDate=new Date();
+  loadCalendarEvents();
+  document.getElementById('cal-month-popup').classList.add('open');
+}
+function closeMonthPopup(){document.getElementById('cal-month-popup').classList.remove('open');}
+
 function changeMonth(dir){calDate.setMonth(calDate.getMonth()+dir);loadCalendarEvents();}
 function goToday(){calDate=new Date();loadCalendarEvents();}
 function showEventDetail(ev){document.getElementById('event-popup-title').textContent=ev.rawTitle||ev.title;const calColors={green:'#34C759',pink:'#FF2D55',blue:'#007AFF'};const calNames={green:'Sérgio',pink:'Miriam',blue:'Familie'};document.getElementById('event-popup-body').innerHTML=`<div class="event-meta-row">📅 ${ev.date}</div>${ev.time?`<div class="event-meta-row">⏰ ${ev.time}</div>`:''}<div class="event-meta-row"><span style="width:10px;height:10px;border-radius:50%;background:${calColors[ev.color]||'#007AFF'};display:inline-block;margin-right:4px;"></span>${calNames[ev.color]||'Kalender'}</div>${ev.eventId?`<div style="display:flex;gap:8px;margin-top:14px;"><button onclick="editEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" style="flex:1;padding:10px;border-radius:10px;background:var(--surface2);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">✏️ Bearbeiten</button><button onclick="deleteEvent('${ev.calId}','${ev.eventId}')" style="flex:1;padding:10px;border-radius:10px;background:#fce7f3;border:none;font-size:13px;font-weight:600;cursor:pointer;color:#9d174d;font-family:'Inter',sans-serif;">🗑️ Löschen</button></div>`:''}`;document.getElementById('event-popup').classList.add('open');}
