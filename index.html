@@ -483,6 +483,36 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .kc-player .sp-controls{gap:16px;justify-content:center;margin-bottom:4px;}
 .kc-player .sp-btn{width:44px;height:44px;font-size:15px;}
 .kc-player .sp-play{width:58px;height:58px;font-size:19px;}
+
+.kc-player{position:relative;overflow:hidden;}
+.sp-bgart{position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(1.15);}
+.sp-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,17,14,0.30) 0%,rgba(20,17,14,0.62) 45%,rgba(20,17,14,0.88) 100%);}
+.kc-player > *:not(.sp-bgart):not(.sp-scrim){position:relative;z-index:2;}
+.kc-player .kc-label,.kc-player .kc-mini{color:rgba(255,255,255,0.75);text-shadow:0 1px 6px rgba(0,0,0,0.5);}
+.kc-player .sp-now{margin-top:auto;margin-bottom:14px;gap:0;flex-direction:column;align-items:flex-start;}
+.kc-player .sp-art{display:none;}
+.kc-player .sp-track{font-size:24px;font-weight:600;letter-spacing:-0.5px;line-height:1.15;color:#fff;
+  text-shadow:0 2px 12px rgba(0,0,0,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.kc-player .sp-artist{font-size:14px;color:rgba(255,255,255,0.78);margin-top:5px;text-shadow:0 1px 8px rgba(0,0,0,0.5);}
+.kc-player .sp-progress{margin:0 0 14px;gap:11px;align-items:center;}
+.kc-player .sp-bar{height:4px;border-radius:2px;background:rgba(255,255,255,0.28);}
+.kc-player .sp-fill{background:#fff;}
+.kc-player .sp-time{color:rgba(255,255,255,0.7);font-size:11.5px;text-shadow:0 1px 6px rgba(0,0,0,0.5);}
+.kc-player .sp-controls{gap:26px;justify-content:center;margin-bottom:4px;}
+.kc-player .sp-btn{width:46px;height:46px;border-radius:50%;font-size:16px;background:rgba(255,255,255,0.16);
+  color:#fff;border:1.5px solid rgba(255,255,255,0.35);backdrop-filter:blur(6px);}
+.kc-player .sp-play{width:58px;height:58px;font-size:20px;background:rgba(255,255,255,0.22);border-color:rgba(255,255,255,0.6);}
+
+.kpollen{display:flex;align-items:center;gap:7px;background:var(--k-tile);border-radius:20px;padding:6px 13px;flex-shrink:0;cursor:default;}
+.kp-dot{width:9px;height:9px;border-radius:50%;background:#C9C2B6;flex-shrink:0;}
+.kp-t{font-size:11.5px;font-weight:600;}
+.kp-v{font-size:11px;color:var(--k-mute);}
+.kpollen.lvl1 .kp-dot{background:#8CC46B;}
+.kpollen.lvl2 .kp-dot{background:#D7C64A;}
+.kpollen.lvl3 .kp-dot{background:#E9A23B;}
+.kpollen.lvl4 .kp-dot{background:#D9603C;}
+.kpollen.lvl5 .kp-dot{background:#B02E2E;}
+.kpollen.lvl4,.kpollen.lvl5{background:var(--k-peach);}
 </style>
 
 </head>
@@ -657,15 +687,10 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
       <span class="weather-icon" id="weather-icon">⛅</span>
       <div><div class="weather-temp" id="weather-temp">—°C</div><div class="weather-loc">Dietlikon</div></div>
     </div>
+    <div class="kpollen" id="pollen-chip" title="Pollen — Dietlikon"></div>
     <div class="kpres">
       <div class="kper" id="pres-sergio"><div class="kav">S</div><div><div class="kpn">Sérgio</div><div class="kps">—</div></div></div>
       <div class="kper" id="pres-miriam"><div class="kav out">M</div><div><div class="kpn">Miriam</div><div class="kps">—</div></div></div>
-    </div>
-    <div class="vdivider"></div>
-    <div class="cal-toggles">
-      <button class="cal-chip active" onclick="toggleCal('sergio',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#34C759;"></button>
-      <button class="cal-chip active" onclick="toggleCal('miriam',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#FF2D55;"></button>
-      <button class="cal-chip active" onclick="toggleCal('familie',this)" style="width:12px;height:12px;padding:0;border-radius:50%;background:#007AFF;"></button>
     </div>
     <div class="vdivider"></div>
     <button onclick="enterSleep()" style="background:var(--surface2);border:none;border-radius:var(--radius-sm);padding:6px 14px;cursor:pointer;color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;flex-shrink:0;white-space:nowrap;">🌙 Sleep</button>
@@ -688,7 +713,7 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
       <div class="kc-head"><span class="kc-label">Verkehr — Volketswil</span><span class="kc-badge" id="traffic-status">—</span></div>
       <div class="kc-figure"><span class="kc-num" id="traffic-duration">—</span><span class="kc-sub" id="traffic-normal">normal —</span></div>
       <div class="kmap">
-        <img src="https://maps.googleapis.com/maps/api/staticmap?size=560x240&scale=2&maptype=roadmap&markers=color:0x3B5129%7CFadackerstrasse+5,8305+Dietlikon&markers=color:0xD9603C%7CIndustriestrasse+25,8604+Volketswil&style=feature:poi%7Cvisibility:off&style=feature:landscape%7Celement:geometry%7Ccolor:0xdce5d2&style=feature:road%7Celement:geometry%7Ccolor:0xf2efe6&style=feature:water%7Celement:geometry%7Ccolor:0xc3d4dd&key=AIzaSyAJJDZCPITUdHBEI_XneYwE-ynlwRHXWgw" alt="" onerror="this.style.display='none';this.parentNode.querySelector('.kmap-fb').style.display='block';">
+        <img src="https://maps.googleapis.com/maps/api/staticmap?size=560x240&scale=2&maptype=roadmap&markers=color:0x3B5129%7CFadackerstrasse+5,8305+Dietlikon&markers=color:0xD9603C%7CIndustriestrasse+25,8604+Volketswil&style=feature:poi%7Cvisibility:off&style=feature:landscape%7Celement:geometry%7Ccolor:0xdce5d2&style=feature:road%7Celement:geometry%7Ccolor:0xf2efe6&style=feature:water%7Celement:geometry%7Ccolor:0xc3d4dd&key=AIzaSyCjaHl6Sj0iTn9RFHl4JIP5ZsDzGV-wZKE" alt="" onerror="this.style.display='none';this.parentNode.querySelector('.kmap-fb').style.display='block';">
         <svg class="kmap-fb" viewBox="0 0 300 120" preserveAspectRatio="none">
           <rect width="300" height="120" fill="#CBD8BE"/>
           <path d="M0 84 H300" stroke="#B7C7A8" stroke-width="10"/><path d="M0 32 H300" stroke="#B7C7A8" stroke-width="6"/>
@@ -715,6 +740,8 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
     </div>
 
     <div class="card kc-player" style="cursor:pointer;" onclick="openSPPopup()">
+      <div class="sp-bgart" id="sp-bg"></div>
+      <div class="sp-scrim"></div>
       <div class="kc-head"><span class="kc-label">Player</span><span class="kc-mini" id="sp-status">—</span></div>
       <div class="sp-now">
         <div class="sp-art" id="sp-art">🎵</div>
@@ -872,14 +899,31 @@ function renderBring() {
   bringItems.forEach((item, idx) => {
     const el = document.createElement('div');
     el.className = 'bring-tag';
-    const slug = bringSlug(item.name);
-    const emo = bringEmoji(item.name);
-    const fallback = emo ? `<span class=\'bt-emo\'>${emo}</span>` : `<span class=\'bt-dot\'></span>`;
-    el.innerHTML =
-      `<img class="bt-img" src="https://web.getbring.com/assets/images/items/${slug}.png" alt=""` +
-      ` onerror="this.outerHTML='${fallback}'">` +
-      `<span class="bt-n">${item.name}</span>` +
-      `<span class="bring-tag-x" onclick="removeBringItem(event,${idx})">\u2715</span>`;
+
+    const img = document.createElement('img');
+    img.className = 'bt-img';
+    img.alt = '';
+    img.src = 'https://web.getbring.com/assets/images/items/' + bringSlug(item.name) + '.png';
+    img.onerror = function(){
+      const emo = bringEmoji(item.name);
+      const rep = document.createElement('span');
+      if (emo) { rep.className = 'bt-emo'; rep.textContent = emo; }
+      else { rep.className = 'bt-dot'; }
+      if (this.parentNode) this.parentNode.replaceChild(rep, this);
+    };
+    el.appendChild(img);
+
+    const nm = document.createElement('span');
+    nm.className = 'bt-n';
+    nm.textContent = item.name;
+    el.appendChild(nm);
+
+    const x = document.createElement('span');
+    x.className = 'bring-tag-x';
+    x.textContent = '\u2715';
+    x.onclick = (e) => removeBringItem(e, idx);
+    el.appendChild(x);
+
     tags.appendChild(el);
   });
 }
@@ -1229,6 +1273,43 @@ async function sbbAutocomplete(inputId,listId){const input=document.getElementBy
 document.addEventListener('click',(e)=>{if(!e.target.closest('.sbb-popup-body')){const fl=document.getElementById('sbb-from-list'),tl=document.getElementById('sbb-to-list');if(fl)fl.innerHTML='';if(tl)tl.innerHTML='';}});
 async function searchSBB(){const from=document.getElementById('sbb-from').value.trim(),to=document.getElementById('sbb-to').value.trim();const date=document.getElementById('sbb-date').value,time=document.getElementById('sbb-time-input').value;if(!from||!to)return;const results=document.getElementById('sbb-results');results.innerHTML='<div class="sbb-loading">Laden...</div>';try{let url=`https://transport.opendata.ch/v1/connections?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&limit=6`;if(date&&time)url+=`&date=${date}&time=${time}`;const r=await fetch(url);const d=await r.json();if(!d.connections||d.connections.length===0){results.innerHTML='<div class="sbb-loading">Keine Verbindungen.</div>';return;}results.innerHTML='';d.connections.forEach(c=>{const dep=new Date(c.from.departure),arr=new Date(c.to.arrival);const depTime=dep.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'}),arrTime=arr.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});const durMin=Math.round((arr-dep)/60000),durStr=durMin>=60?`${Math.floor(durMin/60)}h ${durMin%60}min`:`${durMin} min`;const journey=c.sections?.[0]?.journey,lineClean=journey?`${journey.category||''}${journey.number||''}`:'Zug';const platform=c.from.platform?`Gleis ${c.from.platform}`:'';const delay=c.from.prognosis?.departure?Math.round((new Date(c.from.prognosis.departure)-dep)/60000):0;const card=document.createElement('div');card.className='sbb-result-card';card.innerHTML=`<div class="sbb-result-line">${lineClean}</div><div class="sbb-result-times"><div class="sbb-result-dep">${depTime} <span style="font-size:13px;font-weight:400;color:var(--text2);">→ ${arrTime}</span></div><div class="sbb-result-arr">${c.from.station?.name||from} → ${c.to.station?.name||to}</div></div><div class="sbb-result-meta"><div class="sbb-result-dur">${durStr}</div><div class="sbb-result-platform">${platform}</div><div class="${delay>0?'sbb-result-delay':'sbb-result-ontime'}">${delay>0?`+${delay} min`:'Pünktlich'}</div></div>`;results.appendChild(card);});}catch(e){results.innerHTML='<div class="sbb-loading">Fehler.</div>';}}
 
+
+// ── POLLEN (Google Pollen API) ──
+const POLLEN_LEVELS=['Keine','Sehr tief','Tief','Mittel','Hoch','Sehr hoch'];
+const POLLEN_NAMES={GRASS:'Gr\u00e4ser',TREE:'B\u00e4ume',WEED:'Kr\u00e4uter'};
+async function loadPollen(){
+  const chip=document.getElementById('pollen-chip');
+  if(!chip) return;
+  try{
+    const url=`https://pollen.googleapis.com/v1/forecast:lookup?location.latitude=47.4239`+
+      `&location.longitude=8.6188&days=1&languageCode=de&key=${CONFIG.SHEETS_API_KEY}`;
+    const r=await fetch(url);
+    if(!r.ok) throw new Error('http '+r.status);
+    const d=await r.json();
+    const types=d?.dailyInfo?.[0]?.pollenTypeInfo||[];
+    const scored=types
+      .map(t=>({code:t.code,val:t.indexInfo?.value??0}))
+      .filter(t=>t.val>0)
+      .sort((a,b)=>b.val-a.val);
+    if(!scored.length){
+      chip.className='kpollen lvl0';
+      chip.innerHTML=`<span class="kp-dot"></span><span class="kp-t">Pollen</span><span class="kp-v">keine</span>`;
+      return;
+    }
+    const top=scored[0];
+    const lvl=Math.min(5,Math.max(0,top.val));
+    chip.className='kpollen lvl'+lvl;
+    chip.title=scored.map(t=>`${POLLEN_NAMES[t.code]||t.code}: ${POLLEN_LEVELS[Math.min(5,t.val)]}`).join(' \u00b7 ');
+    chip.innerHTML=`<span class="kp-dot"></span><span class="kp-t">${POLLEN_NAMES[top.code]||top.code}</span>`+
+      `<span class="kp-v">${POLLEN_LEVELS[lvl]}</span>`;
+  }catch(e){
+    chip.className='kpollen lvl0';
+    chip.innerHTML=`<span class="kp-dot"></span><span class="kp-t">Pollen</span><span class="kp-v">\u2014</span>`;
+    console.warn('Pollen:',e.message);
+  }
+}
+loadPollen();setInterval(loadPollen,6*60*60*1000);
+
 // ── CALENDAR ──
 let calDate=new Date(),calEvents=[],hiddenCals=new Set();
 const MONTH_NAMES=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
@@ -1515,6 +1596,7 @@ async function loadSpotify() {
     document.getElementById('sp-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
     document.getElementById('sp-status').textContent = spotifyPlaying ? 'Läuft' : 'Pausiert';
     if (pic) document.getElementById('sp-art').innerHTML = `<img src="${pic}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`;
+    const spbg=document.getElementById('sp-bg'); if(spbg&&pic) spbg.style.backgroundImage=`url(${pic})`;
     // Popup
     document.getElementById('sp-popup-track').textContent = track;
     document.getElementById('sp-popup-artist').textContent = artist;
