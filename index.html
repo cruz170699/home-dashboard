@@ -390,6 +390,49 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .kmonth-card{background:var(--k-card);border-radius:24px;width:1080px;max-width:94vw;height:78vh;padding:22px 26px;display:flex;flex-direction:column;}
 .kmonth-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .kmonth-card .cal-grid{flex:1;min-height:0;}
+
+.kc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0;}
+.kc-label{font-size:12px;font-weight:600;color:var(--k-mute);}
+.kc-mini{font-size:11px;font-weight:600;color:var(--k-mute);background:var(--k-tile);padding:5px 11px;border-radius:20px;cursor:pointer;}
+.kc-mini.clayx{background:var(--k-clay);color:#fff;}
+.kc-badge{font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;background:var(--k-sage);color:var(--k-moss);}
+.kc-figure{display:flex;align-items:baseline;gap:9px;flex-shrink:0;}
+.kc-num{font-size:46px;font-weight:600;letter-spacing:-2px;line-height:1;}
+.kc-sub{font-size:12px;color:var(--k-mute);}
+.kc-verkehr{background:var(--k-sage)!important;}
+.kc-verkehr .kc-label,.kc-verkehr .kc-sub{color:#5A6B4C;}
+.kc-verkehr .kc-badge{background:rgba(255,255,255,0.6);}
+.kmap{margin-top:11px;border-radius:14px;overflow:hidden;flex:1;min-height:0;background:#CBD8BE;position:relative;}
+.kmap img{width:100%;height:100%;object-fit:cover;display:block;}
+.kmap-fb{display:none;width:100%;height:100%;}
+.kc-lichter{background:var(--k-peach)!important;}
+.kc-lichter .ktile{background:rgba(255,255,255,0.55);}
+.kc-player{background:var(--k-ink)!important;color:#F5F1EA;}
+.kc-player .kc-label,.kc-player .kc-mini{color:rgba(245,241,234,0.5);background:transparent;}
+.kc-player .sp-track{color:#F5F1EA;font-size:15px;font-weight:600;}
+.kc-player .sp-artist{color:rgba(245,241,234,0.55);font-size:11.5px;}
+.kc-player .sp-art{background:#463C33;border-radius:14px;}
+.kc-player .sp-bar{background:rgba(255,255,255,0.14);}
+.kc-player .sp-fill{background:var(--k-clay);}
+.kc-player .sp-time{color:rgba(245,241,234,0.45);}
+.kc-player .sp-btn{background:rgba(255,255,255,0.1);color:#F5F1EA;border:none;}
+.kc-player .sp-play{background:var(--k-clay);color:#fff;}
+.kc-player .sp-now{margin-bottom:12px;}
+.kdep{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--k-line);}
+.kdep:last-child{border-bottom:none;}
+.kline{width:34px;height:20px;border-radius:5px;background:#C2001E;color:#fff;font-size:10.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.kline.s{background:#00983A;}.kline.ir,.kline.ic{background:#C2001E;}.kline.re{background:#0079C2;}
+.kdt{font-size:16px;font-weight:600;letter-spacing:-0.3px;width:52px;flex-shrink:0;}
+.kdd{font-size:11.5px;color:var(--k-mute);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kin{font-size:11.5px;font-weight:600;color:var(--k-moss);flex-shrink:0;}
+.kin.soon{color:var(--k-clay);}
+.kdep-empty{font-size:12px;color:var(--k-mute);padding:12px 0;}
+.sbb-times{display:block!important;flex:1;min-height:0;overflow:hidden;}
+.bring-scroll{flex:1;min-height:0;overflow:hidden;}
+.bring-input-row{margin-top:10px;}
+.meal-strip{align-items:stretch!important;}
+.meal-pill{width:100%;}
 </style>
 
 </head>
@@ -590,95 +633,72 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
   </div>
 
   <div class="bottom">
-    <div class="card" id="traffic-card">
-      <div class="card-header">
-        <div class="card-title-row"><div class="card-icon blue">🚗</div><span class="card-label">Verkehr</span></div>
-        <button class="pill-btn gray" onclick="loadTraffic()" style="font-size:14px;padding:4px 10px;">↻</button>
+
+    <div class="card kc-verkehr" id="traffic-card">
+      <div class="kc-head"><span class="kc-label">Verkehr — Volketswil</span><span class="kc-badge" id="traffic-status">—</span></div>
+      <div class="kc-figure"><span class="kc-num" id="traffic-duration">—</span><span class="kc-sub" id="traffic-normal">normal —</span></div>
+      <div class="kmap">
+        <img src="https://maps.googleapis.com/maps/api/staticmap?size=560x240&scale=2&maptype=roadmap&markers=color:0x3B5129%7CFadackerstrasse+5,8305+Dietlikon&markers=color:0xD9603C%7CIndustriestrasse+25,8604+Volketswil&style=feature:poi%7Cvisibility:off&style=feature:landscape%7Celement:geometry%7Ccolor:0xdce5d2&style=feature:road%7Celement:geometry%7Ccolor:0xf2efe6&style=feature:water%7Celement:geometry%7Ccolor:0xc3d4dd&key=AIzaSyAJJDZCPITUdHBEI_XneYwE-ynlwRHXWgw" alt="" onerror="this.style.display='none';this.parentNode.querySelector('.kmap-fb').style.display='block';">
+        <svg class="kmap-fb" viewBox="0 0 300 120" preserveAspectRatio="xMidYMid slice">
+          <rect width="300" height="120" fill="#CBD8BE"/>
+          <path d="M0 84 H300" stroke="#B7C7A8" stroke-width="10"/><path d="M0 32 H300" stroke="#B7C7A8" stroke-width="6"/>
+          <path d="M70 0 V120" stroke="#B7C7A8" stroke-width="6"/><path d="M212 0 V120" stroke="#B7C7A8" stroke-width="8"/>
+          <path d="M34 90 C96 90 112 48 166 42 C214 37 228 24 272 26" stroke="#3B5129" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <circle cx="34" cy="90" r="7" fill="#fff" stroke="#3B5129" stroke-width="4"/>
+          <circle cx="272" cy="26" r="7" fill="#D9603C" stroke="#fff" stroke-width="3.5"/>
+        </svg>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;padding:4px 0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="font-size:11px;color:var(--text2);">Dietlikon → Volketswil</div>
-          <div id="traffic-status" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surface2);">—</div>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:6px;">
-          <div id="traffic-duration" style="font-size:28px;font-weight:700;color:var(--text);">—</div>
-          <div id="traffic-normal" style="font-size:11px;color:var(--text3);">normal: —</div>
-        </div>
-        <div id="traffic-depart" style="font-size:12px;color:var(--text2);padding:6px 10px;background:var(--surface2);border-radius:8px;text-align:center;">Abfahrt berechnen...</div>
-        <div id="traffic-bar" style="height:4px;border-radius:2px;background:var(--surface2);overflow:hidden;">
-          <div id="traffic-bar-fill" style="height:100%;width:0%;border-radius:2px;background:var(--green);transition:width 0.5s;"></div>
-        </div>
-      </div>
+      <div style="display:none;"><div id="traffic-bar-fill"></div></div>
+      <button class="kpill" id="traffic-depart" onclick="loadTraffic()">—</button>
     </div>
 
-    <!-- BRING via HA -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title-row"><div class="card-icon green"><img src="bring.png" style="width:18px;height:18px;object-fit:contain;border-radius:3px;"></div><span class="card-label">Bring!</span></div>
-        <button class="pill-btn gray" onclick="loadBring()" style="font-size:14px;padding:4px 10px;">↻</button>
-      </div>
-      <div class="bring-scroll"><div class="bring-tags" id="bring-tags"></div></div>
-      <div class="bring-input-row">
-        <input class="bring-input" id="bring-input" placeholder="Artikel hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()">
-        <button class="bring-add-btn" onclick="addBringItem()">+</button>
-      </div>
+    <div class="card kc-sbb">
+      <div class="kc-head"><span class="kc-label">SBB — Dietlikon → Zürich HB</span><span class="kc-mini" onclick="loadSBB()">↻</span></div>
+      <div class="sbb-times" id="sbb-times"></div>
+      <button class="kpill dark" onclick="openSBBPopup()">Verbindung suchen</button>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title-row"><div class="card-icon blue"><img src="sbb.png" style="width:18px;height:18px;object-fit:contain;border-radius:3px;"></div><span class="card-label">Dietlikon → Zürich HB</span></div>
-        <button class="pill-btn gray" onclick="loadSBB()" style="font-size:14px;padding:4px 10px;">↻</button>
-      </div>
-      <div class="sbb-times" id="sbb-times">
-        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-        <div class="sbb-dot"></div>
-        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-        <div class="sbb-dot"></div>
-        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-        <div class="sbb-dot"></div>
-        <div class="sbb-time-block"><div class="sbb-time">—:——</div></div>
-      </div>
-      <button class="kpill" onclick="openSBBPopup()">Verbindung suchen</button>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title-row"><div class="card-icon green">🍽️</div><span class="card-label">Essen</span></div>
-        <button class="pill-btn gray" onclick="loadMeals()" style="font-size:14px;padding:4px 10px;">↻</button>
-      </div>
+    <div class="card kc-essen">
+      <div class="kc-head"><span class="kc-label">Essen</span><span class="kc-mini" onclick="loadMeals()">↻</span></div>
       <div class="meal-strip" id="meal-strip"></div>
       <button class="kpill clay" onclick="openMealWeekPopup()">Woche planen</button>
     </div>
-    <div class="card" style="cursor:pointer;" onclick="openSPPopup()">
-      <div class="card-header">
-        <div class="card-title-row"><div class="card-icon green"><img src="spotify.png" style="width:18px;height:18px;object-fit:contain;border-radius:3px;"></div><span class="card-label">Player</span></div>
-        <span style="font-size:10px;color:var(--text3);" id="sp-status">Home Assistant</span>
-      </div>
+
+    <div class="card kc-player" style="cursor:pointer;" onclick="openSPPopup()">
+      <div class="kc-head"><span class="kc-label">Player</span><span class="kc-mini" id="sp-status">—</span></div>
       <div class="sp-now">
         <div class="sp-art" id="sp-art">🎵</div>
         <div class="sp-info">
           <div class="sp-track" id="sp-track">Kein Titel</div>
-          <div class="sp-artist" id="sp-artist">HA einrichten</div>
+          <div class="sp-artist" id="sp-artist">—</div>
         </div>
-      </div>
-      <div class="sp-controls" onclick="event.stopPropagation()">
-        <button class="sp-btn" onclick="event.stopPropagation();spotifyPrev()">⏮</button>
-        <button class="sp-btn sp-play" id="sp-play-btn" onclick="event.stopPropagation();spotifyPlayPause()">▶</button>
-        <button class="sp-btn" onclick="event.stopPropagation();spotifyNext()">⏭</button>
       </div>
       <div class="sp-progress">
         <span class="sp-time" id="sp-elapsed">0:00</span>
         <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
         <span class="sp-time" id="sp-duration">0:00</span>
       </div>
+      <div class="sp-controls" onclick="event.stopPropagation()">
+        <button class="sp-btn" onclick="event.stopPropagation();spotifyPrev()">⏮</button>
+        <button class="sp-btn sp-play" id="sp-play-btn" onclick="event.stopPropagation();spotifyPlayPause()">▶</button>
+        <button class="sp-btn" onclick="event.stopPropagation();spotifyNext()">⏭</button>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title-row"><div class="card-icon yellow">💡</div><span class="card-label">Lichter</span></div>
-        <button class="pill-btn orange" onclick="toggleAllLights()">Alle</button>
-      </div>
+    <div class="card kc-lichter">
+      <div class="kc-head"><span class="kc-label">Lichter</span><span class="kc-mini clayx" onclick="toggleAllLights()">Alle</span></div>
       <div class="lights-grid" id="lights-grid"></div>
     </div>
+
+    <div class="card kc-bring">
+      <div class="kc-head"><span class="kc-label">Bring!</span><span class="kc-mini" onclick="loadBring()">↻</span></div>
+      <div class="bring-scroll"><div class="bring-tags" id="bring-tags"></div></div>
+      <div class="bring-input-row">
+        <input class="bring-input" id="bring-input" placeholder="Artikel hinzufügen…" onkeydown="if(event.key==='Enter')addBringItem()">
+        <button class="bring-add-btn" onclick="addBringItem()">+</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1067,7 +1087,39 @@ async function getMealSuggestions(){const btn=document.getElementById('meal-sugg
 function showMealSuggestions(suggestions){const days=['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];const list=document.getElementById('meal-week-list');list.innerHTML=`<div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:8px;">✨ KI-Vorschläge — klicken zum Übernehmen</div>`;days.forEach((day,i)=>{const s=suggestions[day];if(!s)return;const m=mealData[i];const row=document.createElement('div');row.className='meal-week-row';row.innerHTML=`<div class="meal-week-day">${m.day.slice(0,2)}</div><div class="meal-week-meals"><div class="meal-week-lunch">${s.lunch}</div><div class="meal-week-dinner">${s.dinner}</div></div><div style="font-size:11px;color:var(--blue);">Übernehmen</div>`;row.onclick=async()=>{currentMealColIdx=m.colIdx;document.getElementById('meal-edit-lunch').value=s.lunch;document.getElementById('meal-edit-dinner').value=s.dinner;await saveMeal();openMealWeekPopup();};list.appendChild(row);});const acceptAll=document.createElement('button');acceptAll.className='meal-save-btn';acceptAll.textContent='Alle Vorschläge übernehmen';acceptAll.style.marginTop='12px';acceptAll.onclick=async()=>{for(let i=0;i<days.length;i++){const s=suggestions[days[i]];if(!s)continue;currentMealColIdx=mealData[i].colIdx;document.getElementById('meal-edit-lunch').value=s.lunch;document.getElementById('meal-edit-dinner').value=s.dinner;await saveMeal();}closeMealWeekPopup();loadMeals();};list.appendChild(acceptAll);document.getElementById('meal-week-popup').classList.add('open');}
 
 // ── SBB ──
-async function loadSBB(){try{const r=await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=4');if(!r.ok)throw new Error();const d=await r.json();const container=document.getElementById('sbb-times');container.innerHTML='';d.connections.forEach((c,i)=>{if(i>0){const dot=document.createElement('div');dot.className='sbb-dot';container.appendChild(dot);}const dep=new Date(c.from.departure);const time=dep.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});const delay=c.from.prognosis?.departure?Math.round((new Date(c.from.prognosis.departure)-dep)/60000):0;const el=document.createElement('div');el.className='sbb-time-block';el.innerHTML=`<div class="sbb-time">${time}</div>${delay>0?`<div class="sbb-delay">+${delay}'</div>`:`<div class="sbb-ok">✓</div>`}`;container.appendChild(el);});}catch(e){document.getElementById('sbb-times').innerHTML='<div class="sbb-time" style="font-size:10px;color:var(--red);">Klicken</div>';}}
+async function loadSBB(){
+  const c=document.getElementById('sbb-times');
+  if(!c) return;
+  try{
+    const r=await fetch('https://transport.opendata.ch/v1/connections?from=Dietlikon&to=Z%C3%BCrich%20HB&limit=4');
+    if(!r.ok) throw new Error('http');
+    const d=await r.json();
+    c.innerHTML='';
+    (d.connections||[]).forEach(con=>{
+      const dep=con.from?.prognosis?.departure||con.from?.departure;
+      if(!dep) return;
+      const t=new Date(dep);
+      const hhmm=t.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});
+      const mins=Math.max(0,Math.round((t-new Date())/60000));
+      const sec=con.sections?.find(x=>x.journey);
+      const cat=sec?.journey?.category||'';
+      const num=sec?.journey?.number||'';
+      const line=(cat+num).trim()||'\u2014';
+      const plat=con.from?.platform?`Gl. ${con.from.platform}`:'';
+      const dest=sec?.journey?.to||'';
+      const row=document.createElement('div');
+      row.className='kdep';
+      row.innerHTML=`<span class="kline ${cat.toLowerCase()}">${line}</span>`+
+        `<span class="kdt">${hhmm}</span>`+
+        `<span class="kdd">${[plat,dest].filter(Boolean).join(' \u00b7 ')}</span>`+
+        `<span class="kin${mins<10?' soon':''}">in ${mins} Min</span>`;
+      c.appendChild(row);
+    });
+    if(!c.children.length) c.innerHTML='<div class="kdep-empty">Keine Verbindungen</div>';
+  }catch(e){
+    c.innerHTML='<div class="kdep-empty">Keine Verbindung zur SBB</div>';
+  }
+}
 loadSBB();setInterval(loadSBB,60000);
 function openSBBPopup(){document.getElementById('sbb-popup').classList.add('open');const now=new Date();document.getElementById('sbb-date').value=now.toISOString().split('T')[0];document.getElementById('sbb-time-input').value=now.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});document.getElementById('sbb-results').innerHTML='';searchSBB();}
 function closeSBBPopup(){document.getElementById('sbb-popup').classList.remove('open');}
@@ -1253,9 +1305,9 @@ async function loadTraffic() {
       document.getElementById('traffic-depart').style.color = 'var(--text2)';
     }
 
-    document.getElementById('traffic-duration').textContent = `${durationMins} Min`;
+    document.getElementById('traffic-duration').textContent = `${durationMins}`;
     document.getElementById('traffic-duration').style.color = color;
-    document.getElementById('traffic-normal').textContent = `normal: ${normalMins} Min`;
+    document.getElementById('traffic-normal').textContent = `Min \u00b7 normal ${normalMins}`;
     document.getElementById('traffic-status').textContent = statusText;
     document.getElementById('traffic-status').style.background = delay <= 2 ? 'rgba(52,199,89,0.15)' : delay <= 8 ? 'rgba(255,149,0,0.15)' : 'rgba(255,59,48,0.15)';
     document.getElementById('traffic-status').style.color = color;
