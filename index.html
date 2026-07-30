@@ -1212,20 +1212,98 @@ async function loadSPPlaylists(body) {
   });
 }
 
+const CAST_SPEAKERS = [
+  {id:'media_player.living_room_speaker', name:'Living Room speaker', icon:'\ud83d\udd0a'},
+  {id:'media_player.lights_display', name:'Lights display', icon:'\ud83d\udcfa'},
+];
+
 async function loadSPDevices(body) {
-  if (!spToken) { body.innerHTML = spConnectHTML(); return; }
-  const d = await spFetch('https://api.spotify.com/v1/me/player/devices');
-  if (!d || !d.devices) { body.innerHTML = '<div class="sp-loading">Keine Geräte</div>'; return; }
   body.innerHTML = '';
-  const icons = {smartphone:'📱',computer:'💻',speaker:'🔊',tv:'📺',tablet:'📱',game_console:'🎮'};
-  d.devices.forEach(dev => {
-    const btn = document.createElement('button');
-    btn.className = 'sp-device-btn' + (dev.is_active ? ' active-device' : '');
-    btn.innerHTML = `<span class="sp-device-icon">${icons[dev.type?.toLowerCase()]||'🔊'}</span><div><div class="sp-device-name">${dev.name}${dev.is_active?' ✓':''}</div><div class="sp-device-type">${dev.type} · ${dev.volume_percent}%</div></div>`;
-    btn.onclick = () => transferPlayback(dev.id);
-    body.appendChild(btn);
-  });
+
+  // --- Spotify devices ---
+  if (spToken) {
+    const d = await spFetch('https://api.spotify.com/v1/me/player/devices');
+    const head = document.createElement('div');
+    head.style.cssText = 'font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);padding:4px 2px 8px;letter-spacing:0.5px;';
+    head.textContent = 'SPOTIFY';
+    body.appendChild(head);
+    if (d && d.devices && d.devices.length) {
+      const icons = {smartphone:'\ud83d\udcf1',computer:'\ud83d\udcbb',speaker:'\ud83d\udd0a',tv:'\ud83d\udcfa',tablet:'\ud83d\udcf1',game_console:'\ud83c\udfae'};
+      d.devices.forEach(dev => {
+        const btn = document.createElement('button');
+        btn.className = 'sp-device-btn' + (dev.is_active ? ' active-device' : '');
+        btn.innerHTML = `<span class="sp-device-icon">${icons[dev.type?.toLowerCase()]||'\ud83d\udd0a'}</span><div><div class="sp-device-name">${dev.name}${dev.is_active?' \u2713':''}</div><div class="sp-device-type">${dev.type} \u00b7 ${dev.volume_percent}%</div></div>`;
+        btn.onclick = () => transferPlayback(dev.id);
+        body.appendChild(btn);
+      });
+    } else {
+      const e = document.createElement('div');
+      e.className = 'sp-loading';
+      e.style.padding = '8px 2px';
+      e.textContent = 'Keine aktiven Spotify-Ger\u00e4te';
+      body.appendChild(e);
+    }
+  } else {
+    body.innerHTML = spConnectHTML();
+  }
+
+  // --- Google Cast speakers via HA ---
+  const head2 = document.createElement('div');
+  head2.style.cssText = 'font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);padding:14px 2px 8px;letter-spacing:0.5px;border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;';
+  head2.textContent = 'LAUTSPRECHER';
+  body.appendChild(head2);
+
+  for (const sp of CAST_SPEAKERS) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'padding:8px 2px 12px;';
+    let st = null;
+    try {
+      const r = await fetch(`${CONFIG.HA_URL}/api/states/${sp.id}`, {headers:HA_HEADERS});
+      if (r.ok) st = await r.json();
+    } catch(e) {}
+    if (!st) {
+      wrap.innerHTML = `<div style="font-size:13px;color:rgba(255,255,255,0.4);">${sp.icon} ${sp.name} \u2014 nicht erreichbar</div>`;
+      body.appendChild(wrap);
+      continue;
+    }
+    const state = st.state;
+    const off = (state === 'off' || state === 'unavailable' || state === 'standby');
+    const playing = (state === 'playing');
+    const vol = Math.round((st.attributes?.volume_level ?? 0) * 100);
+    const title = st.attributes?.media_title || (off ? 'Aus' : 'Bereit');
+    wrap.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:18px;">${sp.icon}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sp.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title}</div>
+        </div>
+        <button onclick="castPlayPause('${sp.id}')" style="width:32px;height:32px;border-radius:50%;border:none;background:#1DB954;color:white;font-size:13px;cursor:pointer;flex-shrink:0;">${playing?'\u23f8':'\u25b6'}</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:rgba(255,255,255,0.4);width:26px;flex-shrink:0;">${vol}%</span>
+        <input type="range" min="0" max="100" value="${vol}" onchange="castVolume('${sp.id}',this.value)"
+          style="flex:1;height:4px;accent-color:#1DB954;cursor:pointer;">
+      </div>`;
+    body.appendChild(wrap);
+  }
 }
+
+async function castPlayPause(id) {
+  try {
+    await fetch(`${CONFIG.HA_URL}/api/services/media_player/media_play_pause`, {
+      method:'POST', headers:HA_HEADERS, body:JSON.stringify({entity_id:id})});
+  } catch(e) {}
+  setTimeout(() => loadSPDevices(document.getElementById('sp-popup-body')), 900);
+}
+
+async function castVolume(id, pct) {
+  try {
+    await fetch(`${CONFIG.HA_URL}/api/services/media_player/volume_set`, {
+      method:'POST', headers:HA_HEADERS, body:JSON.stringify({entity_id:id, volume_level: parseInt(pct)/100})});
+  } catch(e) {}
+}
+
 
 async function playPlaylist(uri) {
   if (!spToken) return;
