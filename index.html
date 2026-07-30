@@ -454,6 +454,35 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .kc-player .sp-btn{width:38px;height:38px;border-radius:50%;font-size:13px;}
 .kc-player .sp-play{width:50px;height:50px;font-size:16px;}
 .dashboard{grid-template-rows:62px 200px 1fr!important;}
+
+.sbb-times{align-items:stretch!important;justify-content:flex-start!important;gap:0!important;}
+.kdep{width:100%;}
+.ktile-in{justify-content:center;gap:10px;padding:11px 12px;}
+.ktile-ico{font-size:17px;}
+.ktile-nm{font-size:12.5px;}
+.ktile-st{font-size:10px;}
+.kmap-fb{width:100%;height:100%;}
+
+.bring-tags{display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;}
+.bring-tag{display:inline-flex!important;align-items:center;gap:8px;background:var(--k-tile)!important;
+  border:none!important;border-radius:20px!important;padding:7px 12px 7px 8px!important;font-size:12.5px;}
+.bt-img{width:22px;height:22px;object-fit:contain;flex-shrink:0;}
+.bt-emo{font-size:16px;line-height:1;width:22px;text-align:center;flex-shrink:0;}
+.bt-dot{width:8px;height:8px;border-radius:50%;background:var(--k-clay);flex-shrink:0;margin:0 7px;}
+.bt-n{font-weight:500;}
+.bring-tag-x{margin-left:2px;opacity:0.35;cursor:pointer;font-size:11px;}
+.bring-tag-x:hover{opacity:0.8;}
+
+.kc-player .sp-now{gap:16px;align-items:center;}
+.kc-player .sp-art{width:104px;height:104px;border-radius:16px;font-size:34px;}
+.kc-player .sp-art img{border-radius:16px;}
+.kc-player .sp-track{font-size:21px;font-weight:600;letter-spacing:-0.4px;line-height:1.2;}
+.kc-player .sp-artist{font-size:13px;margin-top:4px;}
+.kc-player .sp-progress{margin-top:auto;margin-bottom:16px;gap:10px;}
+.kc-player .sp-bar{height:5px;border-radius:3px;}
+.kc-player .sp-controls{gap:16px;justify-content:center;margin-bottom:4px;}
+.kc-player .sp-btn{width:44px;height:44px;font-size:15px;}
+.kc-player .sp-play{width:58px;height:58px;font-size:19px;}
 </style>
 
 </head>
@@ -660,7 +689,7 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
       <div class="kc-figure"><span class="kc-num" id="traffic-duration">—</span><span class="kc-sub" id="traffic-normal">normal —</span></div>
       <div class="kmap">
         <img src="https://maps.googleapis.com/maps/api/staticmap?size=560x240&scale=2&maptype=roadmap&markers=color:0x3B5129%7CFadackerstrasse+5,8305+Dietlikon&markers=color:0xD9603C%7CIndustriestrasse+25,8604+Volketswil&style=feature:poi%7Cvisibility:off&style=feature:landscape%7Celement:geometry%7Ccolor:0xdce5d2&style=feature:road%7Celement:geometry%7Ccolor:0xf2efe6&style=feature:water%7Celement:geometry%7Ccolor:0xc3d4dd&key=AIzaSyAJJDZCPITUdHBEI_XneYwE-ynlwRHXWgw" alt="" onerror="this.style.display='none';this.parentNode.querySelector('.kmap-fb').style.display='block';">
-        <svg class="kmap-fb" viewBox="0 0 300 120" preserveAspectRatio="xMidYMid slice">
+        <svg class="kmap-fb" viewBox="0 0 300 120" preserveAspectRatio="none">
           <rect width="300" height="120" fill="#CBD8BE"/>
           <path d="M0 84 H300" stroke="#B7C7A8" stroke-width="10"/><path d="M0 32 H300" stroke="#B7C7A8" stroke-width="6"/>
           <path d="M70 0 V120" stroke="#B7C7A8" stroke-width="6"/><path d="M212 0 V120" stroke="#B7C7A8" stroke-width="8"/>
@@ -811,17 +840,46 @@ async function loadBring() {
   }
 }
 
+const BRING_EMOJI={
+  milch:'\U0001F95B',brot:'\U0001F35E',eier:'\U0001F95A',butter:'\U0001F9C8',kaese:'\U0001F9C0',
+  apfel:'\U0001F34E',banane:'\U0001F34C',tomaten:'\U0001F345',kartoffeln:'\U0001F954',zwiebeln:'\U0001F9C5',
+  salat:'\U0001F957',karotten:'\U0001F955',reis:'\U0001F35A',pasta:'\U0001F35D',nudeln:'\U0001F35D',
+  poulet:'\U0001F357',fleisch:'\U0001F969',fisch:'\U0001F41F',kaffee:'\u2615',tee:'\U0001F375',
+  bier:'\U0001F37A',wein:'\U0001F377',wasser:'\U0001F4A7',schokolade:'\U0001F36B',zucker:'\U0001F36C',
+  mehl:'\U0001F33E',oel:'\U0001FAD2',pizza:'\U0001F355',joghurt:'\U0001F368',honig:'\U0001F36F',
+  papier:'\U0001F9FB',seife:'\U0001F9FC',shampoo:'\U0001F9F4',zahnpasta:'\U0001FAA5',
+};
+function bringSlug(n){
+  return n.toLowerCase().trim()
+    .replace(/\u00e4/g,'ae').replace(/\u00f6/g,'oe').replace(/\u00fc/g,'ue').replace(/\u00df/g,'ss')
+    .replace(/[^a-z0-9]+/g,'');
+}
+function bringEmoji(n){
+  const k=bringSlug(n);
+  if(BRING_EMOJI[k]) return BRING_EMOJI[k];
+  for(const key in BRING_EMOJI){ if(k.includes(key)) return BRING_EMOJI[key]; }
+  return null;
+}
+
 function renderBring() {
   const tags = document.getElementById('bring-tags');
+  if(!tags) return;
   tags.innerHTML = '';
   if (!bringItems.length) {
-    tags.innerHTML = '<div style="font-size:11px;color:var(--text3)">Liste ist leer 🎉</div>';
+    tags.innerHTML = '<div style="font-size:12px;color:var(--k-mute)">Liste ist leer</div>';
     return;
   }
   bringItems.forEach((item, idx) => {
-    const el = document.createElement('button');
+    const el = document.createElement('div');
     el.className = 'bring-tag';
-    el.innerHTML = `${item.name} <span class="bring-tag-x" onclick="removeBringItem(event,${idx})">✕</span>`;
+    const slug = bringSlug(item.name);
+    const emo = bringEmoji(item.name);
+    const fallback = emo ? `<span class=\'bt-emo\'>${emo}</span>` : `<span class=\'bt-dot\'></span>`;
+    el.innerHTML =
+      `<img class="bt-img" src="https://web.getbring.com/assets/images/items/${slug}.png" alt=""` +
+      ` onerror="this.outerHTML='${fallback}'">` +
+      `<span class="bt-n">${item.name}</span>` +
+      `<span class="bring-tag-x" onclick="removeBringItem(event,${idx})">\u2715</span>`;
     tags.appendChild(el);
   });
 }
