@@ -712,9 +712,9 @@ const LIGHTS=[
   {id:'light.reading',type:'light',tab:'schlaf'},
   {id:'light.licht_zimmer',type:'light',tab:'schlaf'},
   {id:'switch.mirror',type:'switch',tab:'schlaf'},
-  {id:'light.stube_lampe',type:'light',tab:'stube'},
-  {id:'switch.balkon_light',type:'switch',tab:'stube'},
-  {id:'switch.mood_light',type:'switch',tab:'stube'},
+  {id:'light.stube_light',type:'light',tab:'stube'},
+  {id:'switch.balkon_balkon_light',type:'switch',tab:'stube'},
+  {id:'switch.balkon_mood_light',type:'switch',tab:'stube'},
 ];
 let lightStates=[false,false,false,false,false,false];
 function switchLightTab(tab){document.querySelectorAll('.lights-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.lights-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');document.getElementById('panel-'+tab).classList.add('active');}
