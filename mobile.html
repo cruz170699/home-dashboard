@@ -16,10 +16,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Responsive scale for large screens (Fold 7 inner = ~900px wide) */
-:root { --scale: 1; }
-@media (min-width: 600px) { :root { --scale: 1.2; } }
-@media (min-width: 768px) { :root { --scale: 1.4; } }
-@media (min-width: 900px) { :root { --scale: 1.6; } }
+@media (min-width: 600px){
+  #app, #home-screen, #pin-screen, #login-page { zoom: 1.25; }
+}
+@media (min-width: 760px){
+  #app, #home-screen, #pin-screen, #login-page { zoom: 1.45; }
+}
+@media (min-width: 880px){
+  #app, #home-screen, #pin-screen, #login-page { zoom: 1.7; }
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
   --blue:#007AFF;--green:#30D158;--red:#FF453A;--orange:#FF9F0A;--yellow:#FFD60A;--purple:#BF5AF2;
@@ -66,6 +71,45 @@ input,textarea,select,button{font-family:'Outfit',-apple-system,sans-serif;}
   font-size:12px;font-weight:600;border:1.5px solid transparent;}
 .modebtn svg{width:24px;height:24px;}
 .modebtn.on{border-color:var(--accent);color:var(--accent);}
+
+/* tab bar */
+#tab-bar{background:var(--surface)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  border-top:1px solid var(--border)!important;max-width:560px!important;box-shadow:none!important;
+  padding:10px 0 calc(10px + var(--safe-bottom))!important;}
+.tab-btn{font-family:'Outfit',sans-serif!important;color:var(--text2)!important;}
+.tab-btn.active{color:var(--accent)!important;}
+.tab-label{font-size:10.5px;font-weight:600;}
+/* user picker */
+#user-select{gap:12px!important;}
+#user-select button{display:flex!important;flex-direction:column;align-items:center;gap:12px;
+  min-width:0;color:var(--text)!important;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;}
+#pin-screen{gap:16px!important;padding:24px;}
+/* headers */
+.nav-title{font-family:'Outfit',sans-serif;font-weight:600;letter-spacing:-0.3px;}
+.nav-subtitle{color:var(--text2);}
+
+.ml-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.ml-tile{position:relative;border-radius:18px;overflow:hidden;height:104px;background:var(--surface);
+  cursor:pointer;user-select:none;touch-action:none;-webkit-user-select:none;}
+.ml-fill{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--amber);
+  transition:height .18s cubic-bezier(.4,0,.2,1);}
+.ml-fill.sw{background:var(--moss);}
+.ml-in{position:relative;z-index:2;height:100%;padding:14px;display:flex;flex-direction:column;justify-content:center;gap:10px;}
+.ml-ico{font-size:17px;opacity:0.45;line-height:1;}
+.ml-tile.on .ml-ico{opacity:1;}
+.ml-n{font-size:13.5px;font-weight:600;line-height:1.2;}
+.ml-s{font-size:11px;opacity:0.55;margin-top:2px;}
+.ml-grip{position:absolute;top:10px;right:11px;z-index:2;width:16px;height:3px;border-radius:2px;background:rgba(0,0,0,0.2);}
+.ml-tile.dragging{outline:2px solid var(--clay);outline-offset:-2px;}
+html.alfie-night .ml-tile.on{color:#191410;}
+html.alfie-night .ml-grip{background:rgba(0,0,0,0.28);}
+.ml-all{width:100%;border:none;border-radius:24px;padding:15px;background:var(--accent);color:#fff;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;}
+html.alfie-night .ml-all{color:#191410;}
+.room-label{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--text2);margin:6px 0 10px;}
+
+
 .hs-mark{display:block;}
 html.alfie-day{--hs-r3:#F3DBD1;--hs-r2:#DCE5D2;}
 html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
@@ -78,7 +122,7 @@ html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
 @media (prefers-reduced-motion: reduce){.hs-mark *{animation:none!important;}}
 .hs-word{font-size:34px;font-weight:600;letter-spacing:7px;color:var(--text);margin-top:20px;padding-left:7px;}
 .hs-greet{font-size:13px;color:var(--text2);margin-top:7px;}
-.hs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:400px;margin-top:34px;}
+.hs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:440px;margin-top:34px;}
 .hs-card{background:var(--surface);border-radius:22px;padding:22px 14px 18px;display:flex;
   flex-direction:column;align-items:center;gap:9px;cursor:pointer;}
 .hs-card:active{transform:scale(0.975);}
@@ -92,7 +136,7 @@ html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
 /* Center & cap width on wide screens (Fold unfolded, tablets, desktop) */
 @media (min-width: 500px) {
   body{background:#000;}
-  #app{max-width:500px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,0.8);}
+  #app{max-width:560px;margin:0 auto;box-shadow:none;}
   #login-page, #pin-screen, #home-screen{
     max-width:500px;
     margin:0 auto;
@@ -160,7 +204,7 @@ html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
 .day-arrow{color:var(--text3);font-size:20px;}
 .day-meals{padding:0 18px 16px;display:flex;flex-direction:column;gap:10px;}
 .meal-row{display:flex;align-items:center;gap:12px;}
-.meal-icon{font-size:20px;flex-shrink:0;}
+.meal-icon{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text2);flex-shrink:0;width:44px;padding-top:2px;}
 .meal-text{font-size:clamp(15px,2vw,26px);font-weight:400;}
 .meal-empty{color:var(--text3);font-style:italic;font-size:clamp(14px,1.8vw,24px);}
 .meal-divider{height:0.5px;background:var(--border);}
@@ -424,7 +468,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
       <div class="nav-header">
         <div class="nav-row">
           <div>
-            <div class="nav-title">🍽️ Mahlzeiten</div>
+            <div class="nav-title">Mahlzeiten</div>
             <div class="nav-subtitle" id="week-label">Laden...</div>
           </div>
           <div style="display:flex;gap:8px;">
@@ -440,7 +484,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;">
           <button onclick="switchMealTab('week',this)" id="meal-tab-week" class="pill-btn pill-blue" style="font-size:14px;">Woche</button>
-          <button onclick="switchMealTab('favs',this)" id="meal-tab-favs" class="pill-btn pill-surface" style="font-size:14px;">⭐ Favoriten</button>
+          <button onclick="switchMealTab('favs',this)" id="meal-tab-favs" class="pill-btn pill-surface" style="font-size:14px;">Favoriten</button>
         </div>
       </div>
       <div id="days-list"></div>
@@ -450,7 +494,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
     <!-- LIGHTS PAGE -->
     <div class="page" id="page-lights">
       <div class="nav-header">
-        <div class="nav-title">💡 Lichter</div>
+        <div class="nav-title">Lichter</div>
         <div class="nav-subtitle">IKEA Dirigera</div>
       </div>
       <div id="lights-list"></div>
@@ -556,7 +600,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
         <!-- Breakfast -->
         <div class="tr-food-block">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div class="tr-food-label" style="margin-bottom:0;">☀️ Frühstück</div>
+            <div class="tr-food-label" style="margin-bottom:0;">Frühstück</div>
             <div id="nut-breakfast" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
           </div>
           <div id="food-list-breakfast" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
@@ -574,7 +618,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
         <!-- Dinner -->
         <div class="tr-food-block">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div class="tr-food-label" style="margin-bottom:0;">🌙 Abendessen</div>
+            <div class="tr-food-label" style="margin-bottom:0;">Abendessen</div>
             <div id="nut-dinner" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
           </div>
           <div id="food-list-dinner" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
@@ -693,7 +737,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
     <!-- SETTINGS PAGE -->
     <div class="page" id="page-settings">
       <div class="nav-header">
-        <div class="nav-title">⚙️ Einstellungen</div>
+        <div class="nav-title">Einstellungen</div>
         <div class="nav-subtitle" id="settings-username">—</div>
       </div>
 
@@ -717,7 +761,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
       <div class="section-hd">Sicherheit</div>
       <div class="card">
         <div class="card-row" style="flex-direction:column;align-items:stretch;gap:12px;padding:18px;">
-          <div style="font-size:16px;font-weight:600;">🔐 PIN ändern</div>
+          <div style="font-size:16px;font-weight:600;">PIN ändern</div>
           <input type="number" id="new-pin" class="tr-input" style="width:100%;background:var(--surface2);" placeholder="Neuer PIN eingeben">
           <input type="number" id="new-pin-confirm" class="tr-input" style="width:100%;background:var(--surface2);" placeholder="PIN bestätigen">
           <button onclick="changePin()" style="width:100%;padding:14px;border-radius:14px;background:var(--blue);color:white;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">PIN speichern</button>
@@ -851,15 +895,15 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
   </div>
   <!-- Meal tabs -->
   <div style="display:flex;border-bottom:0.5px solid var(--border);flex-shrink:0;">
-    <button id="meal-tab-btn-lunch" onclick="switchMealEditTab('lunch')" style="flex:1;padding:14px;border:none;background:none;color:var(--blue);font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid var(--blue);">☀️ Mittag</button>
-    <button id="meal-tab-btn-dinner" onclick="switchMealEditTab('dinner')" style="flex:1;padding:14px;border:none;background:none;color:var(--text3);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid transparent;">🌙 Abend</button>
+    <button id="meal-tab-btn-lunch" onclick="switchMealEditTab('lunch')" style="flex:1;padding:14px;border:none;background:none;color:var(--blue);font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid var(--blue);">Mittag</button>
+    <button id="meal-tab-btn-dinner" onclick="switchMealEditTab('dinner')" style="flex:1;padding:14px;border:none;background:none;color:var(--text3);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid transparent;">Abend</button>
   </div>
   <!-- Swipeable container -->
   <div id="meal-edit-swipe" style="flex:1;overflow:hidden;position:relative;" 
     ontouchstart="mealSwipeStart(event)" ontouchend="mealSwipeEnd(event)">
     <!-- Lunch panel -->
     <div id="meal-panel-lunch" style="position:absolute;inset:0;overflow-y:auto;padding:20px;transition:transform 0.3s cubic-bezier(.4,0,.2,1);transform:translateX(0);">
-      <div class="modal-section-label" style="margin-bottom:10px;">☀️ Mittagessen</div>
+      <div class="modal-section-label" style="margin-bottom:10px;">Mittagessen</div>
       <div class="meal-input-wrap">
         <input class="modal-input" id="edit-lunch" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-lunch','drop-lunch','lunch')"
@@ -873,7 +917,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
     </div>
     <!-- Dinner panel -->
     <div id="meal-panel-dinner" style="position:absolute;inset:0;overflow-y:auto;padding:20px;transition:transform 0.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);">
-      <div class="modal-section-label" style="margin-bottom:10px;">🌙 Abendessen</div>
+      <div class="modal-section-label" style="margin-bottom:10px;">Abendessen</div>
       <div class="meal-input-wrap">
         <input class="modal-input" id="edit-dinner" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-dinner','drop-dinner','dinner')"
@@ -1118,7 +1162,7 @@ function switchUser(){
   const sw = document.getElementById('pin-switch');
   if(sw) sw.style.display = 'none';
   const sel = document.getElementById('user-select');
-  if(sel) sel.style.display = '';
+  if(sel) sel.style.display = 'flex';
 }
 
 function selectUser(user){
@@ -1133,6 +1177,8 @@ function selectUser(user){
   document.getElementById('pin-input').value = '';
   const pinLen = PINS[user].length;
   document.getElementById('pin-dots').innerHTML = Array(pinLen).fill('<div class="pin-dot"></div>').join('');
+  const usel = document.getElementById('user-select');
+  if(usel) usel.style.display='none';
   document.getElementById('pin-entry').style.display='flex';
   const sw = document.getElementById('pin-switch');
   if(sw) sw.style.display='block';
@@ -1161,7 +1207,7 @@ function checkPin(){
   if(pinEntry === PINS[currentUser]){
     setUser(currentUser);
   } else {
-    document.getElementById('pin-error').textContent='❌ Falscher PIN';
+    document.getElementById('pin-error').textContent='Falscher PIN';
     pinEntry=''; updatePinDots();
   }
 }
@@ -1374,15 +1420,15 @@ function renderDays(){
     el.innerHTML=`
       <div class="day-top">
         <div>
-          <div class="day-name" style="${isToday?'color:var(--blue);':''}">${isToday?'📍 Heute':m.day}</div>
+          <div class="day-name" style="${isToday?'color:var(--blue);':''}">${isToday?'Heute':m.day}</div>
           <div class="day-date">${m.date.getDate()}.${m.date.getMonth()+1}.</div>
         </div>
         <div class="day-arrow">›</div>
       </div>
       <div class="day-meals">
-        <div class="meal-row"><div class="meal-icon">☀️</div><div class="${!m.lunch||m.lunch==='—'?'meal-empty':'meal-text'}">${!m.lunch||m.lunch==='—'?'Noch nicht geplant':m.lunch}</div></div>
+        <div class="meal-row"><div class="meal-icon">Mittag</div><div class="${!m.lunch||m.lunch==='—'?'meal-empty':'meal-text'}">${!m.lunch||m.lunch==='—'?'Noch nicht geplant':m.lunch}</div></div>
         <div class="meal-divider"></div>
-        <div class="meal-row"><div class="meal-icon">🌙</div><div class="${!m.dinner||m.dinner==='—'?'meal-empty':'meal-text'}">${!m.dinner||m.dinner==='—'?'Noch nicht geplant':m.dinner}</div></div>
+        <div class="meal-row"><div class="meal-icon">Abend</div><div class="${!m.dinner||m.dinner==='—'?'meal-empty':'meal-text'}">${!m.dinner||m.dinner==='—'?'Noch nicht geplant':m.dinner}</div></div>
       </div>`;
     c.appendChild(el);
   });
@@ -1573,8 +1619,8 @@ function renderFavsList(){
     <div style="font-size:18px;font-weight:700;margin-bottom:14px;">➕ Favorit hinzufügen</div>
     <input class="add-fav-input" id="new-fav-name" placeholder="Mahlzeit eingeben...">
     <div class="add-fav-types">
-      <button class="type-pill sel" id="type-lunch" onclick="selFavType('Mittagessen')">☀️ Mittag</button>
-      <button class="type-pill" id="type-dinner" onclick="selFavType('Abendessen')">🌙 Abend</button>
+      <button class="type-pill sel" id="type-lunch" onclick="selFavType('Mittagessen')">Mittag</button>
+      <button class="type-pill" id="type-dinner" onclick="selFavType('Abendessen')">Abend</button>
       <button class="type-pill" id="type-both" onclick="selFavType('Beides')">🍽️ Beides</button>
     </div>
     <button class="add-fav-submit" onclick="addFav()">⭐ Speichern</button>`;
@@ -1682,34 +1728,97 @@ async function loadLights(){
   }catch(e){list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;">Verbindungsfehler: '+e.message+'</div>';}
 }
 
+function mlIcon(on, dim, br){
+  if(!on) return '\u25CB';
+  if(!dim) return '\u23FB';
+  if(br >= 88) return '\u25CF';
+  if(br >= 63) return '\u25D5';
+  if(br >= 38) return '\u25D1';
+  return '\u25D4';
+}
+
 function renderLights(){
-  const list=document.getElementById('lights-list');list.innerHTML='';
+  const list=document.getElementById('lights-list');
+  if(!list) return;
+  list.innerHTML='';
+  const anyOn = LIGHTS.some(l => lightStates[l.id]?.state === 'on');
+
   const rooms=[...new Set(LIGHTS.map(l=>l.room))];
   rooms.forEach(room=>{
-    const label=document.createElement('div');label.className='room-label';label.textContent=room;list.appendChild(label);
-    const card=document.createElement('div');card.className='card';
+    const label=document.createElement('div');
+    label.className='room-label';
+    label.textContent=room;
+    list.appendChild(label);
+
+    const grid=document.createElement('div');
+    grid.className='ml-grid';
+
     LIGHTS.filter(l=>l.room===room).forEach(l=>{
-      const state=lightStates[l.id];
-      const isOn=state?.state==='on';
-      const brightness=state?.attributes?.brightness?Math.round(state.attributes.brightness/255*100):100;
-      const isSwitch=l.id.startsWith('switch.');
-      const row=document.createElement('div');row.className='light-row';
-      row.innerHTML=`
-        <div class="light-emoji">${l.icon}</div>
-        <div class="light-info">
-          <div class="light-name">${l.name}</div>
-          <div class="light-status">${isOn?'● Ein':'○ Aus'}</div>
-        </div>
-        <button class="toggle ${isOn?'on':'off'}" onclick="toggleLight('${l.id}','${isOn?'turn_off':'turn_on'}')"></button>`;
-      card.appendChild(row);
-      if(isOn&&!isSwitch){
-        const brRow=document.createElement('div');brRow.className='brightness-wrap';
-        brRow.innerHTML=`<input type="range" class="brightness-slider" min="1" max="100" value="${brightness}" onchange="setBrightness('${l.id}',this.value)">`;
-        card.appendChild(brRow);
-      }
+      const st=lightStates[l.id];
+      const on=st?.state==='on';
+      const dim=!l.id.startsWith('switch.');
+      const br=st?.attributes?.brightness ? Math.max(1,Math.round(st.attributes.brightness/255*100)) : 100;
+      const pct = on ? (dim ? br : 100) : 0;
+      const label2 = !on ? 'Aus' : (dim ? br+' %' : 'Ein');
+
+      const t=document.createElement('div');
+      t.className='ml-tile'+(on?' on':'');
+      t.innerHTML =
+        `<div class="ml-fill${dim?'':' sw'}" style="height:${pct}%"></div>` +
+        (dim && on ? '<div class="ml-grip"></div>' : '') +
+        `<div class="ml-in"><div class="ml-ico">${mlIcon(on,dim,br)}</div>` +
+        `<div><div class="ml-n">${l.name}</div><div class="ml-s">${label2}</div></div></div>`;
+      mlAttach(t, l, dim);
+      grid.appendChild(t);
     });
-    list.appendChild(card);
+    list.appendChild(grid);
   });
+
+  const btn=document.createElement('button');
+  btn.className='ml-all';
+  btn.textContent = anyOn ? 'Alle aus' : 'Alle an';
+  btn.onclick = () => {
+    LIGHTS.forEach(l => toggleLight(l.id, anyOn ? 'turn_off' : 'turn_on'));
+    setTimeout(loadLights, 1200);
+  };
+  list.appendChild(btn);
+}
+
+function mlAttach(el, l, dim){
+  let startY=0, dragging=false, pending=null;
+  el.addEventListener('pointerdown', e => {
+    startY=e.clientY; dragging=false;
+    try{ el.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  el.addEventListener('pointermove', e => {
+    const on = lightStates[l.id]?.state === 'on';
+    if(!dim || !on) return;
+    if(!dragging && Math.abs(e.clientY-startY) < 8) return;
+    dragging=true;
+    el.classList.add('dragging');
+    const r=el.getBoundingClientRect();
+    let pct=Math.round((1-(e.clientY-r.top)/r.height)*100);
+    pct=Math.max(5, Math.min(100, pct));
+    pending=pct;
+    const fill=el.querySelector('.ml-fill');
+    const stx=el.querySelector('.ml-s');
+    const ico=el.querySelector('.ml-ico');
+    if(fill){ fill.style.transition='none'; fill.style.height=pct+'%'; }
+    if(stx) stx.textContent=pct+' %';
+    if(ico) ico.textContent=mlIcon(true, true, pct);
+  });
+  el.addEventListener('pointerup', () => {
+    el.classList.remove('dragging');
+    if(dragging){
+      if(pending!==null) setBrightness(l.id, pending);
+      pending=null;
+    } else {
+      const on = lightStates[l.id]?.state === 'on';
+      toggleLight(l.id, on ? 'turn_off' : 'turn_on');
+    }
+    dragging=false;
+  });
+  el.addEventListener('pointercancel', () => { el.classList.remove('dragging'); dragging=false; });
 }
 
 async function toggleLight(id,service){
@@ -2089,7 +2198,7 @@ let foodSearchTimer = null;
 
 function openFoodSearch(meal) {
   currentFoodMeal = meal;
-  const labels = {breakfast:'☀️ Frühstück', lunch:'🌤️ Mittagessen', dinner:'🌙 Abendessen', snacks:'🍪 Snacks'};
+  const labels = {breakfast:'Frühstück', lunch:'🌤️ Mittagessen', dinner:'Abendessen', snacks:'🍪 Snacks'};
   document.getElementById('food-modal-title').textContent = labels[meal];
   document.getElementById('food-search-input').value = '';
   document.getElementById('food-search-results').innerHTML = '';
