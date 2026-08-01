@@ -2326,9 +2326,22 @@ function updateSleepContent() {
   const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
   document.getElementById('sleep-date').textContent = `${days[now.getDay()]}, ${now.getDate()}. ${months[now.getMonth()]}`;
 
-  // Weather
-  document.getElementById('sleep-weather-icon').textContent = document.getElementById('weather-icon').textContent;
-  document.getElementById('sleep-weather-temp').textContent = document.getElementById('weather-temp').textContent;
+  // Weather — read the data directly, fall back to the header, then refetch
+  const wIco = document.getElementById('sleep-weather-icon');
+  const wTmp = document.getElementById('sleep-weather-temp');
+  const wDsc = document.getElementById('sleep-weather-desc');
+  const cw = weatherData && weatherData.current_weather;
+  if (cw && typeof cw.temperature === 'number') {
+    if (wIco) wIco.textContent = WX_ICONS[cw.weathercode] || '\ud83c\udf21';
+    if (wTmp) wTmp.textContent = `${Math.round(cw.temperature)}\u00b0`;
+    if (wDsc) wDsc.textContent = (WX_DESC && WX_DESC[cw.weathercode] ? WX_DESC[cw.weathercode] + ' \u00b7 ' : '') + 'Dietlikon';
+  } else {
+    const hIco = document.getElementById('weather-icon');
+    const hTmp = document.getElementById('weather-temp');
+    if (wIco && hIco) wIco.textContent = hIco.textContent;
+    if (wTmp && hTmp) wTmp.textContent = (hTmp.textContent || '').replace('C','');
+    if (!weatherData) loadWeather();
+  }
 
   // Events — after 18:00 show tomorrow, otherwise the rest of today
   const evening = now.getHours() >= 18;
