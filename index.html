@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pavia Cruz — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -351,6 +351,73 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 #sleep-verse-text{color:rgba(242,233,220,0.94);}
 #sleep-verse-ref{color:rgba(242,233,220,0.45);}
 #sleep-hint{color:rgba(242,233,220,0.22);}
+
+.sv-veil{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(255deg, rgba(20,17,14,0.80) 0%, rgba(20,17,14,0.55) 34%, rgba(20,17,14,0.14) 62%, rgba(20,17,14,0.42) 100%);}
+.sv-veil2{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg, rgba(20,17,14,0.30) 0%, rgba(20,17,14,0) 30%, rgba(20,17,14,0.55) 100%);}
+#sleep-content{position:absolute!important;inset:0!important;z-index:2;
+  padding:54px 58px 0!important;display:flex!important;flex-direction:column!important;
+  color:#F5F1EA;font-family:'Outfit',sans-serif;}
+.sv-top{display:flex;align-items:flex-start;gap:56px;flex:1;min-height:0;}
+.sv-L{flex:1;display:flex;flex-direction:column;min-width:0;}
+#sleep-time{position:static!important;transform:none!important;
+  font-size:130px!important;font-weight:200!important;letter-spacing:-6px!important;line-height:0.9!important;
+  text-shadow:0 4px 54px rgba(0,0,0,0.5)!important;color:#F5F1EA!important;}
+#sleep-date{position:static!important;transform:none!important;
+  font-size:19px!important;font-weight:400!important;color:rgba(245,241,234,0.75)!important;
+  margin-top:12px!important;letter-spacing:0.3px;}
+.sv-wrow{display:flex;align-items:center;gap:16px;margin-top:34px;}
+#sleep-weather{position:static!important;transform:none!important;background:none!important;
+  display:contents!important;}
+#sleep-weather-icon{font-size:30px;}
+#sleep-weather-temp{font-size:44px;font-weight:300;letter-spacing:-1.8px;line-height:1;color:#F5F1EA;}
+#sleep-weather-desc{font-size:13.5px;color:rgba(245,241,234,0.62);margin-top:5px;}
+.sv-pol{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(14px);border-radius:20px;padding:8px 15px;margin-left:8px;}
+.sv-pd{width:8px;height:8px;border-radius:50%;background:#E9A23B;flex-shrink:0;}
+.sv-pt{font-size:12.5px;font-weight:500;}
+.sv-vers{margin-top:auto;margin-bottom:30px;max-width:520px;}
+#sleep-bible{position:static!important;transform:none!important;background:none!important;
+  width:auto!important;text-align:left!important;padding:0!important;}
+.sv-vl{font-size:10.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(245,241,234,0.38);margin-bottom:13px;}
+#sleep-verse-text{font-family:'Fraunces',Georgia,serif!important;font-size:25px!important;
+  font-weight:300!important;line-height:1.55!important;font-style:normal!important;
+  color:rgba(245,241,234,0.95)!important;}
+#sleep-verse-ref{font-size:12px!important;color:rgba(245,241,234,0.45)!important;margin-top:13px!important;
+  letter-spacing:1.4px;text-transform:uppercase;}
+.sv-R{width:440px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;gap:30px;padding-bottom:30px;}
+.sv-bl{font-size:10.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(245,241,234,0.4);margin-bottom:14px;}
+.sv-row{display:flex;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.09);}
+.sv-row:last-child{border-bottom:none;}
+.sv-k{font-size:13px;font-weight:600;color:rgba(245,241,234,0.5);width:58px;flex-shrink:0;}
+.sv-v{font-size:17px;font-weight:400;line-height:1.3;}
+.sv-empty{font-size:15px;color:rgba(245,241,234,0.42);font-style:italic;padding:10px 0;}
+.sv-np{display:flex;align-items:center;gap:14px;}
+#sleep-spotify{position:static!important;transform:none!important;background:none!important;width:auto!important;}
+#sleep-sp-art{width:56px!important;height:56px!important;border-radius:12px!important;
+  background:rgba(255,255,255,0.16)!important;flex-shrink:0;overflow:hidden;}
+#sleep-sp-art img{width:100%;height:100%;object-fit:cover;}
+#sleep-sp-track{font-size:16px!important;font-weight:500!important;color:#F5F1EA!important;}
+#sleep-sp-artist{font-size:12.5px!important;color:rgba(245,241,234,0.55)!important;margin-top:3px;}
+.sv-tick{height:46px;flex-shrink:0;margin:0 -58px;padding:0 58px;display:flex;align-items:center;
+  border-top:1px solid rgba(255,255,255,0.09);overflow:hidden;}
+.sv-tick-l{font-size:10px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;
+  color:rgba(245,241,234,0.35);flex-shrink:0;margin-right:20px;padding-right:20px;
+  border-right:1px solid rgba(255,255,255,0.12);}
+.sv-tick-w{flex:1;overflow:hidden;white-space:nowrap;}
+.sv-tick-i{display:inline-flex;align-items:center;animation:svroll 46s linear infinite;}
+.sv-ti{font-size:13px;font-weight:400;color:rgba(245,241,234,0.78);flex-shrink:0;}
+.sv-ti b{font-weight:600;color:#F5F1EA;}
+.sv-ti .win{color:#9BC47F;font-weight:600;}
+.sv-ti .loss{color:#E9906F;font-weight:600;}
+.sv-ti .live{color:#E9A23B;font-weight:600;}
+.sv-sep{color:rgba(245,241,234,0.2);margin:0 18px;flex-shrink:0;}
+@keyframes svroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+#sleep-hint{position:absolute!important;bottom:64px!important;left:50%!important;
+  transform:translateX(-50%)!important;font-size:10px;letter-spacing:2px;}
 
 .main{background:var(--k-card)!important;border-radius:22px!important;border:none!important;box-shadow:none!important;padding:15px 18px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:flex;flex-direction:column;}
 .dashboard{grid-template-rows:62px 176px 1fr!important;}
@@ -2159,70 +2226,58 @@ setInterval(loadSpotify, 10000);
 <!-- SLEEP MODE -->
 <div id="sleep-mode" onclick="wakeUp()">
   <div id="sleep-bg"></div>
+  <div class="sv-veil"></div>
+  <div class="sv-veil2"></div>
 
-  <!-- SPORTS TICKER TOP -->
-  <div id="sleep-ticker" style="position:absolute;top:0;left:0;right:0;z-index:10;overflow:hidden;height:36px;background:rgba(0,0,0,0.35);backdrop-filter:blur(20px);border-bottom:0.5px solid rgba(255,255,255,0.1);">
-    <div id="sleep-ticker-inner" style="display:flex;align-items:center;height:100%;white-space:nowrap;animation:ticker 40s linear infinite;">
-    </div>
-  </div>
-  <style>
-  @keyframes ticker{0%{transform:translateX(100vw);}100%{transform:translateX(-100%);}}
-  </style>
   <div id="sleep-content">
-    <!-- TOP: Sports ticker -->
-    <div id="sleep-ticker" class="lg" style="position:absolute;top:20px;left:24px;right:24px;padding:10px 20px;border-radius:16px;display:flex;align-items:center;gap:0;overflow:hidden;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.4);flex-shrink:0;margin-right:16px;padding-right:16px;border-right:1px solid rgba(255,255,255,0.15);">🏆 Sport</div>
-      <div id="sleep-ticker-content" style="display:flex;gap:24px;overflow:hidden;flex:1;white-space:nowrap;">
-        <div class="ticker-loading" style="font-size:13px;color:rgba(255,255,255,0.5);">Laden...</div>
+    <div class="sv-top">
+
+      <div class="sv-L">
+        <div id="sleep-time">00:00</div>
+        <div id="sleep-date">—</div>
+        <div class="sv-wrow">
+          <span id="sleep-weather-icon">⛅</span>
+          <div><div id="sleep-weather-temp">—°</div><div id="sleep-weather-desc">Dietlikon</div></div>
+          <div class="sv-pol" id="sleep-pollen"><span class="sv-pd"></span><span class="sv-pt">—</span></div>
+        </div>
+        <div class="sv-vers" id="sleep-bible">
+          <div class="sv-vl">Tagesvers</div>
+          <div id="sleep-verse-text">—</div>
+          <div id="sleep-verse-ref">—</div>
+        </div>
       </div>
-    </div>
 
-    <!-- CENTER: Clock -->
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-      <div id="sleep-time">00:00</div>
-      <div id="sleep-date">Laden...</div>
-    </div>
-
-    <!-- LEFT TOP: Weather -->
-    <div id="sleep-weather" class="lg" style="position:absolute;top:50%;left:24px;transform:translateY(-130%);width:220px;">
-      <div id="sleep-weather-icon">⛅</div>
-      <div>
-        <div id="sleep-weather-temp">—°C</div>
-        <div id="sleep-weather-desc">Dietlikon</div>
+      <div class="sv-R">
+        <div>
+          <div class="sv-bl" id="sleep-ev-label">Morgen</div>
+          <div id="sleep-events"></div>
+        </div>
+        <div>
+          <div class="sv-bl">Essen</div>
+          <div id="sleep-meals"></div>
+        </div>
+        <div id="sleep-spotify" style="display:none;">
+          <div class="sv-bl">Läuft gerade</div>
+          <div class="sv-np">
+            <div id="sleep-sp-art"></div>
+            <div id="sleep-sp-info">
+              <div id="sleep-sp-track">—</div>
+              <div id="sleep-sp-artist">—</div>
+            </div>
+          </div>
+        </div>
       </div>
+
     </div>
 
-    <!-- LEFT BOTTOM: Events -->
-    <div class="sleep-panel lg" style="position:absolute;top:50%;left:24px;transform:translateY(20%);width:220px;">
-      <div class="sleep-panel-title">📅 Heute</div>
-      <div id="sleep-events">—</div>
-    </div>
-
-    <!-- RIGHT TOP: Meals -->
-    <div class="sleep-panel lg" style="position:absolute;top:50%;right:24px;transform:translateY(-130%);width:220px;">
-      <div class="sleep-panel-title">🍽️ Mahlzeiten</div>
-      <div id="sleep-meals">—</div>
-    </div>
-
-    <!-- RIGHT BOTTOM: Spotify -->
-    <div id="sleep-spotify" class="lg" style="position:absolute;top:50%;right:24px;transform:translateY(20%);width:220px;display:none;">
-      <div id="sleep-sp-art">🎵</div>
-      <div id="sleep-sp-info">
-        <div id="sleep-sp-track">—</div>
-        <div id="sleep-sp-artist">—</div>
-      </div>
-      <div id="sleep-sp-icon">🎵</div>
-    </div>
-
-    <!-- BOTTOM CENTER: Bible verse -->
-    <div id="sleep-bible" class="lg" style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);width:380px;text-align:center;">
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.35);margin-bottom:10px;">✝️ Tagesvers</div>
-      <div id="sleep-verse-text" style="font-size:14px;font-weight:300;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;">Laden...</div>
-      <div id="sleep-verse-ref" style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px;font-weight:500;">—</div>
+    <div class="sv-tick">
+      <div class="sv-tick-l">Sport</div>
+      <div class="sv-tick-w"><div class="sv-tick-i" id="sleep-ticker-content"></div></div>
     </div>
 
     <div id="sleep-hint">TIPPEN ZUM AUFWACHEN</div>
   </div>
+</div>
 </div>
 
 <script>
@@ -2275,30 +2330,51 @@ function updateSleepContent() {
   document.getElementById('sleep-weather-icon').textContent = document.getElementById('weather-icon').textContent;
   document.getElementById('sleep-weather-temp').textContent = document.getElementById('weather-temp').textContent;
 
-  // Today's events
-  const today = now.toISOString().split('T')[0];
-  const todayEvents = calEvents.filter(e => e.date === today).slice(0, 4);
+  // Events — after 18:00 show tomorrow, otherwise the rest of today
+  const evening = now.getHours() >= 18;
+  const target = new Date(now);
+  if (evening) target.setDate(target.getDate() + 1);
+  const pad = (n) => String(n).padStart(2,'0');
+  const tStr = `${target.getFullYear()}-${pad(target.getMonth()+1)}-${pad(target.getDate())}`;
+  const lblEl = document.getElementById('sleep-ev-label');
+  if (lblEl) lblEl.textContent = evening ? 'Morgen' : 'Heute';
+
+  let evs = calEvents.filter(e => e.date === tStr);
+  if (!evening) {
+    const hhmm = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    evs = evs.filter(e => !e.time || e.time >= hhmm);
+  }
+  evs = evs.slice(0, 4);
   const evEl = document.getElementById('sleep-events');
-  if (todayEvents.length) {
-    evEl.innerHTML = todayEvents.map(ev => `
-      <div class="sleep-event">
-        <div class="sleep-event-dot" style="background:${ev.color==='green'?'#34C759':ev.color==='pink'?'#FF2D55':'#007AFF'}"></div>
-        ${ev.time ? `<span class="sleep-event-time">${ev.time}</span>` : ''}
-        <span>${ev.rawTitle || ev.title}</span>
-      </div>`).join('');
+  if (evs.length) {
+    evEl.innerHTML = evs.map(ev =>
+      `<div class="sv-row"><span class="sv-k">${ev.time || '\u2014'}</span>` +
+      `<span class="sv-v">${ev.rawTitle || ev.title}</span></div>`).join('');
   } else {
-    evEl.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:14px;">Keine Events heute</div>';
+    evEl.innerHTML = `<div class="sv-empty">Nichts geplant</div>`;
   }
 
-  // Today's meals
-  const todayMeal = mealData.find(m => m.jsDay === now.getDay());
+  // Meals for the same day
+  const meal = mealData.find(m => m.jsDay === target.getDay());
   const mealsEl = document.getElementById('sleep-meals');
-  if (todayMeal) {
-    mealsEl.innerHTML = `
-      <div class="sleep-meal-row"><span class="sleep-meal-icon">☀️</span><span>${todayMeal.lunch || '—'}</span></div>
-      <div class="sleep-meal-row"><span class="sleep-meal-icon">🌙</span><span>${todayMeal.dinner || '—'}</span></div>`;
+  const lunch = meal && meal.lunch && meal.lunch !== '\u2014' ? meal.lunch : null;
+  const dinner = meal && meal.dinner && meal.dinner !== '\u2014' ? meal.dinner : null;
+  if (lunch || dinner) {
+    mealsEl.innerHTML =
+      (lunch ? `<div class="sv-row"><span class="sv-k">Mittag</span><span class="sv-v">${lunch}</span></div>` : '') +
+      (dinner ? `<div class="sv-row"><span class="sv-k">Abend</span><span class="sv-v">${dinner}</span></div>` : '');
   } else {
-    mealsEl.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:14px;">—</div>';
+    mealsEl.innerHTML = `<div class="sv-empty">Nichts geplant</div>`;
+  }
+
+  // Pollen — mirror the header chip
+  const polSrc = document.getElementById('pollen-chip');
+  const polEl = document.getElementById('sleep-pollen');
+  if (polSrc && polEl) {
+    const t = polSrc.querySelector('.kp-t'), v = polSrc.querySelector('.kp-v');
+    const txt = polEl.querySelector('.sv-pt');
+    if (txt) txt.textContent = (t && v) ? `${t.textContent} ${v.textContent}` : '\u2014';
+    polEl.style.display = (t && t.textContent && t.textContent !== '\u2014') ? '' : 'none';
   }
 
   // Spotify
@@ -2421,310 +2497,195 @@ function loadBibleVerse() {
 }
 
 // ── SPORTS TICKER ──
-async function loadSportsTicker() {
-  const content = document.getElementById('sleep-ticker-content');
-  if (content) content.innerHTML = '<span style="font-size:13px;color:rgba(255,255,255,0.5);">🏆 Laden...</span>';
+const ESPN = 'https://site.api.espn.com/apis/site/v2/sports/';
+const NBA_TEAMS = ['NYK','BOS','LAL','PHI'];
+const PT_CLUBS = ['sporting','benfica','porto','braga','guimar','santa clara','arouca','famalic','estoril','rio ave','moreirense','casa pia','nacional','gil vicente','vit'];
+const EURO_COMPS = [
+  ['uefa.champions','UCL'],
+  ['uefa.europa','UEL'],
+  ['uefa.europa.conf','UECL'],
+];
+const NT_COMPS = [
+  ['fifa.worldq.uefa','WM-Quali'],
+  ['fifa.world','WM'],
+  ['uefa.nations','Nations League'],
+  ['uefa.euroq','EM-Quali'],
+  ['uefa.euro','EM'],
+];
 
-  // Cache 30 min
-  const cached = localStorage.getItem('sports_ticker');
-  const cachedTime = localStorage.getItem('sports_ticker_time');
-  if (cached && cachedTime && Date.now() - parseInt(cachedTime) < 30 * 60 * 1000) {
+function tkDates(backDays, fwdDays){
+  const f=(d)=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const a=new Date(); a.setDate(a.getDate()-backDays);
+  const b=new Date(); b.setDate(b.getDate()+fwdDays);
+  return `${f(a)}-${f(b)}`;
+}
+function tkDay(iso){
+  const d=new Date(iso);
+  const now=new Date();
+  const days=['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const sameDay = d.toDateString()===now.toDateString();
+  const t=d.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});
+  return sameDay ? t : `${days[d.getDay()]} ${t}`;
+}
+async function tkGet(path){
+  try{
+    const r=await fetch(ESPN+path);
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){ return null; }
+}
+function isPT(name){
+  const n=(name||'').toLowerCase();
+  return PT_CLUBS.some(c=>n.includes(c));
+}
+
+async function tkNBA(items){
+  const d=await tkGet(`basketball/nba/scoreboard?dates=${tkDates(2,4)}`);
+  (d?.events||[]).forEach(ev=>{
+    const c=ev.competitions?.[0]; if(!c) return;
+    const t=c.competitors||[];
+    const mine=t.find(x=>NBA_TEAMS.includes(x.team?.abbreviation));
+    if(!mine) return;
+    const opp=t.find(x=>x!==mine);
+    const nm=mine.team?.shortDisplayName||mine.team?.abbreviation;
+    const on=opp?.team?.abbreviation||'';
+    const st=ev.status?.type?.state;
+    if(st==='post'){
+      const a=parseInt(mine.score), b=parseInt(opp.score);
+      const cls=a>b?'win':'loss';
+      items.push(`<b>${nm}</b> <span class="${cls}">${a}\u2013${b}</span> vs ${on}`);
+    } else if(st==='in'){
+      items.push(`<b>${nm}</b> <span class="live">${mine.score}\u2013${opp.score}</span> vs ${on} \u00b7 live`);
+    } else {
+      items.push(`<b>${nm}</b> vs ${on} \u00b7 ${tkDay(ev.date)}`);
+    }
+  });
+}
+
+async function tkF1(items){
+  const d=await tkGet(`racing/f1/scoreboard?dates=${tkDates(2,7)}`);
+  (d?.events||[]).forEach(ev=>{
+    const gp=(ev.shortName||ev.name||'').replace(/Grand Prix/i,'GP');
+    const st=ev.status?.type?.state;
+    const comps=ev.competitions||[];
+    comps.forEach(c=>{
+      const type=c.type?.text||c.type?.abbreviation||'';
+      const lbl=/practice|training/i.test(type)?'Training'
+              :/qual|sprint shootout/i.test(type)?'Quali'
+              :/sprint/i.test(type)?'Sprint'
+              :/race/i.test(type)?'Rennen':type;
+      if(!lbl) return;
+      const cst=c.status?.type?.state;
+      if(cst==='post'){
+        const w=(c.competitors||[]).find(x=>x.winner)||(c.competitors||[])[0];
+        const nm=w?.athlete?.shortName||w?.athlete?.displayName||'';
+        items.push(`<b>F1 ${gp}</b> ${lbl}: <span class="win">${nm}</span>`);
+      } else if(cst==='in'){
+        items.push(`<b>F1 ${gp}</b> ${lbl} <span class="live">live</span>`);
+      } else if(c.date){
+        items.push(`<b>F1 ${gp}</b> ${lbl} \u00b7 ${tkDay(c.date)}`);
+      }
+    });
+    if(!comps.length && ev.date && st!=='post'){
+      items.push(`<b>F1 ${gp}</b> \u00b7 ${tkDay(ev.date)}`);
+    }
+  });
+}
+
+function tkMatch(items, ev, tag, onlyPT){
+  const c=ev.competitions?.[0]; if(!c) return;
+  const t=c.competitors||[];
+  const home=t.find(x=>x.homeAway==='home')||t[0];
+  const away=t.find(x=>x.homeAway==='away')||t[1];
+  if(!home||!away) return;
+  const hn=home.team?.shortDisplayName||home.team?.displayName||'';
+  const an=away.team?.shortDisplayName||away.team?.displayName||'';
+  if(onlyPT && !isPT(hn) && !isPT(an)) return;
+  const st=ev.status?.type?.state;
+  const mine = isPT(hn)?home : (isPT(an)?away:null);
+  const other = mine===home?away:home;
+  if(st==='post'){
+    const a=parseInt(mine?mine.score:home.score), b=parseInt(mine?other.score:away.score);
+    const cls=a>b?'win':(a<b?'loss':'');
+    const nm=mine?(mine===home?hn:an):hn;
+    const on=mine?(other===home?hn:an):an;
+    items.push(`<b>${nm}</b> <span class="${cls}">${a}\u2013${b}</span> ${on} \u00b7 ${tag}`);
+  } else if(st==='in'){
+    items.push(`<b>${hn} ${home.score}\u2013${away.score} ${an}</b> <span class="live">live</span> \u00b7 ${tag}`);
+  } else {
+    items.push(`<b>${hn} \u2013 ${an}</b> \u00b7 ${tag} ${tkDay(ev.date)}`);
+  }
+}
+
+async function tkFootball(items){
+  // Sporting CP in the Portuguese league
+  const liga=await tkGet(`soccer/por.1/scoreboard?dates=${tkDates(3,8)}`);
+  (liga?.events||[]).forEach(ev=>{
+    const t=ev.competitions?.[0]?.competitors||[];
+    const names=t.map(x=>(x.team?.displayName||'').toLowerCase());
+    if(names.some(n=>n.includes('sporting') && !n.includes('braga'))) tkMatch(items, ev, 'Liga Portugal', false);
+  });
+  // Portuguese clubs in Europe
+  for(const [slug,tag] of EURO_COMPS){
+    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(3,10)}`);
+    (d?.events||[]).forEach(ev=>tkMatch(items, ev, tag, true));
+  }
+  // Portugal national team
+  for(const [slug,tag] of NT_COMPS){
+    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(3,14)}`);
+    const evs=d?.events||[];
+    if(!evs.length) continue;
+    evs.forEach(ev=>{
+      const t=ev.competitions?.[0]?.competitors||[];
+      const has=t.some(x=>(x.team?.displayName||'').toLowerCase()==='portugal');
+      if(has) tkMatch(items, ev, tag, false);
+    });
+  }
+}
+
+const SPORTS_CACHE_KEY='sports_ticker_v2';
+async function loadSportsTicker(){
+  const el=document.getElementById('sleep-ticker-content');
+  if(!el) return;
+  const cached=localStorage.getItem(SPORTS_CACHE_KEY);
+  const ct=localStorage.getItem(SPORTS_CACHE_KEY+'_time');
+  if(cached && ct && Date.now()-parseInt(ct) < 20*60*1000){
     renderTicker(JSON.parse(cached));
     return;
   }
-
-  const items = [];
-
-  // ── NBA (Lakers + Knicks) via ESPN API ──
-  try {
-    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
-    const d = await r.json();
-    const games = d?.events || [];
-    for (const game of games) {
-      const comp = game.competitions?.[0];
-      const teams = comp?.competitors || [];
-      const lal = teams.find(t => t.team?.abbreviation === 'LAL');
-      const nyk = teams.find(t => t.team?.abbreviation === 'NYK');
-      const opp_lal = teams.find(t => t.team?.abbreviation !== 'LAL') ;
-      const opp_nyk = teams.find(t => t.team?.abbreviation !== 'NYK');
-      if (lal) {
-        const won = parseInt(lal.score) > parseInt(opp_lal.score);
-        items.push(`🏀 Lakers ${won?'✅':'❌'} ${lal.score}-${opp_lal.score} vs ${opp_lal.team.abbreviation}`);
-      }
-      if (nyk) {
-        const won = parseInt(nyk.score) > parseInt(opp_nyk.score);
-        items.push(`🏀 Knicks ${won?'✅':'❌'} ${nyk.score}-${opp_nyk.score} vs ${opp_nyk.team.abbreviation}`);
-      }
-    }
-    // If no live games, get last results
-    if (!items.find(i => i.includes('Lakers'))) {
-      const r2 = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/13/schedule');
-      const d2 = await r2.json();
-      const last = (d2?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
-      if (last) {
-        const comp = last.competitions[0];
-        const lal = comp.competitors.find(t=>t.team.abbreviation==='LAL');
-        const opp = comp.competitors.find(t=>t.team.abbreviation!=='LAL');
-        const won = parseInt(lal?.score)>parseInt(opp?.score);
-        items.push(`🏀 Lakers ${won?'✅':'❌'} ${lal?.score}-${opp?.score} vs ${opp?.team.abbreviation}`);
-      }
-    }
-    if (!items.find(i => i.includes('Knicks'))) {
-      const r2 = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/18/schedule');
-      const d2 = await r2.json();
-      const last = (d2?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
-      if (last) {
-        const comp = last.competitions[0];
-        const nyk = comp.competitors.find(t=>t.team.abbreviation==='NYK');
-        const opp = comp.competitors.find(t=>t.team.abbreviation!=='NYK');
-        const won = parseInt(nyk?.score)>parseInt(opp?.score);
-        items.push(`🏀 Knicks ${won?'✅':'❌'} ${nyk?.score}-${opp?.score} vs ${opp?.team.abbreviation}`);
-      }
-    }
-  } catch(e) { items.push('🏀 NBA — keine Verbindung'); }
-
-  // ── F1 via Ergast ──
-  try {
-    const r = await fetch('https://ergast.com/api/f1/current/last/results.json');
-    const d = await r.json();
-    const race = d?.MRData?.RaceTable?.Races?.[0];
-    if (race) {
-      const winner = race.Results?.[0];
-      items.push(`🏎️ F1 ${race.raceName}: ${winner?.Driver?.familyName} (${winner?.Constructor?.name})`);
-    }
-  } catch(e) { items.push('🏎️ F1 — keine Verbindung'); }
-
-  // ── SCP via ESPN Soccer ──
-  try {
-    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/por.1/teams/1235/schedule');
-    const d = await r.json();
-    const last = (d?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
-    if (last) {
-      const comp = last.competitions[0];
-      const home = comp.competitors.find(c=>c.homeAway==='home');
-      const away = comp.competitors.find(c=>c.homeAway==='away');
-      const isSCPHome = home?.team?.abbreviation?.includes('SCP') || home?.team?.displayName?.includes('Sporting');
-      const scpScore = isSCPHome ? home?.score : away?.score;
-      const oppScore = isSCPHome ? away?.score : home?.score;
-      const oppName = isSCPHome ? away?.team?.abbreviation : home?.team?.abbreviation;
-      const won = parseInt(scpScore) > parseInt(oppScore);
-      items.push(`🟢 SCP ${won?'✅':'❌'} ${scpScore}-${oppScore} vs ${oppName}`);
-    }
-  } catch(e) { items.push('🟢 SCP — keine Verbindung'); }
-
-  // ── Boston Celtics via ESPN ──
-  try {
-    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/2/schedule');
-    const d = await r.json();
-    const last = (d?.events||[]).filter(e=>e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
-    if (last) {
-      const comp = last.competitions[0];
-      const cel = comp.competitors.find(t=>t.team.abbreviation==='BOS');
-      const opp = comp.competitors.find(t=>t.team.abbreviation!=='BOS');
-      const won = parseInt(cel?.score)>parseInt(opp?.score);
-      items.push(`🍀 Celtics ${won?'✅':'❌'} ${cel?.score}-${opp?.score} vs ${opp?.team.abbreviation}`);
-    }
-  } catch(e) { items.push('🍀 Celtics — keine Verbindung'); }
-
-  // ── Portugal ──
-  items.push('🇵🇹 Portugal WC 2026 — Gruppe A | Jun-Jul 2026');
-
-  if (items.length === 0) items.push('🏆 Keine Sportdaten verfügbar');
-
-  localStorage.setItem('sports_ticker', JSON.stringify(items));
-  localStorage.setItem('sports_ticker_time', Date.now().toString());
-  renderTicker(items);
-}
-
-function renderTicker(items) {
-  const sep = '<span style="color:rgba(255,255,255,0.2);flex-shrink:0;margin:0 12px;">·</span>';
-  const html = items.map(item =>
-    `<span style="font-size:12px;color:rgba(255,255,255,0.85);font-weight:500;flex-shrink:0;">${item}</span>`
-  ).join(sep);
-
-  // Sleep mode ticker only
-  const sleepContent = document.getElementById('sleep-ticker-content');
-  if (sleepContent) sleepContent.innerHTML = html + sep + html;
-
-  // Auto-scroll sleep ticker
-  let pos = 0;
-  const scroll = () => {
-    if (!document.getElementById('sleep-mode')?.classList.contains('active')) return;
-    pos += 0.4;
-    const el = document.getElementById('sleep-ticker-content');
-    if (el && pos > el.scrollWidth / 2) pos = 0;
-    if (el) el.style.transform = `translateX(-${pos}px)`;
-    requestAnimationFrame(scroll);
-  };
-  // Duplicate content for seamless loop
-  content.innerHTML += content.innerHTML;
-  requestAnimationFrame(scroll);
-}
-
-// ── SPORTS TICKER ──
-async function loadSportsTicker() {
-  const items = [];
-
-  // SCP - fetch latest
-  try {
-    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/por.1/teams/133/schedule?seasontype=2&limit=5');
-    const d = await r.json();
-    const events = d.events || [];
-    const last = events.filter(e => e.competitions?.[0]?.status?.type?.completed).slice(-1)[0];
-    const next = events.filter(e => !e.competitions?.[0]?.status?.type?.completed)[0];
-    if (last) {
-      const c = last.competitions[0];
-      const home = c.competitors.find(t => t.homeAway === 'home');
-      const away = c.competitors.find(t => t.homeAway === 'away');
-      items.push(`🟢 SCP: ${home.team.abbreviation} ${home.score}-${away.score} ${away.team.abbreviation}`);
-    }
-    if (next) {
-      const c = next.competitions[0];
-      const home = c.competitors.find(t => t.homeAway === 'home');
-      const away = c.competitors.find(t => t.homeAway === 'away');
-      const date = new Date(next.date).toLocaleDateString('de-CH', {day:'2-digit',month:'2-digit'});
-      items.push(`🟢 SCP Next: ${home.team.abbreviation} vs ${away.team.abbreviation} · ${date}`);
-    }
-  } catch(e) {
-    items.push(`🟢 SCP: 5-1 vs Vitória SC · Rio Ave vs SCP heute 21:15`);
+  const items=[];
+  try{
+    await Promise.all([tkNBA(items), tkF1(items), tkFootball(items)]);
+  }catch(e){ console.warn('ticker:', e); }
+  const uniq=[...new Set(items)];
+  if(uniq.length){
+    localStorage.setItem(SPORTS_CACHE_KEY, JSON.stringify(uniq));
+    localStorage.setItem(SPORTS_CACHE_KEY+'_time', Date.now().toString());
   }
-
-  // NBA - Lakers & Knicks
-  try {
-    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
-    const d = await r.json();
-    const events = d.events || [];
-    events.forEach(ev => {
-      const teams = ev.competitions[0].competitors;
-      const lal = teams.find(t => t.team.abbreviation === 'LAL');
-      const nyk = teams.find(t => t.team.abbreviation === 'NYK');
-      if (lal) {
-        const opp = teams.find(t => t.team.abbreviation !== 'LAL');
-        const status = ev.status.type;
-        if (status.completed) items.push(`🟡 Lakers: ${lal.team.abbreviation} ${lal.score}-${opp.score} ${opp.team.abbreviation}`);
-        else items.push(`🟡 Lakers vs ${opp.team.abbreviation} · ${new Date(ev.date).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit'})} ${new Date(ev.date).toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'})}`);
-      }
-      if (nyk) {
-        const opp = teams.find(t => t.team.abbreviation !== 'NYK');
-        const status = ev.status.type;
-        if (status.completed) items.push(`🔵 Knicks: ${nyk.team.abbreviation} ${nyk.score}-${opp.score} ${opp.team.abbreviation}`);
-        else items.push(`🔵 Knicks vs ${opp.team.abbreviation} · ${new Date(ev.date).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit'})}`);
-      }
-    });
-    // Fallback if no live games
-    if (!items.find(i => i.includes('Lakers'))) items.push(`🟡 Lakers: 0-3 vs OKC (Playoffs R2) · Game 4 morgen`);
-    if (!items.find(i => i.includes('Knicks'))) items.push(`🔵 Knicks: Eastern Conference Finals`);
-  } catch(e) {
-    items.push(`🟡 Lakers: 0-3 vs OKC · Game 4 morgen`);
-    items.push(`🔵 Knicks: 4-0 vs PHI · Eastern Conference Finals`);
-  }
-
-  // Celtic - static (Scottish Premiership not in ESPN API)
-  items.push(`🟢 Celtic: 3-1 vs Rangers · Old Firm 10.05`);
-
-  // F1
-  items.push(`🏎️ F1 Miami GP: 1. Antonelli · 2. Norris · 3. Piastri · Nächstes Rennen: Kanada 22-24 Mai`);
-
-  // Portugal WC
-  items.push(`🇵🇹 Portugal: WM 2026 qualifiziert! · Gruppe F gewonnen`);
-
-  // Build ticker HTML
-  const ticker = document.getElementById('sleep-ticker-inner');
-  ticker.innerHTML = items.map(item =>
-    `<span style="display:inline-block;padding:0 32px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);">${item}</span><span style="color:rgba(255,255,255,0.2);font-size:10px;">·</span>`
-  ).join('') + items.map(item =>
-    `<span style="display:inline-block;padding:0 32px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);">${item}</span><span style="color:rgba(255,255,255,0.2);font-size:10px;">·</span>`
-  ).join(''); // duplicate for seamless loop
+  renderTicker(uniq);
 }
 
-// ── SPORTS TICKER ──
-const SPORTS_CACHE_KEY = 'sports_ticker_cache';
-const SPORTS_CACHE_TTL = 30 * 60 * 1000; // 30 minutes
-
-async function loadSportsTicker() {
-  // Check cache
-  try {
-    const cached = JSON.parse(localStorage.getItem(SPORTS_CACHE_KEY) || '{}');
-    if (cached.time && Date.now() - cached.time < SPORTS_CACHE_TTL && cached.items?.length) {
-      renderTicker(cached.items);
-      return;
-    }
-  } catch(e) {}
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{
-          role: 'user',
-          content: `Search for the latest results/scores for these sports and return ONLY a JSON array, no other text:
-1. Sporting CP (SCP) last Primeira Liga result
-2. LA Lakers last NBA game result  
-3. NY Knicks last NBA game result
-4. Celtic FC last Scottish Premiership result
-5. Portugal national team latest World Cup 2026 qualifier result
-6. Latest F1 race result or next race info
-
-Return format - JSON array only:
-[
-  {"sport":"⚽ SCP","text":"SCP 2-1 Benfica","sub":"Primeira Liga"},
-  {"sport":"🏀 Lakers","text":"LAL 112 - BOS 108","sub":"NBA Playoffs"},
-  ...
-]
-Keep text very short (max 20 chars). Use real current data from web search.`
-        }]
-      })
-    });
-
-    const data = await resp.json();
-    // Extract text from response (may have tool use blocks)
-    let jsonText = '';
-    for (const block of data.content || []) {
-      if (block.type === 'text') { jsonText = block.text; break; }
-    }
-    const items = JSON.parse(jsonText.replace(/```json|```/g, '').trim());
-    localStorage.setItem(SPORTS_CACHE_KEY, JSON.stringify({ time: Date.now(), items }));
-    renderTicker(items);
-  } catch(e) {
-    // Fallback static items
-    renderTicker([
-      { sport: '⚽ SCP', text: 'Laden...', sub: 'Primeira Liga' },
-      { sport: '🏀 Lakers', text: 'Laden...', sub: 'NBA' },
-      { sport: '🏀 Knicks', text: 'Laden...', sub: 'NBA' },
-      { sport: '⚽ Celtic', text: 'Laden...', sub: 'Scottish Prem' },
-      { sport: '⚽ Portugal', text: 'Laden...', sub: 'World Cup' },
-      { sport: '🏎️ F1', text: 'Laden...', sub: 'Formula 1' },
-    ]);
+function renderTicker(items){
+  const el=document.getElementById('sleep-ticker-content');
+  if(!el) return;
+  if(!items || !items.length){
+    el.style.animation='none';
+    el.innerHTML='<span class="sv-ti" style="opacity:0.45;">Keine Spiele in den n\u00e4chsten Tagen</span>';
+    return;
   }
-}
-
-function renderTicker(items) {
-  const html = items.map(item => `
-    <div class="ticker-item">
-      <span class="ticker-flag">${item.sport}</span>
-      <span class="ticker-score">${item.text}</span>
-      <span style="font-size:10px;color:rgba(255,255,255,0.4);">${item.sub}</span>
-    </div>
-    <span class="ticker-sep">·</span>
-  `).join('');
-  document.getElementById('ticker-content').innerHTML = html;
-  document.getElementById('ticker-content-clone').innerHTML = html;
+  el.style.animation='';
+  const sep='<span class="sv-sep">\u00b7</span>';
+  const html=items.map(i=>`<span class="sv-ti">${i}</span>`).join(sep)+sep;
+  el.innerHTML=html+html;
+  const secs=Math.max(30, Math.min(120, items.length*9));
+  el.style.animationDuration=secs+'s';
 }
 
 loadSportsTicker();
-// Refresh every 30 min
 setInterval(() => {
   localStorage.removeItem(SPORTS_CACHE_KEY);
   loadSportsTicker();
-}, 30 * 60 * 1000);
+}, 20 * 60 * 1000);
 
 // Start the idle timer
 resetSleepTimer();
