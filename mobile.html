@@ -7,23 +7,23 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#07080b">
 <title>ALFIE</title>
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon512.png">
+<link rel="icon" type="image/png" href="icon192.png">
 <link rel="manifest" href="manifest.json">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Responsive scale for large screens (Fold 7 inner = ~900px wide) */
-@media (min-width: 600px){
-  #app, #home-screen, #pin-screen, #login-page { zoom: 1.25; }
-}
-@media (min-width: 760px){
-  #app, #home-screen, #pin-screen, #login-page { zoom: 1.45; }
-}
-@media (min-width: 880px){
-  #app, #home-screen, #pin-screen, #login-page { zoom: 1.7; }
+/* wider screens: use the room, scale type up a little */
+@media (min-width: 700px){
+  .nav-title{font-size:34px!important;}
+  .ml-tile{height:118px!important;}
+  .ml-n{font-size:15px!important;}
+  .meal-text,.meal-empty{font-size:17px!important;}
+  .day-name{font-size:22px!important;}
+  .tab-label{font-size:12px!important;}
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -88,6 +88,43 @@ input,textarea,select,button{font-family:'Outfit',-apple-system,sans-serif;}
 .nav-title{font-family:'Outfit',sans-serif;font-weight:600;letter-spacing:-0.3px;}
 .nav-subtitle{color:var(--text2);}
 
+.uic{width:18px;height:18px;display:inline-block;vertical-align:-3px;flex-shrink:0;}
+button .uic{width:19px;height:19px;}
+
+
+/* ── app feel ── */
+html,body{overscroll-behavior:none;height:100%;overflow:hidden;}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;}
+input,textarea{-webkit-user-select:text;user-select:text;}
+#app{position:fixed;inset:0;max-width:760px;margin:0 auto;display:flex;flex-direction:column;
+  box-shadow:none;background:var(--surface);}
+#app-content{flex:1;min-height:0;overflow:hidden;position:relative;background:var(--surface);}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;padding-bottom:24px;display:none;}
+.page.active{display:block;}
+.nav-header{position:sticky;top:0;z-index:20;background:var(--surface);
+  padding-top:calc(18px + var(--safe-top));border-bottom:1px solid var(--border);}
+#tab-bar{position:static!important;flex-shrink:0;}
+/* pressed states instead of hover */
+.tab-btn:active{transform:scale(0.9);}
+.card-row:active,.ml-tile:active{filter:brightness(0.97);}
+
+
+/* tab bar — reset the old fixed/centred hack */
+#tab-bar{left:0!important;right:0!important;transform:none!important;
+  max-width:100%!important;justify-content:center;gap:0;}
+#tab-bar .tab-btn{max-width:120px;}
+.tab-label{white-space:nowrap;}
+/* tiles need to stand out from the white page */
+html.alfie-day .ml-tile{background:var(--bg);}
+html.alfie-day .card{background:#fff;}
+.ml-in{justify-content:space-between;}
+/* page surface */
+#app-content{background:var(--surface);}
+.page{padding-bottom:96px;}
+
+
 .ml-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
 .ml-tile{position:relative;border-radius:18px;overflow:hidden;height:104px;background:var(--surface);
   cursor:pointer;user-select:none;touch-action:none;-webkit-user-select:none;}
@@ -136,7 +173,7 @@ html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
 /* Center & cap width on wide screens (Fold unfolded, tablets, desktop) */
 @media (min-width: 500px) {
   body{background:#000;}
-  #app{max-width:560px;margin:0 auto;box-shadow:none;}
+  #app{max-width:760px;margin:0 auto;box-shadow:none;}
   #login-page, #pin-screen, #home-screen{
     max-width:500px;
     margin:0 auto;
@@ -160,11 +197,13 @@ html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
 .page.active{display:block !important;}
 
 /* ── LOGIN ── */
-#login-page{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
+#login-page{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:32px;}
+.login-full{font-size:10.5px;color:var(--text3);margin-top:9px;letter-spacing:0.3px;text-align:center;}
 #login-page.hidden{display:none;}
-.login-logo{font-size:clamp(40px,5.5vw,72px);font-weight:600;color:var(--text);letter-spacing:7px;}
-.login-sub{font-size:clamp(13px,1.8vw,22px);color:rgba(255,255,255,0.3);letter-spacing:2px;text-transform:uppercase;margin-top:-20px;}
-#btn-login{background:#1a1530;color:white;border:1px solid rgba(123,97,255,0.3);border-radius:16px;padding:18px 32px;font-size:17px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
+.login-logo{font-size:clamp(36px,5vw,58px);font-weight:600;color:var(--text);letter-spacing:8px;margin-top:24px;padding-left:8px;}
+.login-sub{font-size:10.5px;color:var(--text2);letter-spacing:2.6px;text-transform:uppercase;margin-top:11px;}
+#btn-login{background:var(--clay);color:#fff;border:none;border-radius:26px;padding:16px 26px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:11px;margin-top:38px;}
+#btn-login span{background:#fff;border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 #btn-login:active{transform:scale(0.96);}
 #btn-login span{background:white;border-radius:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
@@ -359,8 +398,23 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
 
 <!-- LOGIN -->
 <div id="login-page">
+  <svg class="hs-mark" width="128" height="128" viewBox="0 0 126 126" fill="none">
+    <circle class="ring r3" cx="63" cy="63" r="54" stroke="var(--hs-r3)" stroke-width="3"/>
+    <circle class="ring r2" cx="63" cy="63" r="40" stroke="var(--hs-r2)" stroke-width="3.4"/>
+    <circle class="ring r1" cx="63" cy="63" r="26" stroke="var(--clay)" stroke-width="3"/>
+    <g class="spin">
+      <path class="tick" d="M63 4v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
+      <path class="tick" d="M63 111v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
+      <path class="tick" d="M4 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
+      <path class="tick" d="M111 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
+      <circle class="dot" cx="21" cy="21" r="3.6" fill="var(--amber)"/>
+      <circle class="dot" cx="105" cy="105" r="3.6" fill="var(--amber)"/>
+    </g>
+    <circle class="core" cx="63" cy="63" r="13" fill="var(--amber)"/>
+  </svg>
   <div class="login-logo">ALFIE</div>
   <div class="login-sub">Home Assistant</div>
+  <div class="login-full">Autonomous Living Framework Intelligence Engine</div>
   <button id="btn-login">
     <span><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg></span>
     Mit Google anmelden
@@ -376,14 +430,14 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
     <button onclick="selectUser('sergio')" style="flex:1;padding:24px 16px;border-radius:22px;background:var(--surface);border:1.5px solid var(--border);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
       <div id="pic-sergio" style="width:72px;height:72px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(0,122,255,0.5);">👨</div>
       Sérgio
-      <div onclick="event.stopPropagation();document.getElementById('upload-sergio').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">📷 Foto</div>
+      <div onclick="event.stopPropagation();document.getElementById('upload-sergio').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">Foto</div>
       <input type="file" id="upload-sergio" accept="image/*" style="display:none" onchange="uploadPic('sergio',this)">
     </button>
     <!-- Miriam -->
     <button onclick="selectUser('miriam')" style="flex:1;padding:24px 16px;border-radius:22px;background:var(--surface);border:1.5px solid var(--border););color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
       <div id="pic-miriam" style="width:72px;height:72px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(191,90,242,0.5);">👩</div>
       Miriam
-      <div onclick="event.stopPropagation();document.getElementById('upload-miriam').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">📷 Foto</div>
+      <div onclick="event.stopPropagation();document.getElementById('upload-miriam').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">Foto</div>
       <input type="file" id="upload-miriam" accept="image/*" style="display:none" onchange="uploadPic('miriam',this)">
     </button>
   </div>
@@ -472,8 +526,8 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
             <div class="nav-subtitle" id="week-label">Laden...</div>
           </div>
           <div style="display:flex;gap:8px;">
-            <button class="pill-btn pill-surface" onclick="getMobileSuggestions()" style="padding:10px 16px;font-size:14px;">✨</button>
-            <button class="pill-btn pill-surface" onclick="copyLastWeek()" style="padding:10px 16px;font-size:14px;">📋</button>
+            <button class="pill-btn pill-surface" onclick="getMobileSuggestions()" style="padding:10px 16px;font-size:14px;"><svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></button>
+            <button class="pill-btn pill-surface" onclick="copyLastWeek()" style="padding:10px 16px;font-size:14px;"><svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg></button>
           </div>
         </div>
         <!-- Week selector -->
@@ -503,7 +557,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
     <!-- TRACKER PAGE -->
     <div class="page" id="page-tracker">
       <div class="nav-header">
-        <div class="nav-title">📊 ALFIE HT</div>
+        <div class="nav-title">Tracker</div>
         <div class="nav-subtitle" id="tracker-date-label">Heute</div>
       </div>
       <div class="tracker-date-row" id="tracker-dates"></div>
@@ -710,11 +764,11 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
               <option value="Skifahren">⛷️ Skifahren</option>
               <option value="Snowboard">🏂 Snowboard</option>
             </optgroup>
-            <optgroup label="➕ Sonstiges">
+            <optgroup label="Sonstiges">
               <option value="Tanzen">💃 Tanzen</option>
               <option value="Klettern">🧗 Klettern</option>
               <option value="Seilspringen">🪢 Seilspringen</option>
-              <option value="Anderes">✏️ Anderes</option>
+              <option value="Anderes">Anderes</option>
             </optgroup>
           </select>
           <div id="workout-duration-row" style="display:none;align-items:center;gap:10px;margin-top:4px;">
@@ -747,7 +801,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
         <div class="card-row" style="flex-direction:column;align-items:center;gap:14px;padding:24px;">
           <div id="settings-pic" style="width:90px;height:90px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden;border:2px solid var(--border);cursor:pointer;" onclick="document.getElementById('upload-settings').click()">👤</div>
           <input type="file" id="upload-settings" accept="image/*" style="display:none" onchange="uploadSettingsPic(this)">
-          <button onclick="document.getElementById('upload-settings').click()" style="background:var(--surface2);border:none;border-radius:12px;padding:10px 20px;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">📷 Foto ändern</button>
+          <button onclick="document.getElementById('upload-settings').click()" style="background:var(--surface2);border:none;border-radius:12px;padding:10px 20px;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Foto ändern</button>
         </div>
         <div class="card-row" style="border-top:0.5px solid var(--border);">
           <div style="font-size:16px;font-weight:500;flex:1;">Name</div>
@@ -951,13 +1005,13 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
 <div id="ing-modal" onclick="if(event.target===this)closeIng()">
   <div class="bring-sheet">
     <div class="bring-handle"></div>
-    <div class="bring-title" id="ing-title">✏️ Zutaten</div>
+    <div class="bring-title" id="ing-title">Zutaten</div>
     <div class="bring-items" id="ing-items"></div>
     <div class="bring-add-row">
       <input class="bring-add-input" id="ing-new" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addIngItem()">
       <button class="bring-add-plus" onclick="addIngItem()">+</button>
     </div>
-    <button class="bring-confirm" onclick="saveIng()">💾 Speichern</button>
+    <button class="bring-confirm" onclick="saveIng()"><svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Speichern</button>
     <button class="bring-cancel" onclick="closeIng()">Abbrechen</button>
   </div>
 </div>
@@ -1121,7 +1175,7 @@ function uploadPic(user, input) {
 function updatePicUI(user, dataUrl) {
   const picEl = document.getElementById(`pic-${user}`);
   if(picEl) picEl.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-  showToast('📷 Foto gespeichert!');
+  showToast('Foto gespeichert!');
 }
 
 function loadProfilePics() {
@@ -1171,7 +1225,7 @@ function selectUser(user){
   const saved = localStorage.getItem(`alfie_pic_${user}`);
   const pinPic = document.getElementById('pin-pic');
   if(saved) pinPic.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
-  else pinPic.innerHTML = user==='sergio' ? '👨' : '👩';
+  else pinPic.innerHTML = user==='sergio' ? 'S' : 'M';
   document.getElementById('pin-name').textContent = user==='sergio' ? 'Sérgio' : 'Miriam';
   document.getElementById('pin-error').textContent = '';
   document.getElementById('pin-input').value = '';
@@ -1527,7 +1581,7 @@ function pickMeal(inputId,dropId,name){
 
 // ── AI SUGGESTIONS ──
 async function getMobileSuggestions(){
-  showToast('✨ KI denkt nach...');
+  showToast('KI denkt nach …');
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -1553,7 +1607,7 @@ async function getMobileSuggestions(){
 }
 
 async function copyLastWeek(){
-  showToast('📋 Laden...');
+  showToast('Laden …');
   try{
     // Get previous week's sheet name
     const prevSheetName = getSheetName(currentWeekOffset - 1);
@@ -1607,7 +1661,7 @@ function renderFavsList(){
         </div>
         <div class="fav-ings">${f.ingredients.length?f.ingredients.map(ing=>`<span class="fav-ing-tag">${ing}</span>`).join(''):'<span class="fav-ing-empty">Keine Zutaten</span>'}</div>
         <div class="fav-btns">
-          <button class="fav-edit-btn" onclick="openIng(${i})">✏️ Zutaten</button>
+          <button class="fav-edit-btn" onclick="openIng(${i})">Zutaten</button>
           ${f.ingredients.length?`<button class="fav-bring-btn" onclick="openBringFromFav(${i})">🛒 Bring!</button>`:''}
         </div>`;
       c.appendChild(el);
@@ -1616,14 +1670,14 @@ function renderFavsList(){
   // Add fav form
   const form=document.createElement('div');form.className='add-fav-card';
   form.innerHTML=`
-    <div style="font-size:18px;font-weight:700;margin-bottom:14px;">➕ Favorit hinzufügen</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:14px;">Favorit hinzufügen</div>
     <input class="add-fav-input" id="new-fav-name" placeholder="Mahlzeit eingeben...">
     <div class="add-fav-types">
       <button class="type-pill sel" id="type-lunch" onclick="selFavType('Mittagessen')">Mittag</button>
       <button class="type-pill" id="type-dinner" onclick="selFavType('Abendessen')">Abend</button>
       <button class="type-pill" id="type-both" onclick="selFavType('Beides')">🍽️ Beides</button>
     </div>
-    <button class="add-fav-submit" onclick="addFav()">⭐ Speichern</button>`;
+    <button class="add-fav-submit" onclick="addFav()"><svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/></svg> Speichern</button>`;
   c.appendChild(form);
 }
 
@@ -1636,10 +1690,10 @@ function selFavType(type){
 
 async function addFav(){
   const name=document.getElementById('new-fav-name').value.trim();if(!name)return;
-  const emojis={'Mittagessen':'☀️','Abendessen':'🌙','Beides':'🍽️'};
+  const emojis={'Mittagessen':'','Abendessen':'','Beides':''};
   favorites.push({name,type:favType,emoji:emojis[favType],ingredients:[]});
   document.getElementById('new-fav-name').value='';
-  renderFavsList();await saveFavorites();showToast('⭐ Gespeichert!');
+  renderFavsList();await saveFavorites();showToast('Gespeichert');
 }
 
 async function deleteFav(idx){favorites.splice(idx,1);renderFavsList();await saveFavorites();showToast('Gelöscht');}
@@ -1664,7 +1718,7 @@ function addIngItem(){const v=document.getElementById('ing-new').value.trim();if
 async function saveIng(){
   if(editingFavIdx===null)return;
   favorites[editingFavIdx].ingredients=[...ingItems.filter(x=>x.trim())];
-  closeIng();renderFavsList();await saveFavorites();showToast('✅ Zutaten gespeichert!');
+  closeIng();renderFavsList();await saveFavorites();showToast('Zutaten gespeichert');
 }
 
 // ── BRING ──
@@ -1721,7 +1775,7 @@ async function loadLights(){
     }).catch(err=>{console.warn('Light error',l.id,err.message);return null;})));
     states.forEach((s,i)=>{if(s)lightStates[LIGHTS[i].id]=s;});
     if(states.every(s=>s===null)){
-      list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;font-size:15px;">⚠️ Keine Verbindung zu Home Assistant<br><span style="font-size:13px;color:var(--text3);">Prüfe ob ha.ha-cruz.com erreichbar ist</span></div>';
+      list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;font-size:15px;">Keine Verbindung zu Home Assistant<br><span style="font-size:13px;color:var(--text3);">Prüfe ob ha.ha-cruz.com erreichbar ist</span></div>';
       return;
     }
     renderLights();
@@ -1931,18 +1985,18 @@ function updateSummary(row){
   document.getElementById('sum-steps').textContent = steps ? parseInt(steps).toLocaleString('de-CH') : '—';
   const actName = document.getElementById('tr-activity-name')?.value || row?.[4] || '';
   const actMins = document.getElementById('tr-activity-mins')?.value || row?.[5] || '';
-  document.getElementById('sum-activity').textContent = actName ? `🏃 ${actName}${actMins?' '+actMins+'min':''}` : '🏃 Keine Aktivität';
+  document.getElementById('sum-activity').textContent = actName ? `${actName}${actMins?' '+actMins+'min':''}` : '🏃 Keine Aktivität';
 }
 
 function triggerAutosaveTracker(){
-  document.getElementById('save-indicator').textContent='💾 Speichern...';
+  document.getElementById('save-indicator').textContent='<svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Speichern...';
   clearTimeout(trackerAutoSaveTimer);
   trackerAutoSaveTimer=setTimeout(()=>saveTracker(),1000);
 }
 
 async function saveTracker(){
-  if(!oauthToken){ document.getElementById('save-indicator').textContent='⚠️ Nicht eingeloggt'; return; }
-  document.getElementById('save-indicator').textContent='💾 Speichern...';
+  if(!oauthToken){ document.getElementById('save-indicator').textContent='Nicht eingeloggt'; return; }
+  document.getElementById('save-indicator').textContent='<svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Speichern...';
   const row=[
     trackerDate,
     document.getElementById('tr-weight').value,
@@ -2082,7 +2136,7 @@ function renderStreaks(s, totalDays) {
   if(s.water>0) items.push({emoji:'💧',label:`${s.water} Tag${s.water>1?'e':''} Wasserziel`,color:'var(--blue)',milestone:checkMilestone(s.water)});
   if(s.steps>0) items.push({emoji:'👟',label:`${s.steps} Tag${s.steps>1?'e':''} Schritteziel`,color:'var(--green)',milestone:checkMilestone(s.steps)});
   if(s.activity>0) items.push({emoji:'🏃',label:`${s.activity} Tag${s.activity>1?'e':''} aktiv`,color:'var(--orange)',milestone:checkMilestone(s.activity)});
-  if(s.allGoals>=3) items.push({emoji:'🏆',label:`${s.allGoals} Tage alle Ziele!`,color:'var(--purple)',milestone:'⭐'});
+  if(s.allGoals>=3) items.push({emoji:'',label:`${s.allGoals} Tage alle Ziele!`,color:'var(--purple)',milestone:'⭐'});
   
   if(items.length===0) {
     c.innerHTML = '';
@@ -2107,7 +2161,7 @@ function renderStreaks(s, totalDays) {
 
 function checkMilestone(days) {
   if(days>=100) return '💯';
-  if(days>=30) return '🏆';
+  if(days>=30) return '';
   if(days>=14) return '⭐';
   if(days>=7) return '✨';
   return '';
@@ -2143,7 +2197,7 @@ function renderWeeklySummary(rows, goals) {
   c.style.display = 'block';
   c.innerHTML = `
     <div style="background:linear-gradient(135deg,rgba(191,90,242,0.18),rgba(0,122,255,0.12));border:1px solid rgba(191,90,242,0.3);border-radius:18px;padding:16px;">
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;">📊 Wochenrückblick</div>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;">Wochenrückblick</div>
       <div style="font-size:15px;color:var(--text);line-height:1.7;">
         💧 <b>${totalWater.toFixed(1)}L</b> Wasser getrunken<br>
         👟 <b>${totalSteps.toLocaleString('de-CH')}</b> Schritte gesamt<br>
@@ -2152,7 +2206,7 @@ function renderWeeklySummary(rows, goals) {
         🏆 <b>${allGoalDays}/7</b> Tage alle Ziele erreicht
       </div>
       <div style="margin-top:12px;font-size:14px;color:var(--text2);font-style:italic;">
-        ${allGoalDays>=5?'🎉 Super Woche! Weiter so!':allGoalDays>=3?'💪 Solide Woche!':activityDays>=4?'👏 Schön aktiv geblieben!':'🌱 Neue Woche, neue Chance!'}
+        ${allGoalDays>=5?'Super Woche':allGoalDays>=3?'Solide Woche':activityDays>=4?'👏 Schön aktiv geblieben!':'🌱 Neue Woche, neue Chance!'}
       </div>
     </div>
   `;
@@ -2319,7 +2373,7 @@ async function searchFood(query) {
     const el = document.createElement('div');
     el.className = 'food-search-result';
     el.innerHTML = `<div class="food-result-name">${f.cat} ${f.name}</div>
-      <div class="food-result-nut">🔥 ${f.kcal} kcal · 💪 ${f.protein}g Protein · 🍞 ${f.carbs}g · 🧈 ${f.fat}g <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>`;
+      <div class="food-result-nut">${f.kcal} kcal · ${f.protein} g Protein · ${f.carbs} g KH · 🧈 ${f.fat}g <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>`;
     el.addEventListener('touchend', (e) => { e.preventDefault(); addFoodItem(i); });
     el.addEventListener('click', () => addFoodItem(i));
     container.appendChild(el);
@@ -2342,7 +2396,7 @@ function addFoodItem(idx) {
   updateNutritionBars();
   triggerAutosaveTracker();
   closeFoodSearch();
-  showToast(`✅ ${item.name} hinzugefügt`);
+  showToast(`${item.name} hinzugefügt`);
 }
 
 function removeFoodItem(meal, idx) {
@@ -2384,6 +2438,13 @@ function updateNutritionBars() {
 // ── SETTINGS ──
 const ALFIE_DAY_START = 7;   // 07:00 → hell
 const ALFIE_DAY_END   = 19;  // 19:00 → dunkel
+
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
 
 function alfieResolveMode(mode){
   if(mode === 'day' || mode === 'night') return mode;
@@ -2495,7 +2556,7 @@ function uploadSettingsPic(input){
       document.getElementById('settings-pic').innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
       const pinEl=document.getElementById(`pic-${currentUser}`);
       if(pinEl) pinEl.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-      showToast('📷 Foto gespeichert!');
+      showToast('Foto gespeichert!');
     };
     img.src = e.target.result;
   };
@@ -2509,7 +2570,7 @@ function loadSettingsPage(){
   const saved=localStorage.getItem(`alfie_pic_${currentUser}`);
   const picEl=document.getElementById('settings-pic');
   if(saved) picEl.innerHTML=`<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
-  else picEl.innerHTML=currentUser==='sergio'?'👨':'👩';
+  else picEl.innerHTML=currentUser==='sergio'?'S':'M';
   alfieApplyTheme();
   const notifOn=localStorage.getItem(`alfie_notif_${currentUser}`)==='true';
   updateNotifToggle(notifOn);
