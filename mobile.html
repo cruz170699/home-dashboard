@@ -58,12 +58,12 @@ button{border:none;background:none;cursor:pointer;}
 .screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;
   padding:calc(28px + var(--safe-top)) 22px calc(24px + var(--safe-bottom));overflow-y:auto;}
 .screen.on{display:flex;}
-.screen-inner{width:100%;max-width:420px;margin:0 auto;display:flex;flex-direction:column;flex:1;}
+.screen-inner{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;flex:1;}
 
 /* ── LOGIN ── */
 #login-page{z-index:900;display:flex;align-items:center;justify-content:center;}
 #login-page.hidden{display:none;}
-.lg-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;}
+.lg-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:420px;}
 .hs-mark{display:block;}
 .hs-mark .r1{animation:hsB 4.5s ease-in-out infinite;transform-origin:center;transform-box:fill-box;}
 .hs-mark .r2{animation:hsB 4.5s ease-in-out infinite .5s;transform-origin:center;transform-box:fill-box;}
@@ -135,10 +135,10 @@ button{border:none;background:none;cursor:pointer;}
 #app.on{display:flex;}
 #app-content{flex:1;min-height:0;position:relative;}
 .page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  display:none;padding:0 0 120px;}
+  display:none;padding:0 0 150px;}
 .page.active{display:block;}
-.pg{width:100%;max-width:480px;margin:0 auto;padding:0 18px;}
-.pg-head{padding:calc(26px + var(--safe-top)) 18px 4px;max-width:480px;margin:0 auto;}
+.pg{width:100%;max-width:640px;margin:0 auto;padding:0 18px;}
+.pg-head{padding:calc(26px + var(--safe-top)) 18px 4px;max-width:640px;margin:0 auto;}
 .pg-title{font-size:24px;font-weight:500;letter-spacing:-0.3px;}
 .pg-sub{font-size:12px;color:var(--text2);margin-top:2px;}
 .pg-row{display:flex;align-items:center;justify-content:space-between;}
@@ -150,14 +150,15 @@ button{border:none;background:none;cursor:pointer;}
   font-weight:600;margin:22px 0 10px;}
 
 /* ── DOCK ── */
-#dock{position:absolute;bottom:calc(14px + var(--safe-bottom));left:50%;transform:translateX(-50%);
-  background:var(--dock-bg);border-radius:28px;padding:11px 16px;display:flex;gap:8px;z-index:60;}
-.tab-btn{width:46px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center;
-  color:var(--dock-fg);transition:color .18s;}
-.tab-btn svg{width:21px;height:21px;}
+#dock{position:absolute;bottom:calc(16px + var(--safe-bottom));left:50%;transform:translateX(-50%);
+  width:calc(100% - 28px);max-width:600px;background:var(--dock-bg);border-radius:32px;
+  padding:12px 10px;display:flex;justify-content:space-around;align-items:center;z-index:60;}
+.tab-btn{flex:1;min-width:0;height:52px;border-radius:24px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;color:var(--dock-fg);transition:color .18s;}
+.tab-btn svg{width:26px;height:26px;}
 .tab-btn.active{color:var(--dock-on);}
-.tab-btn:active{transform:scale(0.9);}
-.tab-label{display:none;}
+.tab-btn:active{transform:scale(0.92);}
+.tab-label{font-size:10px;font-weight:600;letter-spacing:0.2px;}
 
 /* ── MEALS ── */
 .wk-strip{display:flex;gap:4px;margin-top:16px;}
@@ -352,7 +353,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
 #bring-modal,#ing-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.45);
   display:none;align-items:flex-end;}
 #bring-modal.open,#ing-modal.open{display:flex;}
-.bring-sheet{width:100%;max-width:480px;margin:0 auto;background:var(--bg);
+.bring-sheet{width:100%;max-width:640px;margin:0 auto;background:var(--bg);
   border-radius:26px 26px 0 0;padding:12px 18px calc(20px + var(--safe-bottom));max-height:86vh;overflow-y:auto;}
 .bring-handle{width:38px;height:4px;border-radius:2px;background:var(--surface3);margin:0 auto 14px;}
 .bring-title{font-size:17px;font-weight:600;margin-bottom:14px;}
@@ -374,14 +375,142 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
 .food-search-result:active{background:var(--surface);}
 .food-result-name{font-size:14px;font-weight:500;}
 .food-result-nut{font-size:11px;color:var(--text3);margin-top:3px;}
-.toast{position:fixed;bottom:calc(96px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(16px);
+.toast{position:fixed;bottom:calc(122px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(16px);
   background:var(--text);color:var(--bg);padding:12px 20px;border-radius:var(--radius-pill);
   font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .25s;z-index:999;max-width:88vw;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+/* ══ SCALE-UP FOR LARGER PHONES (≈440 CSS px and wider) ══ */
+@media (min-width:430px){
+  .pg-head{padding-top:calc(30px + var(--safe-top));}
+  .pg-title{font-size:31px;}
+  .pg-sub{font-size:14.5px;}
+  .icon-btn{width:46px;height:46px;}
+  .icon-btn svg{width:20px;height:20px;}
+  .sec-lbl,.section-hd,.room-label,.tr-section-hd,.hm-lbl,.modal-section-label{font-size:12.5px;}
+
+  /* login + pin */
+  .lg-word{font-size:36px;letter-spacing:10px;}
+  .lg-sub{font-size:12.5px;}
+  .lg-btn{font-size:17px;padding:19px;}
+  .lg-full{font-size:12px;}
+  .pin-word{font-size:27px;letter-spacing:8px;}
+  .pin-q{font-size:15px;}
+  .usr-card{padding:26px 14px;}
+  .usr-av{width:84px;height:84px;font-size:32px;}
+  .usr-n{font-size:17px;}
+  .usr-foto{font-size:12.5px;padding:6px 13px;}
+  .pin-av{width:72px;height:72px;font-size:28px;}
+  .pin-name{font-size:20px;}
+  .pin-dot{width:16px;height:16px;}
+  #pin-dots{gap:17px;margin:26px 0 26px;}
+  .keypad{grid-template-columns:repeat(3,82px);gap:18px;}
+  .key{height:82px;font-size:25px;}
+  .key svg{width:26px;height:26px;}
+  .pin-err{font-size:14.5px;margin-top:20px;}
+  .pin-switch{font-size:14.5px;}
+
+  /* home */
+  .hm-date{font-size:15px;}
+  .hm-hi{font-size:33px;}
+  .hm-today{padding:22px;}
+  .hm-line{font-size:16px;gap:12px;margin-top:12px;}
+  .hm-card{padding:22px 18px;}
+  .hm-card svg{width:28px;height:28px;}
+  .hm-n{font-size:16.5px;}
+  .hm-s{font-size:12.5px;}
+
+  /* dock */
+  #dock{padding:14px 12px;bottom:calc(20px + var(--safe-bottom));border-radius:36px;}
+  .tab-btn{height:60px;gap:5px;}
+  .tab-btn svg{width:30px;height:30px;}
+  .tab-label{font-size:11.5px;}
+
+  /* meals */
+  .pill-btn{font-size:15px;padding:10px 22px;}
+  .day-card{padding:20px;}
+  .day-name{font-size:18px;}
+  .day-date{font-size:13px;}
+  .day-arrow{font-size:21px;}
+  .meal-row{padding:14px 16px;}
+  .meal-icon{font-size:12.5px;min-width:56px;}
+  .meal-text,.meal-empty{font-size:16px;}
+  .fav-name-big{font-size:17px;}
+  .fav-type-small{font-size:12.5px;}
+  .fav-emoji-big{width:46px;height:46px;font-size:20px;}
+  .fav-ing-tag,.fav-ing-empty{font-size:12.5px;}
+  .fav-edit-btn,.fav-bring-btn,.add-fav-submit{font-size:15px;padding:13px;}
+  .add-fav-input,.type-pill{font-size:15px;}
+
+  /* lights */
+  .ml-tile{height:124px;}
+  .ml-in{padding:16px;}
+  .ml-ico{font-size:19px;}
+  .ml-n{font-size:15px;}
+  .ml-s{font-size:12px;}
+  .ml-all{font-size:16px;padding:17px;}
+
+  /* tracker */
+  .date-pill{font-size:12.5px;padding:10px 0;}
+  .summary-card{padding:22px;}
+  #summary-card > .ring-row > svg{width:112px;height:112px;}
+  .ring-bars{gap:14px;}
+  .bar-hd{font-size:12.5px;}
+  .bar-track,.bar-fill{height:7px;}
+  .summary-value{font-size:18px;}
+  .summary-label{font-size:11.5px;}
+  .summary-bottom-item{font-size:12.5px;}
+  .save-indicator{font-size:12.5px;}
+  .water-chip{font-size:14px;padding:14px;}
+  .tr-row{padding:15px 18px;}
+  .tr-label{font-size:16px;}
+  .tr-input{font-size:16px;padding:12px 15px;width:118px;}
+  .tr-unit{font-size:13px;}
+  .tr-food-block{padding:16px 18px;}
+  .tr-food-ico{width:44px;height:44px;}
+  .tr-food-ico svg{width:21px;height:21px;}
+  .tr-food-label{font-size:16px;}
+  .food-item{padding:12px 14px;}
+  .food-item-name{font-size:15px;}
+  .food-item-nut{font-size:12.5px;}
+  .food-add-btn{font-size:14.5px;padding:13px;}
+  .goal-lbl{font-size:12.5px;}
+  .tr-textarea{font-size:15px;min-height:100px;}
+
+  /* settings */
+  .card-row{padding:16px 18px;}
+  .card-row-label{font-size:16px;}
+  .card-row-icon svg{width:20px;height:20px;}
+  .set-av{width:66px;height:66px;font-size:26px;}
+  .set-input{font-size:16px;}
+  .mode-prev{height:74px;}
+  .modebtn span{font-size:12.5px;}
+
+  /* modals + toast */
+  .modal-title{font-size:19px;}
+  .modal-close{width:38px;height:38px;font-size:16px;}
+  .modal-tabs button{font-size:15px;padding:13px;}
+  .modal-input{font-size:17px;padding:17px 19px;}
+  .meal-dropdown-item{font-size:15px;padding:15px 18px;}
+  .bring-btn,.bring-confirm{font-size:15.5px;padding:16px;}
+  .bring-item-input,.bring-add-input{font-size:15px;padding:13px 15px;}
+  .bring-title{font-size:19px;}
+  .food-result-name{font-size:15.5px;}
+  .food-result-nut{font-size:12.5px;}
+  .toast{font-size:14.5px;padding:14px 22px;}
+}
+
 @media (min-width:700px){
-  .pg-title{font-size:28px;}
-  .ml-tile{height:112px;}
+  .pg-title{font-size:34px;}
+  .hm-hi{font-size:38px;}
+  .ml-tile{height:142px;}
+  .keypad{grid-template-columns:repeat(3,92px);gap:20px;}
+  .key{height:92px;font-size:27px;}
+  .day-name{font-size:20px;}
+  .meal-text,.meal-empty{font-size:17px;}
+  .tab-btn{height:64px;}
+  .tab-btn svg{width:32px;height:32px;}
+  .tab-label{font-size:12px;}
 }
 </style>
 </head>
@@ -898,7 +1027,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
     <button class="modal-close" onclick="closeFoodSearch()">✕</button>
     <div class="modal-title" id="food-modal-title">Essen hinzufügen</div>
   </div>
-  <div style="padding:14px 18px;flex-shrink:0;">
+  <div style="padding:14px 18px;flex-shrink:0;max-width:640px;margin:0 auto;width:100%;">
     <input id="food-search-input" type="text" placeholder="Lebensmittel suchen…" class="modal-input" oninput="debounceSearch(this.value)">
   </div>
   <div id="food-search-status" style="text-align:center;padding:6px;font-size:12px;color:var(--text3);"></div>
@@ -1397,7 +1526,7 @@ function renderDays(){
     el.innerHTML=`
       <div class="day-top">
         <div>
-          <div class="day-name" style="${isToday?'color:var(--blue);':''}">${isToday?'Heute':m.day}</div>
+          <div class="day-name" style="${isToday?'color:var(--clay);':''}">${isToday?'Heute':m.day}</div>
           <div class="day-date">${m.date.getDate()}.${m.date.getMonth()+1}.</div>
         </div>
         <div class="day-arrow">›</div>
