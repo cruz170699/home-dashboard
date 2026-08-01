@@ -1615,6 +1615,41 @@ async function loadPollen(){
 }
 loadPollen();setInterval(loadPollen,6*60*60*1000);
 
+
+// ── PRESENCE ──
+const PRESENCE=[
+  {el:'pres-sergio', name:'Sérgio', ids:['person.sergio','person.sergio_da_cruz','device_tracker.fold_7']},
+  {el:'pres-miriam', name:'Miriam', ids:['person.miriam','device_tracker.miriam']},
+];
+async function loadPresence(){
+  for(const p of PRESENCE){
+    const box=document.getElementById(p.el);
+    if(!box) continue;
+    let state=null;
+    for(const id of p.ids){
+      try{
+        const r=await fetch(`${CONFIG.HA_URL}/api/states/${id}`,{headers:HA_HEADERS});
+        if(!r.ok) continue;
+        const d=await r.json();
+        if(d && d.state && d.state!=='unknown' && d.state!=='unavailable'){ state=d; break; }
+      }catch(e){}
+    }
+    const av=box.querySelector('.kav');
+    const st=box.querySelector('.kps');
+    if(!state){
+      if(st) st.textContent='—';
+      if(av) av.classList.add('out');
+      continue;
+    }
+    const home = state.state==='home';
+    if(st) st.textContent = home ? 'Zuhause' : 'Unterwegs';
+    if(av) av.classList.toggle('out', !home);
+    const bat = state.attributes?.battery_level;
+    box.title = p.name + (typeof bat==='number' ? ` · Akku ${bat}%` : '');
+  }
+}
+loadPresence();setInterval(loadPresence,60000);
+
 // ── CALENDAR ──
 let calDate=new Date(),calEvents=[],hiddenCals=new Set();
 const MONTH_NAMES=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
