@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#07080b">
+<meta name="theme-color" content="#EDE7DC">
 <title>ALFIE</title>
 <link rel="apple-touch-icon" href="icon192.png">
 <link rel="apple-touch-icon" sizes="192x192" href="icon192.png">
@@ -13,1021 +13,895 @@
 <link rel="icon" type="image/png" href="icon192.png">
 <link rel="manifest" href="manifest.json">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Responsive scale for large screens (Fold 7 inner = ~900px wide) */
-/* wider screens: use the room, scale type up a little */
-@media (min-width: 700px){
-  .nav-title{font-size:34px!important;}
-  .ml-tile{height:118px!important;}
-  .ml-n{font-size:15px!important;}
-  .meal-text,.meal-empty{font-size:17px!important;}
-  .day-name{font-size:22px!important;}
-  .tab-label{font-size:12px!important;}
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+/* ══ TOKENS ══ */
 :root{
-  --blue:#007AFF;--green:#30D158;--red:#FF453A;--orange:#FF9F0A;--yellow:#FFD60A;--purple:#BF5AF2;
-  --accent:#007AFF;
-  --bg:#000;--surface:#1C1C1E;--surface2:#2C2C2E;--surface3:#3A3A3C;
-  --text:#fff;--text2:rgba(255,255,255,0.6);--text3:rgba(255,255,255,0.3);
-  --border:rgba(255,255,255,0.08);--radius:18px;
+  --radius-card:22px; --radius-tile:20px; --radius-pill:20px;
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
-html,body{margin:0;padding:0;font-family:'Outfit',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
-
-/* ── ALFIE warm palette ── */
-html.alfie-night{
-  --bg:#191410; --surface:#241D17; --surface2:#2C241D; --surface3:#3A3028;
-  --text:#F2E9DC; --text2:rgba(242,233,220,0.62); --text3:rgba(242,233,220,0.34);
-  --border:rgba(255,255,255,0.08);
-  --accent:#E9A23B; --blue:#E9A23B; --green:#7FA36B; --red:#E9906F;
-  --orange:#D9603C; --yellow:#F0B33F; --purple:#B98FA8;
-  --clay:#D9603C; --moss:#7FA36B; --amber:#E9A23B; --sage:#3E4A34; --peach:#4A3229;
-  --radius:18px;
-}
 html.alfie-day{
   --bg:#EDE7DC; --surface:#FFFFFF; --surface2:#F5F1EA; --surface3:#E4DCCE;
-  --text:#221E19; --text2:rgba(34,30,25,0.6); --text3:rgba(34,30,25,0.36);
+  --text:#221E19; --text2:rgba(34,30,25,0.58); --text3:rgba(34,30,25,0.38);
   --border:rgba(34,30,25,0.08);
-  --accent:#D9603C; --blue:#D9603C; --green:#3B5129; --red:#B0432A;
-  --orange:#D9603C; --yellow:#F0B33F; --purple:#8A5A72;
-  --clay:#D9603C; --moss:#3B5129; --amber:#F0B33F; --sage:#DCE5D2; --peach:#F3DBD1;
-  --radius:18px;
+  --clay:#D9603C; --moss:#3B5129; --moss-soft:#7FA36B; --amber:#F0B33F;
+  --sage:#DCE5D2; --peach:#F3DBD1; --sand:#FAEEDA; --plum:#8A5A72; --water:#5E8FBF;
+  --on-peach:#993C1D; --on-sage:#2E4520; --on-sand:#7A4A0B;
+  --accent:#D9603C; --blue:#5E8FBF; --green:#3B5129; --red:#B0432A; --orange:#D9603C;
+  --yellow:#F0B33F; --purple:#8A5A72;
+  --dock-bg:#221E19; --dock-fg:rgba(237,231,220,0.45); --dock-on:#F0B33F;
+  --on-accent:#FFFFFF;
 }
-html.alfie-day body, html.alfie-night body{background:var(--bg);}
-html.alfie-day #app, html.alfie-night #app{background:var(--bg);}
-@media (min-width:500px){
-  html.alfie-day body, html.alfie-night body{background:var(--bg);}
+html.alfie-night{
+  --bg:#191410; --surface:#241D17; --surface2:#2C241D; --surface3:#3A3028;
+  --text:#F2E9DC; --text2:rgba(242,233,220,0.6); --text3:rgba(242,233,220,0.36);
+  --border:rgba(242,233,220,0.09);
+  --clay:#D9603C; --moss:#7FA36B; --moss-soft:#7FA36B; --amber:#E9A23B;
+  --sage:#3E4A34; --peach:#4A3229; --sand:#43331C; --plum:#B98FA8; --water:#7FA8CE;
+  --on-peach:#F0B9A2; --on-sage:#C4DBB2; --on-sand:#F0C98A;
+  --accent:#E9A23B; --blue:#7FA8CE; --green:#7FA36B; --red:#E9906F; --orange:#D9603C;
+  --yellow:#E9A23B; --purple:#B98FA8;
+  --dock-bg:#2C241D; --dock-fg:rgba(242,233,220,0.4); --dock-on:#E9A23B;
+  --on-accent:#191410;
 }
-/* flatten the iOS look */
-.card,.page,.nav-header{background:var(--surface)!important;border-color:var(--border)!important;
-  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
-.card{border-radius:22px!important;}
-input,textarea,select,button{font-family:'Outfit',-apple-system,sans-serif;}
-.modebtn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;
-  border-radius:16px;background:var(--surface2);color:var(--text2);cursor:pointer;
-  font-size:12px;font-weight:600;border:1.5px solid transparent;}
-.modebtn svg{width:24px;height:24px;}
-.modebtn.on{border-color:var(--accent);color:var(--accent);}
-
-/* tab bar */
-#tab-bar{background:var(--surface)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
-  border-top:1px solid var(--border)!important;max-width:560px!important;box-shadow:none!important;
-  padding:10px 0 calc(10px + var(--safe-bottom))!important;}
-.tab-btn{font-family:'Outfit',sans-serif!important;color:var(--text2)!important;}
-.tab-btn.active{color:var(--accent)!important;}
-.tab-label{font-size:10.5px;font-weight:600;}
-/* user picker */
-#user-select{gap:12px!important;}
-#user-select button{display:flex!important;flex-direction:column;align-items:center;gap:12px;
-  min-width:0;color:var(--text)!important;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;}
-#pin-screen{gap:16px!important;padding:24px;}
-/* headers */
-.nav-title{font-family:'Outfit',sans-serif;font-weight:600;letter-spacing:-0.3px;}
-.nav-subtitle{color:var(--text2);}
-
-.uic{width:18px;height:18px;display:inline-block;vertical-align:-3px;flex-shrink:0;}
-button .uic{width:19px;height:19px;}
-
-
-/* ── app feel ── */
-html,body{overscroll-behavior:none;height:100%;overflow:hidden;}
-body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
-  -webkit-tap-highlight-color:transparent;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
+body{font-family:'Outfit',-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+input,textarea,select,button{font-family:'Outfit',sans-serif;color:var(--text);}
 input,textarea{-webkit-user-select:text;user-select:text;}
-#app{position:fixed;inset:0;max-width:760px;margin:0 auto;display:flex;flex-direction:column;
-  box-shadow:none;background:var(--surface);}
-#app-content{flex:1;min-height:0;overflow:hidden;position:relative;background:var(--surface);}
-.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;padding-bottom:24px;display:none;}
-.page.active{display:block;}
-.nav-header{position:sticky;top:0;z-index:20;background:var(--surface);
-  padding-top:calc(18px + var(--safe-top));border-bottom:1px solid var(--border);}
-#tab-bar{position:static!important;flex-shrink:0;}
-/* pressed states instead of hover */
-.tab-btn:active{transform:scale(0.9);}
-.card-row:active,.ml-tile:active{filter:brightness(0.97);}
+button{border:none;background:none;cursor:pointer;}
+.uic{width:18px;height:18px;display:inline-block;vertical-align:-3px;flex-shrink:0;}
 
-
-/* tab bar — reset the old fixed/centred hack */
-#tab-bar{left:0!important;right:0!important;transform:none!important;
-  max-width:100%!important;justify-content:center;gap:0;}
-#tab-bar .tab-btn{max-width:120px;}
-.tab-label{white-space:nowrap;}
-/* tiles need to stand out from the white page */
-html.alfie-day .ml-tile{background:var(--bg);}
-html.alfie-day .card{background:#fff;}
-.ml-in{justify-content:space-between;}
-/* page surface */
-#app-content{background:var(--surface);}
-.page{padding-bottom:96px;}
-
-
-.ml-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
-.ml-tile{position:relative;border-radius:18px;overflow:hidden;height:104px;background:var(--surface);
-  cursor:pointer;user-select:none;touch-action:none;-webkit-user-select:none;}
-.ml-fill{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--amber);
-  transition:height .18s cubic-bezier(.4,0,.2,1);}
-.ml-fill.sw{background:var(--moss);}
-.ml-in{position:relative;z-index:2;height:100%;padding:14px;display:flex;flex-direction:column;justify-content:center;gap:10px;}
-.ml-ico{font-size:17px;opacity:0.45;line-height:1;}
-.ml-tile.on .ml-ico{opacity:1;}
-.ml-n{font-size:13.5px;font-weight:600;line-height:1.2;}
-.ml-s{font-size:11px;opacity:0.55;margin-top:2px;}
-.ml-grip{position:absolute;top:10px;right:11px;z-index:2;width:16px;height:3px;border-radius:2px;background:rgba(0,0,0,0.2);}
-.ml-tile.dragging{outline:2px solid var(--clay);outline-offset:-2px;}
-html.alfie-night .ml-tile.on{color:#191410;}
-html.alfie-night .ml-grip{background:rgba(0,0,0,0.28);}
-.ml-all{width:100%;border:none;border-radius:24px;padding:15px;background:var(--accent);color:#fff;
-  font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;}
-html.alfie-night .ml-all{color:#191410;}
-.room-label{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;
-  color:var(--text2);margin:6px 0 10px;}
-
-
-.hs-mark{display:block;}
-html.alfie-day{--hs-r3:#F3DBD1;--hs-r2:#DCE5D2;}
-html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
-.hs-mark .ring,.hs-mark .core,.hs-mark .tick,.hs-mark .dot{transform-origin:center;transform-box:fill-box;}
-.hs-mark .r1{animation:hsBreathe 4.5s ease-in-out infinite;}
-.hs-mark .r2{animation:hsBreathe 4.5s ease-in-out infinite .5s;}
-.hs-mark .core{animation:hsCore 4.5s ease-in-out infinite;}
-@keyframes hsBreathe{0%,100%{opacity:.55;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
-@keyframes hsCore{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
-@media (prefers-reduced-motion: reduce){.hs-mark *{animation:none!important;}}
-.hs-word{font-size:34px;font-weight:600;letter-spacing:7px;color:var(--text);margin-top:20px;padding-left:7px;}
-.hs-greet{font-size:13px;color:var(--text2);margin-top:7px;}
-.hs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:440px;margin-top:34px;}
-.hs-card{background:var(--surface);border-radius:22px;padding:22px 14px 18px;display:flex;
-  flex-direction:column;align-items:center;gap:9px;cursor:pointer;}
-.hs-card:active{transform:scale(0.975);}
-.hs-card svg{width:40px;height:40px;}
-.hs-n{font-size:15px;font-weight:600;color:var(--text);}
-.hs-s{font-size:11px;color:var(--text2);text-align:center;line-height:1.35;}
-
-
-
-
-/* Center & cap width on wide screens (Fold unfolded, tablets, desktop) */
-@media (min-width: 500px) {
-  body{background:#000;}
-  #app{max-width:760px;margin:0 auto;box-shadow:none;}
-  #login-page, #pin-screen, #home-screen{
-    max-width:500px;
-    margin:0 auto;
-    left:0 !important;
-    right:0 !important;
-  }
-  #tab-bar{max-width:500px;left:50% !important;right:auto !important;transform:translateX(-50%);}
-  #food-modal, #edit-modal, #bring-modal, #ing-modal{
-    max-width:500px;
-    margin:0 auto;
-    left:0 !important;
-    right:0 !important;
-  }
-  #toast{max-width:500px;left:50% !important;right:auto !important;transform:translateX(-50%);}
-}
-
-/* ── APP SHELL ── */
-#app{background:var(--bg);}
-#app-content{display:block;position:relative;}
-.page{display:none !important;padding-bottom:80px;background:var(--bg);}
-.page.active{display:block !important;}
+/* ══ FULLSCREEN OVERLAYS ══ */
+.screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;
+  padding:calc(28px + var(--safe-top)) 22px calc(24px + var(--safe-bottom));overflow-y:auto;}
+.screen.on{display:flex;}
+.screen-inner{width:100%;max-width:420px;margin:0 auto;display:flex;flex-direction:column;flex:1;}
 
 /* ── LOGIN ── */
-#login-page{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:32px;}
-.login-full{font-size:10.5px;color:var(--text3);margin-top:9px;letter-spacing:0.3px;text-align:center;}
+#login-page{z-index:900;display:flex;align-items:center;justify-content:center;}
 #login-page.hidden{display:none;}
-.login-logo{font-size:clamp(36px,5vw,58px);font-weight:600;color:var(--text);letter-spacing:8px;margin-top:24px;padding-left:8px;}
-.login-sub{font-size:10.5px;color:var(--text2);letter-spacing:2.6px;text-transform:uppercase;margin-top:11px;}
-#btn-login{background:var(--clay);color:#fff;border:none;border-radius:26px;padding:16px 26px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:11px;margin-top:38px;}
-#btn-login span{background:#fff;border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-#btn-login:active{transform:scale(0.96);}
-#btn-login span{background:white;border-radius:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.lg-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;}
+.hs-mark{display:block;}
+.hs-mark .r1{animation:hsB 4.5s ease-in-out infinite;transform-origin:center;transform-box:fill-box;}
+.hs-mark .r2{animation:hsB 4.5s ease-in-out infinite .5s;transform-origin:center;transform-box:fill-box;}
+.hs-mark .core{animation:hsC 4.5s ease-in-out infinite;transform-origin:center;transform-box:fill-box;}
+@keyframes hsB{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
+@keyframes hsC{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+@media (prefers-reduced-motion:reduce){.hs-mark *{animation:none!important;}}
+.lg-word{font-size:30px;font-weight:500;letter-spacing:8px;padding-left:8px;margin-top:26px;}
+.lg-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-top:6px;}
+.lg-btn{width:100%;background:var(--surface);border-radius:var(--radius-pill);padding:16px;
+  display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:500;margin-top:44px;}
+.lg-btn:active{transform:scale(0.98);}
+.lg-full{font-size:11px;color:var(--text3);margin-top:16px;text-align:center;}
 
-/* ── TAB BAR ── */
-#tab-bar{background:rgba(28,28,30,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe-bottom));z-index:500;position:fixed;bottom:0;left:0;right:0;}
-.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border:none;background:none;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;color:var(--text3);}
-.tab-btn:active{transform:scale(0.88);}
-.tab-icon{font-size:clamp(24px,3vw,40px);line-height:1;display:flex;align-items:center;justify-content:center;}
-.tab-label{font-size:clamp(10px,1.3vw,17px);font-weight:500;color:inherit;}
-.tab-btn.active{color:var(--blue);}
-.tab-btn.active .tab-icon{transform:scale(1.1);}
+/* ── PIN ── */
+#pin-screen{z-index:800;justify-content:center;}
+.pin-word{font-size:22px;font-weight:500;letter-spacing:6px;padding-left:6px;text-align:center;}
+.pin-q{font-size:13px;color:var(--text2);margin-top:6px;text-align:center;}
+#user-select{display:flex;gap:12px;margin-top:28px;}
+.usr-card{flex:1;background:var(--surface);border-radius:var(--radius-card);padding:22px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;}
+.usr-card:active{transform:scale(0.975);}
+.usr-av{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:600;overflow:hidden;}
+.usr-av img{width:100%;height:100%;object-fit:cover;}
+.usr-av.a{background:var(--peach);color:var(--on-peach);}
+.usr-av.b{background:var(--sage);color:var(--on-sage);}
+.usr-n{font-size:15px;font-weight:500;}
+.usr-foto{font-size:11px;color:var(--text3);padding:4px 10px;background:var(--surface2);border-radius:12px;}
+#pin-entry{display:none;flex-direction:column;align-items:center;}
+.pin-av{width:56px;height:56px;border-radius:50%;background:var(--peach);color:var(--on-peach);
+  display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;overflow:hidden;}
+.pin-av img{width:100%;height:100%;object-fit:cover;}
+.pin-name{font-size:17px;font-weight:500;margin-top:10px;}
+#pin-dots{display:flex;gap:14px;margin:20px 0 22px;}
+.pin-dot{width:13px;height:13px;border-radius:50%;background:var(--surface3);transition:background .15s;}
+.pin-dot.filled{background:var(--clay);}
+.keypad{display:grid;grid-template-columns:repeat(3,64px);gap:12px;justify-content:center;}
+.key{height:64px;border-radius:50%;background:var(--surface);font-size:20px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;}
+.key:active{background:var(--surface3);}
+.key.blank{background:none;}
+.pin-err{font-size:13px;color:var(--red);height:18px;margin-top:16px;}
+.pin-switch{font-size:13px;color:var(--text2);padding:10px 16px;margin-top:4px;}
 
-/* ── NAV HEADER ── */
-.nav-header{padding:calc(16px + var(--safe-top)) 20px 12px;background:var(--bg);position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border);}
-.nav-title{font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-0.5px;}
-.nav-subtitle{font-size:clamp(14px,1.8vw,22px);color:var(--text2);margin-top:2px;}
-.nav-row{display:flex;align-items:flex-end;justify-content:space-between;}
+/* ── HOME ── */
+#home-screen{z-index:700;justify-content:flex-start;}
+.hm-top{display:flex;align-items:center;justify-content:space-between;}
+.hm-date{font-size:13px;color:var(--text2);}
+.hm-hi{font-size:26px;font-weight:500;margin-top:2px;}
+.hm-today{background:var(--surface);border-radius:var(--radius-card);padding:18px;margin-top:22px;}
+.hm-lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:600;}
+.hm-line{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;}
+.hm-line svg{width:18px;height:18px;flex-shrink:0;}
+.hm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.hm-card{border-radius:var(--radius-card);padding:18px 14px;background:var(--surface);}
+.hm-card:active{transform:scale(0.975);}
+.hm-card svg{width:24px;height:24px;}
+.hm-n{font-size:14px;font-weight:600;margin-top:12px;}
+.hm-s{font-size:11px;margin-top:2px;opacity:0.75;}
+.hm-card.peach{background:var(--peach);color:var(--on-peach);}
+.hm-card.sage{background:var(--sage);color:var(--on-sage);}
+.hm-card.sand{background:var(--sand);color:var(--on-sand);}
+.hm-card.plain{color:var(--text2);}
+.hm-card.plain .hm-n{color:var(--text);}
 
-/* ── SECTION HEADER ── */
-.section-hd{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);padding:20px 20px 8px;}
+/* ══ APP SHELL ══ */
+#app{position:fixed;inset:0;display:none;flex-direction:column;background:var(--bg);}
+#app.on{display:flex;}
+#app-content{flex:1;min-height:0;position:relative;}
+.page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:none;padding:0 0 120px;}
+.page.active{display:block;}
+.pg{width:100%;max-width:480px;margin:0 auto;padding:0 18px;}
+.pg-head{padding:calc(26px + var(--safe-top)) 18px 4px;max-width:480px;margin:0 auto;}
+.pg-title{font-size:24px;font-weight:500;letter-spacing:-0.3px;}
+.pg-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.pg-row{display:flex;align-items:center;justify-content:space-between;}
+.icon-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);
+  display:flex;align-items:center;justify-content:center;}
+.icon-btn svg{width:17px;height:17px;}
+.icon-btn:active{transform:scale(0.94);}
+.sec-lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;margin:22px 0 10px;}
 
-/* ── CARDS ── */
-.card{background:var(--surface);border-radius:var(--radius);margin:0 16px 12px;overflow:hidden;}
-.card-row{display:flex;align-items:center;padding:16px 18px;border-bottom:0.5px solid var(--border);}
-.card-row:last-child{border-bottom:none;}
-.card-row-label{font-size:17px;font-weight:500;flex:1;}
-.card-row-value{font-size:17px;color:var(--text2);}
-.card-row-icon{font-size:22px;margin-right:14px;flex-shrink:0;}
+/* ── DOCK ── */
+#dock{position:absolute;bottom:calc(14px + var(--safe-bottom));left:50%;transform:translateX(-50%);
+  background:var(--dock-bg);border-radius:28px;padding:11px 16px;display:flex;gap:8px;z-index:60;}
+.tab-btn{width:46px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center;
+  color:var(--dock-fg);transition:color .18s;}
+.tab-btn svg{width:21px;height:21px;}
+.tab-btn.active{color:var(--dock-on);}
+.tab-btn:active{transform:scale(0.9);}
+.tab-label{display:none;}
 
 /* ── MEALS ── */
-.day-card{background:var(--surface);border-radius:var(--radius);margin:0 16px 10px;cursor:pointer;overflow:hidden;transition:all 0.15s;}
-.day-card:active{transform:scale(0.98);opacity:0.9;}
-.day-card.today{border:2px solid var(--blue);}
-.day-top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;}
-.day-name{font-size:clamp(18px,2.5vw,32px);font-weight:700;}
-.day-date{font-size:clamp(12px,1.5vw,20px);color:var(--text3);margin-top:2px;}
-.day-arrow{color:var(--text3);font-size:20px;}
-.day-meals{padding:0 18px 16px;display:flex;flex-direction:column;gap:10px;}
-.meal-row{display:flex;align-items:center;gap:12px;}
-.meal-icon{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text2);flex-shrink:0;width:44px;padding-top:2px;}
-.meal-text{font-size:clamp(15px,2vw,26px);font-weight:400;}
-.meal-empty{color:var(--text3);font-style:italic;font-size:clamp(14px,1.8vw,24px);}
-.meal-divider{height:0.5px;background:var(--border);}
-
-/* PILL BUTTONS */
-.pill-btn{padding:10px 20px;border-radius:22px;border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:6px;}
-.pill-blue{background:var(--blue);color:white;}
-.pill-surface{background:var(--surface2);color:var(--text);}
-.pill-btn:active{transform:scale(0.94);}
-
-/* ── EDIT MODAL ── */
-#edit-modal{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;background:var(--bg);transform:translateY(100%);transition:transform 0.35s cubic-bezier(.4,0,.2,1);}
-#edit-modal.open{transform:translateY(0);}
-.modal-header{padding:calc(16px + var(--safe-top)) 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);}
-.modal-title{font-size:20px;font-weight:700;}
-.modal-close{background:var(--surface2);border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;}
-.modal-save-status{font-size:13px;color:var(--text3);}
-.modal-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px;}
-.modal-section{margin-bottom:20px;}
-.modal-section-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:10px;}
-.modal-input{width:100%;background:var(--surface);border:none;border-radius:14px;padding:16px 18px;font-size:19px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
-.modal-input::placeholder{color:var(--text3);}
-.fav-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-.fav-chip{padding:10px 18px;background:var(--surface2);border-radius:22px;font-size:15px;color:var(--text2);cursor:pointer;border:none;font-family:'Inter',sans-serif;}
-.fav-chip:active{background:var(--blue);color:white;}
-.bring-btn-row{margin-top:14px;}
-.bring-btn{width:100%;padding:16px;border-radius:14px;background:rgba(48,209,88,0.12);border:1.5px solid rgba(48,209,88,0.25);color:var(--green);font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.wk-strip{display:flex;gap:4px;margin-top:16px;}
+.wk-d{flex:1;text-align:center;padding:9px 0;border-radius:14px;}
+.wk-d .wd{font-size:10px;color:var(--text3);font-weight:600;}
+.wk-d .wn{font-size:14px;margin-top:2px;}
+.wk-d.today{background:var(--clay);}
+.wk-d.today .wd{color:rgba(255,255,255,0.7);}
+.wk-d.today .wn{color:#fff;font-weight:600;}
+#week-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;}
+#week-strip::-webkit-scrollbar{display:none;}
+.pill-btn{padding:8px 18px;border-radius:var(--radius-pill);background:var(--surface);
+  color:var(--text2);font-size:13px;font-weight:500;}
+.pill-btn.pill-blue{background:var(--text);color:var(--bg);}
+.pill-surface{background:var(--surface);}
+.day-card{background:var(--surface);border-radius:var(--radius-card);padding:16px;margin-top:12px;}
+.day-card:active{transform:scale(0.99);}
+.day-top{display:flex;align-items:center;justify-content:space-between;}
+.day-name{font-size:15px;font-weight:600;}
+.day-date{font-size:11px;color:var(--text3);margin-top:1px;}
+.day-arrow{color:var(--text3);font-size:18px;}
+.day-card.today .day-name{color:var(--clay);}
+.day-meals{margin-top:12px;}
+.meal-row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--surface2);
+  border-radius:14px;margin-top:8px;}
+.meal-row:first-child{margin-top:0;}
+.meal-icon{font-size:11px;font-weight:600;color:var(--text3);min-width:42px;}
+.meal-text{font-size:13px;flex:1;}
+.meal-empty{font-size:13px;color:var(--text3);flex:1;}
+.meal-divider{display:none;}
+/* favorites */
+.fav-card{background:var(--surface);border-radius:var(--radius-card);padding:16px;margin-top:12px;}
+.fav-card-top{display:flex;align-items:center;gap:12px;}
+.fav-emoji-big{width:40px;height:40px;border-radius:14px;background:var(--peach);color:var(--on-peach);
+  display:flex;align-items:center;justify-content:center;font-size:18px;}
+.fav-info{flex:1;}
+.fav-name-big{font-size:15px;font-weight:600;}
+.fav-type-small{font-size:11px;color:var(--text3);margin-top:1px;}
+.fav-del-btn{width:30px;height:30px;border-radius:50%;background:var(--surface2);color:var(--text3);font-size:13px;}
+.fav-ings{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.fav-ing-tag{font-size:11px;padding:5px 11px;border-radius:12px;background:var(--surface2);color:var(--text2);}
+.fav-ing-empty{font-size:11px;color:var(--text3);}
+.fav-btns{display:flex;gap:8px;margin-top:12px;}
+.fav-edit-btn,.fav-bring-btn{flex:1;padding:11px;border-radius:14px;background:var(--surface2);
+  font-size:13px;font-weight:500;color:var(--text2);}
+.fav-bring-btn{background:var(--sage);color:var(--on-sage);}
+.add-fav-card{background:var(--surface);border-radius:var(--radius-card);padding:18px;margin-top:14px;}
+.add-fav-input{width:100%;background:var(--surface2);border:none;border-radius:14px;padding:13px 15px;
+  font-size:14px;outline:none;}
+.add-fav-types{display:flex;gap:8px;margin-top:10px;}
+.type-pill{flex:1;padding:10px;border-radius:14px;background:var(--surface2);font-size:12.5px;
+  font-weight:500;color:var(--text2);}
+.type-pill.sel{background:var(--clay);color:var(--on-accent);}
+.add-fav-submit{width:100%;margin-top:12px;padding:14px;border-radius:var(--radius-pill);
+  background:var(--text);color:var(--bg);font-size:14px;font-weight:600;}
 
 /* ── LIGHTS ── */
-.room-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);padding:20px 20px 8px;}
-.light-row{display:flex;align-items:center;padding:16px 18px;border-bottom:0.5px solid var(--border);}
-.light-row:last-child{border-bottom:none;}
-.light-emoji{font-size:clamp(26px,3.5vw,44px);margin-right:14px;}
-.light-info{flex:1;}
-.light-name{font-size:clamp(16px,2.2vw,28px);font-weight:500;}
-.light-status{font-size:clamp(13px,1.7vw,22px);color:var(--text3);margin-top:2px;}
-.toggle{width:52px;height:32px;border-radius:16px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background 0.25s;}
-.toggle.on{background:var(--green);}
-.toggle.off{background:var(--surface3);}
-.toggle::after{content:'';position:absolute;width:26px;height:26px;border-radius:50%;background:white;top:3px;transition:left 0.25s;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
-.toggle.on::after{left:23px;}
-.toggle.off::after{left:3px;}
-.brightness-wrap{padding:8px 18px 16px;border-bottom:0.5px solid var(--border);}
-.brightness-slider{width:100%;height:5px;border-radius:3px;outline:none;-webkit-appearance:none;background:var(--surface3);}
-.brightness-slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.3);cursor:pointer;}
+.room-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;margin:22px 0 10px;}
+.ml-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ml-tile{position:relative;border-radius:var(--radius-tile);overflow:hidden;height:96px;
+  background:var(--surface);touch-action:none;}
+.ml-fill{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--amber);
+  transition:height .18s cubic-bezier(.4,0,.2,1);}
+.ml-fill.sw{background:var(--moss-soft);}
+.ml-in{position:relative;z-index:2;height:100%;padding:13px;display:flex;flex-direction:column;
+  justify-content:space-between;}
+.ml-ico{font-size:16px;opacity:0.4;line-height:1;}
+.ml-tile.on .ml-ico{opacity:1;}
+.ml-n{font-size:13px;font-weight:600;line-height:1.2;}
+.ml-s{font-size:10px;opacity:0.6;margin-top:2px;}
+.ml-tile.on{color:#221E19;}
+.ml-grip{position:absolute;top:10px;right:11px;z-index:2;width:16px;height:3px;border-radius:2px;
+  background:rgba(0,0,0,0.2);}
+.ml-tile.dragging{outline:2px solid var(--clay);outline-offset:-2px;}
+.ml-all{width:100%;border-radius:var(--radius-pill);padding:15px;background:var(--text);color:var(--bg);
+  font-size:14px;font-weight:600;margin-top:18px;}
 
 /* ── TRACKER ── */
-.tracker-date-row{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 4px;scrollbar-width:none;flex-shrink:0;}
+.tracker-date-row{display:flex;gap:6px;margin-top:14px;overflow-x:auto;scrollbar-width:none;}
 .tracker-date-row::-webkit-scrollbar{display:none;}
-.date-pill{flex-shrink:0;padding:10px 16px;border-radius:20px;border:none;background:var(--surface);font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2);text-align:center;min-width:60px;transition:all 0.2s;}
-.date-pill.active{background:var(--blue);color:white;font-weight:700;}
-.date-pill:active{transform:scale(0.92);}
-.summary-card{margin:8px 16px 8px;background:linear-gradient(135deg,rgba(0,122,255,0.15),rgba(191,90,242,0.12));border:1px solid rgba(0,122,255,0.2);border-radius:22px;padding:20px;}
-.summary-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:16px;}
-.summary-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
-.summary-metric{text-align:center;padding:0 8px;}
-.summary-metric+.summary-metric{border-left:0.5px solid var(--border);}
-.summary-value{font-size:clamp(24px,3.5vw,44px);font-weight:700;}
-.summary-label{font-size:clamp(11px,1.4vw,18px);color:var(--text3);margin-top:3px;}
-.summary-bottom{margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;}
-.summary-bottom-item{font-size:13px;color:var(--text3);}
-.tr-section{background:var(--surface);border-radius:var(--radius);margin:0 16px 12px;overflow:hidden;}
-.tr-section-hd{padding:14px 18px 10px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);}
-.tr-row{display:flex;align-items:center;padding:14px 18px;border-bottom:0.5px solid var(--border);gap:12px;}
-.tr-row:last-child{border-bottom:none;}
-.tr-label{font-size:clamp(16px,2.2vw,28px);font-weight:500;flex:1;}
-.tr-input{background:var(--surface2);border:none;border-radius:12px;padding:clamp(10px,1.5vw,18px) clamp(14px,2vw,22px);font-size:clamp(16px,2.2vw,28px);font-family:'Inter',sans-serif;color:var(--text);outline:none;width:110px;text-align:right;}
-select.tr-input{width:100%;text-align:left;color:var(--text);}
-select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--text);}
-.tr-input::placeholder{color:var(--text3);}
-.tr-unit{font-size:16px;color:var(--text3);width:28px;flex-shrink:0;}
-.water-row{display:flex;gap:8px;padding:10px 18px 16px;}
-.water-chip{flex:1;padding:12px 0;border-radius:12px;background:rgba(0,122,255,0.12);border:1px solid rgba(0,122,255,0.2);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--blue);text-align:center;}
-.water-chip:active{background:var(--blue);color:white;}
-.tr-food-block{padding:14px 18px;border-bottom:0.5px solid var(--border);}
-.tr-food-block:last-child{border-bottom:none;}
-.tr-food-label{font-size:14px;font-weight:600;color:var(--text3);margin-bottom:10px;}
-.tr-textarea{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:14px 16px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;resize:none;min-height:56px;}
-.tr-textarea::placeholder{color:var(--text3);}
-.tr-textarea:focus{background:var(--surface3);}
-.save-indicator{text-align:center;font-size:11px;color:var(--text3);padding:2px;margin:0;}
+.date-pill{flex:1;min-width:44px;text-align:center;padding:8px 0;border-radius:14px;
+  background:transparent;color:var(--text2);font-size:11px;}
+.date-pill.active{background:var(--text);color:var(--bg);}
+.summary-card{background:var(--surface);border-radius:var(--radius-card);padding:18px;margin-top:14px;}
+.summary-title{display:none;}
+.ring-row{display:flex;gap:14px;align-items:center;}
+.ring-bars{flex:1;display:flex;flex-direction:column;gap:11px;}
+.bar-hd{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
+.bar-hd span:first-child{color:var(--text2);}
+.bar-track{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;width:0;border-radius:3px;transition:width .4s;}
+.summary-metrics{display:flex;gap:8px;margin-top:14px;}
+.summary-metric{flex:1;background:var(--surface2);border-radius:14px;padding:10px;text-align:center;}
+.summary-value{font-size:15px;font-weight:600;}
+.summary-label{font-size:10px;color:var(--text3);margin-top:2px;}
+.summary-bottom-item{font-size:11px;color:var(--text3);}
+.save-indicator{font-size:11px;color:var(--text3);text-align:center;padding:8px 0 0;}
+.water-row{display:flex;gap:8px;margin-top:12px;}
+.water-chip{flex:1;padding:11px;border-radius:16px;background:var(--surface);color:var(--water);
+  font-size:12px;font-weight:600;text-align:center;}
+.tr-section{background:var(--surface);border-radius:var(--radius-card);margin-top:12px;overflow:hidden;}
+.tr-section-hd{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;padding:16px 16px 4px;}
+.tr-row{display:flex;align-items:center;gap:12px;padding:13px 16px;}
+.tr-label{flex:1;font-size:14px;}
+.tr-input{background:var(--surface2);border:none;border-radius:12px;padding:10px 13px;font-size:14px;
+  outline:none;text-align:right;width:100px;}
+.tr-unit{font-size:12px;color:var(--text3);min-width:22px;}
+.tr-textarea{width:100%;background:var(--surface2);border:none;border-radius:14px;padding:13px;
+  font-size:14px;outline:none;min-height:88px;resize:none;}
+.tr-food-block{padding:14px 16px;border-top:0.5px solid var(--border);}
+.tr-food-head{display:flex;align-items:center;gap:12px;}
+.tr-food-ico{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.tr-food-ico svg{width:18px;height:18px;}
+.tr-food-ico.b{background:var(--sand);color:var(--on-sand);}
+.tr-food-ico.l{background:var(--peach);color:var(--on-peach);}
+.tr-food-ico.d{background:var(--sage);color:var(--on-sage);}
+.tr-food-ico.s{background:var(--surface2);color:var(--text2);}
+.tr-food-label{font-size:14px;font-weight:600;}
+.food-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);
+  border-radius:12px;margin-top:6px;}
+.food-item-name{flex:1;font-size:13px;}
+.food-item-nut{font-size:11px;color:var(--text3);}
+.food-item-del{width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--text3);
+  font-size:11px;display:flex;align-items:center;justify-content:center;}
+.food-add-btn{width:100%;margin-top:10px;padding:11px;border-radius:14px;background:var(--surface2);
+  color:var(--clay);font-size:13px;font-weight:600;}
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.goal-lbl{font-size:11px;color:var(--text3);margin-bottom:5px;}
+.goal-grid .tr-input{width:100%;text-align:left;}
+select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:none;}
 
-/* ── BRING MODAL ── */
-#bring-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
-#bring-modal.open{opacity:1;pointer-events:all;}
-.bring-sheet{background:var(--surface);border-radius:28px 28px 0 0;width:100%;max-width:540px;padding:20px 20px calc(20px + var(--safe-bottom));animation:slideUp 0.3s cubic-bezier(.4,0,.2,1);}
-@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-.bring-handle{width:36px;height:4px;background:var(--surface3);border-radius:2px;margin:0 auto 18px;}
-.bring-title{font-size:22px;font-weight:700;margin-bottom:16px;}
-.bring-items{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:220px;overflow-y:auto;}
-.bring-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border-radius:14px;}
-.bring-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--surface3);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.bring-check.on{background:var(--green);border-color:var(--green);}
-.bring-check.on::after{content:'✓';color:white;font-size:14px;font-weight:700;}
-.bring-item-input{font-size:17px;flex:1;background:none;border:none;outline:none;font-family:'Inter',sans-serif;color:var(--text);}
-.bring-item-del{color:var(--text3);font-size:18px;cursor:pointer;padding:4px 8px;}
-.bring-add-row{display:flex;gap:8px;margin-bottom:14px;}
-.bring-add-input{flex:1;background:var(--surface2);border:none;border-radius:12px;padding:14px 16px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);outline:none;}
-.bring-add-plus{padding:14px 20px;border-radius:12px;background:var(--green);color:white;border:none;font-size:22px;font-weight:700;cursor:pointer;}
-.bring-confirm{width:100%;padding:18px;border-radius:16px;background:var(--green);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
-.bring-cancel{width:100%;padding:16px;border-radius:16px;background:var(--surface2);color:var(--text2);border:none;font-size:16px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;}
+/* ── SETTINGS ── */
+.card{background:var(--surface);border-radius:var(--radius-card);overflow:hidden;}
+.card-row{display:flex;align-items:center;gap:12px;padding:14px 16px;}
+.card-row + .card-row{border-top:0.5px solid var(--border);}
+.card-row-icon{width:20px;display:flex;justify-content:center;color:var(--text2);}
+.card-row-icon svg{width:18px;height:18px;}
+.card-row-label{flex:1;font-size:14px;}
+.set-av{width:56px;height:56px;border-radius:50%;background:var(--peach);color:var(--on-peach);
+  display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;overflow:hidden;}
+.set-av img{width:100%;height:100%;object-fit:cover;}
+.mode-row{display:flex;gap:10px;}
+.modebtn{flex:1;}
+.mode-prev{height:64px;border-radius:16px;padding:9px;border:2px solid transparent;overflow:hidden;}
+.mode-prev .l1,.mode-prev .l2{height:7px;border-radius:4px;}
+.mode-prev .l2{margin-top:6px;}
+.mode-prev.day{background:#EDE7DC;}
+.mode-prev.day .l1{background:#D9603C;width:60%;} .mode-prev.day .l2{background:#E4DCCE;width:85%;}
+.mode-prev.night{background:#191410;}
+.mode-prev.night .l1{background:#E9A23B;width:60%;} .mode-prev.night .l2{background:#3A3028;width:85%;}
+.mode-prev.auto{display:flex;padding:0;}
+.mode-prev.auto > div{flex:1;padding:9px;}
+.mode-prev.auto .a{background:#EDE7DC;} .mode-prev.auto .b{background:#191410;}
+.modebtn span{display:block;font-size:11px;text-align:center;color:var(--text2);margin-top:6px;}
+.modebtn.on .mode-prev{border-color:var(--clay);}
+.modebtn.on span{color:var(--clay);font-weight:600;}
+.modebtn svg{display:none;}
+.section-hd{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;margin:22px 0 10px;}
+.set-input{background:var(--surface2);border:none;border-radius:12px;padding:10px 14px;font-size:14px;
+  outline:none;text-align:right;width:150px;}
+.danger{color:var(--red);}
 
-/* ── ING MODAL ── */
-#ing-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
-#ing-modal.open{opacity:1;pointer-events:all;}
-
-/* ── FAVS ── */
-.fav-card{background:var(--surface);border-radius:var(--radius);margin:0 16px 10px;overflow:hidden;}
-.fav-card-top{display:flex;align-items:center;padding:16px 18px;gap:14px;}
-.fav-emoji-big{font-size:32px;}
-.fav-info{flex:1;}
-.fav-name-big{font-size:18px;font-weight:600;}
-.fav-type-small{font-size:14px;color:var(--text3);margin-top:2px;}
-.fav-del-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,69,58,0.12);border:none;color:var(--red);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.fav-ings{padding:0 18px 14px;display:flex;flex-wrap:wrap;gap:6px;}
-.fav-ing-tag{padding:6px 14px;background:var(--surface2);border-radius:20px;font-size:14px;color:var(--text2);}
-.fav-ing-empty{font-size:14px;color:var(--text3);font-style:italic;}
-.fav-btns{display:flex;gap:8px;padding:0 18px 16px;}
-.fav-edit-btn{flex:1;padding:12px;border-radius:12px;background:var(--surface2);border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--blue);}
-.fav-bring-btn{flex:1;padding:12px;border-radius:12px;background:rgba(48,209,88,0.12);border:1px solid rgba(48,209,88,0.2);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--green);}
-.add-fav-card{background:var(--surface);border-radius:var(--radius);margin:0 16px 20px;padding:20px;}
-.add-fav-input{width:100%;background:var(--surface2);border:none;border-radius:12px;padding:16px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;margin-bottom:12px;}
-.add-fav-types{display:flex;gap:8px;margin-bottom:14px;}
-.type-pill{flex:1;padding:12px 6px;border-radius:12px;border:2px solid var(--surface3);background:var(--surface2);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-align:center;color:var(--text2);}
-.type-pill.sel{border-color:var(--blue);background:rgba(0,122,255,0.15);color:var(--blue);}
-.add-fav-submit{width:100%;padding:16px;border-radius:14px;background:var(--blue);color:white;border:none;font-size:17px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:calc(100px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:var(--surface2);color:var(--text);padding:12px 22px;border-radius:22px;font-size:15px;font-weight:500;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;border:0.5px solid var(--border);}
-.toast.show{opacity:1;}
-
-/* ── DROPDOWN ── */
+/* ── MODALS ── */
+#edit-modal,#food-modal{position:fixed;inset:0;z-index:400;background:var(--bg);
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;visibility:hidden;}
+#edit-modal.open{transform:translateY(0);visibility:visible;}
+.modal-header{display:flex;align-items:center;gap:12px;padding:calc(16px + var(--safe-top)) 18px 12px;
+  border-bottom:0.5px solid var(--border);flex-shrink:0;}
+.modal-close{width:34px;height:34px;border-radius:50%;background:var(--surface);color:var(--text2);font-size:15px;}
+.modal-title{flex:1;font-size:17px;font-weight:600;}
+.modal-save-status{font-size:13px;color:var(--text3);}
+.modal-tabs{display:flex;gap:8px;padding:14px 18px;flex-shrink:0;}
+.modal-tabs button{flex:1;padding:11px;border-radius:14px;background:var(--surface);
+  font-size:13.5px;font-weight:500;color:var(--text2);}
+.modal-section-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);font-weight:600;}
 .meal-input-wrap{position:relative;}
-.meal-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface2);border-radius:16px;overflow:hidden;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.4);display:none;max-height:240px;overflow-y:auto;}
+.modal-input{width:100%;background:var(--surface);border:none;border-radius:16px;padding:15px 17px;
+  font-size:15px;outline:none;}
+.meal-dropdown{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);
+  border-radius:16px;overflow:hidden;max-height:230px;overflow-y:auto;z-index:10;
+  box-shadow:0 8px 24px rgba(0,0,0,0.14);}
 .meal-dropdown.open{display:block;}
-.meal-dropdown-item{padding:14px 18px;font-size:17px;color:var(--text);cursor:pointer;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;}
-.meal-dropdown-item:last-child{border-bottom:none;}
-.meal-dropdown-item:active{background:rgba(0,122,255,0.2);}
-.food-add-btn{width:100%;padding:12px;border-radius:12px;background:rgba(0,122,255,0.1);border:1.5px dashed rgba(0,122,255,0.3);color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
-.food-item{display:flex;align-items:center;padding:10px 12px;background:var(--surface2);border-radius:12px;gap:10px;}
-.food-item-name{flex:1;font-size:clamp(14px,1.8vw,24px);font-weight:500;}
-.food-item-nut{font-size:12px;color:var(--orange);flex-shrink:0;}
-.food-item-del{color:var(--text3);font-size:16px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
-.food-search-result{display:flex;flex-direction:column;padding:14px 18px;border-bottom:0.5px solid var(--border);cursor:pointer;gap:3px;}
-.food-search-result:active{background:rgba(0,122,255,0.1);}
-.food-result-name{font-size:clamp(15px,2vw,26px);font-weight:500;}
-.food-result-brand{font-size:clamp(12px,1.5vw,20px);color:var(--text3);}
-.food-result-nut{font-size:clamp(12px,1.5vw,20px);color:var(--orange);font-weight:600;}
+.meal-dropdown-item{padding:13px 16px;font-size:14px;display:flex;gap:9px;align-items:center;}
+.meal-dropdown-item:active{background:var(--surface2);}
+.bring-btn{width:100%;padding:14px;border-radius:var(--radius-pill);background:var(--sage);
+  color:var(--on-sage);font-size:14px;font-weight:600;}
+#bring-modal,#ing-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.45);
+  display:none;align-items:flex-end;}
+#bring-modal.open,#ing-modal.open{display:flex;}
+.bring-sheet{width:100%;max-width:480px;margin:0 auto;background:var(--bg);
+  border-radius:26px 26px 0 0;padding:12px 18px calc(20px + var(--safe-bottom));max-height:86vh;overflow-y:auto;}
+.bring-handle{width:38px;height:4px;border-radius:2px;background:var(--surface3);margin:0 auto 14px;}
+.bring-title{font-size:17px;font-weight:600;margin-bottom:14px;}
+.bring-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bring-check{width:24px;height:24px;border-radius:8px;background:var(--surface2);flex-shrink:0;}
+.bring-check.on{background:var(--moss-soft);}
+.bring-item-input{flex:1;background:var(--surface);border:none;border-radius:12px;padding:11px 13px;
+  font-size:14px;outline:none;}
+.bring-item-del{width:26px;height:26px;border-radius:50%;background:var(--surface2);color:var(--text3);
+  font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bring-add-row{display:flex;gap:8px;margin-top:12px;}
+.bring-add-input{flex:1;background:var(--surface);border:none;border-radius:12px;padding:12px 14px;
+  font-size:14px;outline:none;}
+.bring-add-plus{width:44px;border-radius:12px;background:var(--surface);font-size:19px;color:var(--clay);}
+.bring-confirm{width:100%;margin-top:14px;padding:15px;border-radius:var(--radius-pill);
+  background:var(--text);color:var(--bg);font-size:14px;font-weight:600;}
+.bring-cancel{width:100%;margin-top:8px;padding:13px;font-size:13px;color:var(--text3);}
+.food-search-result{padding:14px 18px;border-bottom:0.5px solid var(--border);}
+.food-search-result:active{background:var(--surface);}
+.food-result-name{font-size:14px;font-weight:500;}
+.food-result-nut{font-size:11px;color:var(--text3);margin-top:3px;}
+.toast{position:fixed;bottom:calc(96px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--text);color:var(--bg);padding:12px 20px;border-radius:var(--radius-pill);
+  font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .25s;z-index:999;max-width:88vw;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media (min-width:700px){
+  .pg-title{font-size:28px;}
+  .ml-tile{height:112px;}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-page">
-  <svg class="hs-mark" width="128" height="128" viewBox="0 0 126 126" fill="none">
-    <circle class="ring r3" cx="63" cy="63" r="54" stroke="var(--hs-r3)" stroke-width="3"/>
-    <circle class="ring r2" cx="63" cy="63" r="40" stroke="var(--hs-r2)" stroke-width="3.4"/>
-    <circle class="ring r1" cx="63" cy="63" r="26" stroke="var(--clay)" stroke-width="3"/>
-    <g class="spin">
-      <path class="tick" d="M63 4v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
-      <path class="tick" d="M63 111v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
-      <path class="tick" d="M4 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
-      <path class="tick" d="M111 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
-      <circle class="dot" cx="21" cy="21" r="3.6" fill="var(--amber)"/>
-      <circle class="dot" cx="105" cy="105" r="3.6" fill="var(--amber)"/>
-    </g>
-    <circle class="core" cx="63" cy="63" r="13" fill="var(--amber)"/>
-  </svg>
-  <div class="login-logo">ALFIE</div>
-  <div class="login-sub">Home Assistant</div>
-  <div class="login-full">Autonomous Living Framework Intelligence Engine</div>
-  <button id="btn-login">
-    <span><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg></span>
-    Mit Google anmelden
-  </button>
-</div>
-
-<!-- PIN SCREEN -->
-<div id="pin-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:700;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px;">
-  <div style="font-size:32px;font-weight:600;color:var(--text);letter-spacing:7px;padding-left:7px;">ALFIE</div>
-  <div style="font-size:15px;color:var(--text2);" id="pin-screen-sub">Wer bist du?</div>
-  <div id="user-select" style="display:flex;gap:14px;width:100%;max-width:360px;">
-    <!-- Sergio -->
-    <button onclick="selectUser('sergio')" style="flex:1;padding:24px 16px;border-radius:22px;background:var(--surface);border:1.5px solid var(--border);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
-      <div id="pic-sergio" style="width:72px;height:72px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(0,122,255,0.5);">👨</div>
-      Sérgio
-      <div onclick="event.stopPropagation();document.getElementById('upload-sergio').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">Foto</div>
-      <input type="file" id="upload-sergio" accept="image/*" style="display:none" onchange="uploadPic('sergio',this)">
+<!-- ══ LOGIN ══ -->
+<div class="screen on" id="login-page">
+  <div class="lg-wrap">
+    <svg class="hs-mark" width="96" height="96" viewBox="0 0 126 126" fill="none">
+      <circle class="ring r3" cx="63" cy="63" r="54" stroke="var(--peach)" stroke-width="3"/>
+      <circle class="ring r2" cx="63" cy="63" r="40" stroke="var(--sage)" stroke-width="3.4"/>
+      <circle class="ring r1" cx="63" cy="63" r="26" stroke="var(--clay)" stroke-width="3"/>
+      <circle class="core" cx="63" cy="63" r="13" fill="var(--amber)"/>
+    </svg>
+    <div class="lg-word">ALFIE</div>
+    <div class="lg-sub">Home Assistant</div>
+    <button class="lg-btn" id="btn-login">
+      <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg>
+      Mit Google anmelden
     </button>
-    <!-- Miriam -->
-    <button onclick="selectUser('miriam')" style="flex:1;padding:24px 16px;border-radius:22px;background:var(--surface);border:1.5px solid var(--border););color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
-      <div id="pic-miriam" style="width:72px;height:72px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(191,90,242,0.5);">👩</div>
-      Miriam
-      <div onclick="event.stopPropagation();document.getElementById('upload-miriam').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">Foto</div>
-      <input type="file" id="upload-miriam" accept="image/*" style="display:none" onchange="uploadPic('miriam',this)">
-    </button>
-  </div>
-  <!-- PIN entry -->
-  <div id="pin-entry" style="display:none;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:320px;">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div id="pin-pic" style="width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:28px;"></div>
-      <div id="pin-name" style="font-size:22px;font-weight:600;color:var(--text);"></div>
-    </div>
-    <div id="pin-dots" style="display:flex;gap:14px;"></div>
-    <input id="pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10"
-      style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:16px;padding:18px;font-size:28px;color:white;text-align:center;outline:none;font-family:Inter,sans-serif;letter-spacing:8px;"
-      placeholder="••••" oninput="onPinInput(this.value)" onkeydown="if(event.key==='Enter')checkPin()">
-    <div id="pin-error" style="font-size:14px;color:var(--red);height:18px;"></div>
-    <div id="pin-switch" onclick="switchUser()" style="display:none;font-size:13.5px;color:var(--text2);padding:10px 16px;cursor:pointer;">Anderer Benutzer</div>
-    <button onclick="checkPin()" style="width:100%;padding:16px;border-radius:16px;background:var(--blue);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Weiter →</button>
-    <button onclick="resetPin()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;font-family:Inter,sans-serif;">← Zurück</button>
+    <div class="lg-full">Autonomous Living Framework Intelligence Engine</div>
   </div>
 </div>
 
-<style>
-.pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.15s;}
-.pin-dot.filled{background:white;}
-</style>
-<div id="home-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:600;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
+<!-- ══ PIN ══ -->
+<div class="screen" id="pin-screen">
+  <div class="screen-inner" style="justify-content:center;">
+    <div class="pin-word">ALFIE</div>
+    <div class="pin-q" id="pin-screen-sub">Wer bist du?</div>
 
-  <svg class="hs-mark" width="118" height="118" viewBox="0 0 126 126" fill="none">
-    <circle class="ring r3" cx="63" cy="63" r="54" stroke="var(--hs-r3)" stroke-width="3"/>
-    <circle class="ring r2" cx="63" cy="63" r="40" stroke="var(--hs-r2)" stroke-width="3.4"/>
-    <circle class="ring r1" cx="63" cy="63" r="26" stroke="var(--clay)" stroke-width="3"/>
-    <g class="spin">
-      <path class="tick" d="M63 4v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
-      <path class="tick" d="M63 111v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
-      <path class="tick" d="M4 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
-      <path class="tick" d="M111 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
-      <circle class="dot" cx="21" cy="21" r="3.6" fill="var(--amber)"/>
-      <circle class="dot" cx="105" cy="105" r="3.6" fill="var(--amber)"/>
-    </g>
-    <circle class="core" cx="63" cy="63" r="13" fill="var(--amber)"/>
-  </svg>
-
-  <div class="hs-word">ALFIE</div>
-  <div class="hs-greet" id="hs-greet">Willkommen</div>
-
-  <div class="hs-grid">
-    <div class="hs-card" onclick="enterApp('meals')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M6 3v8M4 3v4M8 3v4M6 11v10"/><path d="M17 3c-2 2-2 6 0 8v10"/></svg>
-      <div class="hs-n">Meals</div>
-      <div class="hs-s">Wochenplan &amp; Favoriten</div>
+    <div id="user-select">
+      <button class="usr-card" onclick="selectUser('sergio')">
+        <div class="usr-av a" id="pic-sergio">S</div>
+        <div class="usr-n">Sérgio</div>
+        <div class="usr-foto" onclick="event.stopPropagation();document.getElementById('upload-sergio').click()">Foto</div>
+        <input type="file" id="upload-sergio" accept="image/*" style="display:none" onchange="uploadPic('sergio',this)">
+      </button>
+      <button class="usr-card" onclick="selectUser('miriam')">
+        <div class="usr-av b" id="pic-miriam">M</div>
+        <div class="usr-n">Miriam</div>
+        <div class="usr-foto" onclick="event.stopPropagation();document.getElementById('upload-miriam').click()">Foto</div>
+        <input type="file" id="upload-miriam" accept="image/*" style="display:none" onchange="uploadPic('miriam',this)">
+      </button>
     </div>
 
-    <div class="hs-card" onclick="enterApp('lights')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 3a6 6 0 0 0-3 11v3h6v-3a6 6 0 0 0-3-11z"/><path d="M10 20h4"/></svg>
-      <div class="hs-n">Control</div>
-      <div class="hs-s">Licht &amp; Ger\u00e4te</div>
-    </div>
-
-    <div class="hs-card" id="home-tracker-card" onclick="enterApp('tracker')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--moss)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 20V11M10 20V4M16 20v-7M22 20v-4"/></svg>
-      <div class="hs-n">Tracker</div>
-      <div class="hs-s">Tag &amp; Woche</div>
-    </div>
-
-    <div class="hs-card" onclick="enterApp('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
-      <div class="hs-n">Einstellungen</div>
-      <div class="hs-s">Konto &amp; Sync</div>
+    <div id="pin-entry">
+      <div class="pin-av" id="pin-pic"></div>
+      <div class="pin-name" id="pin-name"></div>
+      <div id="pin-dots"></div>
+      <div class="keypad">
+        <button class="key" onclick="pinKey('1')">1</button>
+        <button class="key" onclick="pinKey('2')">2</button>
+        <button class="key" onclick="pinKey('3')">3</button>
+        <button class="key" onclick="pinKey('4')">4</button>
+        <button class="key" onclick="pinKey('5')">5</button>
+        <button class="key" onclick="pinKey('6')">6</button>
+        <button class="key" onclick="pinKey('7')">7</button>
+        <button class="key" onclick="pinKey('8')">8</button>
+        <button class="key" onclick="pinKey('9')">9</button>
+        <div class="key blank"></div>
+        <button class="key" onclick="pinKey('0')">0</button>
+        <button class="key" onclick="pinKey('⌫')" aria-label="Löschen">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6H9l-5 6 5 6h11a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1z"/><path d="M17 9l-5 6M12 9l5 6"/></svg>
+        </button>
+      </div>
+      <div class="pin-err" id="pin-error"></div>
+      <div class="pin-switch" id="pin-switch" onclick="switchUser()" style="display:none;">Anderer Benutzer</div>
     </div>
   </div>
-
 </div>
 
-<div id="app" style="display:none;">
+<!-- ══ HOME ══ -->
+<div class="screen" id="home-screen">
+  <div class="screen-inner">
+    <div class="hm-top">
+      <div>
+        <div class="hm-date" id="hm-date">—</div>
+        <div class="hm-hi" id="hs-greet">Willkommen</div>
+      </div>
+      <svg class="hs-mark" width="44" height="44" viewBox="0 0 126 126" fill="none">
+        <circle class="ring r2" cx="63" cy="63" r="50" stroke="var(--sage)" stroke-width="7"/>
+        <circle class="ring r1" cx="63" cy="63" r="28" stroke="var(--clay)" stroke-width="7"/>
+        <circle class="core" cx="63" cy="63" r="12" fill="var(--amber)"/>
+      </svg>
+    </div>
+
+    <div class="hm-today">
+      <div class="hm-lbl">Heute</div>
+      <div id="hm-today-lines"></div>
+    </div>
+
+    <div class="hm-grid">
+      <div class="hm-card peach" onclick="enterApp('meals')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v8M4 3v4M8 3v4M6 11v10"/><path d="M17 3c-2 2-2 6 0 8v10"/></svg>
+        <div class="hm-n">Meals</div>
+        <div class="hm-s">Wochenplan</div>
+      </div>
+      <div class="hm-card sage" onclick="enterApp('lights')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-3 11v3h6v-3a6 6 0 0 0-3-11z"/><path d="M10 20h4"/></svg>
+        <div class="hm-n">Control</div>
+        <div class="hm-s">Licht und Geräte</div>
+      </div>
+      <div class="hm-card sand" id="home-tracker-card" onclick="enterApp('tracker')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11M10 20V4M16 20v-7M22 20v-4"/></svg>
+        <div class="hm-n">Tracker</div>
+        <div class="hm-s">Tag und Woche</div>
+      </div>
+      <div class="hm-card plain" onclick="enterApp('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+        <div class="hm-n">Einstellungen</div>
+        <div class="hm-s">Konto und Sync</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
   <div id="app-content">
 
-    <!-- MEALS PAGE -->
+    <!-- MEALS -->
     <div class="page active" id="page-meals">
-      <div class="nav-header">
-        <div class="nav-row">
+      <div class="pg-head">
+        <div class="pg-row">
           <div>
-            <div class="nav-title">Mahlzeiten</div>
-            <div class="nav-subtitle" id="week-label">Laden...</div>
+            <div class="pg-title">Mahlzeiten</div>
+            <div class="pg-sub" id="week-label">Laden…</div>
           </div>
           <div style="display:flex;gap:8px;">
-            <button class="pill-btn pill-surface" onclick="getMobileSuggestions()" style="padding:10px 16px;font-size:14px;"><svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></button>
-            <button class="pill-btn pill-surface" onclick="copyLastWeek()" style="padding:10px 16px;font-size:14px;"><svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg></button>
+            <button class="icon-btn" onclick="getMobileSuggestions()" aria-label="Vorschläge"><svg viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></button>
+            <button class="icon-btn" onclick="copyLastWeek()" aria-label="Vorwoche kopieren"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg></button>
           </div>
         </div>
-        <!-- Week selector -->
+      </div>
+      <div class="pg">
         <div style="display:flex;align-items:center;gap:8px;margin-top:14px;">
-          <button onclick="changeWeek(-1)" style="background:var(--surface2);border:none;border-radius:12px;padding:8px 14px;color:var(--text);font-size:18px;cursor:pointer;">‹</button>
-          <div id="week-strip" style="display:flex;gap:6px;overflow-x:auto;flex:1;scrollbar-width:none;"></div>
-          <button onclick="changeWeek(1)" style="background:var(--surface2);border:none;border-radius:12px;padding:8px 14px;color:var(--text);font-size:18px;cursor:pointer;">›</button>
+          <button class="icon-btn" onclick="changeWeek(-1)" aria-label="Vorherige Woche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div id="week-strip"></div>
+          <button class="icon-btn" onclick="changeWeek(1)" aria-label="Nächste Woche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
         </div>
-        <div style="display:flex;gap:8px;margin-top:10px;">
-          <button onclick="switchMealTab('week',this)" id="meal-tab-week" class="pill-btn pill-blue" style="font-size:14px;">Woche</button>
-          <button onclick="switchMealTab('favs',this)" id="meal-tab-favs" class="pill-btn pill-surface" style="font-size:14px;">Favoriten</button>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onclick="switchMealTab('week',this)" id="meal-tab-week" class="pill-btn pill-blue">Woche</button>
+          <button onclick="switchMealTab('favs',this)" id="meal-tab-favs" class="pill-btn pill-surface">Favoriten</button>
         </div>
+        <div id="days-list"></div>
+        <div id="favs-list" style="display:none;"></div>
       </div>
-      <div id="days-list"></div>
-      <div id="favs-list" style="display:none;"></div>
     </div>
 
-    <!-- LIGHTS PAGE -->
+    <!-- LIGHTS -->
     <div class="page" id="page-lights">
-      <div class="nav-header">
-        <div class="nav-title">Lichter</div>
-        <div class="nav-subtitle">IKEA Dirigera</div>
+      <div class="pg-head">
+        <div class="pg-row">
+          <div>
+            <div class="pg-title">Control</div>
+            <div class="pg-sub">IKEA Dirigera</div>
+          </div>
+        </div>
       </div>
-      <div id="lights-list"></div>
+      <div class="pg"><div id="lights-list"></div></div>
     </div>
 
-    <!-- TRACKER PAGE -->
+    <!-- TRACKER -->
     <div class="page" id="page-tracker">
-      <div class="nav-header">
-        <div class="nav-title">Tracker</div>
-        <div class="nav-subtitle" id="tracker-date-label">Heute</div>
+      <div class="pg-head">
+        <div class="pg-title">Tracker</div>
+        <div class="pg-sub" id="tracker-date-label">Heute</div>
       </div>
-      <div class="tracker-date-row" id="tracker-dates"></div>
-      <!-- Summary -->
-      <div class="summary-card" id="summary-card">
-        <div class="summary-title">Übersicht</div>
-        <div class="summary-metrics">
-          <div class="summary-metric"><div class="summary-value" id="sum-weight" style="color:var(--purple);">—</div><div class="summary-label">kg</div></div>
-          <div class="summary-metric"><div class="summary-value" id="sum-water" style="color:var(--blue);">—</div><div class="summary-label">L Wasser</div></div>
-          <div class="summary-metric"><div class="summary-value" id="sum-steps" style="color:var(--green);">—</div><div class="summary-label">Schritte</div></div>
-        </div>
-        <!-- Calorie & Protein bars -->
-        <div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;flex-direction:column;gap:10px;">
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-              <span style="font-size:13px;color:var(--text2);">🔥 Kalorien</span>
-              <span style="font-size:13px;font-weight:600;color:var(--orange);" id="sum-kcal">0 / 1800 kcal</span>
-            </div>
-            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
-              <div id="kcal-bar" style="height:100%;width:0%;background:var(--orange);border-radius:3px;transition:width 0.4s;"></div>
-            </div>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-              <span style="font-size:13px;color:var(--text2);">💪 Protein</span>
-              <span style="font-size:13px;font-weight:600;color:var(--blue);" id="sum-protein">0 / 120g</span>
-            </div>
-            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
-              <div id="protein-bar" style="height:100%;width:0%;background:var(--blue);border-radius:3px;transition:width 0.4s;"></div>
-            </div>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-              <span style="font-size:13px;color:var(--text2);">👟 Schritte</span>
-              <span style="font-size:13px;font-weight:600;color:var(--green);" id="sum-steps-bar">0 / 10000</span>
-            </div>
-            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
-              <div id="steps-bar" style="height:100%;width:0%;background:var(--green);border-radius:3px;transition:width 0.4s;"></div>
+      <div class="pg">
+        <div class="tracker-date-row" id="tracker-dates"></div>
+
+        <div class="summary-card" id="summary-card">
+          <div class="summary-title">Übersicht</div>
+          <div class="ring-row">
+            <svg width="92" height="92" viewBox="0 0 100 100" style="flex-shrink:0;">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="9"/>
+              <circle id="kcal-ring" cx="50" cy="50" r="40" fill="none" stroke="var(--clay)" stroke-width="9"
+                stroke-linecap="round" stroke-dasharray="0 251.3" transform="rotate(-90 50 50)"
+                style="transition:stroke-dasharray .4s;"/>
+              <text id="ring-val" x="50" y="48" text-anchor="middle" font-size="17" font-weight="600" fill="var(--text)" font-family="Outfit">0</text>
+              <text id="ring-goal" x="50" y="64" text-anchor="middle" font-size="10" fill="var(--text3)" font-family="Outfit">/ 1800</text>
+            </svg>
+            <div class="ring-bars">
+              <div>
+                <div class="bar-hd"><span>Protein</span><span id="sum-protein" style="color:var(--green);font-weight:600;">0 / 120g</span></div>
+                <div class="bar-track"><div class="bar-fill" id="protein-bar" style="background:var(--moss-soft);"></div></div>
+              </div>
+              <div>
+                <div class="bar-hd"><span>Wasser</span><span id="sum-water-bar" style="color:var(--water);font-weight:600;">0 / 2.5L</span></div>
+                <div class="bar-track"><div class="bar-fill" id="water-bar" style="background:var(--water);"></div></div>
+              </div>
+              <div>
+                <div class="bar-hd"><span>Schritte</span><span id="sum-steps-bar" style="color:var(--amber);font-weight:600;">0 / 10000</span></div>
+                <div class="bar-track"><div class="bar-fill" id="steps-bar" style="background:var(--amber);"></div></div>
+              </div>
             </div>
           </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-              <span style="font-size:13px;color:var(--text2);">💧 Wasser</span>
-              <span style="font-size:13px;font-weight:600;color:var(--blue);" id="sum-water-bar">0 / 2.5L</span>
-            </div>
-            <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
-              <div id="water-bar" style="height:100%;width:0%;background:var(--blue);border-radius:3px;transition:width 0.4s;"></div>
-            </div>
+          <div class="summary-metrics">
+            <div class="summary-metric"><div class="summary-value" id="sum-weight">—</div><div class="summary-label">kg</div></div>
+            <div class="summary-metric"><div class="summary-value" id="sum-steps">—</div><div class="summary-label">Schritte</div></div>
+            <div class="summary-metric"><div class="summary-value" id="sum-water">—</div><div class="summary-label">L Wasser</div></div>
           </div>
-          <div style="margin-top:4px;display:flex;justify-content:space-between;">
-            <div class="summary-bottom-item" id="sum-meals">🍽️ 0/3 Mahlzeiten</div>
-            <div class="summary-bottom-item" id="sum-activity">🏃 Keine Aktivität</div>
+          <div style="display:flex;justify-content:space-between;margin-top:12px;">
+            <div class="summary-bottom-item" id="sum-meals">0/3 Mahlzeiten</div>
+            <div class="summary-bottom-item" id="sum-activity">Keine Aktivität</div>
           </div>
+          <div style="display:none;"><span id="sum-kcal"></span><span id="kcal-bar"></span></div>
         </div>
-      </div>
-      <div class="save-indicator" id="save-indicator">✓ Alles gespeichert</div>
-      
-      <!-- Streaks & Achievements -->
-      <div id="streaks-container" style="margin:8px 16px 12px;"></div>
-      
-      <!-- Weekly Summary (Sundays only) -->
-      <div id="weekly-summary" style="margin:8px 16px 12px;display:none;"></div>
-      
-      <!-- Body -->
-      <div class="tr-section">
-        <div class="tr-section-hd">⚖️ Körper</div>
-        <div class="tr-row">
-          <div class="tr-label">Gewicht</div>
-          <input class="tr-input" id="tr-weight" type="number" step="0.1" placeholder="—" oninput="triggerAutosaveTracker();updateSummary()">
-          <div class="tr-unit">kg</div>
-        </div>
-        <div class="tr-row">
-          <div class="tr-label">Schritte</div>
-          <input class="tr-input" id="tr-steps" type="number" placeholder="—" oninput="triggerAutosaveTracker();updateStepBar();updateSummary()">
-          <div class="tr-unit">👟</div>
-        </div>
-      </div>
-      <div class="tr-section">
-        <div class="tr-section-hd">💧 Wasser</div>
-        <div class="tr-row">
-          <div class="tr-label">Getrunken</div>
-          <input class="tr-input" id="tr-water" type="number" step="0.1" placeholder="0" oninput="triggerAutosaveTracker();updateWaterBar();updateSummary()">
-          <div class="tr-unit">L</div>
-        </div>
+        <div class="save-indicator" id="save-indicator">Alles gespeichert</div>
+
+        <div id="streaks-container" style="margin-top:12px;"></div>
+        <div id="weekly-summary" style="margin-top:12px;display:none;"></div>
+
         <div class="water-row">
-          <button class="water-chip" onclick="addWater(0.25)">+0.25</button>
-          <button class="water-chip" onclick="addWater(0.5)">+0.5</button>
-          <button class="water-chip" onclick="addWater(1)">+1L</button>
-          <button class="water-chip" onclick="addWater(-0.25)" style="background:rgba(255,69,58,0.1);border-color:rgba(255,69,58,0.2);color:var(--red);">-0.25</button>
+          <button class="water-chip" onclick="addWater(0.25)">+0.25 L</button>
+          <button class="water-chip" onclick="addWater(0.5)">+0.5 L</button>
+          <button class="water-chip" onclick="addWater(1)">+1 L</button>
+          <button class="water-chip" onclick="addWater(-0.25)" style="color:var(--red);">−0.25</button>
         </div>
-      </div>
-      <div class="tr-section">
-        <div class="tr-section-hd">🍽️ Essen</div>
-        <!-- Breakfast -->
-        <div class="tr-food-block">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div class="tr-food-label" style="margin-bottom:0;">Frühstück</div>
-            <div id="nut-breakfast" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
-          </div>
-          <div id="food-list-breakfast" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
-          <button class="food-add-btn" onclick="openFoodSearch('breakfast')">+ Essen hinzufügen</button>
-        </div>
-        <!-- Lunch -->
-        <div class="tr-food-block">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div class="tr-food-label" style="margin-bottom:0;">🌤️ Mittagessen</div>
-            <div id="nut-lunch" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
-          </div>
-          <div id="food-list-lunch" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
-          <button class="food-add-btn" onclick="openFoodSearch('lunch')">+ Essen hinzufügen</button>
-        </div>
-        <!-- Dinner -->
-        <div class="tr-food-block">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div class="tr-food-label" style="margin-bottom:0;">Abendessen</div>
-            <div id="nut-dinner" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
-          </div>
-          <div id="food-list-dinner" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
-          <button class="food-add-btn" onclick="openFoodSearch('dinner')">+ Essen hinzufügen</button>
-        </div>
-        <!-- Snacks -->
-        <div class="tr-food-block">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div class="tr-food-label" style="margin-bottom:0;">🍪 Snacks</div>
-            <div id="nut-snacks" style="font-size:12px;color:var(--orange);font-weight:600;"></div>
-          </div>
-          <div id="food-list-snacks" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
-          <button class="food-add-btn" onclick="openFoodSearch('snacks')">+ Essen hinzufügen</button>
-        </div>
-        <!-- Goals -->
-        <div style="padding:14px 18px;border-top:0.5px solid var(--border);">
-          <div style="font-size:13px;color:var(--text3);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">🎯 Tagesziele</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div>
-              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">🔥 Kalorien</div>
-              <input type="number" id="goal-kcal" class="tr-input" style="width:100%;" placeholder="1800 kcal" oninput="updateNutritionBars();saveGoals()">
-            </div>
-            <div>
-              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">💪 Protein</div>
-              <input type="number" id="goal-protein" class="tr-input" style="width:100%;" placeholder="120 g" oninput="updateNutritionBars();saveGoals()">
-            </div>
-            <div>
-              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">👟 Schritte</div>
-              <input type="number" id="goal-steps" class="tr-input" style="width:100%;" placeholder="10000" oninput="updateStepBar();saveGoals()">
-            </div>
-            <div>
-              <div style="font-size:12px;color:var(--text3);margin-bottom:5px;">💧 Wasser</div>
-              <input type="number" id="goal-water" class="tr-input" style="width:100%;" placeholder="2.5 L" step="0.25" oninput="updateWaterBar();saveGoals()">
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Activity -->
-      <div class="tr-section">
-        <div class="tr-section-hd">🏃 Aktivität</div>
-        <div class="tr-food-block">
-          <div style="font-size:14px;font-weight:600;color:var(--text3);margin-bottom:10px;">Was hast du gemacht?</div>
-          <select id="tr-activity-name" class="tr-input" style="width:100%;margin-bottom:10px;appearance:none;-webkit-appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;"
-            oninput="triggerAutosaveTracker();if(this.value)document.getElementById('workout-duration-row').style.display='flex';else document.getElementById('workout-duration-row').style.display='none';">
-            <option value="">— Aktivität wählen —</option>
-            <optgroup label="🏃 Laufen & Gehen">
-              <option value="Laufen">🏃 Laufen</option>
-              <option value="Joggen">🏃 Joggen</option>
-              <option value="Spazieren">🚶 Spazieren</option>
-              <option value="Wandern">🥾 Wandern</option>
-              <option value="Nordic Walking">🚶 Nordic Walking</option>
-            </optgroup>
-            <optgroup label="🚴 Radfahren">
-              <option value="Velofahren">🚴 Velofahren</option>
-              <option value="E-Bike">⚡ E-Bike</option>
-              <option value="Spinning">🚴 Spinning</option>
-            </optgroup>
-            <optgroup label="💪 Kraft & Training">
-              <option value="Fitnessstudio">🏋️ Fitnessstudio</option>
-              <option value="Krafttraining">💪 Krafttraining</option>
-              <option value="Crossfit">🔥 Crossfit</option>
-              <option value="Heimtraining">🏠 Heimtraining</option>
-              <option value="Liegestütze">💪 Liegestütze</option>
-            </optgroup>
-            <optgroup label="🧘 Yoga & Entspannung">
-              <option value="Yoga">🧘 Yoga</option>
-              <option value="Pilates">🧘 Pilates</option>
-              <option value="Stretching">🤸 Stretching</option>
-              <option value="Meditation">🧠 Meditation</option>
-            </optgroup>
-            <optgroup label="🏊 Wasser">
-              <option value="Schwimmen">🏊 Schwimmen</option>
-              <option value="Wasserpolo">🤽 Wasserpolo</option>
-            </optgroup>
-            <optgroup label="⚽ Sport">
-              <option value="Fussball">⚽ Fussball</option>
-              <option value="Basketball">🏀 Basketball</option>
-              <option value="Tennis">🎾 Tennis</option>
-              <option value="Volleyball">🏐 Volleyball</option>
-              <option value="Badminton">🏸 Badminton</option>
-              <option value="Tischtennis">🏓 Tischtennis</option>
-            </optgroup>
-            <optgroup label="🥊 Kampfsport">
-              <option value="Boxen">🥊 Boxen</option>
-              <option value="Kampfsport">🥋 Kampfsport</option>
-            </optgroup>
-            <optgroup label="❄️ Winter">
-              <option value="Skifahren">⛷️ Skifahren</option>
-              <option value="Snowboard">🏂 Snowboard</option>
-            </optgroup>
-            <optgroup label="Sonstiges">
-              <option value="Tanzen">💃 Tanzen</option>
-              <option value="Klettern">🧗 Klettern</option>
-              <option value="Seilspringen">🪢 Seilspringen</option>
-              <option value="Anderes">Anderes</option>
-            </optgroup>
-          </select>
-          <div id="workout-duration-row" style="display:none;align-items:center;gap:10px;margin-top:4px;">
-            <div style="font-size:15px;color:var(--text2);flex:1;">⏱️ Wie lange?</div>
-            <input type="number" id="tr-activity-mins" class="tr-input" style="width:90px;" placeholder="Min" oninput="triggerAutosaveTracker()">
-            <div style="font-size:14px;color:var(--text3);">Min</div>
+        <div class="tr-section">
+          <div class="tr-section-hd">Körper</div>
+          <div class="tr-row">
+            <div class="tr-label">Gewicht</div>
+            <input class="tr-input" id="tr-weight" type="number" step="0.1" placeholder="—" oninput="triggerAutosaveTracker();updateSummary()">
+            <div class="tr-unit">kg</div>
           </div>
-          <div id="tr-activity-display" style="margin-top:8px;font-size:14px;color:var(--green);"></div>
+          <div class="tr-row" style="border-top:0.5px solid var(--border);">
+            <div class="tr-label">Schritte</div>
+            <input class="tr-input" id="tr-steps" type="number" placeholder="—" oninput="triggerAutosaveTracker();updateStepBar();updateSummary()">
+            <div class="tr-unit"></div>
+          </div>
+          <div class="tr-row" style="border-top:0.5px solid var(--border);">
+            <div class="tr-label">Wasser</div>
+            <input class="tr-input" id="tr-water" type="number" step="0.1" placeholder="0" oninput="triggerAutosaveTracker();updateWaterBar();updateSummary()">
+            <div class="tr-unit">L</div>
+          </div>
         </div>
-      </div>
 
-      <div class="tr-section" style="margin-bottom:30px;">
-        <div class="tr-section-hd">📝 Notizen</div>
-        <div class="tr-food-block">
-          <textarea class="tr-textarea" id="tr-notes" placeholder="Wie war dein Tag?" oninput="triggerAutosaveTracker()"></textarea>
+        <div class="tr-section">
+          <div class="tr-section-hd">Essen</div>
+          <div class="tr-food-block">
+            <div class="tr-food-head">
+              <div class="tr-food-ico b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg></div>
+              <div style="flex:1;"><div class="tr-food-label">Frühstück</div></div>
+              <div id="nut-breakfast" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+            </div>
+            <div id="food-list-breakfast"></div>
+            <button class="food-add-btn" onclick="openFoodSearch('breakfast')">+ Essen hinzufügen</button>
+          </div>
+          <div class="tr-food-block">
+            <div class="tr-food-head">
+              <div class="tr-food-ico l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg></div>
+              <div style="flex:1;"><div class="tr-food-label">Mittagessen</div></div>
+              <div id="nut-lunch" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+            </div>
+            <div id="food-list-lunch"></div>
+            <button class="food-add-btn" onclick="openFoodSearch('lunch')">+ Essen hinzufügen</button>
+          </div>
+          <div class="tr-food-block">
+            <div class="tr-food-head">
+              <div class="tr-food-ico d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></div>
+              <div style="flex:1;"><div class="tr-food-label">Abendessen</div></div>
+              <div id="nut-dinner" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+            </div>
+            <div id="food-list-dinner"></div>
+            <button class="food-add-btn" onclick="openFoodSearch('dinner')">+ Essen hinzufügen</button>
+          </div>
+          <div class="tr-food-block">
+            <div class="tr-food-head">
+              <div class="tr-food-ico s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="13" r="1"/><circle cx="11" cy="15" r="1"/></svg></div>
+              <div style="flex:1;"><div class="tr-food-label">Snacks</div></div>
+              <div id="nut-snacks" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+            </div>
+            <div id="food-list-snacks"></div>
+            <button class="food-add-btn" onclick="openFoodSearch('snacks')">+ Essen hinzufügen</button>
+          </div>
+          <div class="tr-food-block">
+            <div class="tr-section-hd" style="padding:0 0 10px;">Tagesziele</div>
+            <div class="goal-grid">
+              <div><div class="goal-lbl">Kalorien</div><input type="number" id="goal-kcal" class="tr-input" placeholder="1800" oninput="updateNutritionBars();saveGoals()"></div>
+              <div><div class="goal-lbl">Protein g</div><input type="number" id="goal-protein" class="tr-input" placeholder="120" oninput="updateNutritionBars();saveGoals()"></div>
+              <div><div class="goal-lbl">Schritte</div><input type="number" id="goal-steps" class="tr-input" placeholder="10000" oninput="updateStepBar();saveGoals()"></div>
+              <div><div class="goal-lbl">Wasser L</div><input type="number" id="goal-water" class="tr-input" placeholder="2.5" step="0.25" oninput="updateWaterBar();saveGoals()"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tr-section">
+          <div class="tr-section-hd">Aktivität</div>
+          <div class="tr-food-block" style="border-top:none;">
+            <select id="tr-activity-name" class="tr-input"
+              oninput="triggerAutosaveTracker();document.getElementById('workout-duration-row').style.display=this.value?'flex':'none';">
+              <option value="">— Aktivität wählen —</option>
+              <optgroup label="Laufen und Gehen">
+                <option value="Laufen">Laufen</option><option value="Joggen">Joggen</option>
+                <option value="Spazieren">Spazieren</option><option value="Wandern">Wandern</option>
+                <option value="Nordic Walking">Nordic Walking</option>
+              </optgroup>
+              <optgroup label="Radfahren">
+                <option value="Velofahren">Velofahren</option><option value="E-Bike">E-Bike</option>
+                <option value="Spinning">Spinning</option>
+              </optgroup>
+              <optgroup label="Kraft und Training">
+                <option value="Fitnessstudio">Fitnessstudio</option><option value="Krafttraining">Krafttraining</option>
+                <option value="Crossfit">Crossfit</option><option value="Heimtraining">Heimtraining</option>
+                <option value="Liegestütze">Liegestütze</option>
+              </optgroup>
+              <optgroup label="Yoga und Entspannung">
+                <option value="Yoga">Yoga</option><option value="Pilates">Pilates</option>
+                <option value="Stretching">Stretching</option><option value="Meditation">Meditation</option>
+              </optgroup>
+              <optgroup label="Wasser">
+                <option value="Schwimmen">Schwimmen</option><option value="Wasserpolo">Wasserpolo</option>
+              </optgroup>
+              <optgroup label="Sport">
+                <option value="Fussball">Fussball</option><option value="Basketball">Basketball</option>
+                <option value="Tennis">Tennis</option><option value="Volleyball">Volleyball</option>
+                <option value="Badminton">Badminton</option><option value="Tischtennis">Tischtennis</option>
+              </optgroup>
+              <optgroup label="Kampfsport">
+                <option value="Boxen">Boxen</option><option value="Kampfsport">Kampfsport</option>
+              </optgroup>
+              <optgroup label="Winter">
+                <option value="Skifahren">Skifahren</option><option value="Snowboard">Snowboard</option>
+              </optgroup>
+              <optgroup label="Sonstiges">
+                <option value="Tanzen">Tanzen</option><option value="Klettern">Klettern</option>
+                <option value="Seilspringen">Seilspringen</option><option value="Anderes">Anderes</option>
+              </optgroup>
+            </select>
+            <div id="workout-duration-row" style="display:none;align-items:center;gap:10px;margin-top:10px;">
+              <div style="font-size:14px;color:var(--text2);flex:1;">Wie lange?</div>
+              <input type="number" id="tr-activity-mins" class="tr-input" style="width:88px;" placeholder="Min" oninput="triggerAutosaveTracker()">
+              <div class="tr-unit">Min</div>
+            </div>
+            <div id="tr-activity-display" style="margin-top:8px;font-size:13px;color:var(--green);"></div>
+          </div>
+        </div>
+
+        <div class="tr-section" style="margin-bottom:12px;">
+          <div class="tr-section-hd">Notizen</div>
+          <div class="tr-food-block" style="border-top:none;">
+            <textarea class="tr-textarea" id="tr-notes" placeholder="Wie war dein Tag?" oninput="triggerAutosaveTracker()"></textarea>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- SETTINGS PAGE -->
+    <!-- SETTINGS -->
     <div class="page" id="page-settings">
-      <div class="nav-header">
-        <div class="nav-title">Einstellungen</div>
-        <div class="nav-subtitle" id="settings-username">—</div>
+      <div class="pg-head">
+        <div class="pg-title">Einstellungen</div>
+        <div class="pg-sub" id="settings-username">—</div>
       </div>
-
-      <!-- Profile -->
-      <div class="section-hd">Profil</div>
-      <div class="card">
-        <div class="card-row" style="flex-direction:column;align-items:center;gap:14px;padding:24px;">
-          <div id="settings-pic" style="width:90px;height:90px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden;border:2px solid var(--border);cursor:pointer;" onclick="document.getElementById('upload-settings').click()">👤</div>
-          <input type="file" id="upload-settings" accept="image/*" style="display:none" onchange="uploadSettingsPic(this)">
-          <button onclick="document.getElementById('upload-settings').click()" style="background:var(--surface2);border:none;border-radius:12px;padding:10px 20px;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Foto ändern</button>
+      <div class="pg">
+        <div class="section-hd">Profil</div>
+        <div class="card">
+          <div class="card-row">
+            <div class="set-av" id="settings-pic" onclick="document.getElementById('upload-settings').click()"></div>
+            <input type="file" id="upload-settings" accept="image/*" style="display:none" onchange="uploadSettingsPic(this)">
+            <div style="flex:1;">
+              <input id="settings-name-input" type="text" class="set-input"
+                style="text-align:left;width:100%;" placeholder="Dein Name" onchange="saveName(this.value)">
+              <div style="font-size:11px;color:var(--text3);margin-top:6px;padding-left:2px;">Tippe auf das Bild, um das Foto zu ändern</div>
+            </div>
+          </div>
         </div>
-        <div class="card-row" style="border-top:0.5px solid var(--border);">
-          <div style="font-size:16px;font-weight:500;flex:1;">Name</div>
-          <input id="settings-name-input" type="text" 
-            style="background:var(--surface2);border:none;border-radius:10px;padding:10px 14px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);outline:none;text-align:right;width:160px;"
-            placeholder="Dein Name" onchange="saveName(this.value)">
-        </div>
-      </div>
 
-      <!-- Change PIN -->
-      <div class="section-hd">Sicherheit</div>
-      <div class="card">
-        <div class="card-row" style="flex-direction:column;align-items:stretch;gap:12px;padding:18px;">
-          <div style="font-size:16px;font-weight:600;">PIN ändern</div>
-          <input type="number" id="new-pin" class="tr-input" style="width:100%;background:var(--surface2);" placeholder="Neuer PIN eingeben">
-          <input type="number" id="new-pin-confirm" class="tr-input" style="width:100%;background:var(--surface2);" placeholder="PIN bestätigen">
-          <button onclick="changePin()" style="width:100%;padding:14px;border-radius:14px;background:var(--blue);color:white;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">PIN speichern</button>
-          <div id="pin-change-msg" style="font-size:13px;text-align:center;height:18px;"></div>
-        </div>
-      </div>
-
-      <!-- Erscheinungsbild -->
-      <div class="section-hd">Erscheinungsbild</div>
-      <div class="card">
-        <div style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-          <div class="modebtn" id="mode-auto" onclick="setMode('auto')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none"/></svg>
-            <span>Automatisch</span></div>
+        <div class="section-hd">Erscheinungsbild</div>
+        <div class="mode-row">
           <div class="modebtn" id="mode-day" onclick="setMode('day')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
-            <span>Hell</span></div>
+            <div class="mode-prev day"><div class="l1"></div><div class="l2"></div></div>
+            <span>Hell</span>
+          </div>
           <div class="modebtn" id="mode-night" onclick="setMode('night')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
-            <span>Dunkel</span></div>
+            <div class="mode-prev night"><div class="l1"></div><div class="l2"></div></div>
+            <span>Dunkel</span>
+          </div>
+          <div class="modebtn" id="mode-auto" onclick="setMode('auto')">
+            <div class="mode-prev auto"><div class="a"><div class="l1" style="background:#D9603C;"></div><div class="l2" style="background:#E4DCCE;"></div></div><div class="b"><div class="l1" style="background:#E9A23B;"></div><div class="l2" style="background:#3A3028;"></div></div></div>
+            <span>Auto</span>
+          </div>
         </div>
-        <div style="padding:0 18px 18px;font-size:12.5px;color:var(--text3);line-height:1.5;">
-          Automatisch: hell von 07:00 bis 19:00, danach dunkel.
+        <div style="font-size:11.5px;color:var(--text3);margin-top:10px;line-height:1.5;">Auto: hell von 07:00 bis 19:00, danach dunkel.</div>
+
+        <div class="section-hd">Sicherheit</div>
+        <div class="card">
+          <div class="card-row" style="flex-direction:column;align-items:stretch;gap:10px;padding:16px;">
+            <div style="font-size:14px;font-weight:600;">PIN ändern</div>
+            <input type="number" id="new-pin" class="tr-input" style="width:100%;text-align:left;" placeholder="Neuer PIN">
+            <input type="number" id="new-pin-confirm" class="tr-input" style="width:100%;text-align:left;" placeholder="PIN bestätigen">
+            <button onclick="changePin()" style="width:100%;padding:13px;border-radius:var(--radius-pill);background:var(--text);color:var(--bg);font-size:14px;font-weight:600;">PIN speichern</button>
+            <div id="pin-change-msg" style="font-size:12px;text-align:center;height:16px;"></div>
+          </div>
+        </div>
+
+        <div class="section-hd">Konto</div>
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-row">
+            <div class="card-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+            <div class="card-row-label">Benachrichtigungen</div>
+            <button id="notif-toggle" onclick="toggleNotif()" style="width:46px;height:26px;border-radius:13px;position:relative;background:var(--surface3);transition:background .25s;">
+              <div id="notif-thumb" style="position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .25s;"></div>
+            </button>
+          </div>
+          <div class="card-row" onclick="switchUser2()">
+            <div class="card-row-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></div>
+            <div class="card-row-label danger">Benutzer wechseln</div>
+          </div>
         </div>
       </div>
-
-      <!-- Notifications -->
-      <div class="section-hd">Benachrichtigungen</div>
-      <div class="card" style="margin-bottom:30px;">
-        <div class="card-row">
-          <div class="card-row-icon">🔔</div>
-          <div class="card-row-label">Benachrichtigungen</div>
-          <button id="notif-toggle" onclick="toggleNotif()" style="width:52px;height:32px;border-radius:16px;border:none;cursor:pointer;position:relative;background:var(--surface3);transition:background 0.25s;" >
-            <div id="notif-thumb" style="position:absolute;width:26px;height:26px;border-radius:50%;background:white;top:3px;left:3px;transition:left 0.25s;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>
-          </button>
-        </div>
-      </div>
-
     </div>
 
   </div>
 
-  <!-- TAB BAR -->
-  <div id="tab-bar">
-    <button class="tab-btn" id="tab-home" onclick="goHome()">
-      <div class="tab-icon">
-        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="18" r="10" fill="none" stroke="#9B85FF" stroke-width="2"/>
-          <text x="20" y="22" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="currentColor">ALFIE</text>
-        </svg>
-      </div>
+  <!-- DOCK -->
+  <div id="dock">
+    <button class="tab-btn" id="tab-home" onclick="goHome()" aria-label="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
       <div class="tab-label">Home</div>
     </button>
-    <button class="tab-btn active" id="tab-meals" onclick="switchTab('meals')">
-      <div class="tab-icon">
-        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-          <line x1="13" y1="8" x2="13" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="10" y1="8" x2="10" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="16" y1="8" x2="16" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M10 15 Q13 18 16 15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <line x1="27" y1="8" x2="27" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M27 8 Q32 12 27 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <circle cx="20" cy="22" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
-          <circle cx="20" cy="22" r="4.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
-        </svg>
-      </div>
+    <button class="tab-btn active" id="tab-meals" onclick="switchTab('meals')" aria-label="Meals">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v8M4 3v4M8 3v4M6 11v10"/><path d="M17 3c-2 2-2 6 0 8v10"/></svg>
       <div class="tab-label">Meals</div>
     </button>
-    <button class="tab-btn" id="tab-lights" onclick="switchTab('lights')">
-      <div class="tab-icon">
-        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20 6 Q12 11 12 19 Q12 25 16 27 L16 31 Q16 33 20 33 Q24 33 24 31 L24 27 Q28 25 28 19 Q28 11 20 6Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="17" y1="29" x2="23" y2="29" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="18" y1="32" x2="22" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M17 20 Q20 16 23 20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <line x1="20" y1="2" x2="20" y2="0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="30" y1="10" x2="32" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="10" y1="10" x2="8" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="34" y1="20" x2="36" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="6" y1="20" x2="4" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
+    <button class="tab-btn" id="tab-lights" onclick="switchTab('lights')" aria-label="Control">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-3 11v3h6v-3a6 6 0 0 0-3-11z"/><path d="M10 20h4"/></svg>
       <div class="tab-label">Control</div>
     </button>
-    <button class="tab-btn" id="tab-tracker" onclick="switchTab('tracker')">
-      <div class="tab-icon">
-        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-          <rect x="6" y="24" width="7" height="10" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
-          <rect x="16" y="18" width="7" height="16" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
-          <rect x="26" y="12" width="7" height="22" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
-          <polyline points="8,20 19,13 29,8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="8" cy="20" r="2" fill="currentColor"/>
-          <circle cx="19" cy="13" r="2" fill="currentColor"/>
-          <circle cx="29" cy="8" r="2" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="tab-label">HT</div>
+    <button class="tab-btn" id="tab-tracker" onclick="switchTab('tracker')" aria-label="Tracker">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11M10 20V4M16 20v-7M22 20v-4"/></svg>
+      <div class="tab-label">Tracker</div>
     </button>
-    <button class="tab-btn" id="tab-settings" onclick="switchTab('settings')">
-      <div class="tab-icon">
-        <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.3"/>
-          <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="20" y1="6" x2="20" y2="3"/>
-            <line x1="20" y1="34" x2="20" y2="37"/>
-            <line x1="34" y1="20" x2="37" y2="20"/>
-            <line x1="6" y1="20" x2="3" y2="20"/>
-            <line x1="29.9" y1="10.1" x2="32" y2="8"/>
-            <line x1="10.1" y1="29.9" x2="8" y2="32"/>
-            <line x1="29.9" y1="29.9" x2="32" y2="32"/>
-            <line x1="10.1" y1="10.1" x2="8" y2="8"/>
-          </g>
-          <circle cx="20" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
-          <circle cx="20" cy="20" r="2" fill="currentColor"/>
-        </svg>
-      </div>
+    <button class="tab-btn" id="tab-settings" onclick="switchTab('settings')" aria-label="Einstellungen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
       <div class="tab-label">Settings</div>
     </button>
   </div>
 </div>
 
-<!-- EDIT MODAL (full screen slide up) -->
+<!-- ══ MODALS ══ -->
 <div id="edit-modal">
   <div class="modal-header">
     <button class="modal-close" onclick="closeEdit()">✕</button>
     <div class="modal-title" id="edit-modal-title">Montag</div>
     <div class="modal-save-status" id="modal-save-status">✓</div>
   </div>
-  <!-- Meal tabs -->
-  <div style="display:flex;border-bottom:0.5px solid var(--border);flex-shrink:0;">
-    <button id="meal-tab-btn-lunch" onclick="switchMealEditTab('lunch')" style="flex:1;padding:14px;border:none;background:none;color:var(--blue);font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid var(--blue);">Mittag</button>
-    <button id="meal-tab-btn-dinner" onclick="switchMealEditTab('dinner')" style="flex:1;padding:14px;border:none;background:none;color:var(--text3);font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid transparent;">Abend</button>
+  <div class="modal-tabs">
+    <button id="meal-tab-btn-lunch" onclick="switchMealEditTab('lunch')">Mittag</button>
+    <button id="meal-tab-btn-dinner" onclick="switchMealEditTab('dinner')">Abend</button>
   </div>
-  <!-- Swipeable container -->
-  <div id="meal-edit-swipe" style="flex:1;overflow:hidden;position:relative;" 
+  <div id="meal-edit-swipe" style="flex:1;overflow:hidden;position:relative;"
     ontouchstart="mealSwipeStart(event)" ontouchend="mealSwipeEnd(event)">
-    <!-- Lunch panel -->
-    <div id="meal-panel-lunch" style="position:absolute;inset:0;overflow-y:auto;padding:20px;transition:transform 0.3s cubic-bezier(.4,0,.2,1);transform:translateX(0);">
+    <div id="meal-panel-lunch" style="position:absolute;inset:0;overflow-y:auto;padding:6px 18px 20px;transition:transform .3s cubic-bezier(.4,0,.2,1);transform:translateX(0);">
       <div class="modal-section-label" style="margin-bottom:10px;">Mittagessen</div>
       <div class="meal-input-wrap">
-        <input class="modal-input" id="edit-lunch" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
+        <input class="modal-input" id="edit-lunch" placeholder="Suchen oder eingeben…" autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-lunch','drop-lunch','lunch')"
           onfocus="showDrop('edit-lunch','drop-lunch','lunch')"
           onblur="setTimeout(()=>hideDrop('drop-lunch'),250)">
         <div class="meal-dropdown" id="drop-lunch"></div>
       </div>
       <div style="margin-top:14px;">
-        <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'lunch')">🛒 Zutaten zu Bring!</button>
+        <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'lunch')">Zutaten zu Bring!</button>
       </div>
     </div>
-    <!-- Dinner panel -->
-    <div id="meal-panel-dinner" style="position:absolute;inset:0;overflow-y:auto;padding:20px;transition:transform 0.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);">
+    <div id="meal-panel-dinner" style="position:absolute;inset:0;overflow-y:auto;padding:6px 18px 20px;transition:transform .3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);">
       <div class="modal-section-label" style="margin-bottom:10px;">Abendessen</div>
       <div class="meal-input-wrap">
-        <input class="modal-input" id="edit-dinner" placeholder="Suchen oder eingeben..." autocomplete="off" autocorrect="off"
+        <input class="modal-input" id="edit-dinner" placeholder="Suchen oder eingeben…" autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-dinner','drop-dinner','dinner')"
           onfocus="showDrop('edit-dinner','drop-dinner','dinner')"
           onblur="setTimeout(()=>hideDrop('drop-dinner'),250)">
         <div class="meal-dropdown" id="drop-dinner"></div>
       </div>
       <div style="margin-top:14px;">
-        <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'dinner')">🛒 Zutaten zu Bring!</button>
+        <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'dinner')">Zutaten zu Bring!</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- BRING MODAL -->
 <div id="bring-modal" onclick="if(event.target===this)closeBring()">
   <div class="bring-sheet">
     <div class="bring-handle"></div>
-    <div class="bring-title" id="bring-title">🛒 Zutaten</div>
+    <div class="bring-title" id="bring-title">Zutaten</div>
     <div class="bring-items" id="bring-items"></div>
     <div class="bring-add-row">
-      <input class="bring-add-input" id="bring-new" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addBringItem()">
+      <input class="bring-add-input" id="bring-new" placeholder="Zutat hinzufügen…" onkeydown="if(event.key==='Enter')addBringItem()">
       <button class="bring-add-plus" onclick="addBringItem()">+</button>
     </div>
-    <button class="bring-confirm" onclick="confirmBring()">✓ Zu Bring! hinzufügen</button>
+    <button class="bring-confirm" onclick="confirmBring()">Zu Bring! hinzufügen</button>
     <button class="bring-cancel" onclick="closeBring()">Abbrechen</button>
   </div>
 </div>
 
-<!-- ING MODAL -->
 <div id="ing-modal" onclick="if(event.target===this)closeIng()">
   <div class="bring-sheet">
     <div class="bring-handle"></div>
     <div class="bring-title" id="ing-title">Zutaten</div>
     <div class="bring-items" id="ing-items"></div>
     <div class="bring-add-row">
-      <input class="bring-add-input" id="ing-new" placeholder="Zutat hinzufügen..." onkeydown="if(event.key==='Enter')addIngItem()">
+      <input class="bring-add-input" id="ing-new" placeholder="Zutat hinzufügen…" onkeydown="if(event.key==='Enter')addIngItem()">
       <button class="bring-add-plus" onclick="addIngItem()">+</button>
     </div>
-    <button class="bring-confirm" onclick="saveIng()"><svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Speichern</button>
+    <button class="bring-confirm" onclick="saveIng()">Speichern</button>
     <button class="bring-cancel" onclick="closeIng()">Abbrechen</button>
   </div>
 </div>
 
-<!-- FOOD SEARCH MODAL -->
-<div id="food-modal" style="position:fixed;inset:0;z-index:400;background:var(--bg);transform:translateY(100%);transition:transform 0.32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;visibility:hidden;">
-  <div style="padding:16px 20px 12px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
-    <button onclick="closeFoodSearch()" style="background:var(--surface2);border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--text2);">✕</button>
-    <div style="font-size:18px;font-weight:700;" id="food-modal-title">Essen hinzufügen</div>
+<div id="food-modal">
+  <div class="modal-header">
+    <button class="modal-close" onclick="closeFoodSearch()">✕</button>
+    <div class="modal-title" id="food-modal-title">Essen hinzufügen</div>
   </div>
-  <div style="padding:14px 16px;flex-shrink:0;">
-    <input id="food-search-input" type="text" placeholder="Lebensmittel suchen..." 
-      style="width:100%;background:var(--surface);border:none;border-radius:14px;padding:14px 18px;font-size:17px;font-family:'Inter',sans-serif;color:var(--text);outline:none;"
-      oninput="debounceSearch(this.value)">
+  <div style="padding:14px 18px;flex-shrink:0;">
+    <input id="food-search-input" type="text" placeholder="Lebensmittel suchen…" class="modal-input" oninput="debounceSearch(this.value)">
   </div>
-  <div id="food-search-status" style="text-align:center;padding:8px;font-size:14px;color:var(--text3);"></div>
+  <div id="food-search-status" style="text-align:center;padding:6px;font-size:12px;color:var(--text3);"></div>
   <div id="food-search-results" style="flex:1;overflow-y:auto;"></div>
 </div>
 
@@ -1174,8 +1048,8 @@ function uploadPic(user, input) {
 
 function updatePicUI(user, dataUrl) {
   const picEl = document.getElementById(`pic-${user}`);
-  if(picEl) picEl.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-  showToast('Foto gespeichert!');
+  if(picEl) picEl.innerHTML = `<img src="${dataUrl}">`;
+  showToast('Foto gespeichert');
 }
 
 function loadProfilePics() {
@@ -1183,7 +1057,7 @@ function loadProfilePics() {
     const saved = localStorage.getItem(`alfie_pic_${user}`);
     if (saved) {
       const picEl = document.getElementById(`pic-${user}`);
-      if (picEl) picEl.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
+      if (picEl) picEl.innerHTML = `<img src="${saved}">`;
     }
   });
 }
@@ -1210,6 +1084,12 @@ function onLogin(){
 function switchUser(){
   localStorage.removeItem('alfie_last_user');
   currentUser = null;
+  _tabChecked = {};
+  foodLog = { breakfast:[], lunch:[], dinner:[], snacks:[] };
+  ['breakfast','lunch','dinner','snacks'].forEach(m=>renderFoodList(m));
+  ['tr-weight','tr-steps','tr-water','tr-activity-name','tr-activity-mins','tr-notes'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
   pinEntry = '';
   const pe = document.getElementById('pin-entry');
   if(pe) pe.style.display = 'none';
@@ -1224,11 +1104,10 @@ function selectUser(user){
   pinEntry = '';
   const saved = localStorage.getItem(`alfie_pic_${user}`);
   const pinPic = document.getElementById('pin-pic');
-  if(saved) pinPic.innerHTML = `<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
+  if(saved) pinPic.innerHTML = `<img src="${saved}">`;
   else pinPic.innerHTML = user==='sergio' ? 'S' : 'M';
-  document.getElementById('pin-name').textContent = user==='sergio' ? 'Sérgio' : 'Miriam';
+  document.getElementById('pin-name').textContent = getUserName(user);
   document.getElementById('pin-error').textContent = '';
-  document.getElementById('pin-input').value = '';
   const pinLen = PINS[user].length;
   document.getElementById('pin-dots').innerHTML = Array(pinLen).fill('<div class="pin-dot"></div>').join('');
   const usel = document.getElementById('user-select');
@@ -1236,7 +1115,6 @@ function selectUser(user){
   document.getElementById('pin-entry').style.display='flex';
   const sw = document.getElementById('pin-switch');
   if(sw) sw.style.display='block';
-  setTimeout(()=>document.getElementById('pin-input').focus(), 300);
 }
 
 function onPinInput(val){
@@ -1268,14 +1146,16 @@ function checkPin(){
 
 function setUser(user){
   currentUser=user;
+  _tabChecked = {};
+  foodLog = { breakfast:[], lunch:[], dinner:[], snacks:[] };
+  trackerDate = new Date().toISOString().split('T')[0];
   sessionStorage.setItem('alfie_user',user);
   localStorage.setItem('alfie_last_user',user);
   document.getElementById('pin-screen').style.display='none';
-  // Tracker only for Miriam, Settings for both
-  document.getElementById('tab-tracker').style.display=user==='sergio'?'none':'flex';
-  document.getElementById('tab-settings').style.display='flex';
+  // Every module is available to every user
+  document.querySelectorAll('#dock .tab-btn').forEach(b=>b.style.display='flex');
   const trackerCard=document.getElementById('home-tracker-card');
-  if(trackerCard) trackerCard.style.display=user==='sergio'?'none':'flex';
+  if(trackerCard) trackerCard.style.display='';
   // Load settings from cloud, then apply theme
   loadUserSettings(user).then(()=>{
     loadTheme(user);
@@ -1283,20 +1163,28 @@ function setUser(user){
     if(savedPin) PINS[user]=savedPin;
   });
   document.getElementById('home-screen').style.display='flex';
+  renderHomeToday();
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-home').classList.add('active');
 }
 
 function resetPin(){
   pinEntry=''; currentUser=null;
-  const inp = document.getElementById('pin-input');
-  if(inp) inp.value='';
+  updatePinDots();
   document.getElementById('pin-entry').style.display='none';
+}
+
+// switch user from the settings page
+function switchUser2(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('home-screen').style.display='none';
+  document.getElementById('pin-screen').style.display='flex';
+  switchUser();
 }
 
 function enterApp(tab){
   document.getElementById('home-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
+  document.getElementById('app').style.display = 'flex';
   switchTab(tab);
 }
 
@@ -1304,6 +1192,7 @@ function enterApp(tab){
 function goHome(){
   document.getElementById('app').style.display = 'none';
   document.getElementById('home-screen').style.display = 'flex';
+  renderHomeToday();
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-home').classList.add('active');
 }
@@ -1315,11 +1204,45 @@ window.addEventListener('load',()=>{
   if(btn){ btn.addEventListener('click',()=>{ window.location.href=getAuthUrl(); }); }
 });
 
+// ── HOME SCREEN ──
+function renderHomeToday(){
+  const now = new Date();
+  const wd = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][now.getDay()];
+  const mo = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][now.getMonth()];
+  const dEl = document.getElementById('hm-date');
+  if(dEl) dEl.textContent = `${wd}, ${now.getDate()}. ${mo}`;
+  const h = now.getHours();
+  const greet = h < 11 ? 'Guete Morge' : h < 18 ? 'Hoi' : 'Guete Abig';
+  const gEl = document.getElementById('hs-greet');
+  if(gEl) gEl.textContent = `${greet} ${getUserName(currentUser)}`;
+
+  const lines = [];
+  const today = mealData.find(m => m.date && m.date.toDateString() === now.toDateString());
+  if(today && today.dinner && today.dinner !== '—')
+    lines.push({c:'var(--clay)', t:`Znacht: ${today.dinner}`});
+  else if(today && today.lunch && today.lunch !== '—')
+    lines.push({c:'var(--clay)', t:`Mittag: ${today.lunch}`});
+  else
+    lines.push({c:'var(--text3)', t:'Heute noch nichts geplant'});
+
+  const kcal = Math.round(Object.values(foodLog).flat().reduce((s,i)=>s+(i.kcal||0),0));
+  const goalKcal = parseInt(JSON.parse(localStorage.getItem(goalsKey())||'{}').kcal) || 1800;
+  if(kcal > 0) lines.push({c:'var(--amber)', t:`${kcal} / ${goalKcal} kcal`});
+
+  const onCount = Object.values(lightStates).filter(s => s && s.state === 'on').length;
+  if(onCount > 0) lines.push({c:'var(--moss-soft)', t:`${onCount} Licht${onCount>1?'er':''} an`});
+
+  const c = document.getElementById('hm-today-lines');
+  if(c) c.innerHTML = lines.map(l =>
+    `<div class="hm-line"><span style="width:8px;height:8px;border-radius:50%;background:${l.c};flex-shrink:0;"></span>${l.t}</div>`
+  ).join('');
+}
+
 // ── TAB NAVIGATION ──
 let currentTab='meals';
 function switchTab(tab){
   document.getElementById('home-screen').style.display='none';
-  document.getElementById('app').style.display='block';
+  document.getElementById('app').style.display='flex';
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.page').forEach(p=>{
@@ -1384,8 +1307,8 @@ function renderWeekStrip() {
     const isActive = i === currentWeekOffset;
     const isCurrent = i === 0;
     const btn = document.createElement('button');
-    btn.style.cssText = `flex-shrink:0;padding:8px 12px;border-radius:14px;border:none;background:${isActive?'var(--blue)':'var(--surface2)'};color:${isActive?'white':'var(--text2)'};font-size:13px;font-weight:${isActive?'700':'500'};cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;`;
-    btn.textContent = isCurrent ? `📍 Diese Woche` : `${mon.getDate()}.${mon.getMonth()+1}–${sun.getDate()}.${sun.getMonth()+1}`;
+    btn.style.cssText = `flex-shrink:0;padding:8px 14px;border-radius:var(--radius-pill);border:none;background:${isActive?'var(--clay)':'var(--surface)'};color:${isActive?'var(--on-accent)':'var(--text2)'};font-size:12.5px;font-weight:${isActive?'600':'500'};cursor:pointer;white-space:nowrap;`;
+    btn.textContent = isCurrent ? `Diese Woche` : `${mon.getDate()}.${mon.getMonth()+1}–${sun.getDate()}.${sun.getMonth()+1}`;
     btn.onclick = () => { currentWeekOffset = i; renderWeekStrip(); loadMeals(); };
     strip.appendChild(btn);
   }
@@ -1499,16 +1422,16 @@ function switchMealEditTab(tab) {
   const dinnerPanel = document.getElementById('meal-panel-dinner');
   const lunchBtn = document.getElementById('meal-tab-btn-lunch');
   const dinnerBtn = document.getElementById('meal-tab-btn-dinner');
+  const on = b => { b.style.background='var(--clay)'; b.style.color='var(--on-accent)'; b.style.fontWeight='600'; };
+  const off = b => { b.style.background='var(--surface)'; b.style.color='var(--text2)'; b.style.fontWeight='500'; };
   if (tab === 'lunch') {
     lunchPanel.style.transform = 'translateX(0)';
     dinnerPanel.style.transform = 'translateX(100%)';
-    lunchBtn.style.color = 'var(--blue)'; lunchBtn.style.borderBottom = '2px solid var(--blue)'; lunchBtn.style.fontWeight = '700';
-    dinnerBtn.style.color = 'var(--text3)'; dinnerBtn.style.borderBottom = '2px solid transparent'; dinnerBtn.style.fontWeight = '600';
+    on(lunchBtn); off(dinnerBtn);
   } else {
     lunchPanel.style.transform = 'translateX(-100%)';
     dinnerPanel.style.transform = 'translateX(0)';
-    dinnerBtn.style.color = 'var(--blue)'; dinnerBtn.style.borderBottom = '2px solid var(--blue)'; dinnerBtn.style.fontWeight = '700';
-    lunchBtn.style.color = 'var(--text3)'; lunchBtn.style.borderBottom = '2px solid transparent'; lunchBtn.style.fontWeight = '600';
+    on(dinnerBtn); off(lunchBtn);
   }
 }
 
@@ -1581,7 +1504,7 @@ function pickMeal(inputId,dropId,name){
 
 // ── AI SUGGESTIONS ──
 async function getMobileSuggestions(){
-  showToast('KI denkt nach …');
+  showToast('KI denkt nach…');
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -1602,7 +1525,7 @@ async function getMobileSuggestions(){
         body:JSON.stringify({values:[[mealData[i].lunch],[mealData[i].dinner]]})
       });
     }
-    renderDays();showToast('✨ Vorschläge geladen!');
+    renderDays();showToast('Vorschläge geladen');
   }catch(e){showToast('Fehler');}
 }
 
@@ -1624,7 +1547,7 @@ async function copyLastWeek(){
         body:JSON.stringify({values:[[rows[1]?.[i+1]||'—'],[rows[2]?.[i+1]||'—']]})
       });
     }
-    await loadMeals();showToast('📋 Vorwoche übernommen!');
+    await loadMeals();showToast('Vorwoche übernommen');
   }catch(e){showToast('Fehler: '+e.message);}
 }
 
@@ -1690,7 +1613,7 @@ function selFavType(type){
 
 async function addFav(){
   const name=document.getElementById('new-fav-name').value.trim();if(!name)return;
-  const emojis={'Mittagessen':'','Abendessen':'','Beides':''};
+  const emojis={'Mittagessen':'M','Abendessen':'A','Beides':'B'};
   favorites.push({name,type:favType,emoji:emojis[favType],ingredients:[]});
   document.getElementById('new-fav-name').value='';
   renderFavsList();await saveFavorites();showToast('Gespeichert');
@@ -1702,7 +1625,7 @@ async function deleteFav(idx){favorites.splice(idx,1);renderFavsList();await sav
 function openIng(idx){
   editingFavIdx=idx;
   ingItems=[...favorites[idx].ingredients];
-  document.getElementById('ing-title').textContent=`✏️ ${favorites[idx].name}`;
+  document.getElementById('ing-title').textContent=favorites[idx].name;
   renderIngItems();
   document.getElementById('ing-modal').classList.add('open');
 }
@@ -1729,13 +1652,13 @@ function openBringForInput(idx,type){
   if(!meal||meal==='—'){showToast('Kein Gericht');return;}
   const fav=favorites.find(f=>f.name.toLowerCase()===meal.toLowerCase());
   bringItems=fav?.ingredients?.length?fav.ingredients.map(n=>({name:n,checked:true})):[{name:meal,checked:true}];
-  document.getElementById('bring-title').textContent=`🛒 ${meal}`;
+  document.getElementById('bring-title').textContent=meal;
   renderBringItems();document.getElementById('bring-modal').classList.add('open');
 }
 function openBringFromFav(idx){
   const f=favorites[idx];
   bringItems=f.ingredients.map(n=>({name:n,checked:true}));
-  document.getElementById('bring-title').textContent=`🛒 ${f.name}`;
+  document.getElementById('bring-title').textContent=f.name;
   renderBringItems();document.getElementById('bring-modal').classList.add('open');
 }
 function renderBringItems(){
@@ -1751,7 +1674,7 @@ async function confirmBring(){
   const toAdd=bringItems.filter(i=>i.checked);if(!toAdd.length){closeBring();return;}
   let n=0;
   for(const item of toAdd){try{await fetch(`${CONFIG.HA_URL}/api/services/todo/add_item`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:CONFIG.BRING_ENTITY,item:item.name})});n++;}catch(e){}}
-  closeBring();showToast(`🛒 ${n} Zutaten zu Bring!`);
+  closeBring();showToast(`${n} Zutaten zu Bring!`);
 }
 function closeBring(){document.getElementById('bring-modal').classList.remove('open');bringItems=[];}
 
@@ -1887,7 +1810,7 @@ async function toggleLight(id,service){
     if(!r.ok) throw new Error('HA error');
     setTimeout(loadLights,1200);
   }catch(e){
-    showToast('❌ Verbindung zu HA fehlgeschlagen');
+    showToast('Verbindung zu HA fehlgeschlagen');
     // Revert
     if(lightStates[id]){
       lightStates[id].state = service==='turn_on' ? 'off' : 'on';
@@ -1898,10 +1821,39 @@ async function toggleLight(id,service){
 async function setBrightness(id,pct){
   try{
     await fetch(`${CONFIG.HA_URL}/api/services/light/turn_on`,{method:'POST',headers:HA_H,body:JSON.stringify({entity_id:id,brightness_pct:parseInt(pct)})});
-  }catch(e){showToast('❌ Helligkeit fehlgeschlagen');}
+  }catch(e){showToast('Helligkeit fehlgeschlagen');}
 }
 
-// ── TRACKER ──
+// ── TRACKER (strictly per user — no shared data) ──
+// Every user writes to their own sheet tab: Tracker_sergio / Tracker_miriam
+function trackerTab(){
+  return currentUser ? `Tracker_${currentUser}` : null;
+}
+
+let _tabChecked = {};
+async function ensureTrackerTab(){
+  const tab = trackerTab();
+  if(!tab || !oauthToken) return null;
+  if(_tabChecked[tab]) return tab;
+  try{
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/${encodeURIComponent(tab)}!A1:A1`,
+      {headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const d = await r.json();
+    if(d.error){
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}:batchUpdate`,{
+        method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({requests:[{addSheet:{properties:{title:tab}}}]})
+      });
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/${encodeURIComponent(tab)}!A1:K1?valueInputOption=RAW`,{
+        method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
+        body:JSON.stringify({values:[['datum','gewicht','schritte','wasser','aktivitaet','minuten','','','','notizen','essen']]})
+      });
+    }
+    _tabChecked[tab] = true;
+    return tab;
+  }catch(e){ return tab; }
+}
+
 function renderDateStrip(){
   const strip=document.getElementById('tracker-dates');strip.innerHTML='';
   const today=new Date();
@@ -1934,12 +1886,15 @@ async function loadTracker(){
   updateNutritionBars();
   loadGoals();
   try{
-    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:K`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const tab = await ensureTrackerTab();
+    if(!tab) return;
+    const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/${encodeURIComponent(tab)}!A:K`,{headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d=await r.json();
     const rows=d.values||[];
     const row=rows.find(r=>r[0]===trackerDate);
-    const ids=['tr-weight','tr-steps','tr-water','tr-activity-name','tr-activity-mins','tr-notes'];
-    ids.forEach((id,i)=>{ const el=document.getElementById(id); if(el) el.value=row?.[i+1]||''; });
+    // column map must match the row written in saveTracker()
+    const cols={'tr-weight':1,'tr-steps':2,'tr-water':3,'tr-activity-name':4,'tr-activity-mins':5,'tr-notes':9};
+    Object.entries(cols).forEach(([id,c])=>{ const el=document.getElementById(id); if(el) el.value=row?.[c]||''; });
     
     // Carry over Gewicht from last known entry (if today is empty)
     if(!row || !row[1]){
@@ -1985,18 +1940,20 @@ function updateSummary(row){
   document.getElementById('sum-steps').textContent = steps ? parseInt(steps).toLocaleString('de-CH') : '—';
   const actName = document.getElementById('tr-activity-name')?.value || row?.[4] || '';
   const actMins = document.getElementById('tr-activity-mins')?.value || row?.[5] || '';
-  document.getElementById('sum-activity').textContent = actName ? `${actName}${actMins?' '+actMins+'min':''}` : '🏃 Keine Aktivität';
+  document.getElementById('sum-activity').textContent = actName ? `${actName}${actMins?' · '+actMins+' Min':''}` : 'Keine Aktivität';
 }
 
 function triggerAutosaveTracker(){
-  document.getElementById('save-indicator').textContent='<svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Speichern...';
+  document.getElementById('save-indicator').textContent='Speichern…';
   clearTimeout(trackerAutoSaveTimer);
   trackerAutoSaveTimer=setTimeout(()=>saveTracker(),1000);
 }
 
 async function saveTracker(){
   if(!oauthToken){ document.getElementById('save-indicator').textContent='Nicht eingeloggt'; return; }
-  document.getElementById('save-indicator').textContent='<svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Speichern...';
+  if(!currentUser){ document.getElementById('save-indicator').textContent='Kein Benutzer'; return; }
+  const tab = await ensureTrackerTab();
+  document.getElementById('save-indicator').textContent='Speichern…';
   const row=[
     trackerDate,
     document.getElementById('tr-weight').value,
@@ -2010,7 +1967,7 @@ async function saveTracker(){
   ];
   try{
     // Try simple append first to test connection
-    const testR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:A`,{
+    const testR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/${encodeURIComponent(tab)}!A:A`,{
       headers:{'Authorization':`Bearer ${oauthToken}`}
     });
     if(!testR.ok){
@@ -2024,12 +1981,12 @@ async function saveTracker(){
 
     let saveR;
     if(idx>0){
-      saveR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A${idx+1}:K${idx+1}?valueInputOption=RAW`,{
+      saveR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/${encodeURIComponent(tab)}!A${idx+1}:K${idx+1}?valueInputOption=RAW`,{
         method:'PUT',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[row]})
       });
     } else {
-      saveR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/Tracker!A:K:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
+      saveR = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/${encodeURIComponent(tab)}!A:K:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,{
         method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},
         body:JSON.stringify({values:[row]})
       });
@@ -2039,7 +1996,7 @@ async function saveTracker(){
       document.getElementById('save-indicator').textContent=`⚠️ ${err2.error?.message||saveR.status}`;
       return;
     }
-    document.getElementById('save-indicator').textContent='✓ Gespeichert';
+    document.getElementById('save-indicator').textContent='Gespeichert';
   }catch(e){
     document.getElementById('save-indicator').textContent=`⚠️ ${e.message}`;
   }
@@ -2054,8 +2011,9 @@ function addWater(amount){
 }
 
 // ── GOALS ──
+function goalsKey(){ return `alfie_goals_${currentUser||'x'}`; }
 function saveGoals() {
-  localStorage.setItem('alfie_goals', JSON.stringify({
+  localStorage.setItem(goalsKey(), JSON.stringify({
     kcal: document.getElementById('goal-kcal').value,
     protein: document.getElementById('goal-protein').value,
     steps: document.getElementById('goal-steps').value,
@@ -2064,7 +2022,7 @@ function saveGoals() {
 }
 
 function loadGoals() {
-  const saved = localStorage.getItem('alfie_goals');
+  const saved = localStorage.getItem(goalsKey());
   if (saved) {
     const g = JSON.parse(saved);
     if(g.kcal) document.getElementById('goal-kcal').value = g.kcal;
@@ -2081,13 +2039,15 @@ function loadGoals() {
 
 // ── STREAKS & ACHIEVEMENTS ──
 async function loadStreaks() {
-  if(!oauthToken) return;
+  if(!oauthToken || !currentUser) return;
   try {
-    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEETS_ID}/values/Tracker!A:K`, {headers:{'Authorization':`Bearer ${oauthToken}`}});
+    const tab = await ensureTrackerTab();
+    if(!tab){ renderStreaks({water:0,steps:0,activity:0,allGoals:0}, 0); return; }
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.TRACKER_SHEET_ID}/values/${encodeURIComponent(tab)}!A:K`, {headers:{'Authorization':`Bearer ${oauthToken}`}});
     const d = await r.json();
     if(d.error) { renderStreaks([]); return; }
     const rows = (d.values||[]).slice(1);
-    const goals = JSON.parse(localStorage.getItem('alfie_goals')||'{}');
+    const goals = JSON.parse(localStorage.getItem(goalsKey())||'{}');
     const goalKcal = parseInt(goals.kcal)||1800;
     const goalProtein = parseInt(goals.protein)||120;
     const goalSteps = parseInt(goals.steps)||10000;
@@ -2133,10 +2093,10 @@ function renderStreaks(s, totalDays) {
   const c = document.getElementById('streaks-container'); if(!c) return;
   const items = [];
   
-  if(s.water>0) items.push({emoji:'💧',label:`${s.water} Tag${s.water>1?'e':''} Wasserziel`,color:'var(--blue)',milestone:checkMilestone(s.water)});
-  if(s.steps>0) items.push({emoji:'👟',label:`${s.steps} Tag${s.steps>1?'e':''} Schritteziel`,color:'var(--green)',milestone:checkMilestone(s.steps)});
-  if(s.activity>0) items.push({emoji:'🏃',label:`${s.activity} Tag${s.activity>1?'e':''} aktiv`,color:'var(--orange)',milestone:checkMilestone(s.activity)});
-  if(s.allGoals>=3) items.push({emoji:'',label:`${s.allGoals} Tage alle Ziele!`,color:'var(--purple)',milestone:'⭐'});
+  if(s.water>0) items.push({label:`${s.water} Tag${s.water>1?'e':''} Wasserziel`,color:'var(--water)',milestone:checkMilestone(s.water)});
+  if(s.steps>0) items.push({label:`${s.steps} Tag${s.steps>1?'e':''} Schritteziel`,color:'var(--amber)',milestone:checkMilestone(s.steps)});
+  if(s.activity>0) items.push({label:`${s.activity} Tag${s.activity>1?'e':''} aktiv`,color:'var(--moss-soft)',milestone:checkMilestone(s.activity)});
+  if(s.allGoals>=3) items.push({label:`${s.allGoals} Tage alle Ziele`,color:'var(--clay)',milestone:'★'});
   
   if(items.length===0) {
     c.innerHTML = '';
@@ -2144,14 +2104,14 @@ function renderStreaks(s, totalDays) {
   }
   
   c.innerHTML = `
-    <div style="background:linear-gradient(135deg,rgba(255,159,10,0.15),rgba(255,45,85,0.1));border:1px solid rgba(255,159,10,0.25);border-radius:18px;padding:14px;">
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px;">🔥 Streaks</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="background:var(--surface);border-radius:var(--radius-card);padding:16px;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px;">Streaks</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
         ${items.map(i=>`
           <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:22px;">${i.emoji}</span>
-            <span style="flex:1;font-size:14px;color:var(--text);font-weight:600;">${i.label}</span>
-            ${i.milestone?`<span style="font-size:18px;">${i.milestone}</span>`:''}
+            <span style="width:8px;height:8px;border-radius:50%;background:${i.color};flex-shrink:0;"></span>
+            <span style="flex:1;font-size:13.5px;color:var(--text);">${i.label}</span>
+            ${i.milestone?`<span style="font-size:13px;color:var(--text3);">${i.milestone}</span>`:''}
           </div>
         `).join('')}
       </div>
@@ -2160,10 +2120,10 @@ function renderStreaks(s, totalDays) {
 }
 
 function checkMilestone(days) {
-  if(days>=100) return '💯';
-  if(days>=30) return '';
-  if(days>=14) return '⭐';
-  if(days>=7) return '✨';
+  if(days>=100) return '100+';
+  if(days>=30) return '30+';
+  if(days>=14) return '14+';
+  if(days>=7) return '7+';
   return '';
 }
 
@@ -2196,17 +2156,17 @@ function renderWeeklySummary(rows, goals) {
   
   c.style.display = 'block';
   c.innerHTML = `
-    <div style="background:linear-gradient(135deg,rgba(191,90,242,0.18),rgba(0,122,255,0.12));border:1px solid rgba(191,90,242,0.3);border-radius:18px;padding:16px;">
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;">Wochenrückblick</div>
-      <div style="font-size:15px;color:var(--text);line-height:1.7;">
-        💧 <b>${totalWater.toFixed(1)}L</b> Wasser getrunken<br>
-        👟 <b>${totalSteps.toLocaleString('de-CH')}</b> Schritte gesamt<br>
-        🏃 <b>${activityDays}/7</b> Tage aktiv<br>
-        🔥 <b>${totalKcal.toLocaleString('de-CH')} kcal</b> gegessen<br>
-        🏆 <b>${allGoalDays}/7</b> Tage alle Ziele erreicht
+    <div style="background:var(--surface);border-radius:var(--radius-card);padding:16px;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px;">Wochenrückblick</div>
+      <div style="font-size:13.5px;color:var(--text);line-height:1.8;">
+        <b>${totalWater.toFixed(1)} L</b> Wasser getrunken<br>
+        <b>${totalSteps.toLocaleString('de-CH')}</b> Schritte gesamt<br>
+        <b>${activityDays}/7</b> Tage aktiv<br>
+        <b>${totalKcal.toLocaleString('de-CH')} kcal</b> gegessen<br>
+        <b>${allGoalDays}/7</b> Tage alle Ziele erreicht
       </div>
-      <div style="margin-top:12px;font-size:14px;color:var(--text2);font-style:italic;">
-        ${allGoalDays>=5?'Super Woche':allGoalDays>=3?'Solide Woche':activityDays>=4?'👏 Schön aktiv geblieben!':'🌱 Neue Woche, neue Chance!'}
+      <div style="margin-top:12px;font-size:13px;color:var(--text2);">
+        ${allGoalDays>=5?'Super Woche.':allGoalDays>=3?'Solide Woche.':activityDays>=4?'Schön aktiv geblieben.':'Neue Woche, neue Chance.'}
       </div>
     </div>
   `;
@@ -2252,7 +2212,7 @@ let foodSearchTimer = null;
 
 function openFoodSearch(meal) {
   currentFoodMeal = meal;
-  const labels = {breakfast:'Frühstück', lunch:'🌤️ Mittagessen', dinner:'Abendessen', snacks:'🍪 Snacks'};
+  const labels = {breakfast:'Frühstück', lunch:'Mittagessen', dinner:'Abendessen', snacks:'Snacks'};
   document.getElementById('food-modal-title').textContent = labels[meal];
   document.getElementById('food-search-input').value = '';
   document.getElementById('food-search-results').innerHTML = '';
@@ -2372,8 +2332,8 @@ async function searchFood(query) {
   results.forEach((f, i) => {
     const el = document.createElement('div');
     el.className = 'food-search-result';
-    el.innerHTML = `<div class="food-result-name">${f.cat} ${f.name}</div>
-      <div class="food-result-nut">${f.kcal} kcal · ${f.protein} g Protein · ${f.carbs} g KH · 🧈 ${f.fat}g <span style="color:var(--text3);font-size:11px;">/ 100g</span></div>`;
+    el.innerHTML = `<div class="food-result-name">${f.name}</div>
+      <div class="food-result-nut">${f.kcal} kcal · ${f.protein} g Protein · ${f.carbs} g KH · ${f.fat} g Fett / 100 g</div>`;
     el.addEventListener('touchend', (e) => { e.preventDefault(); addFoodItem(i); });
     el.addEventListener('click', () => addFoodItem(i));
     container.appendChild(el);
@@ -2413,27 +2373,43 @@ function renderFoodList(meal) {
   container.innerHTML = items.map((item, i) => `
     <div class="food-item">
       <div class="food-item-name">${item.name}</div>
-      <div class="food-item-nut">🔥${item.kcal} · 💪${item.protein}g</div>
+      <div class="food-item-nut">${item.kcal} kcal · ${item.protein} g</div>
       <div class="food-item-del" onclick="removeFoodItem('${meal}',${i})">✕</div>
     </div>`).join('');
   // Update meal total
   const totalKcal = items.reduce((s,i) => s+i.kcal, 0);
   const totalProtein = items.reduce((s,i) => s+i.protein, 0);
   const nutEl = document.getElementById(`nut-${meal}`);
-  if (nutEl) nutEl.textContent = items.length ? `🔥 ${totalKcal} kcal · 💪 ${totalProtein}g` : '';
+  if (nutEl) nutEl.textContent = items.length ? `${Math.round(totalKcal)} kcal · ${Math.round(totalProtein)} g` : '';
 }
 
 function updateNutritionBars() {
-  const totalKcal = Object.values(foodLog).flat().reduce((s,i) => s+i.kcal, 0);
-  const totalProtein = Object.values(foodLog).flat().reduce((s,i) => s+i.protein, 0);
+  const totalKcal = Math.round(Object.values(foodLog).flat().reduce((s,i) => s+(i.kcal||0), 0));
+  const totalProtein = Math.round(Object.values(foodLog).flat().reduce((s,i) => s+(i.protein||0), 0));
   const goalKcal = parseInt(document.getElementById('goal-kcal')?.value) || 1800;
   const goalProtein = parseInt(document.getElementById('goal-protein')?.value) || 120;
-  document.getElementById('sum-kcal').textContent = `${totalKcal} / ${goalKcal} kcal`;
+
+  const ring = document.getElementById('kcal-ring');
+  const C = 2 * Math.PI * 40;
+  if(ring){
+    const pct = Math.min(1, totalKcal/goalKcal);
+    ring.setAttribute('stroke-dasharray', `${(C*pct).toFixed(1)} ${C.toFixed(1)}`);
+    ring.setAttribute('stroke', totalKcal > goalKcal ? 'var(--red)' : 'var(--clay)');
+  }
+  const rv = document.getElementById('ring-val');
+  const rg = document.getElementById('ring-goal');
+  if(rv) rv.textContent = totalKcal;
+  if(rg) rg.textContent = `/ ${goalKcal}`;
+
   document.getElementById('sum-protein').textContent = `${totalProtein} / ${goalProtein}g`;
-  document.getElementById('kcal-bar').style.width = `${Math.min(100, totalKcal/goalKcal*100)}%`;
-  document.getElementById('protein-bar').style.width = `${Math.min(100, totalProtein/goalProtein*100)}%`;
-  document.getElementById('kcal-bar').style.background = totalKcal > goalKcal ? 'var(--red)' : 'var(--orange)';
-  document.getElementById('protein-bar').style.background = totalProtein >= goalProtein ? 'var(--green)' : 'var(--blue)';
+  const pb = document.getElementById('protein-bar');
+  if(pb){
+    pb.style.width = `${Math.min(100, totalProtein/goalProtein*100)}%`;
+    pb.style.background = totalProtein >= goalProtein ? 'var(--moss-soft)' : 'var(--moss-soft)';
+  }
+  const meals = ['breakfast','lunch','dinner','snacks'].filter(m=>foodLog[m] && foodLog[m].length).length;
+  const sm = document.getElementById('sum-meals');
+  if(sm) sm.textContent = `${meals}/4 Mahlzeiten`;
 }
 // ── SETTINGS ──
 const ALFIE_DAY_START = 7;   // 07:00 → hell
@@ -2533,8 +2509,7 @@ async function loadUserSettings(user){
 }
 
 function loadTheme(user){
-  const saved=localStorage.getItem(`alfie_theme_${user}`)||'midnight';
-  setTheme(saved);
+  alfieApplyTheme();
 }
 
 function uploadSettingsPic(input){
@@ -2553,10 +2528,10 @@ function uploadSettingsPic(input){
       ctx.drawImage(img, x, y, size, size, 0, 0, 200, 200);
       const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
       localStorage.setItem(`alfie_pic_${currentUser}`, dataUrl);
-      document.getElementById('settings-pic').innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+      document.getElementById('settings-pic').innerHTML=`<img src="${dataUrl}">`;
       const pinEl=document.getElementById(`pic-${currentUser}`);
-      if(pinEl) pinEl.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-      showToast('Foto gespeichert!');
+      if(pinEl) pinEl.innerHTML=`<img src="${dataUrl}">`;
+      showToast('Foto gespeichert');
     };
     img.src = e.target.result;
   };
@@ -2569,7 +2544,7 @@ function loadSettingsPage(){
   document.getElementById('settings-name-input').value = name;
   const saved=localStorage.getItem(`alfie_pic_${currentUser}`);
   const picEl=document.getElementById('settings-pic');
-  if(saved) picEl.innerHTML=`<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
+  if(saved) picEl.innerHTML=`<img src="${saved}">`;
   else picEl.innerHTML=currentUser==='sergio'?'S':'M';
   alfieApplyTheme();
   const notifOn=localStorage.getItem(`alfie_notif_${currentUser}`)==='true';
@@ -2584,7 +2559,7 @@ function saveName(name){
   localStorage.setItem(`alfie_name_${currentUser}`, name.trim());
   document.getElementById('settings-username').textContent = name.trim();
   document.getElementById('nav-subtitle-meals') && (document.getElementById('nav-subtitle-meals').textContent = name.trim());
-  showToast('✅ Name gespeichert!');
+  showToast('Name gespeichert');
   saveUserSettings();
 }
 
@@ -2602,7 +2577,7 @@ function changePin(){
   localStorage.setItem(`alfie_pin_${currentUser}`,newPin);
   document.getElementById('new-pin').value='';
   document.getElementById('new-pin-confirm').value='';
-  msg.style.color='var(--green)';msg.textContent='✅ PIN gespeichert!';
+  msg.style.color='var(--green)';msg.textContent='PIN gespeichert';
   setTimeout(()=>msg.textContent='',2000);
   saveUserSettings();
 }

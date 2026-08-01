@@ -1,5 +1,5 @@
 // ALFIE Service Worker v1
-const CACHE = 'alfie-v2';
+const CACHE = 'alfie-v3';
 const ASSETS = [
   '/home-dashboard/mobile.html',
   '/home-dashboard/manifest.json',
