@@ -12,7 +12,8 @@
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Responsive scale for large screens (Fold 7 inner = ~900px wide) */
 :root { --scale: 1; }
@@ -29,7 +30,64 @@
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
-html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;background:#07080b;color:var(--text);-webkit-font-smoothing:antialiased;}
+html,body{margin:0;padding:0;font-family:'Outfit',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* ── ALFIE warm palette ── */
+html.alfie-night{
+  --bg:#191410; --surface:#241D17; --surface2:#2C241D; --surface3:#3A3028;
+  --text:#F2E9DC; --text2:rgba(242,233,220,0.62); --text3:rgba(242,233,220,0.34);
+  --border:rgba(255,255,255,0.08);
+  --accent:#E9A23B; --blue:#E9A23B; --green:#7FA36B; --red:#E9906F;
+  --orange:#D9603C; --yellow:#F0B33F; --purple:#B98FA8;
+  --clay:#D9603C; --moss:#7FA36B; --amber:#E9A23B; --sage:#3E4A34; --peach:#4A3229;
+  --radius:18px;
+}
+html.alfie-day{
+  --bg:#EDE7DC; --surface:#FFFFFF; --surface2:#F5F1EA; --surface3:#E4DCCE;
+  --text:#221E19; --text2:rgba(34,30,25,0.6); --text3:rgba(34,30,25,0.36);
+  --border:rgba(34,30,25,0.08);
+  --accent:#D9603C; --blue:#D9603C; --green:#3B5129; --red:#B0432A;
+  --orange:#D9603C; --yellow:#F0B33F; --purple:#8A5A72;
+  --clay:#D9603C; --moss:#3B5129; --amber:#F0B33F; --sage:#DCE5D2; --peach:#F3DBD1;
+  --radius:18px;
+}
+html.alfie-day body, html.alfie-night body{background:var(--bg);}
+html.alfie-day #app, html.alfie-night #app{background:var(--bg);}
+@media (min-width:500px){
+  html.alfie-day body, html.alfie-night body{background:var(--bg);}
+}
+/* flatten the iOS look */
+.card,.page,.nav-header{background:var(--surface)!important;border-color:var(--border)!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+.card{border-radius:22px!important;}
+input,textarea,select,button{font-family:'Outfit',-apple-system,sans-serif;}
+.modebtn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;
+  border-radius:16px;background:var(--surface2);color:var(--text2);cursor:pointer;
+  font-size:12px;font-weight:600;border:1.5px solid transparent;}
+.modebtn svg{width:24px;height:24px;}
+.modebtn.on{border-color:var(--accent);color:var(--accent);}
+.hs-mark{display:block;}
+html.alfie-day{--hs-r3:#F3DBD1;--hs-r2:#DCE5D2;}
+html.alfie-night{--hs-r3:#4A3A31;--hs-r2:#7FA36B;}
+.hs-mark .ring,.hs-mark .core,.hs-mark .tick,.hs-mark .dot{transform-origin:center;transform-box:fill-box;}
+.hs-mark .r1{animation:hsBreathe 4.5s ease-in-out infinite;}
+.hs-mark .r2{animation:hsBreathe 4.5s ease-in-out infinite .5s;}
+.hs-mark .core{animation:hsCore 4.5s ease-in-out infinite;}
+@keyframes hsBreathe{0%,100%{opacity:.55;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
+@keyframes hsCore{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+@media (prefers-reduced-motion: reduce){.hs-mark *{animation:none!important;}}
+.hs-word{font-size:34px;font-weight:600;letter-spacing:7px;color:var(--text);margin-top:20px;padding-left:7px;}
+.hs-greet{font-size:13px;color:var(--text2);margin-top:7px;}
+.hs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:400px;margin-top:34px;}
+.hs-card{background:var(--surface);border-radius:22px;padding:22px 14px 18px;display:flex;
+  flex-direction:column;align-items:center;gap:9px;cursor:pointer;}
+.hs-card:active{transform:scale(0.975);}
+.hs-card svg{width:40px;height:40px;}
+.hs-n{font-size:15px;font-weight:600;color:var(--text);}
+.hs-s{font-size:11px;color:var(--text2);text-align:center;line-height:1.35;}
+
+
+
 
 /* Center & cap width on wide screens (Fold unfolded, tablets, desktop) */
 @media (min-width: 500px) {
@@ -60,7 +118,7 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif;backgr
 /* ── LOGIN ── */
 #login-page{position:fixed;inset:0;background:#07080b;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
 #login-page.hidden{display:none;}
-.login-logo{font-size:clamp(44px,6vw,80px);font-weight:800;color:#C4B0FF;letter-spacing:-2px;}
+.login-logo{font-size:clamp(40px,5.5vw,72px);font-weight:600;color:var(--text);letter-spacing:7px;}
 .login-sub{font-size:clamp(13px,1.8vw,22px);color:rgba(255,255,255,0.3);letter-spacing:2px;text-transform:uppercase;margin-top:-20px;}
 #btn-login{background:#1a1530;color:white;border:1px solid rgba(123,97,255,0.3);border-radius:16px;padding:18px 32px;font-size:17px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
 #btn-login:active{transform:scale(0.96);}
@@ -266,20 +324,20 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
 </div>
 
 <!-- PIN SCREEN -->
-<div id="pin-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:700;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px;">
-  <div style="font-size:36px;font-weight:800;color:#C4B0FF;letter-spacing:-1px;">ALFIE</div>
-  <div style="font-size:17px;color:rgba(255,255,255,0.4);" id="pin-screen-sub">Wer bist du?</div>
-  <div style="display:flex;gap:14px;width:100%;max-width:360px;">
+<div id="pin-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:700;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px;">
+  <div style="font-size:32px;font-weight:600;color:var(--text);letter-spacing:7px;padding-left:7px;">ALFIE</div>
+  <div style="font-size:15px;color:var(--text2);" id="pin-screen-sub">Wer bist du?</div>
+  <div id="user-select" style="display:flex;gap:14px;width:100%;max-width:360px;">
     <!-- Sergio -->
-    <button onclick="selectUser('sergio')" style="flex:1;padding:24px 16px;border-radius:22px;background:rgba(0,122,255,0.12);border:1.5px solid rgba(0,122,255,0.3);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
-      <div id="pic-sergio" style="width:72px;height:72px;border-radius:50%;background:rgba(0,122,255,0.3);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(0,122,255,0.5);">👨</div>
+    <button onclick="selectUser('sergio')" style="flex:1;padding:24px 16px;border-radius:22px;background:var(--surface);border:1.5px solid var(--border);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div id="pic-sergio" style="width:72px;height:72px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(0,122,255,0.5);">👨</div>
       Sérgio
       <div onclick="event.stopPropagation();document.getElementById('upload-sergio').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">📷 Foto</div>
       <input type="file" id="upload-sergio" accept="image/*" style="display:none" onchange="uploadPic('sergio',this)">
     </button>
     <!-- Miriam -->
-    <button onclick="selectUser('miriam')" style="flex:1;padding:24px 16px;border-radius:22px;background:rgba(191,90,242,0.12);border:1.5px solid rgba(191,90,242,0.3);color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
-      <div id="pic-miriam" style="width:72px;height:72px;border-radius:50%;background:rgba(191,90,242,0.3);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(191,90,242,0.5);">👩</div>
+    <button onclick="selectUser('miriam')" style="flex:1;padding:24px 16px;border-radius:22px;background:var(--surface);border:1.5px solid var(--border););color:white;font-size:20px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div id="pic-miriam" style="width:72px;height:72px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:2px solid rgba(191,90,242,0.5);">👩</div>
       Miriam
       <div onclick="event.stopPropagation();document.getElementById('upload-miriam').click()" style="font-size:11px;color:rgba(255,255,255,0.4);padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;">📷 Foto</div>
       <input type="file" id="upload-miriam" accept="image/*" style="display:none" onchange="uploadPic('miriam',this)">
@@ -288,14 +346,15 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
   <!-- PIN entry -->
   <div id="pin-entry" style="display:none;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:320px;">
     <div style="display:flex;align-items:center;gap:14px;">
-      <div id="pin-pic" style="width:52px;height:52px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:28px;"></div>
-      <div id="pin-name" style="font-size:22px;font-weight:700;color:white;"></div>
+      <div id="pin-pic" style="width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:28px;"></div>
+      <div id="pin-name" style="font-size:22px;font-weight:600;color:var(--text);"></div>
     </div>
     <div id="pin-dots" style="display:flex;gap:14px;"></div>
     <input id="pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="10"
       style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:16px;padding:18px;font-size:28px;color:white;text-align:center;outline:none;font-family:Inter,sans-serif;letter-spacing:8px;"
       placeholder="••••" oninput="onPinInput(this.value)" onkeydown="if(event.key==='Enter')checkPin()">
     <div id="pin-error" style="font-size:14px;color:var(--red);height:18px;"></div>
+    <div id="pin-switch" onclick="switchUser()" style="display:none;font-size:13.5px;color:var(--text2);padding:10px 16px;cursor:pointer;">Anderer Benutzer</div>
     <button onclick="checkPin()" style="width:100%;padding:16px;border-radius:16px;background:var(--blue);color:white;border:none;font-size:18px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Weiter →</button>
     <button onclick="resetPin()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;font-family:Inter,sans-serif;">← Zurück</button>
   </div>
@@ -305,70 +364,56 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
 .pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.15s;}
 .pin-dot.filled{background:white;}
 </style>
-<div id="home-screen" style="display:none;position:fixed;inset:0;background:#07080b;z-index:600;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
-  <svg width="180" height="132" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="bg2" cx="50%" cy="45%" r="65%"><stop offset="0%" stop-color="#0e1117"/><stop offset="100%" stop-color="#07080b"/></radialGradient>
-      <radialGradient id="hl" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#7B61FF" stop-opacity="0.2"/><stop offset="100%" stop-color="#7B61FF" stop-opacity="0"/></radialGradient>
-    </defs>
-    <rect width="680" height="500" fill="url(#bg2)" rx="20"/>
-    <ellipse cx="340" cy="210" rx="260" ry="190" fill="url(#hl)"/>
-    <circle cx="340" cy="200" r="112" fill="#0b0a14" stroke="#2d2458" stroke-width="1.5"/>
-    <text x="340" y="224" text-anchor="middle" font-family="Inter,sans-serif" font-size="66" font-weight="700" fill="#C4B0FF" textLength="280" lengthAdjust="spacing">ALFIE</text>
-    <text x="340" y="318" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#9B85FF" textLength="200" lengthAdjust="spacing">HOME ASSISTANT</text>
+<div id="home-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:600;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
+
+  <svg class="hs-mark" width="118" height="118" viewBox="0 0 126 126" fill="none">
+    <circle class="ring r3" cx="63" cy="63" r="54" stroke="var(--hs-r3)" stroke-width="3"/>
+    <circle class="ring r2" cx="63" cy="63" r="40" stroke="var(--hs-r2)" stroke-width="3.4"/>
+    <circle class="ring r1" cx="63" cy="63" r="26" stroke="var(--clay)" stroke-width="3"/>
+    <g class="spin">
+      <path class="tick" d="M63 4v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
+      <path class="tick" d="M63 111v11" stroke="var(--clay)" stroke-width="3.4" stroke-linecap="round"/>
+      <path class="tick" d="M4 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
+      <path class="tick" d="M111 63h11" stroke="var(--hs-r2)" stroke-width="3.4" stroke-linecap="round"/>
+      <circle class="dot" cx="21" cy="21" r="3.6" fill="var(--amber)"/>
+      <circle class="dot" cx="105" cy="105" r="3.6" fill="var(--amber)"/>
+    </g>
+    <circle class="core" cx="63" cy="63" r="13" fill="var(--amber)"/>
   </svg>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:400px;margin-top:32px;">
-    <div onclick="enterApp('meals')" style="background:#1a1530;border:1px solid rgba(123,97,255,0.3);border-radius:24px;padding:24px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
-      <svg viewBox="0 0 104 80" width="80" height="62" xmlns="http://www.w3.org/2000/svg">
-        <line x1="36" y1="14" x2="36" y2="52" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="30" y1="14" x2="30" y2="30" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="42" y1="14" x2="42" y2="30" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M30 30 Q36 36 42 30" stroke="#C4B0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <line x1="68" y1="14" x2="68" y2="52" stroke="#C4B0FF" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M68 14 Q76 22 68 34" stroke="#C4B0FF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <circle cx="52" cy="46" r="22" stroke="#C4B0FF" stroke-width="2.5" fill="none"/>
-        <circle cx="52" cy="46" r="13" stroke="#C4B0FF" stroke-width="1.2" fill="none"/>
-        
-      </svg>
-      <div style="font-size:16px;font-weight:700;color:white;">ALFIE Meals</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">Wochenplan & Favoriten</div>
+
+  <div class="hs-word">ALFIE</div>
+  <div class="hs-greet" id="hs-greet">Willkommen</div>
+
+  <div class="hs-grid">
+    <div class="hs-card" onclick="enterApp('meals')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3v8M4 3v4M8 3v4M6 11v10"/><path d="M17 3c-2 2-2 6 0 8v10"/></svg>
+      <div class="hs-n">Meals</div>
+      <div class="hs-s">Wochenplan &amp; Favoriten</div>
     </div>
 
-    <div onclick="enterApp('lights')" style="background:#1a1f10;border:1px solid rgba(255,214,10,0.3);border-radius:24px;padding:24px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
-      <svg viewBox="0 0 104 80" width="80" height="62" xmlns="http://www.w3.org/2000/svg">
-        <path d="M52 12 Q32 24 32 42 Q32 58 44 64 L44 74 Q44 78 52 78 Q60 78 60 74 L60 64 Q72 58 72 42 Q72 24 52 12Z" stroke="#FFD60A" stroke-width="2.5" fill="rgba(255,214,10,0.07)" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="45" y1="68" x2="59" y2="68" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="47" y1="74" x2="57" y2="74" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M47 44 Q52 37 57 44" stroke="#FFD60A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <line x1="52" y1="5" x2="52" y2="1" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="76" y1="18" x2="80" y2="14" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="28" y1="18" x2="24" y2="14" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="80" y1="42" x2="86" y2="42" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="24" y1="42" x2="18" y2="42" stroke="#FFD60A" stroke-width="2.5" stroke-linecap="round"/>
-        
-      </svg>
-      <div style="font-size:16px;font-weight:700;color:white;">ALFIE C</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;">ALFIE Control</div>
+    <div class="hs-card" onclick="enterApp('lights')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3a6 6 0 0 0-3 11v3h6v-3a6 6 0 0 0-3-11z"/><path d="M10 20h4"/></svg>
+      <div class="hs-n">Control</div>
+      <div class="hs-s">Licht &amp; Ger\u00e4te</div>
     </div>
 
-    <div onclick="enterApp('tracker')" id="home-tracker-card" style="background:#101a20;border:1px solid rgba(48,209,88,0.3);border-radius:24px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;grid-column:1/-1;" ontouchstart="this.style.opacity='0.7'" ontouchend="this.style.opacity='1'">
-      <svg viewBox="0 0 160 80" width="140" height="62" xmlns="http://www.w3.org/2000/svg">
-        <rect x="20" y="46" width="22" height="28" rx="3" fill="rgba(48,209,88,0.2)" stroke="#30D158" stroke-width="2"/>
-        <rect x="54" y="30" width="22" height="44" rx="3" fill="rgba(48,209,88,0.2)" stroke="#30D158" stroke-width="2"/>
-        <rect x="88" y="14" width="22" height="60" rx="3" fill="rgba(48,209,88,0.35)" stroke="#30D158" stroke-width="2"/>
-        <polyline points="24,38 58,24 76,30 90,14 108,20" fill="none" stroke="#C4B0FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="24" cy="38" r="3.5" fill="#C4B0FF"/>
-        <circle cx="58" cy="24" r="3.5" fill="#C4B0FF"/>
-        <circle cx="76" cy="30" r="3.5" fill="#C4B0FF"/>
-        <circle cx="90" cy="14" r="3.5" fill="#C4B0FF"/>
-        <circle cx="108" cy="20" r="3.5" fill="#C4B0FF"/>
-        <line x1="14" y1="76" x2="120" y2="76" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-        
-      </svg>
-      <div style="font-size:16px;font-weight:700;color:white;">ALFIE HT</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);">Health Tracker</div>
+    <div class="hs-card" id="home-tracker-card" onclick="enterApp('tracker')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--moss)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 20V11M10 20V4M16 20v-7M22 20v-4"/></svg>
+      <div class="hs-n">Tracker</div>
+      <div class="hs-s">Tag &amp; Woche</div>
+    </div>
+
+    <div class="hs-card" onclick="enterApp('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+      <div class="hs-n">Einstellungen</div>
+      <div class="hs-s">Konto &amp; Sync</div>
     </div>
   </div>
+
 </div>
 
 <div id="app" style="display:none;">
@@ -680,18 +725,25 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
         </div>
       </div>
 
-      <!-- Themes -->
-      <div class="section-hd">Theme</div>
+      <!-- Erscheinungsbild -->
+      <div class="section-hd">Erscheinungsbild</div>
       <div class="card">
-        <div style="padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="theme-grid">
-          <div onclick="setTheme('midnight')" id="theme-midnight" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#07080b;border:2px solid #7B61FF;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#7B61FF;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Midnight</div></div>
-          <div onclick="setTheme('ocean')" id="theme-ocean" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#040d18;border:2px solid #00C9FF;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#00C9FF;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Ocean</div></div>
-          <div onclick="setTheme('forest')" id="theme-forest" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#050f08;border:2px solid #30D158;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#30D158;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Forest</div></div>
-          <div onclick="setTheme('sunset')" id="theme-sunset" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#120806;border:2px solid #FF6B35;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#FF6B35;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Sunset</div></div>
-          <div onclick="setTheme('rose')" id="theme-rose" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#110609;border:2px solid #FF2D55;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#FF2D55;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Rose</div></div>
-          <div onclick="setTheme('gold')" id="theme-gold" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#0f0d04;border:2px solid #FFD60A;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#FFD60A;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Gold</div></div>
-          <div onclick="setTheme('arctic')" id="theme-arctic" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#050810;border:2px solid #64D2FF;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#64D2FF;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Arctic</div></div>
-          <div onclick="setTheme('neon')" id="theme-neon" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:14px;border:2px solid transparent;"><div style="width:44px;height:44px;border-radius:12px;background:#010a01;border:2px solid #39FF14;display:flex;align-items:center;justify-content:center;"><div style="width:18px;height:18px;border-radius:50%;background:#39FF14;"></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);">Neon</div></div>
+        <div style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div class="modebtn" id="mode-auto" onclick="setMode('auto')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none"/></svg>
+            <span>Automatisch</span></div>
+          <div class="modebtn" id="mode-day" onclick="setMode('day')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+            <span>Hell</span></div>
+          <div class="modebtn" id="mode-night" onclick="setMode('night')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+            <span>Dunkel</span></div>
+        </div>
+        <div style="padding:0 18px 18px;font-size:12.5px;color:var(--text3);line-height:1.5;">
+          Automatisch: hell von 07:00 bis 19:00, danach dunkel.
         </div>
       </div>
 
@@ -717,7 +769,7 @@ select.tr-input option,select.tr-input optgroup{background:#1c1c1e;color:var(--t
       <div class="tab-icon">
         <svg viewBox="0 0 40 40" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
           <circle cx="20" cy="18" r="10" fill="none" stroke="#9B85FF" stroke-width="2"/>
-          <text x="20" y="22" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="#C4B0FF">ALFIE</text>
+          <text x="20" y="22" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="currentColor">ALFIE</text>
         </svg>
       </div>
       <div class="tab-label">Home</div>
@@ -917,44 +969,81 @@ function getAuthUrl(){
   return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GCAL_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
 }
 
-function initAuth(){
-  // Check cached token — only valid 55 min (tokens expire after 60)
-  const cached = localStorage.getItem('alfie_token');
-  const cachedTime = localStorage.getItem('alfie_token_time');
-  if(cached && cachedTime && Date.now() - parseInt(cachedTime) < 55 * 60 * 1000){
-    oauthToken = cached;
-    onLogin();
-    return;
-  }
-  // Clear expired token
-  localStorage.removeItem('alfie_token');
-  localStorage.removeItem('alfie_token_time');
+let gTokenClient=null;
 
-  // Check if returning from Google OAuth
-  const hash=window.location.hash.substring(1);
-  const params=new URLSearchParams(hash);
-  const token=params.get('access_token');
-  if(token){
-    oauthToken=token;
-    localStorage.setItem('alfie_token', token);
-    localStorage.setItem('alfie_token_time', Date.now().toString());
-    window.history.replaceState({},document.title,window.location.pathname);
-    onLogin();
-    return;
-  }
-  // Show login
-  document.getElementById('btn-login').onclick=()=>{ window.location.href=getAuthUrl(); };
+function gStore(tok){
+  oauthToken = tok;
+  localStorage.setItem('alfie_token', tok);
+  localStorage.setItem('alfie_token_time', Date.now().toString());
 }
 
-// Auto re-auth when token expires
-setInterval(()=>{
+function gInitClient(){
+  if(gTokenClient || !window.google || !google.accounts || !google.accounts.oauth2) return false;
+  gTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CONFIG.GCAL_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    callback: (resp) => {
+      if(resp && resp.access_token){
+        gStore(resp.access_token);
+        const lp = document.getElementById('login-page');
+        if(lp && lp.style.display !== 'none') onLogin();
+      }
+    },
+    error_callback: () => {
+      const lp = document.getElementById('login-page');
+      if(lp) lp.style.display = '';
+    },
+  });
+  return true;
+}
+
+function gRefresh(){
+  if(!gInitClient()) return;
+  try{ gTokenClient.requestAccessToken({prompt:''}); }catch(e){ console.warn('refresh', e); }
+}
+
+function initAuth(){
+  const cached = localStorage.getItem('alfie_token');
   const cachedTime = localStorage.getItem('alfie_token_time');
-  if(cachedTime && Date.now() - parseInt(cachedTime) > 55 * 60 * 1000){
-    localStorage.removeItem('alfie_token');
-    localStorage.removeItem('alfie_token_time');
-    window.location.href=getAuthUrl();
+  const fresh = cached && cachedTime && (Date.now() - parseInt(cachedTime) < 55 * 60 * 1000);
+
+  // Returning from the old redirect flow — still honour it
+  const hash = window.location.hash.substring(1);
+  const token = new URLSearchParams(hash).get('access_token');
+  if(token){
+    gStore(token);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    onLogin();
+    return;
   }
-}, 60 * 1000);
+
+  const start = () => {
+    gInitClient();
+    if(fresh){
+      oauthToken = cached;
+      onLogin();
+    } else if(cached){
+      gRefresh();          // logged in before → get a new token silently
+      setTimeout(() => { if(oauthToken) onLogin(); }, 1200);
+    }
+    const btn = document.getElementById('btn-login');
+    if(btn) btn.onclick = () => {
+      if(gInitClient()) gTokenClient.requestAccessToken();
+      else window.location.href = getAuthUrl();
+    };
+  };
+
+  if(window.google && google.accounts) start();
+  else setTimeout(start, 1200);
+}
+
+// Silent refresh well before the token expires — no page redirect
+setInterval(gRefresh, 45 * 60 * 1000);
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState !== 'visible') return;
+  const t = parseInt(localStorage.getItem('alfie_token_time') || '0');
+  if(Date.now() - t > 45 * 60 * 1000) gRefresh();
+});
 
 // ── PROFILE PICS ──
 function uploadPic(user, input) {
@@ -1010,9 +1099,26 @@ function onLogin(){
   renderWeekStrip();
   loadMeals();
   loadProfilePics();
-  const savedUser = sessionStorage.getItem('alfie_user');
-  if(savedUser){ setUser(savedUser); }
-  else { document.getElementById('pin-screen').style.display='flex'; }
+  const lastUser = localStorage.getItem('alfie_last_user');
+  document.getElementById('pin-screen').style.display='flex';
+  if(lastUser && PINS[lastUser]){
+    const sel = document.getElementById('user-select');
+    if(sel) sel.style.display = 'none';
+    selectUser(lastUser);
+  }
+}
+
+
+function switchUser(){
+  localStorage.removeItem('alfie_last_user');
+  currentUser = null;
+  pinEntry = '';
+  const pe = document.getElementById('pin-entry');
+  if(pe) pe.style.display = 'none';
+  const sw = document.getElementById('pin-switch');
+  if(sw) sw.style.display = 'none';
+  const sel = document.getElementById('user-select');
+  if(sel) sel.style.display = '';
 }
 
 function selectUser(user){
@@ -1028,6 +1134,8 @@ function selectUser(user){
   const pinLen = PINS[user].length;
   document.getElementById('pin-dots').innerHTML = Array(pinLen).fill('<div class="pin-dot"></div>').join('');
   document.getElementById('pin-entry').style.display='flex';
+  const sw = document.getElementById('pin-switch');
+  if(sw) sw.style.display='block';
   setTimeout(()=>document.getElementById('pin-input').focus(), 300);
 }
 
@@ -1061,6 +1169,7 @@ function checkPin(){
 function setUser(user){
   currentUser=user;
   sessionStorage.setItem('alfie_user',user);
+  localStorage.setItem('alfie_last_user',user);
   document.getElementById('pin-screen').style.display='none';
   // Tracker only for Miriam, Settings for both
   document.getElementById('tab-tracker').style.display=user==='sergio'?'none':'flex';
@@ -2164,33 +2273,43 @@ function updateNutritionBars() {
   document.getElementById('protein-bar').style.background = totalProtein >= goalProtein ? 'var(--green)' : 'var(--blue)';
 }
 // ── SETTINGS ──
-const THEMES = {
-  midnight: {bg:'#07080b', surface:'#1C1C1E', accent:'#7B61FF'},
-  ocean:    {bg:'#040d18', surface:'#0d1f2d', accent:'#00C9FF'},
-  forest:   {bg:'#050f08', surface:'#0d1f11', accent:'#30D158'},
-  sunset:   {bg:'#120806', surface:'#1f120d', accent:'#FF6B35'},
-  rose:     {bg:'#110609', surface:'#1f0d12', accent:'#FF2D55'},
-  gold:     {bg:'#0f0d04', surface:'#1f1a0d', accent:'#FFD60A'},
-  arctic:   {bg:'#050810', surface:'#0d1220', accent:'#64D2FF'},
-  neon:     {bg:'#010a01', surface:'#0d1a0d', accent:'#39FF14'},
-};
+const ALFIE_DAY_START = 7;   // 07:00 → hell
+const ALFIE_DAY_END   = 19;  // 19:00 → dunkel
 
-function setTheme(themeId){
-  const t=THEMES[themeId]; if(!t)return;
-  document.documentElement.style.setProperty('--bg',t.bg);
-  document.documentElement.style.setProperty('--surface',t.surface);
-  document.documentElement.style.setProperty('--blue',t.accent);
-  document.documentElement.style.setProperty('--accent',t.accent);
-  document.documentElement.style.setProperty('--green',themeId==='neon'?'#39FF14':'#30D158');
-  document.body.style.background = t.bg;
-  document.getElementById('app').style.background = t.bg;
-  localStorage.setItem(`alfie_theme_${currentUser}`,themeId);
-  document.querySelectorAll('[id^="theme-"]').forEach(el=>{el.style.borderColor='transparent';el.style.background='transparent';});
-  const sel=document.getElementById(`theme-${themeId}`);
-  if(sel){sel.style.borderColor=t.accent;sel.style.background='rgba(255,255,255,0.05)';}
-  showToast(`🎨 ${themeId.charAt(0).toUpperCase()+themeId.slice(1)} aktiviert`);
-  saveUserSettings();
+function alfieResolveMode(mode){
+  if(mode === 'day' || mode === 'night') return mode;
+  const h = new Date().getHours();
+  return (h >= ALFIE_DAY_START && h < ALFIE_DAY_END) ? 'day' : 'night';
 }
+
+function alfieApplyTheme(){
+  const mode = localStorage.getItem('alfie_mode') || 'auto';
+  const res  = alfieResolveMode(mode);
+  const html = document.documentElement;
+  html.classList.remove('alfie-day','alfie-night');
+  html.classList.add('alfie-' + res);
+  // clear inline overrides left by the old theme system
+  ['--bg','--surface','--blue','--accent','--green'].forEach(v => html.style.removeProperty(v));
+  document.body.style.background = '';
+  const app = document.getElementById('app');
+  if (app) app.style.background = '';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', res === 'day' ? '#EDE7DC' : '#191410');
+  document.querySelectorAll('[id^="mode-"]').forEach(el => el.classList.remove('on'));
+  const sel = document.getElementById('mode-' + mode);
+  if (sel) sel.classList.add('on');
+}
+
+function setMode(mode){
+  localStorage.setItem('alfie_mode', mode);
+  alfieApplyTheme();
+}
+// keep the old name working wherever it is still called
+function setTheme(){ alfieApplyTheme(); }
+
+alfieApplyTheme();
+setInterval(alfieApplyTheme, 5 * 60 * 1000);
+
 
 async function saveUserSettings(){
   if(!oauthToken||!currentUser)return;
@@ -2282,10 +2401,7 @@ function loadSettingsPage(){
   const picEl=document.getElementById('settings-pic');
   if(saved) picEl.innerHTML=`<img src="${saved}" style="width:100%;height:100%;object-fit:cover;">`;
   else picEl.innerHTML=currentUser==='sergio'?'👨':'👩';
-  const savedTheme=localStorage.getItem(`alfie_theme_${currentUser}`)||'midnight';
-  document.querySelectorAll('[id^="theme-"]').forEach(el=>{el.style.borderColor='transparent';el.style.background='transparent';});
-  const selTheme=document.getElementById(`theme-${savedTheme}`);
-  if(selTheme){selTheme.style.borderColor=THEMES[savedTheme]?.accent;selTheme.style.background='rgba(255,255,255,0.05)';}
+  alfieApplyTheme();
   const notifOn=localStorage.getItem(`alfie_notif_${currentUser}`)==='true';
   updateNotifToggle(notifOn);
   // Load saved PIN
