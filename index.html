@@ -1303,38 +1303,66 @@ loadLights();setInterval(loadLights,30000);
 
 // ── OAUTH ──
 let oauthToken=null;
+let gTokenClient=null;
+
+function gApplyToken(tok){
+  oauthToken = tok;
+  localStorage.setItem('google_oauth_token', tok);
+  localStorage.setItem('google_oauth_time', Date.now().toString());
+  const ov=document.getElementById('login-overlay');
+  if(ov) ov.style.display='none';
+  loadCalendarEvents();
+  loadTraffic();
+  requestNotificationPermission();
+}
+
+function gSilentRefresh(){
+  if(!gTokenClient) return;
+  try{ gTokenClient.requestAccessToken({ prompt: '' }); }catch(e){ console.warn('silent refresh failed', e); }
+}
+
 function initOAuth(){
   const storedToken = localStorage.getItem('google_oauth_token');
   const storedTime = localStorage.getItem('google_oauth_time');
-  if (storedToken && storedTime && Date.now() - parseInt(storedTime) < 50 * 60 * 1000) {
-    oauthToken = storedToken;
-    document.getElementById('login-overlay').style.display = 'none';
-    loadCalendarEvents();
-    loadTraffic();
-    requestNotificationPermission();
-    return;
-  }
+  const fresh = storedToken && storedTime && (Date.now() - parseInt(storedTime) < 50 * 60 * 1000);
 
-  const client = google.accounts.oauth2.initTokenClient({
+  gTokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CONFIG.GCAL_CLIENT_ID,
     scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
     callback: (resp) => {
-      if (resp.access_token) {
-        oauthToken = resp.access_token;
-        localStorage.setItem('google_oauth_token', oauthToken);
-        localStorage.setItem('google_oauth_time', Date.now().toString());
-        document.getElementById('login-overlay').style.display = 'none';
-        loadCalendarEvents();
-        loadTraffic();
-        requestNotificationPermission();
-      }
+      if (resp && resp.access_token) gApplyToken(resp.access_token);
+    },
+    error_callback: (err) => {
+      console.warn('OAuth error:', err);
+      const ov=document.getElementById('login-overlay');
+      if(ov) ov.style.display='';
     },
   });
-  document.getElementById('btn-google-login').onclick = () => client.requestAccessToken();
 
-  setInterval(() => {
-    client.requestAccessToken({ prompt: '' });
-  }, 45 * 60 * 1000);
+  const btn=document.getElementById('btn-google-login');
+  if(btn) btn.onclick = () => gTokenClient.requestAccessToken();
+
+  if (fresh) {
+    oauthToken = storedToken;
+    const ov=document.getElementById('login-overlay');
+    if(ov) ov.style.display='none';
+    loadCalendarEvents();
+    loadTraffic();
+    requestNotificationPermission();
+  } else if (storedToken) {
+    // We were logged in before — try to get a new token without asking.
+    gSilentRefresh();
+  }
+
+  // Refresh well before the 60-minute expiry, always running.
+  setInterval(gSilentRefresh, 45 * 60 * 1000);
+
+  // If the tab was asleep (kiosk overnight), refresh on wake.
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState !== 'visible') return;
+    const t = parseInt(localStorage.getItem('google_oauth_time')||'0');
+    if(Date.now() - t > 45 * 60 * 1000) gSilentRefresh();
+  });
 }
 window.addEventListener('load', () => { setTimeout(() => { if (window.google) initOAuth(); else setTimeout(initOAuth, 1500); }, 500); });
 
