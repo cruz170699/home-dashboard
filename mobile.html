@@ -17,7 +17,7 @@
 <style>
 /* ══ TOKENS ══ */
 :root{
-  --radius-card:22px; --radius-tile:20px; --radius-pill:20px;
+  --radius-card:1.375rem; --radius-tile:1.25rem; --radius-pill:1.25rem;
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -46,24 +46,27 @@ html.alfie-night{
   --on-accent:#191410;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+/* Fluid scale: 1rem grows with the viewport, so the whole UI keeps its
+   proportions whether the device reports 360 or 1080 CSS pixels. */
+html{font-size:calc(clamp(16px, 4vw, 44px) * var(--ui-scale, 1));}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
 body{font-family:'Outfit',-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);
   -webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 input,textarea,select,button{font-family:'Outfit',sans-serif;color:var(--text);}
 input,textarea{-webkit-user-select:text;user-select:text;}
 button{border:none;background:none;cursor:pointer;}
-.uic{width:18px;height:18px;display:inline-block;vertical-align:-3px;flex-shrink:0;}
+.uic{width:1.125rem;height:1.125rem;display:inline-block;vertical-align:-0.1875rem;flex-shrink:0;}
 
 /* ══ FULLSCREEN OVERLAYS ══ */
 .screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;
-  padding:calc(28px + var(--safe-top)) 22px calc(24px + var(--safe-bottom));overflow-y:auto;}
+  padding:calc(1.75rem + var(--safe-top)) 1.375rem calc(1.5rem + var(--safe-bottom));overflow-y:auto;}
 .screen.on{display:flex;}
-.screen-inner{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;flex:1;}
+.screen-inner{width:100%;max-width:35rem;margin:0 auto;display:flex;flex-direction:column;flex:1;}
 
 /* ── LOGIN ── */
 #login-page{z-index:900;display:flex;align-items:center;justify-content:center;}
 #login-page.hidden{display:none;}
-.lg-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:420px;}
+.lg-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:26.25rem;}
 .hs-mark{display:block;}
 .hs-mark .r1{animation:hsB 4.5s ease-in-out infinite;transform-origin:center;transform-box:fill-box;}
 .hs-mark .r2{animation:hsB 4.5s ease-in-out infinite .5s;transform-origin:center;transform-box:fill-box;}
@@ -71,59 +74,59 @@ button{border:none;background:none;cursor:pointer;}
 @keyframes hsB{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.03);}}
 @keyframes hsC{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
 @media (prefers-reduced-motion:reduce){.hs-mark *{animation:none!important;}}
-.lg-word{font-size:30px;font-weight:500;letter-spacing:8px;padding-left:8px;margin-top:26px;}
-.lg-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-top:6px;}
-.lg-btn{width:100%;background:var(--surface);border-radius:var(--radius-pill);padding:16px;
-  display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:500;margin-top:44px;}
+.lg-word{font-size:1.875rem;font-weight:500;letter-spacing:0.5rem;padding-left:0.5rem;margin-top:1.625rem;}
+.lg-sub{font-size:0.6875rem;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-top:0.375rem;}
+.lg-btn{width:100%;background:var(--surface);border-radius:var(--radius-pill);padding:1rem;
+  display:flex;align-items:center;justify-content:center;gap:0.625rem;font-size:0.9375rem;font-weight:500;margin-top:2.75rem;}
 .lg-btn:active{transform:scale(0.98);}
-.lg-full{font-size:11px;color:var(--text3);margin-top:16px;text-align:center;}
+.lg-full{font-size:0.6875rem;color:var(--text3);margin-top:1rem;text-align:center;}
 
 /* ── PIN ── */
 #pin-screen{z-index:800;justify-content:center;}
-.pin-word{font-size:22px;font-weight:500;letter-spacing:6px;padding-left:6px;text-align:center;}
-.pin-q{font-size:13px;color:var(--text2);margin-top:6px;text-align:center;}
-#user-select{display:flex;gap:12px;margin-top:28px;}
-.usr-card{flex:1;background:var(--surface);border-radius:var(--radius-card);padding:22px 12px;
-  display:flex;flex-direction:column;align-items:center;gap:10px;}
+.pin-word{font-size:1.375rem;font-weight:500;letter-spacing:0.375rem;padding-left:0.375rem;text-align:center;}
+.pin-q{font-size:0.8125rem;color:var(--text2);margin-top:0.375rem;text-align:center;}
+#user-select{display:flex;gap:0.75rem;margin-top:1.75rem;}
+.usr-card{flex:1;background:var(--surface);border-radius:var(--radius-card);padding:1.375rem 0.75rem;
+  display:flex;flex-direction:column;align-items:center;gap:0.625rem;}
 .usr-card:active{transform:scale(0.975);}
-.usr-av{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:24px;font-weight:600;overflow:hidden;}
+.usr-av{width:4rem;height:4rem;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;font-weight:600;overflow:hidden;}
 .usr-av img{width:100%;height:100%;object-fit:cover;}
 .usr-av.a{background:var(--peach);color:var(--on-peach);}
 .usr-av.b{background:var(--sage);color:var(--on-sage);}
-.usr-n{font-size:15px;font-weight:500;}
-.usr-foto{font-size:11px;color:var(--text3);padding:4px 10px;background:var(--surface2);border-radius:12px;}
+.usr-n{font-size:0.9375rem;font-weight:500;}
+.usr-foto{font-size:0.6875rem;color:var(--text3);padding:0.25rem 0.625rem;background:var(--surface2);border-radius:0.75rem;}
 #pin-entry{display:none;flex-direction:column;align-items:center;}
-.pin-av{width:56px;height:56px;border-radius:50%;background:var(--peach);color:var(--on-peach);
-  display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;overflow:hidden;}
+.pin-av{width:3.5rem;height:3.5rem;border-radius:50%;background:var(--peach);color:var(--on-peach);
+  display:flex;align-items:center;justify-content:center;font-size:1.375rem;font-weight:600;overflow:hidden;}
 .pin-av img{width:100%;height:100%;object-fit:cover;}
-.pin-name{font-size:17px;font-weight:500;margin-top:10px;}
-#pin-dots{display:flex;gap:14px;margin:20px 0 22px;}
-.pin-dot{width:13px;height:13px;border-radius:50%;background:var(--surface3);transition:background .15s;}
+.pin-name{font-size:1.0625rem;font-weight:500;margin-top:0.625rem;}
+#pin-dots{display:flex;gap:0.875rem;margin:1.25rem 0 1.375rem;}
+.pin-dot{width:0.8125rem;height:0.8125rem;border-radius:50%;background:var(--surface3);transition:background .15s;}
 .pin-dot.filled{background:var(--clay);}
-.keypad{display:grid;grid-template-columns:repeat(3,64px);gap:12px;justify-content:center;}
-.key{height:64px;border-radius:50%;background:var(--surface);font-size:20px;font-weight:500;
+.keypad{display:grid;grid-template-columns:repeat(3,4rem);gap:0.75rem;justify-content:center;}
+.key{height:4rem;border-radius:50%;background:var(--surface);font-size:1.25rem;font-weight:500;
   display:flex;align-items:center;justify-content:center;}
 .key:active{background:var(--surface3);}
 .key.blank{background:none;}
-.pin-err{font-size:13px;color:var(--red);height:18px;margin-top:16px;}
-.pin-switch{font-size:13px;color:var(--text2);padding:10px 16px;margin-top:4px;}
+.pin-err{font-size:0.8125rem;color:var(--red);height:1.125rem;margin-top:1rem;}
+.pin-switch{font-size:0.8125rem;color:var(--text2);padding:0.625rem 1rem;margin-top:0.25rem;}
 
 /* ── HOME ── */
 #home-screen{z-index:700;justify-content:flex-start;}
 .hm-top{display:flex;align-items:center;justify-content:space-between;}
-.hm-date{font-size:13px;color:var(--text2);}
-.hm-hi{font-size:26px;font-weight:500;margin-top:2px;}
-.hm-today{background:var(--surface);border-radius:var(--radius-card);padding:18px;margin-top:22px;}
-.hm-lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:600;}
-.hm-line{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;}
-.hm-line svg{width:18px;height:18px;flex-shrink:0;}
-.hm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
-.hm-card{border-radius:var(--radius-card);padding:18px 14px;background:var(--surface);}
+.hm-date{font-size:0.8125rem;color:var(--text2);}
+.hm-hi{font-size:1.625rem;font-weight:500;margin-top:2px;}
+.hm-today{background:var(--surface);border-radius:var(--radius-card);padding:1.125rem;margin-top:1.375rem;}
+.hm-lbl{font-size:0.6875rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:600;}
+.hm-line{display:flex;align-items:center;gap:0.625rem;margin-top:0.625rem;font-size:0.875rem;}
+.hm-line svg{width:1.125rem;height:1.125rem;flex-shrink:0;}
+.hm-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.875rem;}
+.hm-card{border-radius:var(--radius-card);padding:1.125rem 0.875rem;background:var(--surface);}
 .hm-card:active{transform:scale(0.975);}
-.hm-card svg{width:24px;height:24px;}
-.hm-n{font-size:14px;font-weight:600;margin-top:12px;}
-.hm-s{font-size:11px;margin-top:2px;opacity:0.75;}
+.hm-card svg{width:1.5rem;height:1.5rem;}
+.hm-n{font-size:0.875rem;font-weight:600;margin-top:0.75rem;}
+.hm-s{font-size:0.6875rem;margin-top:2px;opacity:0.75;}
 .hm-card.peach{background:var(--peach);color:var(--on-peach);}
 .hm-card.sage{background:var(--sage);color:var(--on-sage);}
 .hm-card.sand{background:var(--sand);color:var(--on-sand);}
@@ -135,383 +138,266 @@ button{border:none;background:none;cursor:pointer;}
 #app.on{display:flex;}
 #app-content{flex:1;min-height:0;position:relative;}
 .page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  display:none;padding:0 0 150px;}
+  display:none;padding:0 0 9.375rem;}
 .page.active{display:block;}
-.pg{width:100%;max-width:640px;margin:0 auto;padding:0 18px;}
-.pg-head{padding:calc(26px + var(--safe-top)) 18px 4px;max-width:640px;margin:0 auto;}
-.pg-title{font-size:24px;font-weight:500;letter-spacing:-0.3px;}
-.pg-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.pg{width:100%;max-width:40rem;margin:0 auto;padding:0 1.125rem;}
+.pg-head{padding:calc(1.625rem + var(--safe-top)) 1.125rem 0.25rem;max-width:40rem;margin:0 auto;}
+.pg-title{font-size:1.5rem;font-weight:500;letter-spacing:-0.3px;}
+.pg-sub{font-size:0.75rem;color:var(--text2);margin-top:2px;}
 .pg-row{display:flex;align-items:center;justify-content:space-between;}
-.icon-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);
+.icon-btn{width:2.375rem;height:2.375rem;border-radius:50%;background:var(--surface);
   display:flex;align-items:center;justify-content:center;}
-.icon-btn svg{width:17px;height:17px;}
+.icon-btn svg{width:1.0625rem;height:1.0625rem;}
 .icon-btn:active{transform:scale(0.94);}
-.sec-lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
-  font-weight:600;margin:22px 0 10px;}
+.sec-lbl{font-size:0.6875rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;margin:1.375rem 0 0.625rem;}
 
 /* ── DOCK ── */
-#dock{position:absolute;bottom:calc(16px + var(--safe-bottom));left:50%;transform:translateX(-50%);
-  width:calc(100% - 28px);max-width:600px;background:var(--dock-bg);border-radius:32px;
-  padding:12px 10px;display:flex;justify-content:space-around;align-items:center;z-index:60;}
-.tab-btn{flex:1;min-width:0;height:52px;border-radius:24px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:4px;color:var(--dock-fg);transition:color .18s;}
-.tab-btn svg{width:26px;height:26px;}
+#dock{position:absolute;bottom:calc(1rem + var(--safe-bottom));left:50%;transform:translateX(-50%);
+  width:calc(100% - 1.75rem);max-width:37.5rem;background:var(--dock-bg);border-radius:2rem;
+  padding:0.75rem 0.625rem;display:flex;justify-content:space-around;align-items:center;z-index:60;}
+.tab-btn{flex:1;min-width:0;height:3.25rem;border-radius:1.5rem;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:0.25rem;color:var(--dock-fg);transition:color .18s;}
+.tab-btn svg{width:1.625rem;height:1.625rem;}
 .tab-btn.active{color:var(--dock-on);}
 .tab-btn:active{transform:scale(0.92);}
-.tab-label{font-size:10px;font-weight:600;letter-spacing:0.2px;}
+.tab-label{font-size:0.625rem;font-weight:600;letter-spacing:0.2px;}
 
 /* ── MEALS ── */
-.wk-strip{display:flex;gap:4px;margin-top:16px;}
-.wk-d{flex:1;text-align:center;padding:9px 0;border-radius:14px;}
-.wk-d .wd{font-size:10px;color:var(--text3);font-weight:600;}
-.wk-d .wn{font-size:14px;margin-top:2px;}
+.wk-strip{display:flex;gap:0.25rem;margin-top:1rem;}
+.wk-d{flex:1;text-align:center;padding:0.5625rem 0;border-radius:0.875rem;}
+.wk-d .wd{font-size:0.625rem;color:var(--text3);font-weight:600;}
+.wk-d .wn{font-size:0.875rem;margin-top:2px;}
 .wk-d.today{background:var(--clay);}
 .wk-d.today .wd{color:rgba(255,255,255,0.7);}
 .wk-d.today .wn{color:#fff;font-weight:600;}
-#week-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;}
+#week-strip{display:flex;gap:0.375rem;overflow-x:auto;scrollbar-width:none;}
 #week-strip::-webkit-scrollbar{display:none;}
-.pill-btn{padding:8px 18px;border-radius:var(--radius-pill);background:var(--surface);
-  color:var(--text2);font-size:13px;font-weight:500;}
+.pill-btn{padding:0.5rem 1.125rem;border-radius:var(--radius-pill);background:var(--surface);
+  color:var(--text2);font-size:0.8125rem;font-weight:500;}
 .pill-btn.pill-blue{background:var(--text);color:var(--bg);}
 .pill-surface{background:var(--surface);}
-.day-card{background:var(--surface);border-radius:var(--radius-card);padding:16px;margin-top:12px;}
+.day-card{background:var(--surface);border-radius:var(--radius-card);padding:1rem;margin-top:0.75rem;}
 .day-card:active{transform:scale(0.99);}
 .day-top{display:flex;align-items:center;justify-content:space-between;}
-.day-name{font-size:15px;font-weight:600;}
-.day-date{font-size:11px;color:var(--text3);margin-top:1px;}
-.day-arrow{color:var(--text3);font-size:18px;}
+.day-name{font-size:0.9375rem;font-weight:600;}
+.day-date{font-size:0.6875rem;color:var(--text3);margin-top:1px;}
+.day-arrow{color:var(--text3);font-size:1.125rem;}
 .day-card.today .day-name{color:var(--clay);}
-.day-meals{margin-top:12px;}
-.meal-row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--surface2);
-  border-radius:14px;margin-top:8px;}
+.day-meals{margin-top:0.75rem;}
+.meal-row{display:flex;align-items:center;gap:0.625rem;padding:0.6875rem 0.75rem;background:var(--surface2);
+  border-radius:0.875rem;margin-top:0.5rem;}
 .meal-row:first-child{margin-top:0;}
-.meal-icon{font-size:11px;font-weight:600;color:var(--text3);min-width:42px;}
-.meal-text{font-size:13px;flex:1;}
-.meal-empty{font-size:13px;color:var(--text3);flex:1;}
+.meal-icon{font-size:0.6875rem;font-weight:600;color:var(--text3);min-width:2.625rem;}
+.meal-text{font-size:0.8125rem;flex:1;}
+.meal-empty{font-size:0.8125rem;color:var(--text3);flex:1;}
 .meal-divider{display:none;}
 /* favorites */
-.fav-card{background:var(--surface);border-radius:var(--radius-card);padding:16px;margin-top:12px;}
-.fav-card-top{display:flex;align-items:center;gap:12px;}
-.fav-emoji-big{width:40px;height:40px;border-radius:14px;background:var(--peach);color:var(--on-peach);
-  display:flex;align-items:center;justify-content:center;font-size:18px;}
+.fav-card{background:var(--surface);border-radius:var(--radius-card);padding:1rem;margin-top:0.75rem;}
+.fav-card-top{display:flex;align-items:center;gap:0.75rem;}
+.fav-emoji-big{width:2.5rem;height:2.5rem;border-radius:0.875rem;background:var(--peach);color:var(--on-peach);
+  display:flex;align-items:center;justify-content:center;font-size:1.125rem;}
 .fav-info{flex:1;}
-.fav-name-big{font-size:15px;font-weight:600;}
-.fav-type-small{font-size:11px;color:var(--text3);margin-top:1px;}
-.fav-del-btn{width:30px;height:30px;border-radius:50%;background:var(--surface2);color:var(--text3);font-size:13px;}
-.fav-ings{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
-.fav-ing-tag{font-size:11px;padding:5px 11px;border-radius:12px;background:var(--surface2);color:var(--text2);}
-.fav-ing-empty{font-size:11px;color:var(--text3);}
-.fav-btns{display:flex;gap:8px;margin-top:12px;}
-.fav-edit-btn,.fav-bring-btn{flex:1;padding:11px;border-radius:14px;background:var(--surface2);
-  font-size:13px;font-weight:500;color:var(--text2);}
+.fav-name-big{font-size:0.9375rem;font-weight:600;}
+.fav-type-small{font-size:0.6875rem;color:var(--text3);margin-top:1px;}
+.fav-del-btn{width:1.875rem;height:1.875rem;border-radius:50%;background:var(--surface2);color:var(--text3);font-size:0.8125rem;}
+.fav-ings{display:flex;flex-wrap:wrap;gap:0.375rem;margin-top:0.75rem;}
+.fav-ing-tag{font-size:0.6875rem;padding:0.3125rem 0.6875rem;border-radius:0.75rem;background:var(--surface2);color:var(--text2);}
+.fav-ing-empty{font-size:0.6875rem;color:var(--text3);}
+.fav-btns{display:flex;gap:0.5rem;margin-top:0.75rem;}
+.fav-edit-btn,.fav-bring-btn{flex:1;padding:0.6875rem;border-radius:0.875rem;background:var(--surface2);
+  font-size:0.8125rem;font-weight:500;color:var(--text2);}
 .fav-bring-btn{background:var(--sage);color:var(--on-sage);}
-.add-fav-card{background:var(--surface);border-radius:var(--radius-card);padding:18px;margin-top:14px;}
-.add-fav-input{width:100%;background:var(--surface2);border:none;border-radius:14px;padding:13px 15px;
-  font-size:14px;outline:none;}
-.add-fav-types{display:flex;gap:8px;margin-top:10px;}
-.type-pill{flex:1;padding:10px;border-radius:14px;background:var(--surface2);font-size:12.5px;
+.add-fav-card{background:var(--surface);border-radius:var(--radius-card);padding:1.125rem;margin-top:0.875rem;}
+.add-fav-input{width:100%;background:var(--surface2);border:none;border-radius:0.875rem;padding:0.8125rem 0.9375rem;
+  font-size:0.875rem;outline:none;}
+.add-fav-types{display:flex;gap:0.5rem;margin-top:0.625rem;}
+.type-pill{flex:1;padding:0.625rem;border-radius:0.875rem;background:var(--surface2);font-size:0.7812rem;
   font-weight:500;color:var(--text2);}
 .type-pill.sel{background:var(--clay);color:var(--on-accent);}
-.add-fav-submit{width:100%;margin-top:12px;padding:14px;border-radius:var(--radius-pill);
-  background:var(--text);color:var(--bg);font-size:14px;font-weight:600;}
+.add-fav-submit{width:100%;margin-top:0.75rem;padding:0.875rem;border-radius:var(--radius-pill);
+  background:var(--text);color:var(--bg);font-size:0.875rem;font-weight:600;}
 
 /* ── LIGHTS ── */
-.room-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
-  font-weight:600;margin:22px 0 10px;}
-.ml-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.ml-tile{position:relative;border-radius:var(--radius-tile);overflow:hidden;height:96px;
+.room-label{font-size:0.6875rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;margin:1.375rem 0 0.625rem;}
+.ml-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.625rem;}
+.ml-tile{position:relative;border-radius:var(--radius-tile);overflow:hidden;height:6rem;
   background:var(--surface);touch-action:none;}
 .ml-fill{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--amber);
   transition:height .18s cubic-bezier(.4,0,.2,1);}
 .ml-fill.sw{background:var(--moss-soft);}
-.ml-in{position:relative;z-index:2;height:100%;padding:13px;display:flex;flex-direction:column;
+.ml-in{position:relative;z-index:2;height:100%;padding:0.8125rem;display:flex;flex-direction:column;
   justify-content:space-between;}
-.ml-ico{font-size:16px;opacity:0.4;line-height:1;}
+.ml-ico{font-size:1rem;opacity:0.4;line-height:1;}
 .ml-tile.on .ml-ico{opacity:1;}
-.ml-n{font-size:13px;font-weight:600;line-height:1.2;}
-.ml-s{font-size:10px;opacity:0.6;margin-top:2px;}
+.ml-n{font-size:0.8125rem;font-weight:600;line-height:1.2;}
+.ml-s{font-size:0.625rem;opacity:0.6;margin-top:2px;}
 .ml-tile.on{color:#221E19;}
-.ml-grip{position:absolute;top:10px;right:11px;z-index:2;width:16px;height:3px;border-radius:2px;
+.ml-grip{position:absolute;top:0.625rem;right:0.6875rem;z-index:2;width:1rem;height:0.1875rem;border-radius:2px;
   background:rgba(0,0,0,0.2);}
 .ml-tile.dragging{outline:2px solid var(--clay);outline-offset:-2px;}
-.ml-all{width:100%;border-radius:var(--radius-pill);padding:15px;background:var(--text);color:var(--bg);
-  font-size:14px;font-weight:600;margin-top:18px;}
+.ml-all{width:100%;border-radius:var(--radius-pill);padding:0.9375rem;background:var(--text);color:var(--bg);
+  font-size:0.875rem;font-weight:600;margin-top:1.125rem;}
 
 /* ── TRACKER ── */
-.tracker-date-row{display:flex;gap:6px;margin-top:14px;overflow-x:auto;scrollbar-width:none;}
+.tracker-date-row{display:flex;gap:0.375rem;margin-top:0.875rem;overflow-x:auto;scrollbar-width:none;}
 .tracker-date-row::-webkit-scrollbar{display:none;}
-.date-pill{flex:1;min-width:44px;text-align:center;padding:8px 0;border-radius:14px;
-  background:transparent;color:var(--text2);font-size:11px;}
+.date-pill{flex:1;min-width:2.75rem;text-align:center;padding:0.5rem 0;border-radius:0.875rem;
+  background:transparent;color:var(--text2);font-size:0.6875rem;}
 .date-pill.active{background:var(--text);color:var(--bg);}
-.summary-card{background:var(--surface);border-radius:var(--radius-card);padding:18px;margin-top:14px;}
+.summary-card{background:var(--surface);border-radius:var(--radius-card);padding:1.125rem;margin-top:0.875rem;}
 .summary-title{display:none;}
-.ring-row{display:flex;gap:14px;align-items:center;}
-.ring-bars{flex:1;display:flex;flex-direction:column;gap:11px;}
-.bar-hd{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
+.ring-row{display:flex;gap:0.875rem;align-items:center;}
+.ring-bars{flex:1;display:flex;flex-direction:column;gap:0.6875rem;}
+.bar-hd{display:flex;justify-content:space-between;font-size:0.6875rem;margin-bottom:0.25rem;}
 .bar-hd span:first-child{color:var(--text2);}
-.bar-track{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
-.bar-fill{height:100%;width:0;border-radius:3px;transition:width .4s;}
-.summary-metrics{display:flex;gap:8px;margin-top:14px;}
-.summary-metric{flex:1;background:var(--surface2);border-radius:14px;padding:10px;text-align:center;}
-.summary-value{font-size:15px;font-weight:600;}
-.summary-label{font-size:10px;color:var(--text3);margin-top:2px;}
-.summary-bottom-item{font-size:11px;color:var(--text3);}
-.save-indicator{font-size:11px;color:var(--text3);text-align:center;padding:8px 0 0;}
-.water-row{display:flex;gap:8px;margin-top:12px;}
-.water-chip{flex:1;padding:11px;border-radius:16px;background:var(--surface);color:var(--water);
-  font-size:12px;font-weight:600;text-align:center;}
-.tr-section{background:var(--surface);border-radius:var(--radius-card);margin-top:12px;overflow:hidden;}
-.tr-section-hd{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);
-  font-weight:600;padding:16px 16px 4px;}
-.tr-row{display:flex;align-items:center;gap:12px;padding:13px 16px;}
-.tr-label{flex:1;font-size:14px;}
-.tr-input{background:var(--surface2);border:none;border-radius:12px;padding:10px 13px;font-size:14px;
-  outline:none;text-align:right;width:100px;}
-.tr-unit{font-size:12px;color:var(--text3);min-width:22px;}
-.tr-textarea{width:100%;background:var(--surface2);border:none;border-radius:14px;padding:13px;
-  font-size:14px;outline:none;min-height:88px;resize:none;}
-.tr-food-block{padding:14px 16px;border-top:0.5px solid var(--border);}
-.tr-food-head{display:flex;align-items:center;gap:12px;}
-.tr-food-ico{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
-.tr-food-ico svg{width:18px;height:18px;}
+.bar-track{height:0.375rem;background:var(--surface2);border-radius:0.1875rem;overflow:hidden;}
+.bar-fill{height:100%;width:0;border-radius:0.1875rem;transition:width .4s;}
+.summary-metrics{display:flex;gap:0.5rem;margin-top:0.875rem;}
+.summary-metric{flex:1;background:var(--surface2);border-radius:0.875rem;padding:0.625rem;text-align:center;}
+.summary-value{font-size:0.9375rem;font-weight:600;}
+.summary-label{font-size:0.625rem;color:var(--text3);margin-top:2px;}
+.summary-bottom-item{font-size:0.6875rem;color:var(--text3);}
+.save-indicator{font-size:0.6875rem;color:var(--text3);text-align:center;padding:0.5rem 0 0;}
+.water-row{display:flex;gap:0.5rem;margin-top:0.75rem;}
+.water-chip{flex:1;padding:0.6875rem;border-radius:1rem;background:var(--surface);color:var(--water);
+  font-size:0.75rem;font-weight:600;text-align:center;}
+.tr-section{background:var(--surface);border-radius:var(--radius-card);margin-top:0.75rem;overflow:hidden;}
+.tr-section-hd{font-size:0.6875rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;padding:1rem 1rem 0.25rem;}
+.tr-row{display:flex;align-items:center;gap:0.75rem;padding:0.8125rem 1rem;}
+.tr-label{flex:1;font-size:0.875rem;}
+.tr-input{background:var(--surface2);border:none;border-radius:0.75rem;padding:0.625rem 0.8125rem;font-size:0.875rem;
+  outline:none;text-align:right;width:6.25rem;}
+.tr-unit{font-size:0.75rem;color:var(--text3);min-width:1.375rem;}
+.tr-textarea{width:100%;background:var(--surface2);border:none;border-radius:0.875rem;padding:0.8125rem;
+  font-size:0.875rem;outline:none;min-height:5.5rem;resize:none;}
+.tr-food-block{padding:0.875rem 1rem;border-top:0.5px solid var(--border);}
+.tr-food-head{display:flex;align-items:center;gap:0.75rem;}
+.tr-food-ico{width:2.375rem;height:2.375rem;border-radius:0.75rem;display:flex;align-items:center;justify-content:center;}
+.tr-food-ico svg{width:1.125rem;height:1.125rem;}
 .tr-food-ico.b{background:var(--sand);color:var(--on-sand);}
 .tr-food-ico.l{background:var(--peach);color:var(--on-peach);}
 .tr-food-ico.d{background:var(--sage);color:var(--on-sage);}
 .tr-food-ico.s{background:var(--surface2);color:var(--text2);}
-.tr-food-label{font-size:14px;font-weight:600;}
-.food-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);
-  border-radius:12px;margin-top:6px;}
-.food-item-name{flex:1;font-size:13px;}
-.food-item-nut{font-size:11px;color:var(--text3);}
-.food-item-del{width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--text3);
-  font-size:11px;display:flex;align-items:center;justify-content:center;}
-.food-add-btn{width:100%;margin-top:10px;padding:11px;border-radius:14px;background:var(--surface2);
-  color:var(--clay);font-size:13px;font-weight:600;}
-.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.goal-lbl{font-size:11px;color:var(--text3);margin-bottom:5px;}
+.tr-food-label{font-size:0.875rem;font-weight:600;}
+.food-item{display:flex;align-items:center;gap:0.625rem;padding:0.625rem 0.75rem;background:var(--surface2);
+  border-radius:0.75rem;margin-top:0.375rem;}
+.food-item-name{flex:1;font-size:0.8125rem;}
+.food-item-nut{font-size:0.6875rem;color:var(--text3);}
+.food-item-del{width:1.375rem;height:1.375rem;border-radius:50%;background:var(--surface3);color:var(--text3);
+  font-size:0.6875rem;display:flex;align-items:center;justify-content:center;}
+.food-add-btn{width:100%;margin-top:0.625rem;padding:0.6875rem;border-radius:0.875rem;background:var(--surface2);
+  color:var(--clay);font-size:0.8125rem;font-weight:600;}
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.625rem;}
+.goal-lbl{font-size:0.6875rem;color:var(--text3);margin-bottom:0.3125rem;}
 .goal-grid .tr-input{width:100%;text-align:left;}
 select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:none;}
 
 /* ── SETTINGS ── */
 .card{background:var(--surface);border-radius:var(--radius-card);overflow:hidden;}
-.card-row{display:flex;align-items:center;gap:12px;padding:14px 16px;}
+.card-row{display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;}
 .card-row + .card-row{border-top:0.5px solid var(--border);}
-.card-row-icon{width:20px;display:flex;justify-content:center;color:var(--text2);}
-.card-row-icon svg{width:18px;height:18px;}
-.card-row-label{flex:1;font-size:14px;}
-.set-av{width:56px;height:56px;border-radius:50%;background:var(--peach);color:var(--on-peach);
-  display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;overflow:hidden;}
+.card-row-icon{width:1.25rem;display:flex;justify-content:center;color:var(--text2);}
+.card-row-icon svg{width:1.125rem;height:1.125rem;}
+.card-row-label{flex:1;font-size:0.875rem;}
+.set-av{width:3.5rem;height:3.5rem;border-radius:50%;background:var(--peach);color:var(--on-peach);
+  display:flex;align-items:center;justify-content:center;font-size:1.375rem;font-weight:600;overflow:hidden;}
 .set-av img{width:100%;height:100%;object-fit:cover;}
-.mode-row{display:flex;gap:10px;}
+.mode-row{display:flex;gap:0.625rem;}
 .modebtn{flex:1;}
-.mode-prev{height:64px;border-radius:16px;padding:9px;border:2px solid transparent;overflow:hidden;}
-.mode-prev .l1,.mode-prev .l2{height:7px;border-radius:4px;}
-.mode-prev .l2{margin-top:6px;}
+.mode-prev{height:4rem;border-radius:1rem;padding:0.5625rem;border:2px solid transparent;overflow:hidden;}
+.mode-prev .l1,.mode-prev .l2{height:0.4375rem;border-radius:0.25rem;}
+.mode-prev .l2{margin-top:0.375rem;}
 .mode-prev.day{background:#EDE7DC;}
 .mode-prev.day .l1{background:#D9603C;width:60%;} .mode-prev.day .l2{background:#E4DCCE;width:85%;}
 .mode-prev.night{background:#191410;}
 .mode-prev.night .l1{background:#E9A23B;width:60%;} .mode-prev.night .l2{background:#3A3028;width:85%;}
 .mode-prev.auto{display:flex;padding:0;}
-.mode-prev.auto > div{flex:1;padding:9px;}
+.mode-prev.auto > div{flex:1;padding:0.5625rem;}
 .mode-prev.auto .a{background:#EDE7DC;} .mode-prev.auto .b{background:#191410;}
-.modebtn span{display:block;font-size:11px;text-align:center;color:var(--text2);margin-top:6px;}
+.modebtn span{display:block;font-size:0.6875rem;text-align:center;color:var(--text2);margin-top:0.375rem;}
 .modebtn.on .mode-prev{border-color:var(--clay);}
 .modebtn.on span{color:var(--clay);font-weight:600;}
 .modebtn svg{display:none;}
-.section-hd{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
-  font-weight:600;margin:22px 0 10px;}
-.set-input{background:var(--surface2);border:none;border-radius:12px;padding:10px 14px;font-size:14px;
-  outline:none;text-align:right;width:150px;}
+.section-hd{font-size:0.6875rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
+  font-weight:600;margin:1.375rem 0 0.625rem;}
+.set-input{background:var(--surface2);border:none;border-radius:0.75rem;padding:0.625rem 0.875rem;font-size:0.875rem;
+  outline:none;text-align:right;width:9.375rem;}
 .danger{color:var(--red);}
+
+.scale-row{display:flex;gap:0.5rem;}
+.scalebtn{flex:1;padding:0.75rem 0.25rem;border-radius:1rem;background:var(--surface);
+  color:var(--text2);font-size:0.8125rem;font-weight:500;text-align:center;}
+.scalebtn.on{background:var(--clay);color:var(--on-accent);font-weight:600;}
+.scale-hint{font-size:0.6875rem;color:var(--text3);margin-top:0.625rem;line-height:1.5;}
+.scale-sample{background:var(--surface);border-radius:var(--radius-card);padding:1rem;margin-top:0.625rem;}
+.scale-sample-t{font-size:1.5rem;font-weight:500;}
+.scale-sample-s{font-size:0.875rem;color:var(--text2);margin-top:0.25rem;}
 
 /* ── MODALS ── */
 #edit-modal,#food-modal{position:fixed;inset:0;z-index:400;background:var(--bg);
   transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);
   display:flex;flex-direction:column;visibility:hidden;}
 #edit-modal.open{transform:translateY(0);visibility:visible;}
-.modal-header{display:flex;align-items:center;gap:12px;padding:calc(16px + var(--safe-top)) 18px 12px;
+.modal-header{display:flex;align-items:center;gap:0.75rem;padding:calc(1rem + var(--safe-top)) 1.125rem 0.75rem;
   border-bottom:0.5px solid var(--border);flex-shrink:0;}
-.modal-close{width:34px;height:34px;border-radius:50%;background:var(--surface);color:var(--text2);font-size:15px;}
-.modal-title{flex:1;font-size:17px;font-weight:600;}
-.modal-save-status{font-size:13px;color:var(--text3);}
-.modal-tabs{display:flex;gap:8px;padding:14px 18px;flex-shrink:0;}
-.modal-tabs button{flex:1;padding:11px;border-radius:14px;background:var(--surface);
-  font-size:13.5px;font-weight:500;color:var(--text2);}
-.modal-section-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+.modal-close{width:2.125rem;height:2.125rem;border-radius:50%;background:var(--surface);color:var(--text2);font-size:0.9375rem;}
+.modal-title{flex:1;font-size:1.0625rem;font-weight:600;}
+.modal-save-status{font-size:0.8125rem;color:var(--text3);}
+.modal-tabs{display:flex;gap:0.5rem;padding:0.875rem 1.125rem;flex-shrink:0;}
+.modal-tabs button{flex:1;padding:0.6875rem;border-radius:0.875rem;background:var(--surface);
+  font-size:0.8438rem;font-weight:500;color:var(--text2);}
+.modal-section-label{font-size:0.6875rem;letter-spacing:1.5px;text-transform:uppercase;
   color:var(--text3);font-weight:600;}
 .meal-input-wrap{position:relative;}
-.modal-input{width:100%;background:var(--surface);border:none;border-radius:16px;padding:15px 17px;
-  font-size:15px;outline:none;}
-.meal-dropdown{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);
-  border-radius:16px;overflow:hidden;max-height:230px;overflow-y:auto;z-index:10;
-  box-shadow:0 8px 24px rgba(0,0,0,0.14);}
+.modal-input{width:100%;background:var(--surface);border:none;border-radius:1rem;padding:0.9375rem 1.0625rem;
+  font-size:0.9375rem;outline:none;}
+.meal-dropdown{display:none;position:absolute;top:calc(100% + 0.375rem);left:0;right:0;background:var(--surface);
+  border-radius:1rem;overflow:hidden;max-height:14.375rem;overflow-y:auto;z-index:10;
+  box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.14);}
 .meal-dropdown.open{display:block;}
-.meal-dropdown-item{padding:13px 16px;font-size:14px;display:flex;gap:9px;align-items:center;}
+.meal-dropdown-item{padding:0.8125rem 1rem;font-size:0.875rem;display:flex;gap:0.5625rem;align-items:center;}
 .meal-dropdown-item:active{background:var(--surface2);}
-.bring-btn{width:100%;padding:14px;border-radius:var(--radius-pill);background:var(--sage);
-  color:var(--on-sage);font-size:14px;font-weight:600;}
+.bring-btn{width:100%;padding:0.875rem;border-radius:var(--radius-pill);background:var(--sage);
+  color:var(--on-sage);font-size:0.875rem;font-weight:600;}
 #bring-modal,#ing-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.45);
   display:none;align-items:flex-end;}
 #bring-modal.open,#ing-modal.open{display:flex;}
-.bring-sheet{width:100%;max-width:640px;margin:0 auto;background:var(--bg);
-  border-radius:26px 26px 0 0;padding:12px 18px calc(20px + var(--safe-bottom));max-height:86vh;overflow-y:auto;}
-.bring-handle{width:38px;height:4px;border-radius:2px;background:var(--surface3);margin:0 auto 14px;}
-.bring-title{font-size:17px;font-weight:600;margin-bottom:14px;}
-.bring-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.bring-check{width:24px;height:24px;border-radius:8px;background:var(--surface2);flex-shrink:0;}
+.bring-sheet{width:100%;max-width:40rem;margin:0 auto;background:var(--bg);
+  border-radius:1.625rem 1.625rem 0 0;padding:0.75rem 1.125rem calc(1.25rem + var(--safe-bottom));max-height:86vh;overflow-y:auto;}
+.bring-handle{width:2.375rem;height:0.25rem;border-radius:2px;background:var(--surface3);margin:0 auto 0.875rem;}
+.bring-title{font-size:1.0625rem;font-weight:600;margin-bottom:0.875rem;}
+.bring-item{display:flex;align-items:center;gap:0.625rem;margin-bottom:0.5rem;}
+.bring-check{width:1.5rem;height:1.5rem;border-radius:0.5rem;background:var(--surface2);flex-shrink:0;}
 .bring-check.on{background:var(--moss-soft);}
-.bring-item-input{flex:1;background:var(--surface);border:none;border-radius:12px;padding:11px 13px;
-  font-size:14px;outline:none;}
-.bring-item-del{width:26px;height:26px;border-radius:50%;background:var(--surface2);color:var(--text3);
-  font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.bring-add-row{display:flex;gap:8px;margin-top:12px;}
-.bring-add-input{flex:1;background:var(--surface);border:none;border-radius:12px;padding:12px 14px;
-  font-size:14px;outline:none;}
-.bring-add-plus{width:44px;border-radius:12px;background:var(--surface);font-size:19px;color:var(--clay);}
-.bring-confirm{width:100%;margin-top:14px;padding:15px;border-radius:var(--radius-pill);
-  background:var(--text);color:var(--bg);font-size:14px;font-weight:600;}
-.bring-cancel{width:100%;margin-top:8px;padding:13px;font-size:13px;color:var(--text3);}
-.food-search-result{padding:14px 18px;border-bottom:0.5px solid var(--border);}
+.bring-item-input{flex:1;background:var(--surface);border:none;border-radius:0.75rem;padding:0.6875rem 0.8125rem;
+  font-size:0.875rem;outline:none;}
+.bring-item-del{width:1.625rem;height:1.625rem;border-radius:50%;background:var(--surface2);color:var(--text3);
+  font-size:0.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bring-add-row{display:flex;gap:0.5rem;margin-top:0.75rem;}
+.bring-add-input{flex:1;background:var(--surface);border:none;border-radius:0.75rem;padding:0.75rem 0.875rem;
+  font-size:0.875rem;outline:none;}
+.bring-add-plus{width:2.75rem;border-radius:0.75rem;background:var(--surface);font-size:1.1875rem;color:var(--clay);}
+.bring-confirm{width:100%;margin-top:0.875rem;padding:0.9375rem;border-radius:var(--radius-pill);
+  background:var(--text);color:var(--bg);font-size:0.875rem;font-weight:600;}
+.bring-cancel{width:100%;margin-top:0.5rem;padding:0.8125rem;font-size:0.8125rem;color:var(--text3);}
+.food-search-result{padding:0.875rem 1.125rem;border-bottom:0.5px solid var(--border);}
 .food-search-result:active{background:var(--surface);}
-.food-result-name{font-size:14px;font-weight:500;}
-.food-result-nut{font-size:11px;color:var(--text3);margin-top:3px;}
-.toast{position:fixed;bottom:calc(122px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(16px);
-  background:var(--text);color:var(--bg);padding:12px 20px;border-radius:var(--radius-pill);
-  font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .25s;z-index:999;max-width:88vw;}
+.food-result-name{font-size:0.875rem;font-weight:500;}
+.food-result-nut{font-size:0.6875rem;color:var(--text3);margin-top:0.1875rem;}
+.toast{position:fixed;bottom:calc(7.625rem + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(1rem);
+  background:var(--text);color:var(--bg);padding:0.75rem 1.25rem;border-radius:var(--radius-pill);
+  font-size:0.8125rem;font-weight:500;opacity:0;pointer-events:none;transition:all .25s;z-index:999;max-width:88vw;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ══ SCALE-UP FOR LARGER PHONES (≈440 CSS px and wider) ══ */
-@media (min-width:430px){
-  .pg-head{padding-top:calc(30px + var(--safe-top));}
-  .pg-title{font-size:31px;}
-  .pg-sub{font-size:14.5px;}
-  .icon-btn{width:46px;height:46px;}
-  .icon-btn svg{width:20px;height:20px;}
-  .sec-lbl,.section-hd,.room-label,.tr-section-hd,.hm-lbl,.modal-section-label{font-size:12.5px;}
-
-  /* login + pin */
-  .lg-word{font-size:36px;letter-spacing:10px;}
-  .lg-sub{font-size:12.5px;}
-  .lg-btn{font-size:17px;padding:19px;}
-  .lg-full{font-size:12px;}
-  .pin-word{font-size:27px;letter-spacing:8px;}
-  .pin-q{font-size:15px;}
-  .usr-card{padding:26px 14px;}
-  .usr-av{width:84px;height:84px;font-size:32px;}
-  .usr-n{font-size:17px;}
-  .usr-foto{font-size:12.5px;padding:6px 13px;}
-  .pin-av{width:72px;height:72px;font-size:28px;}
-  .pin-name{font-size:20px;}
-  .pin-dot{width:16px;height:16px;}
-  #pin-dots{gap:17px;margin:26px 0 26px;}
-  .keypad{grid-template-columns:repeat(3,82px);gap:18px;}
-  .key{height:82px;font-size:25px;}
-  .key svg{width:26px;height:26px;}
-  .pin-err{font-size:14.5px;margin-top:20px;}
-  .pin-switch{font-size:14.5px;}
-
-  /* home */
-  .hm-date{font-size:15px;}
-  .hm-hi{font-size:33px;}
-  .hm-today{padding:22px;}
-  .hm-line{font-size:16px;gap:12px;margin-top:12px;}
-  .hm-card{padding:22px 18px;}
-  .hm-card svg{width:28px;height:28px;}
-  .hm-n{font-size:16.5px;}
-  .hm-s{font-size:12.5px;}
-
-  /* dock */
-  #dock{padding:14px 12px;bottom:calc(20px + var(--safe-bottom));border-radius:36px;}
-  .tab-btn{height:60px;gap:5px;}
-  .tab-btn svg{width:30px;height:30px;}
-  .tab-label{font-size:11.5px;}
-
-  /* meals */
-  .pill-btn{font-size:15px;padding:10px 22px;}
-  .day-card{padding:20px;}
-  .day-name{font-size:18px;}
-  .day-date{font-size:13px;}
-  .day-arrow{font-size:21px;}
-  .meal-row{padding:14px 16px;}
-  .meal-icon{font-size:12.5px;min-width:56px;}
-  .meal-text,.meal-empty{font-size:16px;}
-  .fav-name-big{font-size:17px;}
-  .fav-type-small{font-size:12.5px;}
-  .fav-emoji-big{width:46px;height:46px;font-size:20px;}
-  .fav-ing-tag,.fav-ing-empty{font-size:12.5px;}
-  .fav-edit-btn,.fav-bring-btn,.add-fav-submit{font-size:15px;padding:13px;}
-  .add-fav-input,.type-pill{font-size:15px;}
-
-  /* lights */
-  .ml-tile{height:124px;}
-  .ml-in{padding:16px;}
-  .ml-ico{font-size:19px;}
-  .ml-n{font-size:15px;}
-  .ml-s{font-size:12px;}
-  .ml-all{font-size:16px;padding:17px;}
-
-  /* tracker */
-  .date-pill{font-size:12.5px;padding:10px 0;}
-  .summary-card{padding:22px;}
-  #summary-card > .ring-row > svg{width:112px;height:112px;}
-  .ring-bars{gap:14px;}
-  .bar-hd{font-size:12.5px;}
-  .bar-track,.bar-fill{height:7px;}
-  .summary-value{font-size:18px;}
-  .summary-label{font-size:11.5px;}
-  .summary-bottom-item{font-size:12.5px;}
-  .save-indicator{font-size:12.5px;}
-  .water-chip{font-size:14px;padding:14px;}
-  .tr-row{padding:15px 18px;}
-  .tr-label{font-size:16px;}
-  .tr-input{font-size:16px;padding:12px 15px;width:118px;}
-  .tr-unit{font-size:13px;}
-  .tr-food-block{padding:16px 18px;}
-  .tr-food-ico{width:44px;height:44px;}
-  .tr-food-ico svg{width:21px;height:21px;}
-  .tr-food-label{font-size:16px;}
-  .food-item{padding:12px 14px;}
-  .food-item-name{font-size:15px;}
-  .food-item-nut{font-size:12.5px;}
-  .food-add-btn{font-size:14.5px;padding:13px;}
-  .goal-lbl{font-size:12.5px;}
-  .tr-textarea{font-size:15px;min-height:100px;}
-
-  /* settings */
-  .card-row{padding:16px 18px;}
-  .card-row-label{font-size:16px;}
-  .card-row-icon svg{width:20px;height:20px;}
-  .set-av{width:66px;height:66px;font-size:26px;}
-  .set-input{font-size:16px;}
-  .mode-prev{height:74px;}
-  .modebtn span{font-size:12.5px;}
-
-  /* modals + toast */
-  .modal-title{font-size:19px;}
-  .modal-close{width:38px;height:38px;font-size:16px;}
-  .modal-tabs button{font-size:15px;padding:13px;}
-  .modal-input{font-size:17px;padding:17px 19px;}
-  .meal-dropdown-item{font-size:15px;padding:15px 18px;}
-  .bring-btn,.bring-confirm{font-size:15.5px;padding:16px;}
-  .bring-item-input,.bring-add-input{font-size:15px;padding:13px 15px;}
-  .bring-title{font-size:19px;}
-  .food-result-name{font-size:15.5px;}
-  .food-result-nut{font-size:12.5px;}
-  .toast{font-size:14.5px;padding:14px 22px;}
-}
-
-@media (min-width:700px){
-  .pg-title{font-size:34px;}
-  .hm-hi{font-size:38px;}
-  .ml-tile{height:142px;}
-  .keypad{grid-template-columns:repeat(3,92px);gap:20px;}
-  .key{height:92px;font-size:27px;}
-  .day-name{font-size:20px;}
-  .meal-text,.meal-empty{font-size:17px;}
-  .tab-btn{height:64px;}
-  .tab-btn svg{width:32px;height:32px;}
-  .tab-label{font-size:12px;}
-}
+/* ── icon sizing (inline SVGs scale with the root) ── */
+.hs-mark{width:6rem;height:6rem;}
+.hm-top .hs-mark{width:2.75rem;height:2.75rem;}
+.lg-btn svg{width:1.0625rem;height:1.0625rem;}
+.key svg{width:1.3125rem;height:1.3125rem;}
+#summary-card .ring-row > svg{width:5.75rem;height:5.75rem;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -639,19 +525,19 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <div class="pg-title">Mahlzeiten</div>
             <div class="pg-sub" id="week-label">Laden…</div>
           </div>
-          <div style="display:flex;gap:8px;">
+          <div style="display:flex;gap:0.5rem;">
             <button class="icon-btn" onclick="getMobileSuggestions()" aria-label="Vorschläge"><svg viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></button>
             <button class="icon-btn" onclick="copyLastWeek()" aria-label="Vorwoche kopieren"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg></button>
           </div>
         </div>
       </div>
       <div class="pg">
-        <div style="display:flex;align-items:center;gap:8px;margin-top:14px;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.875rem;">
           <button class="icon-btn" onclick="changeWeek(-1)" aria-label="Vorherige Woche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
           <div id="week-strip"></div>
           <button class="icon-btn" onclick="changeWeek(1)" aria-label="Nächste Woche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
         </div>
-        <div style="display:flex;gap:8px;margin-top:12px;">
+        <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
           <button onclick="switchMealTab('week',this)" id="meal-tab-week" class="pill-btn pill-blue">Woche</button>
           <button onclick="switchMealTab('favs',this)" id="meal-tab-favs" class="pill-btn pill-surface">Favoriten</button>
         </div>
@@ -713,7 +599,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <div class="summary-metric"><div class="summary-value" id="sum-steps">—</div><div class="summary-label">Schritte</div></div>
             <div class="summary-metric"><div class="summary-value" id="sum-water">—</div><div class="summary-label">L Wasser</div></div>
           </div>
-          <div style="display:flex;justify-content:space-between;margin-top:12px;">
+          <div style="display:flex;justify-content:space-between;margin-top:0.75rem;">
             <div class="summary-bottom-item" id="sum-meals">0/3 Mahlzeiten</div>
             <div class="summary-bottom-item" id="sum-activity">Keine Aktivität</div>
           </div>
@@ -721,8 +607,8 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
         </div>
         <div class="save-indicator" id="save-indicator">Alles gespeichert</div>
 
-        <div id="streaks-container" style="margin-top:12px;"></div>
-        <div id="weekly-summary" style="margin-top:12px;display:none;"></div>
+        <div id="streaks-container" style="margin-top:0.75rem;"></div>
+        <div id="weekly-summary" style="margin-top:0.75rem;display:none;"></div>
 
         <div class="water-row">
           <button class="water-chip" onclick="addWater(0.25)">+0.25 L</button>
@@ -756,7 +642,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <div class="tr-food-head">
               <div class="tr-food-ico b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg></div>
               <div style="flex:1;"><div class="tr-food-label">Frühstück</div></div>
-              <div id="nut-breakfast" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+              <div id="nut-breakfast" style="font-size:0.6875rem;color:var(--clay);font-weight:600;"></div>
             </div>
             <div id="food-list-breakfast"></div>
             <button class="food-add-btn" onclick="openFoodSearch('breakfast')">+ Essen hinzufügen</button>
@@ -765,7 +651,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <div class="tr-food-head">
               <div class="tr-food-ico l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg></div>
               <div style="flex:1;"><div class="tr-food-label">Mittagessen</div></div>
-              <div id="nut-lunch" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+              <div id="nut-lunch" style="font-size:0.6875rem;color:var(--clay);font-weight:600;"></div>
             </div>
             <div id="food-list-lunch"></div>
             <button class="food-add-btn" onclick="openFoodSearch('lunch')">+ Essen hinzufügen</button>
@@ -774,7 +660,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <div class="tr-food-head">
               <div class="tr-food-ico d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></div>
               <div style="flex:1;"><div class="tr-food-label">Abendessen</div></div>
-              <div id="nut-dinner" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+              <div id="nut-dinner" style="font-size:0.6875rem;color:var(--clay);font-weight:600;"></div>
             </div>
             <div id="food-list-dinner"></div>
             <button class="food-add-btn" onclick="openFoodSearch('dinner')">+ Essen hinzufügen</button>
@@ -783,13 +669,13 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <div class="tr-food-head">
               <div class="tr-food-ico s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="13" r="1"/><circle cx="11" cy="15" r="1"/></svg></div>
               <div style="flex:1;"><div class="tr-food-label">Snacks</div></div>
-              <div id="nut-snacks" style="font-size:11px;color:var(--clay);font-weight:600;"></div>
+              <div id="nut-snacks" style="font-size:0.6875rem;color:var(--clay);font-weight:600;"></div>
             </div>
             <div id="food-list-snacks"></div>
             <button class="food-add-btn" onclick="openFoodSearch('snacks')">+ Essen hinzufügen</button>
           </div>
           <div class="tr-food-block">
-            <div class="tr-section-hd" style="padding:0 0 10px;">Tagesziele</div>
+            <div class="tr-section-hd" style="padding:0 0 0.625rem;">Tagesziele</div>
             <div class="goal-grid">
               <div><div class="goal-lbl">Kalorien</div><input type="number" id="goal-kcal" class="tr-input" placeholder="1800" oninput="updateNutritionBars();saveGoals()"></div>
               <div><div class="goal-lbl">Protein g</div><input type="number" id="goal-protein" class="tr-input" placeholder="120" oninput="updateNutritionBars();saveGoals()"></div>
@@ -842,16 +728,16 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
                 <option value="Seilspringen">Seilspringen</option><option value="Anderes">Anderes</option>
               </optgroup>
             </select>
-            <div id="workout-duration-row" style="display:none;align-items:center;gap:10px;margin-top:10px;">
-              <div style="font-size:14px;color:var(--text2);flex:1;">Wie lange?</div>
-              <input type="number" id="tr-activity-mins" class="tr-input" style="width:88px;" placeholder="Min" oninput="triggerAutosaveTracker()">
+            <div id="workout-duration-row" style="display:none;align-items:center;gap:0.625rem;margin-top:0.625rem;">
+              <div style="font-size:0.875rem;color:var(--text2);flex:1;">Wie lange?</div>
+              <input type="number" id="tr-activity-mins" class="tr-input" style="width:5.5rem;" placeholder="Min" oninput="triggerAutosaveTracker()">
               <div class="tr-unit">Min</div>
             </div>
-            <div id="tr-activity-display" style="margin-top:8px;font-size:13px;color:var(--green);"></div>
+            <div id="tr-activity-display" style="margin-top:0.5rem;font-size:0.8125rem;color:var(--green);"></div>
           </div>
         </div>
 
-        <div class="tr-section" style="margin-bottom:12px;">
+        <div class="tr-section" style="margin-bottom:0.75rem;">
           <div class="tr-section-hd">Notizen</div>
           <div class="tr-food-block" style="border-top:none;">
             <textarea class="tr-textarea" id="tr-notes" placeholder="Wie war dein Tag?" oninput="triggerAutosaveTracker()"></textarea>
@@ -875,7 +761,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <div style="flex:1;">
               <input id="settings-name-input" type="text" class="set-input"
                 style="text-align:left;width:100%;" placeholder="Dein Name" onchange="saveName(this.value)">
-              <div style="font-size:11px;color:var(--text3);margin-top:6px;padding-left:2px;">Tippe auf das Bild, um das Foto zu ändern</div>
+              <div style="font-size:0.6875rem;color:var(--text3);margin-top:0.375rem;padding-left:2px;">Tippe auf das Bild, um das Foto zu ändern</div>
             </div>
           </div>
         </div>
@@ -895,26 +781,52 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
             <span>Auto</span>
           </div>
         </div>
-        <div style="font-size:11.5px;color:var(--text3);margin-top:10px;line-height:1.5;">Auto: hell von 07:00 bis 19:00, danach dunkel.</div>
+        <div style="font-size:0.7188rem;color:var(--text3);margin-top:0.625rem;line-height:1.5;">Auto: hell von 07:00 bis 19:00, danach dunkel.</div>
+
+        <div class="section-hd">Anzeigegrösse</div>
+        <div class="scale-row">
+          <button class="scalebtn" id="scale-0.85" onclick="setUiScale(0.85)">Klein</button>
+          <button class="scalebtn" id="scale-1" onclick="setUiScale(1)">Normal</button>
+          <button class="scalebtn" id="scale-1.2" onclick="setUiScale(1.2)">Gross</button>
+          <button class="scalebtn" id="scale-1.45" onclick="setUiScale(1.45)">XL</button>
+          <button class="scalebtn" id="scale-1.75" onclick="setUiScale(1.75)">XXL</button>
+        </div>
+        <div class="scale-sample">
+          <div class="scale-sample-t">Mahlzeiten</div>
+          <div class="scale-sample-s">So sieht Text in dieser Grösse aus</div>
+        </div>
+        <div class="scale-hint" id="scale-hint">Gilt nur für dieses Gerät.</div>
+
+        <div class="section-hd">App</div>
+        <div class="card">
+          <div class="card-row" onclick="forceUpdate()">
+            <div class="card-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div>
+            <div class="card-row-label">Nach Update suchen</div>
+          </div>
+          <div class="card-row">
+            <div class="card-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg></div>
+            <div class="card-row-label" id="build-version">Version —</div>
+          </div>
+        </div>
 
         <div class="section-hd">Sicherheit</div>
         <div class="card">
-          <div class="card-row" style="flex-direction:column;align-items:stretch;gap:10px;padding:16px;">
-            <div style="font-size:14px;font-weight:600;">PIN ändern</div>
+          <div class="card-row" style="flex-direction:column;align-items:stretch;gap:0.625rem;padding:1rem;">
+            <div style="font-size:0.875rem;font-weight:600;">PIN ändern</div>
             <input type="number" id="new-pin" class="tr-input" style="width:100%;text-align:left;" placeholder="Neuer PIN">
             <input type="number" id="new-pin-confirm" class="tr-input" style="width:100%;text-align:left;" placeholder="PIN bestätigen">
-            <button onclick="changePin()" style="width:100%;padding:13px;border-radius:var(--radius-pill);background:var(--text);color:var(--bg);font-size:14px;font-weight:600;">PIN speichern</button>
-            <div id="pin-change-msg" style="font-size:12px;text-align:center;height:16px;"></div>
+            <button onclick="changePin()" style="width:100%;padding:0.8125rem;border-radius:var(--radius-pill);background:var(--text);color:var(--bg);font-size:0.875rem;font-weight:600;">PIN speichern</button>
+            <div id="pin-change-msg" style="font-size:0.75rem;text-align:center;height:1rem;"></div>
           </div>
         </div>
 
         <div class="section-hd">Konto</div>
-        <div class="card" style="margin-bottom:20px;">
+        <div class="card" style="margin-bottom:1.25rem;">
           <div class="card-row">
             <div class="card-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
             <div class="card-row-label">Benachrichtigungen</div>
-            <button id="notif-toggle" onclick="toggleNotif()" style="width:46px;height:26px;border-radius:13px;position:relative;background:var(--surface3);transition:background .25s;">
-              <div id="notif-thumb" style="position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .25s;"></div>
+            <button id="notif-toggle" onclick="toggleNotif()" style="width:2.875rem;height:1.625rem;border-radius:0.8125rem;position:relative;background:var(--surface3);transition:background .25s;">
+              <div id="notif-thumb" style="position:absolute;width:1.25rem;height:1.25rem;border-radius:50%;background:#fff;top:0.1875rem;left:0.1875rem;transition:left .25s;"></div>
             </button>
           </div>
           <div class="card-row" onclick="switchUser2()">
@@ -965,8 +877,8 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
   </div>
   <div id="meal-edit-swipe" style="flex:1;overflow:hidden;position:relative;"
     ontouchstart="mealSwipeStart(event)" ontouchend="mealSwipeEnd(event)">
-    <div id="meal-panel-lunch" style="position:absolute;inset:0;overflow-y:auto;padding:6px 18px 20px;transition:transform .3s cubic-bezier(.4,0,.2,1);transform:translateX(0);">
-      <div class="modal-section-label" style="margin-bottom:10px;">Mittagessen</div>
+    <div id="meal-panel-lunch" style="position:absolute;inset:0;overflow-y:auto;padding:0.375rem 1.125rem 1.25rem;transition:transform .3s cubic-bezier(.4,0,.2,1);transform:translateX(0);">
+      <div class="modal-section-label" style="margin-bottom:0.625rem;">Mittagessen</div>
       <div class="meal-input-wrap">
         <input class="modal-input" id="edit-lunch" placeholder="Suchen oder eingeben…" autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-lunch','drop-lunch','lunch')"
@@ -974,12 +886,12 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
           onblur="setTimeout(()=>hideDrop('drop-lunch'),250)">
         <div class="meal-dropdown" id="drop-lunch"></div>
       </div>
-      <div style="margin-top:14px;">
+      <div style="margin-top:0.875rem;">
         <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'lunch')">Zutaten zu Bring!</button>
       </div>
     </div>
-    <div id="meal-panel-dinner" style="position:absolute;inset:0;overflow-y:auto;padding:6px 18px 20px;transition:transform .3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);">
-      <div class="modal-section-label" style="margin-bottom:10px;">Abendessen</div>
+    <div id="meal-panel-dinner" style="position:absolute;inset:0;overflow-y:auto;padding:0.375rem 1.125rem 1.25rem;transition:transform .3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);">
+      <div class="modal-section-label" style="margin-bottom:0.625rem;">Abendessen</div>
       <div class="meal-input-wrap">
         <input class="modal-input" id="edit-dinner" placeholder="Suchen oder eingeben…" autocomplete="off" autocorrect="off"
           oninput="triggerModalAutosave();showDrop('edit-dinner','drop-dinner','dinner')"
@@ -987,7 +899,7 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
           onblur="setTimeout(()=>hideDrop('drop-dinner'),250)">
         <div class="meal-dropdown" id="drop-dinner"></div>
       </div>
-      <div style="margin-top:14px;">
+      <div style="margin-top:0.875rem;">
         <button class="bring-btn" onclick="openBringForInput(editingDayIdx,'dinner')">Zutaten zu Bring!</button>
       </div>
     </div>
@@ -1027,10 +939,10 @@ select.tr-input{width:100%;text-align:left;appearance:none;-webkit-appearance:no
     <button class="modal-close" onclick="closeFoodSearch()">✕</button>
     <div class="modal-title" id="food-modal-title">Essen hinzufügen</div>
   </div>
-  <div style="padding:14px 18px;flex-shrink:0;max-width:640px;margin:0 auto;width:100%;">
+  <div style="padding:0.875rem 1.125rem;flex-shrink:0;max-width:40rem;margin:0 auto;width:100%;">
     <input id="food-search-input" type="text" placeholder="Lebensmittel suchen…" class="modal-input" oninput="debounceSearch(this.value)">
   </div>
-  <div id="food-search-status" style="text-align:center;padding:6px;font-size:12px;color:var(--text3);"></div>
+  <div id="food-search-status" style="text-align:center;padding:0.375rem;font-size:0.75rem;color:var(--text3);"></div>
   <div id="food-search-results" style="flex:1;overflow-y:auto;"></div>
 </div>
 
@@ -1045,6 +957,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // ── CONFIG ──
+const ALFIE_BUILD = 'B7 · 02.08.2026';
 const CONFIG = {
   GCAL_CLIENT_ID: '438929727680-b8qi3q72guf6a44u0h3g2adst8n378tv.apps.googleusercontent.com',
   SHEETS_API_KEY: 'AIzaSyCjaHl6Sj0iTn9RFHl4JIP5ZsDzGV-wZKE',
@@ -1333,6 +1246,50 @@ window.addEventListener('load',()=>{
   if(btn){ btn.addEventListener('click',()=>{ window.location.href=getAuthUrl(); }); }
 });
 
+// ── UI SCALE (per device, survives reloads) ──
+function setUiScale(v){
+  localStorage.setItem('alfie_ui_scale', String(v));
+  applyUiScale();
+  showToast('Anzeigegrösse gespeichert');
+}
+
+function applyUiScale(){
+  const v = parseFloat(localStorage.getItem('alfie_ui_scale')) || 1;
+  document.documentElement.style.setProperty('--ui-scale', v);
+  ['0.85','1','1.2','1.45','1.75'].forEach(k=>{
+    const el = document.getElementById('scale-'+k);
+    if(el) el.classList.toggle('on', parseFloat(k) === v);
+  });
+  const hint = document.getElementById('scale-hint');
+  if(hint){
+    const root = Math.round(parseFloat(getComputedStyle(document.documentElement).fontSize));
+    hint.textContent = `Gilt nur für dieses Gerät. Bildschirm ${window.innerWidth}×${window.innerHeight} px `
+      + `· Pixelverhältnis ${window.devicePixelRatio} · Basisgrösse ${root} px`;
+  }
+  const bv = document.getElementById('build-version');
+  if(bv){
+    bv.textContent = `Version ${ALFIE_BUILD}`;
+  }
+}
+
+async function forceUpdate(){
+  showToast('Suche nach Update…');
+  try{
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for(const r of regs){
+        if(r.active) r.active.postMessage('alfie-clear-cache');
+        await r.update();
+      }
+    }
+    if(window.caches){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+  }catch(e){}
+  setTimeout(()=>location.reload(true), 600);
+}
+
 // ── HOME SCREEN ──
 function renderHomeToday(){
   const now = new Date();
@@ -1363,7 +1320,7 @@ function renderHomeToday(){
 
   const c = document.getElementById('hm-today-lines');
   if(c) c.innerHTML = lines.map(l =>
-    `<div class="hm-line"><span style="width:8px;height:8px;border-radius:50%;background:${l.c};flex-shrink:0;"></span>${l.t}</div>`
+    `<div class="hm-line"><span style="width:0.5rem;height:0.5rem;border-radius:50%;background:${l.c};flex-shrink:0;"></span>${l.t}</div>`
   ).join('');
 }
 
@@ -1436,7 +1393,7 @@ function renderWeekStrip() {
     const isActive = i === currentWeekOffset;
     const isCurrent = i === 0;
     const btn = document.createElement('button');
-    btn.style.cssText = `flex-shrink:0;padding:8px 14px;border-radius:var(--radius-pill);border:none;background:${isActive?'var(--clay)':'var(--surface)'};color:${isActive?'var(--on-accent)':'var(--text2)'};font-size:12.5px;font-weight:${isActive?'600':'500'};cursor:pointer;white-space:nowrap;`;
+    btn.style.cssText = `flex-shrink:0;padding:0.5rem 0.875rem;border-radius:var(--radius-pill);border:none;background:${isActive?'var(--clay)':'var(--surface)'};color:${isActive?'var(--on-accent)':'var(--text2)'};font-size:0.7812rem;font-weight:${isActive?'600':'500'};cursor:pointer;white-space:nowrap;`;
     btn.textContent = isCurrent ? `Diese Woche` : `${mon.getDate()}.${mon.getMonth()+1}–${sun.getDate()}.${sun.getMonth()+1}`;
     btn.onclick = () => { currentWeekOffset = i; renderWeekStrip(); loadMeals(); };
     strip.appendChild(btn);
@@ -1701,7 +1658,7 @@ async function saveFavorites(){
 function renderFavsList(){
   const c=document.getElementById('favs-list');c.innerHTML='';
   if(!favorites.length){
-    c.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px 20px;font-size:17px;">Noch keine Favoriten</div>';
+    c.innerHTML='<div style="text-align:center;color:var(--text3);padding:2.5rem 1.25rem;font-size:1.0625rem;">Noch keine Favoriten</div>';
   } else {
     favorites.forEach((f,i)=>{
       const el=document.createElement('div');el.className='fav-card';
@@ -1722,7 +1679,7 @@ function renderFavsList(){
   // Add fav form
   const form=document.createElement('div');form.className='add-fav-card';
   form.innerHTML=`
-    <div style="font-size:18px;font-weight:700;margin-bottom:14px;">Favorit hinzufügen</div>
+    <div style="font-size:1.125rem;font-weight:700;margin-bottom:0.875rem;">Favorit hinzufügen</div>
     <input class="add-fav-input" id="new-fav-name" placeholder="Mahlzeit eingeben...">
     <div class="add-fav-types">
       <button class="type-pill sel" id="type-lunch" onclick="selFavType('Mittagessen')">Mittag</button>
@@ -1819,7 +1776,7 @@ const LIGHTS=[
 
 async function loadLights(){
   const list=document.getElementById('lights-list');
-  list.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px;font-size:17px;">Laden...</div>';
+  list.innerHTML='<div style="text-align:center;color:var(--text3);padding:2.5rem;font-size:1.0625rem;">Laden...</div>';
   try{
     const states=await Promise.all(LIGHTS.map(l=>fetch(`${CONFIG.HA_URL}/api/states/${l.id}`,{headers:HA_H}).then(r=>{
       if(!r.ok) throw new Error(`HA ${r.status}`);
@@ -1827,11 +1784,11 @@ async function loadLights(){
     }).catch(err=>{console.warn('Light error',l.id,err.message);return null;})));
     states.forEach((s,i)=>{if(s)lightStates[LIGHTS[i].id]=s;});
     if(states.every(s=>s===null)){
-      list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;font-size:15px;">Keine Verbindung zu Home Assistant<br><span style="font-size:13px;color:var(--text3);">Prüfe ob ha.ha-cruz.com erreichbar ist</span></div>';
+      list.innerHTML='<div style="text-align:center;color:var(--red);padding:2.5rem;font-size:0.9375rem;">Keine Verbindung zu Home Assistant<br><span style="font-size:0.8125rem;color:var(--text3);">Prüfe ob ha.ha-cruz.com erreichbar ist</span></div>';
       return;
     }
     renderLights();
-  }catch(e){list.innerHTML='<div style="text-align:center;color:var(--red);padding:40px;">Verbindungsfehler: '+e.message+'</div>';}
+  }catch(e){list.innerHTML='<div style="text-align:center;color:var(--red);padding:2.5rem;">Verbindungsfehler: '+e.message+'</div>';}
 }
 
 function mlIcon(on, dim, br){
@@ -1992,7 +1949,7 @@ function renderDateStrip(){
     const dayNames=['So','Mo','Di','Mi','Do','Fr','Sa'];
     const btn=document.createElement('button');
     btn.className='date-pill'+(ds===trackerDate?' active':'');
-    btn.innerHTML=`<div style="font-weight:600;">${dayNames[d.getDay()]}</div><div style="font-size:13px;opacity:0.7;">${d.getDate()}.${d.getMonth()+1}</div>`;
+    btn.innerHTML=`<div style="font-weight:600;">${dayNames[d.getDay()]}</div><div style="font-size:0.8125rem;opacity:0.7;">${d.getDate()}.${d.getMonth()+1}</div>`;
     btn.onclick=()=>{trackerDate=ds;renderDateStrip();loadTracker();};
     strip.appendChild(btn);
   }
@@ -2233,14 +2190,14 @@ function renderStreaks(s, totalDays) {
   }
   
   c.innerHTML = `
-    <div style="background:var(--surface);border-radius:var(--radius-card);padding:16px;">
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px;">Streaks</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="background:var(--surface);border-radius:var(--radius-card);padding:1rem;">
+      <div style="font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:0.75rem;">Streaks</div>
+      <div style="display:flex;flex-direction:column;gap:0.625rem;">
         ${items.map(i=>`
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="width:8px;height:8px;border-radius:50%;background:${i.color};flex-shrink:0;"></span>
-            <span style="flex:1;font-size:13.5px;color:var(--text);">${i.label}</span>
-            ${i.milestone?`<span style="font-size:13px;color:var(--text3);">${i.milestone}</span>`:''}
+          <div style="display:flex;align-items:center;gap:0.625rem;">
+            <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:${i.color};flex-shrink:0;"></span>
+            <span style="flex:1;font-size:0.8438rem;color:var(--text);">${i.label}</span>
+            ${i.milestone?`<span style="font-size:0.8125rem;color:var(--text3);">${i.milestone}</span>`:''}
           </div>
         `).join('')}
       </div>
@@ -2285,16 +2242,16 @@ function renderWeeklySummary(rows, goals) {
   
   c.style.display = 'block';
   c.innerHTML = `
-    <div style="background:var(--surface);border-radius:var(--radius-card);padding:16px;">
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px;">Wochenrückblick</div>
-      <div style="font-size:13.5px;color:var(--text);line-height:1.8;">
+    <div style="background:var(--surface);border-radius:var(--radius-card);padding:1rem;">
+      <div style="font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:0.75rem;">Wochenrückblick</div>
+      <div style="font-size:0.8438rem;color:var(--text);line-height:1.8;">
         <b>${totalWater.toFixed(1)} L</b> Wasser getrunken<br>
         <b>${totalSteps.toLocaleString('de-CH')}</b> Schritte gesamt<br>
         <b>${activityDays}/7</b> Tage aktiv<br>
         <b>${totalKcal.toLocaleString('de-CH')} kcal</b> gegessen<br>
         <b>${allGoalDays}/7</b> Tage alle Ziele erreicht
       </div>
-      <div style="margin-top:12px;font-size:13px;color:var(--text2);">
+      <div style="margin-top:0.75rem;font-size:0.8125rem;color:var(--text2);">
         ${allGoalDays>=5?'Super Woche.':allGoalDays>=3?'Solide Woche.':activityDays>=4?'Schön aktiv geblieben.':'Neue Woche, neue Chance.'}
       </div>
     </div>
@@ -2583,6 +2540,7 @@ function setMode(mode){
 function setTheme(){ alfieApplyTheme(); }
 
 alfieApplyTheme();
+document.documentElement.style.setProperty('--ui-scale', parseFloat(localStorage.getItem('alfie_ui_scale')) || 1);
 setInterval(alfieApplyTheme, 5 * 60 * 1000);
 
 
@@ -2639,7 +2597,11 @@ async function loadUserSettings(user){
 
 function loadTheme(user){
   alfieApplyTheme();
+  applyUiScale();
 }
+
+// the Fold changes viewport when unfolded — re-read the scale
+window.addEventListener('resize', () => { applyUiScale(); });
 
 function uploadSettingsPic(input){
   const file=input.files[0]; if(!file)return;
@@ -2681,6 +2643,7 @@ function loadSettingsPage(){
   // Load saved PIN
   const savedPin=localStorage.getItem(`alfie_pin_${currentUser}`);
   if(savedPin) PINS[currentUser]=savedPin;
+  applyUiScale();
 }
 
 function saveName(name){
@@ -2724,7 +2687,7 @@ function updateNotifToggle(on){
   const btn=document.getElementById('notif-toggle');
   const thumb=document.getElementById('notif-thumb');
   if(btn) btn.style.background=on?'var(--green)':'var(--surface3)';
-  if(thumb) thumb.style.left=on?'23px':'3px';
+  if(thumb) thumb.style.left=on?'1.4375rem':'0.1875rem';
 }
 
 function showToast(msg){
