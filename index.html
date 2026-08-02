@@ -594,6 +594,32 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .p2r,.p2st{flex-shrink:0;}
 .p2empty{margin:auto 0;}
 
+.p2.sport{padding:0;}
+.p2.sport .p2h{padding:12px 16px 11px;margin:0;border-radius:20px 20px 0 0;}
+.p2.sport .p2h .p2l{color:#fff;opacity:0.85;}
+.p2.sport .p2b{background:rgba(255,255,255,0.22)!important;}
+#card-fussball .p2h{background:#0B7A3B;}
+#card-nba .p2h{background:#1D1D2B;}
+#card-f1 .p2h{background:#D9603C;}
+.p2.sport > div:not(.p2h){padding:0 16px 14px;display:flex;flex-direction:column;flex:1;min-height:0;}
+.p2hero{background:var(--k-tile);border-radius:13px;padding:11px 12px;margin:12px 0 10px;flex-shrink:0;}
+.p2hero-l{font-size:9.5px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:var(--k-mute);}
+.p2hero-m{display:flex;align-items:center;gap:9px;margin-top:7px;}
+.p2hero-t{font-size:14px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.p2hero-w{font-size:12px;color:var(--k-clay);font-weight:600;flex-shrink:0;}
+.p2row2{display:flex;align-items:center;gap:9px;padding:6.5px 0;font-size:12.5px;
+  border-bottom:1px solid var(--k-line);flex-shrink:0;}
+.p2row2:last-child{border-bottom:none;}
+.p2row2 .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.p2row2 .v{font-weight:600;font-size:12px;flex-shrink:0;}
+.p2row2 .v.win{color:var(--k-moss);} .p2row2 .v.loss{color:var(--k-clay);}
+.p2row2 .pos{width:14px;font-size:10.5px;font-weight:700;color:var(--k-mute);flex-shrink:0;}
+.crest{width:22px;height:22px;border-radius:50%;flex-shrink:0;object-fit:contain;
+  display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;background:#fff;}
+.crest.lg{width:32px;height:32px;font-size:10px;}
+.stbar{width:3px;height:15px;border-radius:2px;flex-shrink:0;}
+
+
 .ab-row{padding:9px 0!important;}
 .sp-row{padding:7px 0!important;}
 
@@ -1130,17 +1156,17 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
         <div id="abfall-body"></div>
       </div>
 
-      <div class="p2 tap" id="card-fussball" onclick="openP2('fussball')">
+      <div class="p2 tap sport" id="card-fussball" onclick="openP2('fussball')">
         <div class="p2h"><span class="p2b" style="background:#0B7A3B;">SCP</span><span class="p2l">Fussball</span></div>
         <div id="fb-body"><div class="p2empty">Laden …</div></div>
       </div>
 
-      <div class="p2 tap" id="card-nba" onclick="openP2('nba')">
+      <div class="p2 tap sport" id="card-nba" onclick="openP2('nba')">
         <div class="p2h"><span class="p2b" style="background:#C8102E;">NBA</span><span class="p2l">Basketball</span></div>
         <div id="nba-body"><div class="p2empty">Laden …</div></div>
       </div>
 
-      <div class="p2 tap" id="card-f1" onclick="openP2('f1')">
+      <div class="p2 tap sport" id="card-f1" onclick="openP2('f1')">
         <div class="p2h"><span class="p2b" style="background:#D9603C;">F1</span><span class="p2l">Formel 1</span></div>
         <div id="f1-body"><div class="p2empty">Laden …</div></div>
       </div>
@@ -3019,7 +3045,11 @@ async function loadNBA(){
     const opp=t.find(x=>x!==mine);
     out.push({name:mine.team?.shortDisplayName||mine.team?.abbreviation,
               opp:opp?.team?.abbreviation||'', state:ev.status?.type?.state,
-              a:parseInt(mine.score), b:parseInt(opp?.score), date:ev.date});
+              a:parseInt(mine.score), b:parseInt(opp?.score), date:ev.date,
+              logo:mine.team?.logo||mine.team?.logos?.[0]?.href||'',
+              oppLogo:opp?.team?.logo||opp?.team?.logos?.[0]?.href||'',
+              color:'#'+(mine.team?.color||'552583'),
+              rec:(mine.records||[]).find(r=>r.type==='total')?.summary||''});
   });
 
   // nothing in that window (off-season gap) -> read each team's schedule
@@ -3033,7 +3063,10 @@ async function loadNBA(){
         const me=cs.find(x=>x.team?.abbreviation===ab), op=cs.find(x=>x.team?.abbreviation!==ab);
         if(!me||!op) return;
         out.push({name:nm, opp:op.team?.abbreviation||'', state:ev.status?.type?.state,
-                  a:parseInt(me.score?.value ?? me.score), b:parseInt(op.score?.value ?? op.score), date:ev.date});
+                  a:parseInt(me.score?.value ?? me.score), b:parseInt(op.score?.value ?? op.score), date:ev.date,
+                  logo:me.team?.logos?.[0]?.href||t?.team?.logos?.[0]?.href||'',
+                  oppLogo:op.team?.logos?.[0]?.href||'',
+                  color:'#'+(me.team?.color||t?.team?.color||'552583'), rec:''});
       });
     }
     const now=Date.now();
@@ -3076,7 +3109,9 @@ async function loadF1(){
   entries.slice(0,12).forEach((e,i)=>{
     const nm=e.athlete?.shortName||e.athlete?.displayName||e.team?.displayName||'';
     const pts=statVal(e,'points','championshippts','pts');
-    if(nm) res.standings.push({pos:i+1,name:nm,pts});
+    const col='#'+(e.athlete?.team?.color||e.team?.color||'D9603C');
+    const flag=e.athlete?.flag?.href||'';
+    if(nm) res.standings.push({pos:i+1,name:nm,pts,col,flag});
   });
   SPORT.f1=res;
   renderF1();
@@ -3089,34 +3124,44 @@ function fbMatch(ev, tag){
   if(!h||!a) return null;
   return {home:h.team?.shortDisplayName||h.team?.displayName||'',
           away:a.team?.shortDisplayName||a.team?.displayName||'',
-          hs:h.score, as:a.score, state:ev.status?.type?.state, date:ev.date, tag};
+          hs:h.score, as:a.score, state:ev.status?.type?.state, date:ev.date, tag,
+          hLogo:h.team?.logo||h.team?.logos?.[0]?.href||'',
+          aLogo:a.team?.logo||a.team?.logos?.[0]?.href||'',
+          hCol:'#'+(h.team?.color||'0B7A3B'), aCol:'#'+(a.team?.color||'888888')};
 }
 async function loadFootball(){
   const res={sporting:[],liga:[],euro:[],nt:[]};
-  const liga=await tkGet(`soccer/por.1/scoreboard?dates=${tkDates(4,10)}`);
-  (liga?.events||[]).forEach(ev=>{
-    const m=fbMatch(ev,'Liga');
-    if(!m) return;
-    if(/sporting/i.test(m.home)&&!/braga/i.test(m.home) || /sporting/i.test(m.away)&&!/braga/i.test(m.away))
-      res.sporting.push(m);
-  });
+  const isSporting=n=>/sporting/i.test(n) && !/braga/i.test(n);
+  const grab=async(range)=>{
+    const d=await tkGet(`soccer/por.1/scoreboard?dates=${range}`);
+    (d?.events||[]).forEach(ev=>{
+      const m=fbMatch(ev,'Liga');
+      if(m && (isSporting(m.home)||isSporting(m.away))) res.sporting.push(m);
+    });
+  };
+  await grab(tkDates(5,14));
+  if(res.sporting.length<3){ res.sporting.length=0; await grab(tkDates(7,45)); }
+  const now=Date.now();
+  res.sporting.sort((a,b)=>Math.abs(new Date(a.date)-now)-Math.abs(new Date(b.date)-now));
+  res.sporting=res.sporting.slice(0,8);
   const tbl=await tkStand('soccer/por.1/standings');
   const ent=flatEntries(tbl);
   ent.slice(0,20).forEach((e,i)=>{
     const nm=e.team?.shortDisplayName||e.team?.displayName||'';
     const pts=statVal(e,'points','pts');
-    if(nm) res.liga.push({pos:Number(statVal(e,'rank'))||i+1, name:nm, pts});
+    if(nm) res.liga.push({pos:Number(statVal(e,'rank'))||i+1, name:nm, pts,
+      logo:e.team?.logos?.[0]?.href||'', col:'#'+(e.team?.color||'888888')});
   });
   res.liga.sort((a,b)=>a.pos-b.pos);
   for(const [slug,tag] of EURO_COMPS){
-    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(3,12)}`);
+    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(4,30)}`);
     (d?.events||[]).forEach(ev=>{
       const m=fbMatch(ev,tag);
       if(m && (isPT(m.home)||isPT(m.away))) res.euro.push(m);
     });
   }
   for(const [slug,tag] of NT_COMPS){
-    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(3,16)}`);
+    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(4,45)}`);
     (d?.events||[]).forEach(ev=>{
       const m=fbMatch(ev,tag);
       if(m && (/^portugal$/i.test(m.home)||/^portugal$/i.test(m.away))) res.nt.push(m);
@@ -3127,53 +3172,84 @@ async function loadFootball(){
 }
 
 // ---- tile renderers ----
-function nbaRow(g){
-  if(g.state==='post'){
-    const cls=g.a>g.b?'win':'loss';
-    return `<div class="p2r"><span class="t"><b>${g.name}</b> vs ${g.opp}</span>`+
-           `<span class="res ${cls}">${g.a}\u2013${g.b}</span></div>`;
-  }
-  if(g.state==='in')
-    return `<div class="p2r"><span class="t"><b>${g.name}</b> vs ${g.opp}</span>`+
-           `<span class="res live">${g.a}\u2013${g.b}</span></div>`;
-  return `<div class="p2r"><span class="t"><b>${g.name}</b> vs ${g.opp}</span>`+
-         `<span class="w">${tkDay(g.date)}</span></div>`;
+function crest(url, fallbackCol, txt, big){
+  const cls = 'crest'+(big?' lg':'');
+  if(url) return `<img class="${cls}" src="${url}" alt="" onerror="this.style.visibility='hidden'">`;
+  return `<span class="${cls}" style="background:${fallbackCol||'#8C8378'}">${(txt||'').slice(0,3)}</span>`;
 }
+function bar(col){ return `<span class="stbar" style="background:${col||'#8C8378'}"></span>`; }
+
 function renderNBA(){
   const el=document.getElementById('nba-body'); if(!el) return;
-  el.innerHTML = SPORT.nba.length ? SPORT.nba.slice(0,5).map(nbaRow).join('')
-                                  : '<div class="p2empty">Keine Spiele</div>';
+  const g=SPORT.nba;
+  if(!g.length){ el.innerHTML='<div class="p2empty">Keine Spiele</div>'; return; }
+  const now=Date.now();
+  const next=g.find(x=>x.state!=='post' && new Date(x.date)>=now) || g.find(x=>x.state!=='post');
+  const rest=g.filter(x=>x!==next).slice(0,4);
+  let h='';
+  if(next){
+    h += `<div class="p2hero"><div class="p2hero-l">Als N\u00e4chstes</div><div class="p2hero-m">`+
+         crest(next.logo,next.color,next.name)+
+         `<span class="p2hero-t">${next.name} vs ${next.opp}</span>`+
+         `<span class="p2hero-w">${tkDay(next.date)}</span></div></div>`;
+  }
+  h += rest.map(x=>{
+    const val = x.state==='post'
+      ? `<span class="v ${x.a>x.b?'win':'loss'}">${x.a}\u2013${x.b}</span>`
+      : `<span class="v">${tkDay(x.date)}</span>`;
+    return `<div class="p2row2">${bar(x.color)}<span class="t">${x.name} vs ${x.opp}</span>${val}</div>`;
+  }).join('');
+  el.innerHTML=h;
 }
-function fbRow(m){
-  const label=`${m.home} \u2013 ${m.away}`;
-  if(m.state==='post') return `<div class="p2r"><span class="t">${label}</span><span class="res">${m.hs}\u2013${m.as}</span></div>`;
-  if(m.state==='in')   return `<div class="p2r"><span class="t">${label}</span><span class="res live">${m.hs}\u2013${m.as}</span></div>`;
-  return `<div class="p2r"><span class="t">${label}</span><span class="w">${tkDay(m.date)}</span></div>`;
-}
+
 function renderFootball(){
   const el=document.getElementById('fb-body'); if(!el) return;
   const f=SPORT.fb;
-  const sp=f.liga.find(x=>/sporting/i.test(x.name));
+  const now=Date.now();
+  const sp=f.liga.find(x=>/sporting/i.test(x.name) && !/braga/i.test(x.name));
+  const started=f.liga.some(x=>Number(x.pts)>0);
+  const all=[...f.sporting, ...f.euro, ...f.nt];
+  const next=f.sporting.find(m=>m.state!=='post' && new Date(m.date)>=now) || f.sporting[0];
+  const rest=all.filter(m=>m!==next).slice(0,4);
+
   let h='';
-  if(sp) h += `<div class="p2big" style="font-size:22px;">Sporting</div>`+
-              `<div class="p2sub" style="margin-bottom:9px;">${sp.pos}. Liga Portugal \u00b7 ${sp.pts} Pkt</div>`;
-  const rows=[...f.sporting.slice(0,2), ...f.euro.slice(0,2)];
-  h += rows.length ? rows.map(fbRow).join('') : '<div class="p2empty">Keine Spiele</div>';
+  if(next){
+    const other = /sporting/i.test(next.home) ? {n:next.away,l:next.aLogo,c:next.aCol}
+                                              : {n:next.home,l:next.hLogo,c:next.hCol};
+    h += `<div class="p2hero"><div class="p2hero-l">N\u00e4chstes Spiel`+
+         (started&&sp?` \u00b7 ${sp.pos}. mit ${sp.pts} Pkt`:'')+`</div><div class="p2hero-m">`+
+         crest(other.l,other.c,other.n)+
+         `<span class="p2hero-t">${next.home} \u2013 ${next.away}</span>`+
+         `<span class="p2hero-w">${tkDay(next.date)}</span></div></div>`;
+  }
+  h += rest.length ? rest.map(m=>{
+    const val = m.state==='post'
+      ? `<span class="v">${m.hs}\u2013${m.as}</span>`
+      : `<span class="v">${tkDay(m.date)}</span>`;
+    return `<div class="p2row2">${crest(m.hLogo,m.hCol,m.home)}`+
+           `<span class="t">${m.home} \u2013 ${m.away}${m.tag&&m.tag!=='Liga'?' \u00b7 '+m.tag:''}</span>${val}</div>`;
+  }).join('') : '<div class="p2empty">Keine weiteren Spiele</div>';
   el.innerHTML=h;
 }
+
 function renderF1(){
   const el=document.getElementById('f1-body'); if(!el) return;
   const f=SPORT.f1;
   let h='';
   if(f.gp){
-    const next=f.sessions.filter(x=>new Date(x.date)>=new Date()).slice(0,2);
-    h += `<div class="f1next"><div class="f1gp">${f.gp}</div><div class="f1ses">`+
-         (next.length? next.map(x=>`${x.lbl} ${tkDay(x.date)}`).join(' \u00b7 ') : 'Wochenende vorbei')+
+    const now=Date.now();
+    const up=f.sessions.filter(x=>new Date(x.date)>=now);
+    const race=f.sessions.find(x=>/Rennen/.test(x.lbl));
+    const nx=up[0];
+    h += `<div class="p2hero"><div class="p2hero-l">${f.gp}</div><div class="p2hero-m">`+
+         `<span class="p2hero-t">${nx?nx.lbl+' '+tkDay(nx.date):'Wochenende vorbei'}</span>`+
+         (race&&new Date(race.date)>=now?`<span class="p2hero-w">Rennen ${tkDay(race.date)}</span>`:'')+
          `</div></div>`;
   }
   h += f.standings.length
-     ? f.standings.slice(0,3).map(x=>`<div class="p2st"><span class="pos">${x.pos}</span>`+
-        `<span class="nm">${x.name}</span><span class="pts">${x.pts}</span></div>`).join('')
+     ? f.standings.slice(0,4).map(x=>
+        `<div class="p2row2"><span class="pos">${x.pos}</span>${bar(x.col)}`+
+        `<span class="t">${x.name}</span><span class="v">${x.pts}</span></div>`).join('')
      : '<div class="p2empty">Keine Wertung</div>';
   el.innerHTML=h;
 }
