@@ -540,7 +540,7 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .p2h{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-shrink:0;padding-right:20px;}
 .p2l{font-size:11.5px;font-weight:600;color:var(--k-mute);}
 .p2b{font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px;color:#fff;flex-shrink:0;}
-.p2photo{height:74px;border-radius:11px;overflow:hidden;margin-bottom:11px;flex-shrink:0;
+.p2photo{flex:1 1 auto;min-height:64px;border-radius:11px;overflow:hidden;margin-bottom:11px;
   background:var(--k-sage);color:var(--k-moss);display:flex;align-items:center;justify-content:center;}
 .p2photo.dim{background:var(--k-tile);color:#C9C2B6;}
 .p2img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -586,6 +586,14 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
   color:var(--k-mute);margin:18px 0 8px;}
 .p2seg:first-child{margin-top:0;}
 .p2pop-b .p2r{font-size:14px;padding:11px 0;}
+
+.p2 > *:last-child{margin-bottom:0;}
+#bmw-body,#abfall-body,#fb-body,#nba-body,#f1-body{display:flex;flex-direction:column;flex:1;min-height:0;}
+#bmw-body{flex:0 0 auto;}
+.p2ty{margin-top:12px;}
+.p2r,.p2st{flex-shrink:0;}
+.p2empty{margin:auto 0;}
+
 .ab-row{padding:9px 0!important;}
 .sp-row{padding:7px 0!important;}
 
@@ -1805,8 +1813,70 @@ function p2Content(kind){
   }
   if(kind==='skoda') return ['Škoda','<div class="p2empty">MySkoda ist noch nicht verbunden.</div>'];
   // bmw
-  const el=document.getElementById('bmw-body');
-  return ['BMW M235i', p2seg('Aktuell') + (el?el.innerHTML:'')];
+  const ents = window.BMW_ENTITIES || [];
+  if(!ents.length) return ['BMW M235i','<div class="p2empty">Keine Daten</div>'];
+  const get=(...f)=>{
+    for(const x of f){
+      const hit=ents.find(e=>e.entity_id.endsWith(x));
+      if(hit && !['unknown','unavailable',''].includes(hit.state)) return hit;
+    }
+    return null;
+  };
+  const num=v=>{ const n=parseFloat(String(v).replace(',','.')); return isNaN(n)?null:n; };
+  let h='';
+
+  h += p2seg('Tank & Reichweite');
+  const fp=get('range_tank_level_percent','_tank_level_percent'), rg=get('range_total_range_last_sent','_total_range'), tl=get('range_tank_level');
+  if(fp) h += p2row('F\u00fcllstand', Math.round(num(fp.state))+' %','res');
+  if(tl && (!fp || tl.entity_id!==fp.entity_id)) h += p2row('Tankinhalt', Math.round(num(tl.state))+' l');
+  if(rg) h += p2row('Reichweite', Math.round(num(rg.state))+' km');
+  const km=get('vehicle_mileage');
+  if(km) h += p2row('Kilometerstand', Math.round(num(km.state)).toLocaleString('de-CH')+' km');
+
+  h += p2seg('Status');
+  const stat=[
+    ['T\u00fcr vorne links','door_state_front_driver'],
+    ['T\u00fcr vorne rechts','door_state_front_passenger'],
+    ['T\u00fcr hinten links','door_state_rear_driver'],
+    ['T\u00fcr hinten rechts','door_state_rear_passenger'],
+    ['Heckklappe','tailgate_door_state','tailgate_state'],
+    ['Motorhaube','hood_state'],
+    ['Fenster gesamt','windows_overall_state'],
+    ['Dach','sunroof_overall_state','sunroof_state'],
+  ];
+  let any=false;
+  stat.forEach(([lbl,...keys])=>{
+    const e=get(...keys);
+    if(!e) return;
+    any=true;
+    const shut=/closed|secured|locked/i.test(e.state);
+    h += `<div class="p2r"><span class="t">${lbl}</span>`+
+         `<span class="res${shut?'':' loss'}">${carState(e.state)}</span></div>`;
+  });
+  if(!any) h += '<div class="p2empty">Kein Status</div>';
+
+  h += p2seg('Reifendruck');
+  [['Vorne links','tire_pressure_front_left'],['Vorne rechts','tire_pressure_front_right'],
+   ['Hinten links','tire_pressure_rear_left'],['Hinten rechts','tire_pressure_rear_right']].forEach(([lbl,k])=>{
+    const e=get(k); if(!e) return;
+    const v=num(e.state); const bar=v===null?null:(v>30?v/100:v);
+    h += p2row(lbl, bar!==null?bar.toFixed(1)+' bar':'\u2014','res');
+  });
+
+  const pre=get('preconditioning_state'), loc=get('_location');
+  if(pre||loc){
+    h += p2seg('Weiteres');
+    if(pre) h += p2row('Vorklimatisierung', carState(pre.state));
+    if(loc) h += p2row('Standort', loc.state==='home'?'Zuhause':carState(loc.state));
+  }
+
+  const stamps=ents.map(e=>new Date(e.last_updated)).filter(d=>!isNaN(d));
+  if(stamps.length){
+    const mins=Math.round((Date.now()-new Date(Math.max(...stamps)))/60000);
+    h += p2seg('Aktualisiert');
+    h += p2row('Letzte Daten', mins<60?`vor ${mins} Min`:`vor ${Math.round(mins/60)} Std`);
+  }
+  return ['BMW M235i', h];
 }
 function openP2(kind){
   const [title, html] = p2Content(kind);
@@ -1909,6 +1979,7 @@ async function loadCars(){
     if(!r.ok) throw new Error('http '+r.status);
     const all=await r.json();
     const mine=all.filter(e=>e.entity_id.includes(CAR_VIN));
+    window.BMW_ENTITIES=mine;
     if(!mine.length){ body.innerHTML='<div class="p2empty">Keine Daten</div>'; return; }
 
     const pick=(...frags)=>{
@@ -1934,11 +2005,17 @@ async function loadCars(){
               `<div class="p2bar"><i class="${cls}" style="width:${Math.max(2,pctVal)}%"></i></div>`;
     }
 
+    if(doors){
+      const shut=/closed|secured|locked/i.test(doors.state);
+      html += `<div class="p2r" style="border:none;padding:4px 0 0;"><span class="t" style="font-weight:400;color:var(--k-mute);">Status</span>`+
+              `<span class="res${shut?'':' loss'}">${shut?'Alles zu':carState(doors.state)}</span></div>`;
+    }
     if(tyres.length){
       const labels=['VL','VR','HL','HR'];
       html += '<div class="p2ty">' + tyres.map((t,i)=>{
         const v=carNum(t.state);
-        return `<div class="p2td"><div class="p2td-v">${v!==null?(v<10?v.toFixed(1):Math.round(v)):'\u2014'}</div>`+
+        const bar = v===null?null:(v>30? v/100 : v);
+        return `<div class="p2td"><div class="p2td-v">${bar!==null?bar.toFixed(1):'\u2014'}</div>`+
                `<div class="p2td-l">${labels[i]}</div></div>`;
       }).join('') + '</div>';
     }
