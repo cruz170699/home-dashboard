@@ -421,7 +421,7 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 
 .main{background:var(--k-card)!important;border-radius:22px!important;border:none!important;box-shadow:none!important;padding:15px 18px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:flex;flex-direction:column;}
 .dashboard{grid-template-rows:62px 176px 1fr!important;}
-.bottom{grid-template-columns:1.15fr 1.15fr 1fr!important;grid-template-rows:1fr 1fr!important;}
+.bottom{grid-template-columns:1.15fr 1.15fr 1fr!important;grid-template-rows:minmax(0,1fr) minmax(0,1fr)!important;height:100%;}
 .cal-header{margin-bottom:12px;}
 #cal-strip-label{font-size:15px;font-weight:600;}
 .kdark{background:var(--k-ink)!important;color:#fff!important;}
@@ -526,61 +526,68 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .pager::-webkit-scrollbar{display:none;}
 .pg{flex:0 0 100%;width:100%;max-width:100%;min-width:0;scroll-snap-align:start;
   min-height:0;display:flex;flex-direction:column;overflow:hidden;}
-.pg > *{flex:1;min-height:0;}
-.cars-grid{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:1.25fr 1fr;gap:16px;min-height:0;overflow:hidden;}
-.kc-car{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-.car-pic{flex:1;min-height:110px;border-radius:14px;background:var(--k-sage);color:var(--k-moss);
-  display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative;overflow:hidden;padding:0;}
-.car-img{width:100%;height:100%;object-fit:cover;display:block;}
-.car-pic svg{width:118px;height:44px;}
-.car-rows{margin-top:14px;flex-shrink:0;}
-.car-body > .car-big,.car-body > .car-bigsub,.car-body > .car-bar{flex-shrink:0;}
+.pg > *{flex:1;min-height:0;height:100%;}
 .pgdots{display:flex;justify-content:center;gap:8px;padding:8px 0 2px;flex-shrink:0;}
 .pgd{width:7px;height:7px;border-radius:50%;background:#CFC5B4;cursor:pointer;transition:all .18s;}
 .pgd.on{background:var(--k-clay);width:20px;border-radius:4px;}
-.dashboard{grid-template-rows:62px 200px 1fr auto!important;overflow:hidden;}
-.pager{min-height:0;height:100%;}
-.pg{min-width:0;}
-
-.kc-car .kc-head{margin-bottom:16px;}
-
-.kc-car.soon{opacity:0.6;}
-.car-pic.dim{background:var(--k-tile);color:#C9C2B6;}
-
-.car-pic svg{width:118px;height:44px;}
-
-.car-big{font-size:42px;font-weight:600;letter-spacing:-1.8px;line-height:1;}
-.car-bigsub{font-size:12.5px;color:var(--k-mute);margin-top:5px;}
-.car-bar{height:10px;border-radius:6px;background:var(--k-tile);overflow:hidden;margin-top:14px;}
-.car-bar i{display:block;height:100%;border-radius:6px;background:var(--k-moss);transition:width .3s;}
-.car-bar i.warn{background:var(--k-amber);}
-.car-bar i.low{background:var(--k-clay);}
-.car-body{display:flex;flex-direction:column;flex:1;min-height:0;}
-.car-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;
-  border-bottom:1px solid var(--k-line);font-size:14px;}
-.car-row:last-child{border-bottom:none;}
-.car-row span:first-child{color:var(--k-mute);}
-.car-tyres{display:flex;gap:6px;margin-top:12px;flex-shrink:0;}
-.car-ty{flex:1;height:38px;border-radius:10px;background:var(--k-tile);display:flex;
-  flex-direction:column;align-items:center;justify-content:center;}
-.car-ty-v{font-size:14px;font-weight:600;line-height:1;}
-.car-ty-l{font-size:8.5px;color:var(--k-mute);margin-top:2px;letter-spacing:0.5px;}
-.car-empty{font-size:13px;color:var(--k-mute);font-style:italic;}
-
-.ab-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--k-line);}
-.ab-row:last-child{border-bottom:none;}
-.ab-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
-.ab-n{font-size:14.5px;font-weight:500;flex:1;}
-.ab-w{font-size:12.5px;color:var(--k-mute);}
-.ab-w.soon{color:var(--k-clay);font-weight:600;}
-.sp-row{font-size:13px;padding:8px 0;border-bottom:1px solid var(--k-line);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sp-row:last-child{border-bottom:none;}
-.sp-row b{font-weight:600;}
-.sp-row .win{color:var(--k-moss);font-weight:600;}
-.sp-row .loss{color:var(--k-clay);font-weight:600;}
-.sp-row .live{color:var(--k-amber);font-weight:600;}
-#card-abfall,#card-sport{overflow-y:auto;}
+.p2grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,minmax(0,1fr));
+  gap:14px;height:100%;min-height:0;}
+.p2{background:var(--k-card);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;
+  overflow:hidden;min-height:0;position:relative;}
+.p2.tap{cursor:pointer;transition:transform .12s;}
+.p2.tap:hover{transform:translateY(-2px);}
+.p2.tap::after{content:'\203A';position:absolute;top:14px;right:17px;font-size:19px;color:var(--k-mute);opacity:0.4;}
+.p2h{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-shrink:0;padding-right:20px;}
+.p2l{font-size:11.5px;font-weight:600;color:var(--k-mute);}
+.p2b{font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px;color:#fff;flex-shrink:0;}
+.p2photo{height:74px;border-radius:11px;overflow:hidden;margin-bottom:11px;flex-shrink:0;
+  background:var(--k-sage);color:var(--k-moss);display:flex;align-items:center;justify-content:center;}
+.p2photo.dim{background:var(--k-tile);color:#C9C2B6;}
+.p2img{width:100%;height:100%;object-fit:cover;display:block;}
+.carsvg{width:96px;height:36px;}
+.p2big{font-size:32px;font-weight:600;letter-spacing:-1.3px;line-height:1;}
+.p2sub{font-size:11.5px;color:var(--k-mute);margin-top:4px;}
+.p2bar{height:7px;border-radius:4px;background:var(--k-tile);overflow:hidden;margin:10px 0;flex-shrink:0;}
+.p2bar i{display:block;height:100%;border-radius:4px;background:var(--k-moss);}
+.p2bar i.warn{background:var(--k-amber);} .p2bar i.low{background:var(--k-clay);}
+.p2ty{display:flex;gap:5px;margin-top:auto;flex-shrink:0;}
+.p2td{flex:1;padding:6px 0;border-radius:8px;background:var(--k-tile);text-align:center;}
+.p2td-v{font-size:12px;font-weight:600;line-height:1;}
+.p2td-l{font-size:7.5px;color:var(--k-mute);margin-top:1px;}
+.p2empty{font-size:12.5px;color:var(--k-mute);font-style:italic;}
+.p2empty-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--k-mute);}
+.p2dash{font-size:26px;font-weight:600;}
+.p2r{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:7px 0;
+  border-bottom:1px solid var(--k-line);font-size:12.5px;}
+.p2r:last-child{border-bottom:none;}
+.p2r .k{color:var(--k-mute);}
+.p2r .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+.p2r .w{font-size:11px;color:var(--k-mute);flex-shrink:0;}
+.p2r .res{font-weight:600;flex-shrink:0;}
+.p2r .res.win{color:var(--k-moss);} .p2r .res.loss{color:var(--k-clay);} .p2r .res.live{color:var(--k-amber);}
+.abdot{width:8px;height:8px;border-radius:2.5px;flex-shrink:0;}
+.f1next{background:var(--k-tile);border-radius:11px;padding:10px 12px;margin-bottom:10px;flex-shrink:0;}
+.f1gp{font-size:14px;font-weight:600;}
+.f1ses{font-size:11px;color:var(--k-mute);margin-top:2px;}
+.p2st{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:12.5px;}
+.p2st .pos{width:15px;font-weight:700;color:var(--k-mute);font-size:11px;}
+.p2st .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.p2st .pts{font-weight:600;}
+#p2-popup{display:none;position:fixed;inset:0;z-index:998;background:rgba(34,30,25,0.45);
+  backdrop-filter:blur(3px);align-items:center;justify-content:center;}
+#p2-popup.open{display:flex;}
+.p2pop{background:var(--k-card);border-radius:26px;width:560px;max-width:92vw;max-height:84vh;
+  padding:26px 28px;display:flex;flex-direction:column;font-family:'Outfit',sans-serif;}
+.p2pop-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;
+  padding-bottom:16px;border-bottom:1px solid var(--k-line);flex-shrink:0;}
+.p2pop-t{font-size:21px;font-weight:600;letter-spacing:-0.3px;}
+.p2pop-b{overflow-y:auto;min-height:0;}
+.p2seg{font-size:10.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--k-mute);margin:18px 0 8px;}
+.p2seg:first-child{margin-top:0;}
+.p2pop-b .p2r{font-size:14px;padding:11px 0;}
+.ab-row{padding:9px 0!important;}
+.sp-row{padding:7px 0!important;}
 
 
 
@@ -1096,30 +1103,52 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
   </div>
     </div>
     <div class="pg">
-    <div class="cars-grid">
-      <div class="card kc-car" id="car-bmw">
-        <div class="kc-head"><span class="kc-label">BMW M235i</span><span class="kc-mini" id="car-bmw-age">—</span></div>
-        <div class="car-pic"><img class="car-img" src="car-bmw.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg style="display:none" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9"/><path d="M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
-        <div class="car-body" id="car-bmw-body"><div class="car-empty">Keine Daten</div></div>
+    <div class="p2grid">
+
+      <div class="p2 tap" id="card-bmw" onclick="openP2('bmw')">
+        <div class="p2h"><span class="p2l">BMW M235i</span></div>
+        <div class="p2photo"><img class="p2img" src="car-bmw.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg class="carsvg" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
+        <div id="bmw-body"><div class="p2empty">Keine Daten</div></div>
       </div>
-      <div class="card kc-car soon">
-        <div class="kc-head"><span class="kc-label">Škoda</span></div>
-        <div class="car-pic dim"><img class="car-img" src="car-skoda.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg style="display:none" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9"/><path d="M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
-        <div class="car-big">—</div>
-        <div class="car-bigsub">MySkoda nicht verbunden</div>
+
+      <div class="p2 tap" id="card-skoda" onclick="openP2('skoda')">
+        <div class="p2h"><span class="p2l">Škoda</span></div>
+        <div class="p2photo dim"><img class="p2img" src="car-skoda.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg class="carsvg" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
+        <div class="p2empty-mid"><div class="p2dash">—</div><div class="p2sub">MySkoda nicht verbunden</div></div>
       </div>
+
+      <div class="p2 tap" id="card-abfall" onclick="openP2('abfall')">
+        <div class="p2h"><span class="p2l">Abfall Dietlikon</span></div>
+        <div id="abfall-body"></div>
+      </div>
+
+      <div class="p2 tap" id="card-fussball" onclick="openP2('fussball')">
+        <div class="p2h"><span class="p2b" style="background:#0B7A3B;">SCP</span><span class="p2l">Fussball</span></div>
+        <div id="fb-body"><div class="p2empty">Laden …</div></div>
+      </div>
+
+      <div class="p2 tap" id="card-nba" onclick="openP2('nba')">
+        <div class="p2h"><span class="p2b" style="background:#C8102E;">NBA</span><span class="p2l">Basketball</span></div>
+        <div id="nba-body"><div class="p2empty">Laden …</div></div>
+      </div>
+
+      <div class="p2 tap" id="card-f1" onclick="openP2('f1')">
+        <div class="p2h"><span class="p2b" style="background:#D9603C;">F1</span><span class="p2l">Formel 1</span></div>
+        <div id="f1-body"><div class="p2empty">Laden …</div></div>
+      </div>
+
     </div>
-      <div class="card kc-car" id="card-abfall">
-        <div class="kc-head"><span class="kc-label">Abfall Dietlikon</span></div>
-        <div id="abfall-list"></div>
-      </div>
-      <div class="card kc-car" id="card-sport">
-        <div class="kc-head"><span class="kc-label">Sport</span><span class="kc-mini" onclick="loadSportsTicker()">↻</span></div>
-        <div id="sport-list"><div class="car-empty">Laden …</div></div>
-      </div>
     </div>
   </div>
   <div class="pgdots"><span class="pgd on" onclick="goPage(0)"></span><span class="pgd" onclick="goPage(1)"></span></div>
+</div>
+
+<div id="p2-popup" onclick="if(event.target===this)closeP2()">
+  <div class="p2pop">
+    <div class="p2pop-h"><span class="p2pop-t" id="p2pop-title">—</span>
+      <button class="event-popup-close" onclick="closeP2()">✕</button></div>
+    <div class="p2pop-b" id="p2pop-body"></div>
+  </div>
 </div>
 
 <div id="cal-month-popup" onclick="if(event.target===this)closeMonthPopup()">
@@ -1708,6 +1737,1363 @@ loadPollen();setInterval(loadPollen,6*60*60*1000);
 
 
 
+
+
+// ── SEITE-2 POPUPS ──
+function p2seg(t){ return `<div class="p2seg">${t}</div>`; }
+function p2row(a,b,cls){ return `<div class="p2r"><span class="t">${a}</span><span class="${cls||'w'}">${b}</span></div>`; }
+
+function p2Content(kind){
+  const f=SPORT.fb, n=SPORT.nba, r=SPORT.f1;
+  if(kind==='f1'){
+    let h='';
+    if(r.gp){
+      h += p2seg('Rennwochenende · '+r.gp);
+      h += r.sessions.length
+         ? r.sessions.map(x=>p2row(x.lbl, x.winner?x.winner:tkDay(x.date), x.winner?'res win':'w')).join('')
+         : '<div class="p2empty">Keine Sessions</div>';
+    }
+    h += p2seg('Fahrerwertung');
+    h += r.standings.length
+       ? r.standings.map(x=>p2row(`${x.pos} · ${x.name}`, x.pts, 'res')).join('')
+       : '<div class="p2empty">Keine Wertung</div>';
+    return ['Formel 1', h];
+  }
+  if(kind==='nba'){
+    const post=n.filter(g=>g.state==='post'), up=n.filter(g=>g.state!=='post');
+    let h=p2seg('Nächste Spiele');
+    h += up.length ? up.slice(0,6).map(g=>p2row(`${g.name} vs ${g.opp}`, tkDay(g.date))).join('')
+                   : '<div class="p2empty">Keine angesetzt</div>';
+    h += p2seg('Letzte Ergebnisse');
+    h += post.length ? post.slice(0,8).map(g=>p2row(`${g.name} vs ${g.opp}`, `${g.a}–${g.b}`,
+                        'res '+(g.a>g.b?'win':'loss'))).join('')
+                     : '<div class="p2empty">Keine Ergebnisse</div>';
+    return ['NBA · Knicks, Celtics, Lakers, Philly', h];
+  }
+  if(kind==='fussball'){
+    let h=p2seg('Sporting CP');
+    h += f.sporting.length ? f.sporting.map(m=>p2row(`${m.home} – ${m.away}`,
+          m.state==='post'?`${m.hs}–${m.as}`:tkDay(m.date), m.state==='post'?'res':'w')).join('')
+        : '<div class="p2empty">Keine Spiele</div>';
+    h += p2seg('Liga Portugal');
+    h += f.liga.length ? f.liga.map(x=>p2row(`${x.pos} · ${x.name}`, x.pts, 'res')).join('')
+        : '<div class="p2empty">Keine Tabelle</div>';
+    if(f.euro.length){
+      h += p2seg('Portugiesen in Europa');
+      h += f.euro.map(m=>p2row(`${m.home} – ${m.away} · ${m.tag}`,
+            m.state==='post'?`${m.hs}–${m.as}`:tkDay(m.date), m.state==='post'?'res':'w')).join('');
+    }
+    if(f.nt.length){
+      h += p2seg('Nationalteam');
+      h += f.nt.map(m=>p2row(`${m.home} – ${m.away} · ${m.tag}`,
+            m.state==='post'?`${m.hs}–${m.as}`:tkDay(m.date), m.state==='post'?'res':'w')).join('');
+    }
+    return ['Fussball', h];
+  }
+  if(kind==='abfall'){
+    const items=abfallNext(70);
+    let h=p2seg('Nächste Abfuhren');
+    h += items.slice(0,20).map(it=>{
+      const col=ABFALL_COLOR[it.name]||'#8C8378';
+      return `<div class="p2r"><span class="abdot" style="background:${col}"></span>`+
+             `<span class="t">${it.name}</span><span class="w">${abWhen(it.date)}</span></div>`;
+    }).join('');
+    h += p2seg('Regeln');
+    h += p2row('Kehricht','jeden Dienstag')+p2row('Grüngut','jeden Mittwoch')+
+         p2row('Karton','2. und 4. Freitag')+p2row('Papier','1. Samstag im Monat');
+    return ['Abfall Dietlikon', h];
+  }
+  if(kind==='skoda') return ['Škoda','<div class="p2empty">MySkoda ist noch nicht verbunden.</div>'];
+  // bmw
+  const el=document.getElementById('bmw-body');
+  return ['BMW M235i', p2seg('Aktuell') + (el?el.innerHTML:'')];
+}
+function openP2(kind){
+  const [title, html] = p2Content(kind);
+  document.getElementById('p2pop-title').textContent = title;
+  document.getElementById('p2pop-body').innerHTML = html;
+  document.getElementById('p2-popup').classList.add('open');
+}
+function closeP2(){ document.getElementById('p2-popup').classList.remove('open'); }
+
+// ── ABFALL DIETLIKON ──
+const ABFALL_SPECIAL = [
+  ['2026-03-20','Gratiskompost'],['2026-03-23','H\u00e4ckseldienst'],
+  ['2026-04-09','Altmetall'],['2026-04-13','H\u00e4ckseldienst'],
+  ['2026-04-17','Sonderabfallmobil'],['2026-09-28','H\u00e4ckseldienst'],
+  ['2026-10-19','H\u00e4ckseldienst'],['2026-10-22','Altmetall'],
+  ['2026-10-31','Sonderabfallmobil'],
+];
+function abfallNext(days){
+  const out=[];
+  const t=new Date(); t.setHours(0,0,0,0);
+  for(let i=0;i<days;i++){
+    const d=new Date(t); d.setDate(t.getDate()+i);
+    const dow=d.getDay(), dom=d.getDate(), mon=d.getMonth();
+    const iso=`${d.getFullYear()}-${String(mon+1).padStart(2,'0')}-${String(dom).padStart(2,'0')}`;
+    const hits=[];
+    if(dow===2) hits.push('Kehricht');
+    if(dow===3 && ![0,1,11].includes(mon)) hits.push('Gr\u00fcngut');
+    if(dow===5 && mon!==11){
+      const nth=Math.ceil(dom/7);
+      if(nth===2||nth===4) hits.push('Karton');
+    }
+    if(dow===6 && dom<=7 && ![0,3,4,7].includes(mon)) hits.push('Papier');
+    ABFALL_SPECIAL.forEach(([dt,name])=>{ if(dt===iso) hits.push(name); });
+    hits.forEach(h=>out.push({date:d, name:h}));
+  }
+  return out;
+}
+const ABFALL_COLOR={Kehricht:'#8C8378','Gr\u00fcngut':'#3B5129',Karton:'#B07B3C',Papier:'#37618E',
+  Altmetall:'#6B6B6B',Gratiskompost:'#3B5129','H\u00e4ckseldienst':'#3B5129',Sonderabfallmobil:'#D9603C'};
+function abWhen(d){
+  const days=['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const t=new Date(); t.setHours(0,0,0,0);
+  const diff=Math.round((d-t)/86400000);
+  if(diff===0) return 'Heute';
+  if(diff===1) return 'Morgen';
+  return `${days[d.getDay()]} ${d.getDate()}.${d.getMonth()+1}.`;
+}
+function renderAbfall(){
+  const el=document.getElementById('abfall-body');
+  if(!el) return;
+  const items=abfallNext(35);
+  if(!items.length){ el.innerHTML='<div class="p2empty">Nichts geplant</div>'; return; }
+  const first=items[0];
+  let h=`<div class="p2big" style="font-size:26px;">${abWhen(first.date)}</div>`+
+        `<div class="p2sub" style="margin-bottom:10px;">${first.name}</div>`;
+  h += items.slice(1,5).map(it=>{
+    const col=ABFALL_COLOR[it.name]||'#8C8378';
+    return `<div class="p2r"><span class="abdot" style="background:${col}"></span>`+
+           `<span class="t">${it.name}</span><span class="w">${abWhen(it.date)}</span></div>`;
+  }).join('');
+  el.innerHTML=h;
+}
+renderAbfall(); setInterval(renderAbfall, 6*60*60*1000);
+
+// ── SPORT CARD ──
+function renderSportCard(items){
+  const el=document.getElementById('sport-list');
+  if(!el) return;
+  if(!items || !items.length){ el.innerHTML='<div class="car-empty">Keine Spiele</div>'; return; }
+  el.innerHTML = items.slice(0,6).map(i=>`<div class="sp-row">${i}</div>`).join('');
+}
+
+// ── CARS ──
+const CAR_VIN = 'wba11al0207l51497';
+function goPage(i){
+  const p=document.getElementById('pager');
+  if(!p) return;
+  p.scrollTo({left: i*p.clientWidth, behavior:'smooth'});
+}
+function syncDots(){
+  const p=document.getElementById('pager');
+  if(!p) return;
+  const i=Math.round(p.scrollLeft/p.clientWidth);
+  document.querySelectorAll('.pgd').forEach((d,n)=>d.classList.toggle('on', n===i));
+}
+window.addEventListener('load',()=>{
+  const p=document.getElementById('pager');
+  if(p) p.addEventListener('scroll', syncDots, {passive:true});
+});
+
+function carState(v){
+  const m={CLOSED:'Geschlossen',OPEN:'Offen',SECURED:'Verriegelt',UNLOCKED:'Entriegelt',
+           LOCKED:'Verriegelt',TILTED:'Gekippt',INVALID:'\u2014',UNKNOWN:'\u2014'};
+  const k=String(v||'').toUpperCase();
+  return m[k] || String(v||'\u2014');
+}
+function carNum(v){
+  const n=parseFloat(String(v).replace(',','.'));
+  return isNaN(n)?null:n;
+}
+async function loadCars(){
+  const body=document.getElementById('bmw-body');
+  if(!body) return;
+  try{
+    const r=await fetch(`${CONFIG.HA_URL}/api/states`,{headers:HA_HEADERS});
+    if(!r.ok) throw new Error('http '+r.status);
+    const all=await r.json();
+    const mine=all.filter(e=>e.entity_id.includes(CAR_VIN));
+    if(!mine.length){ body.innerHTML='<div class="p2empty">Keine Daten</div>'; return; }
+
+    const pick=(...frags)=>{
+      for(const f of frags){
+        const hit=mine.find(e=>e.entity_id.endsWith(f));
+        if(hit && hit.state && !['unknown','unavailable',''].includes(hit.state)) return hit;
+      }
+      return null;
+    };
+    const fuelPct = pick('range_tank_level_percent','tank_level_percent','_tank_level');
+    const range   = pick('range_total_range_last_sent','_total_range','range_tank_level');
+    const miles   = pick('vehicle_mileage');
+    const doors   = pick('doors_overall_state');
+    const tyres   = ['front_left','front_right','rear_left','rear_right']
+                      .map(p=>pick('tire_pressure_'+p)).filter(Boolean);
+
+    let html='';
+    const pctVal = fuelPct ? carNum(fuelPct.state) : null;
+    if(pctVal!==null && pctVal<=100){
+      const cls = pctVal<15 ? 'low' : (pctVal<30 ? 'warn' : '');
+      html += `<div class="p2big">${Math.round(pctVal)} %</div>`+
+              `<div class="p2sub">${range?Math.round(carNum(range.state))+' km':''}${miles?' \u00b7 '+Math.round(carNum(miles.state)).toLocaleString('de-CH')+' km gesamt':''}</div>`+
+              `<div class="p2bar"><i class="${cls}" style="width:${Math.max(2,pctVal)}%"></i></div>`;
+    }
+
+    if(tyres.length){
+      const labels=['VL','VR','HL','HR'];
+      html += '<div class="p2ty">' + tyres.map((t,i)=>{
+        const v=carNum(t.state);
+        return `<div class="p2td"><div class="p2td-v">${v!==null?(v<10?v.toFixed(1):Math.round(v)):'\u2014'}</div>`+
+               `<div class="p2td-l">${labels[i]}</div></div>`;
+      }).join('') + '</div>';
+    }
+    body.innerHTML = html || '<div class="p2empty">Noch keine Werte</div>';
+
+    const stamps=mine.map(e=>new Date(e.last_updated)).filter(d=>!isNaN(d));
+    const age=null;
+    if(age && stamps.length){
+      const newest=new Date(Math.max(...stamps));
+      const mins=Math.round((Date.now()-newest)/60000);
+      age.textContent = mins<1?'gerade eben' : mins<60?`vor ${mins} Min` : `vor ${Math.round(mins/60)} Std`;
+    }
+  }catch(e){
+    body.innerHTML='<div class="p2empty">Keine Verbindung</div>';
+    console.warn('cars:', e.message);
+  }
+}
+loadCars();setInterval(loadCars,10*60*1000);
+
+// ── PRESENCE ──
+const PRESENCE=[
+  {el:'pres-sergio', name:'Sérgio', ids:['person.sergio','person.sergio_da_cruz','device_tracker.fold_7']},
+  {el:'pres-miriam', name:'Miriam', ids:['person.miriam','device_tracker.miriam']},
+];
+async function loadPresence(){
+  for(const p of PRESENCE){
+    const box=document.getElementById(p.el);
+    if(!box) continue;
+    let state=null;
+    for(const id of p.ids){
+      try{
+        const r=await fetch(`${CONFIG.HA_URL}/api/states/${id}`,{headers:HA_HEADERS});
+        if(!r.ok) continue;
+        const d=await r.json();
+        if(d && d.state && d.state!=='unknown' && d.state!=='unavailable'){ state=d; break; }
+      }catch(e){}
+    }
+    const av=box.querySelector('.kav');
+    const st=box.querySelector('.kps');
+    if(!state){
+      if(st) st.textContent='—';
+      if(av) av.classList.add('out');
+      continue;
+    }
+    const home = state.state==='home';
+    if(st) st.textContent = home ? 'Zuhause' : 'Unterwegs';
+    if(av) av.classList.toggle('out', !home);
+    const bat = state.attributes?.battery_level;
+    box.title = p.name + (typeof bat==='number' ? ` · Akku ${bat}%` : '');
+  }
+}
+loadPresence();setInterval(loadPresence,60000);
+
+// ── CALENDAR ──
+let calDate=new Date(),calEvents=[],hiddenCals=new Set();
+const MONTH_NAMES=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+function toggleCal(name,btn){if(hiddenCals.has(name)){hiddenCals.delete(name);btn.classList.add('active');}else{hiddenCals.add(name);btn.classList.remove('active');}renderCalendar();}
+async function loadCalendarEvents(){calEvents=[];const _mStart=new Date(calDate.getFullYear(),calDate.getMonth(),1);const _mEnd=new Date(calDate.getFullYear(),calDate.getMonth()+1,0,23,59,59);const _t=new Date();_t.setHours(0,0,0,0);const _sEnd=new Date(_t);_sEnd.setDate(_t.getDate()+15);_sEnd.setHours(23,59,59,0);const firstDay=new Date(Math.min(_mStart,_t)).toISOString();const lastDay=new Date(Math.max(_mEnd,_sEnd)).toISOString();const cals=[{id:CONFIG.GCAL_ID_SERGIO,color:'green',key:'sergio'},{id:CONFIG.GCAL_ID_MIRIAM,color:'pink',key:'miriam'},{id:CONFIG.GCAL_ID_FAMILIE,color:'blue',key:'familie'}];for(const cal of cals){try{const r=await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events?timeMin=${firstDay}&timeMax=${lastDay}&singleEvents=true&orderBy=startTime&maxResults=50&fields=items(id,summary,start,end,reminders)`,{headers:{'Authorization':`Bearer ${oauthToken}`}});const d=await r.json();if(d.items)d.items.forEach(ev=>{const start=ev.start?.date||ev.start?.dateTime;if(!start)return;const dateStr=start.split('T')[0];const time=ev.start?.dateTime?new Date(ev.start.dateTime).toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'}):'';const title=ev.summary||'(Kein Titel)';const reminders=ev.reminders?.overrides||(ev.reminders?.useDefault?[{method:'popup',minutes:30}]:[]);calEvents.push({date:dateStr,title:time?`${time} ${title}`:title,rawTitle:title,time,color:cal.color,calKey:cal.key,eventId:ev.id,calId:cal.id,reminders,startDateTime:ev.start?.dateTime||null});});}catch(e){}}renderCalendar();}
+function renderCalendar(){const year=calDate.getFullYear(),month=calDate.getMonth();document.getElementById('cal-month-label').textContent=`${MONTH_NAMES[month]} ${year}`;const firstDay=new Date(year,month,1).getDay();const startOffset=firstDay===0?6:firstDay-1;const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();const today=new Date();const grid=document.getElementById('cal-grid');if(!grid){renderTwoWeeks();return;}grid.innerHTML='';const total=Math.ceil((startOffset+daysInMonth)/7)*7;for(let i=0;i<total;i++){let dayNum,cellDate,isOther=false;if(i<startOffset){dayNum=daysInPrev-startOffset+i+1;cellDate=new Date(year,month-1,dayNum);isOther=true;}else if(i>=startOffset+daysInMonth){dayNum=i-startOffset-daysInMonth+1;cellDate=new Date(year,month+1,dayNum);isOther=true;}else{dayNum=i-startOffset+1;cellDate=new Date(year,month,dayNum);}const isToday=cellDate.toDateString()===today.toDateString();const cell=document.createElement('div');cell.className='cal-cell'+(isOther?' other-month':'')+(isToday?' today':'');const numEl=document.createElement('div');numEl.className='cal-day-num';numEl.textContent=dayNum;cell.appendChild(numEl);const dateStr=`${cellDate.getFullYear()}-${String(cellDate.getMonth()+1).padStart(2,'0')}-${String(cellDate.getDate()).padStart(2,'0')}`;const evs=calEvents.filter(e=>e.date===dateStr&&!hiddenCals.has(e.calKey));if(evs.length){const evc=document.createElement('div');evc.className='cal-cell-events';evs.slice(0,3).forEach(ev=>{const el=document.createElement('div');el.className=`cal-ev ${ev.color}`;el.textContent=ev.title;el.style.cursor='pointer';el.onclick=(e)=>{e.stopPropagation();showEventDetail(ev);};evc.appendChild(el);});if(evs.length>3){const m=document.createElement('div');m.style.cssText='font-size:9px;color:var(--text3);padding:0 4px;cursor:pointer;';m.textContent=`+${evs.length-3} mehr`;m.onclick=(e)=>{e.stopPropagation();showDayEvents(dateStr,evs);};evc.appendChild(m);}cell.appendChild(evc);}cell.onclick=()=>openNewEvent(dateStr);grid.appendChild(cell);}renderTwoWeeks();}
+
+const KDAYS=['So','Mo','Di','Mi','Do','Fr','Sa'];
+function kDateStr(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function renderTwoWeeks(){
+  const strip=document.getElementById('cal-strip');
+  if(!strip) return;
+  strip.innerHTML='';
+  const today=new Date(); today.setHours(0,0,0,0);
+  for(let i=0;i<14;i++){
+    const d=new Date(today); d.setDate(today.getDate()+i);
+    const ds=kDateStr(d);
+    const dow=d.getDay();
+    const cell=document.createElement('div');
+    cell.className='kday'+((dow===0||dow===6)?' we':'')+(i===0?' today':'');
+    cell.innerHTML=`<div class="kday-n">${KDAYS[dow]}</div><div class="kday-d">${d.getDate()}</div>`;
+    const evs=calEvents.filter(e=>e.date===ds&&!hiddenCals.has(e.calKey));
+    evs.slice(0,3).forEach(ev=>{
+      const el=document.createElement('div');
+      el.className=`kev ${ev.color}`;
+      el.textContent=ev.title;
+      el.onclick=(e)=>{e.stopPropagation();showEventDetail(ev);};
+      cell.appendChild(el);
+    });
+    if(evs.length>3){
+      const m=document.createElement('div');
+      m.className='kev more';
+      m.textContent=`+${evs.length-3}`;
+      m.onclick=(e)=>{e.stopPropagation();showDayEvents(ds,evs);};
+      cell.appendChild(m);
+    }
+    cell.onclick=()=>openNewEvent(ds);
+    strip.appendChild(cell);
+  }
+}
+
+function openMonthPopup(){
+  calDate=new Date();
+  loadCalendarEvents();
+  document.getElementById('cal-month-popup').classList.add('open');
+}
+function closeMonthPopup(){document.getElementById('cal-month-popup').classList.remove('open');}
+
+function changeMonth(dir){calDate.setMonth(calDate.getMonth()+dir);loadCalendarEvents();}
+function goToday(){calDate=new Date();loadCalendarEvents();}
+function showEventDetail(ev){document.getElementById('event-popup-title').textContent=ev.rawTitle||ev.title;const calColors={green:'#34C759',pink:'#FF2D55',blue:'#007AFF'};const calNames={green:'Sérgio',pink:'Miriam',blue:'Familie'};document.getElementById('event-popup-body').innerHTML=`<div class="event-meta-row">${ev.date}</div>${ev.time?`<div class="event-meta-row">${ev.time}</div>`:''}<div class="event-meta-row"><span style="width:10px;height:10px;border-radius:50%;background:${calColors[ev.color]||'#007AFF'};display:inline-block;margin-right:4px;"></span>${calNames[ev.color]||'Kalender'}</div>${ev.eventId?`<div style="display:flex;gap:8px;margin-top:14px;"><button onclick="editEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" style="flex:1;padding:10px;border-radius:10px;background:var(--surface2);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Bearbeiten</button><button onclick="deleteEvent('${ev.calId}','${ev.eventId}')" style="flex:1;padding:10px;border-radius:10px;background:#fce7f3;border:none;font-size:13px;font-weight:600;cursor:pointer;color:#9d174d;font-family:'Inter',sans-serif;">Löschen</button></div>`:''}`;document.getElementById('event-popup').classList.add('open');}
+function showDayEvents(dateStr,evs){document.getElementById('event-popup-title').textContent=dateStr;document.getElementById('event-popup-body').innerHTML=evs.map(ev=>`<div class="event-meta-row" style="cursor:pointer;" onclick="showEventDetail(${JSON.stringify(ev).replace(/"/g,'&quot;')})"><span style="width:8px;height:8px;border-radius:50%;background:${ev.color==='green'?'#34C759':ev.color==='pink'?'#FF2D55':'#007AFF'};display:inline-block;flex-shrink:0;"></span>${ev.title}</div>`).join('');document.getElementById('event-popup').classList.add('open');}
+function closeEventPopup(){document.getElementById('event-popup').classList.remove('open');}
+async function deleteEvent(calId,eventId){if(!confirm('Event wirklich löschen?'))return;try{await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`,{method:'DELETE',headers:{'Authorization':`Bearer ${oauthToken}`}});closeEventPopup();loadCalendarEvents();}catch(e){alert('Fehler!');}}
+function editEvent(ev){
+  closeEventPopup();
+  document.getElementById('new-event-title').value = ev.rawTitle||'';
+  document.getElementById('new-event-date').value = ev.date||'';
+  document.getElementById('new-event-end-date').value = ev.endDate||ev.date||'';
+  document.getElementById('new-event-time').value = ev.time||'';
+  document.getElementById('new-event-cal').value = ev.calKey||'sergio';
+  document.getElementById('new-event-popup').dataset.editId = ev.eventId||'';
+  document.getElementById('new-event-popup').dataset.editCalId = ev.calId||'';
+  document.getElementById('new-event-popup').classList.add('open');
+  kTimeSync();
+  document.querySelector('.new-event-submit').textContent='Speichern';
+  setTimeout(()=>document.getElementById('new-event-title').focus(),100);
+}
+
+
+function alfieState(st){
+  const m=document.getElementById('alfie-mark');
+  if(m) m.setAttribute('class','alfie-mark s-'+(st||'idle'));
+}
+
+function kTimeSync(){
+  const v=(document.getElementById('new-event-time')||{}).value||'';
+  const h=document.getElementById('ktime-h'), m=document.getElementById('ktime-m');
+  if(!h||!m) return;
+  if(!v){ h.textContent='\u2014\u2014'; m.textContent='\u2014\u2014'; }
+  else { const p=v.split(':'); h.textContent=p[0]; m.textContent=p[1]; }
+  document.querySelectorAll('.ktime-presets button').forEach(b=>{
+    b.classList.toggle('on', b.textContent===v);
+  });
+}
+function kTimeSet(v){
+  const inp=document.getElementById('new-event-time');
+  if(inp) inp.value=v;
+  kTimeSync();
+}
+function kTimeClear(){ kTimeSet(''); }
+function kTimeAdd(delta){
+  const inp=document.getElementById('new-event-time');
+  if(!inp) return;
+  let cur=inp.value;
+  if(!cur){ const n=new Date(); cur=String(n.getHours()).padStart(2,'0')+':00'; }
+  const [hh,mm]=cur.split(':').map(Number);
+  let total=(hh*60+mm+delta)%1440;
+  if(total<0) total+=1440;
+  inp.value=String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
+  kTimeSync();
+}
+
+function openNewEvent(dateStr){
+  const d = dateStr || new Date().toISOString().split('T')[0];
+  document.getElementById('new-event-date').value = d;
+  document.getElementById('new-event-end-date').value = d;
+  document.getElementById('new-event-title').value = '';
+  document.getElementById('new-event-time').value = '';
+  document.getElementById('new-event-popup').classList.add('open');
+  kTimeSync();
+  setTimeout(()=>document.getElementById('new-event-title').focus(),100);
+}
+function closeNewEvent(){document.getElementById('new-event-popup').classList.remove('open');document.getElementById('new-event-popup').dataset.editId='';document.getElementById('new-event-popup').dataset.editCalId='';document.querySelector('.new-event-submit').textContent='Event hinzufügen';}
+async function submitNewEvent(){
+  const title = document.getElementById('new-event-title').value.trim();
+  const date = document.getElementById('new-event-date').value;
+  const endDate = document.getElementById('new-event-end-date').value || date;
+  const time = document.getElementById('new-event-time').value;
+  const calKey = document.getElementById('new-event-cal').value;
+  const editId = document.getElementById('new-event-popup').dataset.editId;
+  const editCalId = document.getElementById('new-event-popup').dataset.editCalId;
+  if(!title||!date) return alert('Bitte Titel und Datum eingeben!');
+  const calIds={sergio:CONFIG.GCAL_ID_SERGIO,miriam:CONFIG.GCAL_ID_MIRIAM,familie:CONFIG.GCAL_ID_FAMILIE};
+  const calId = editCalId||calIds[calKey];
+  const event = {summary:title};
+  if(time){
+    event.start={dateTime:`${date}T${time}:00`,timeZone:'Europe/Zurich'};
+    event.end={dateTime:`${endDate}T${time}:00`,timeZone:'Europe/Zurich'};
+  } else {
+    // For all-day multi-day events, end date must be day after last day
+    const endDateObj = new Date(endDate);
+    endDateObj.setDate(endDateObj.getDate()+1);
+    const endDateStr = endDateObj.toISOString().split('T')[0];
+    event.start={date};
+    event.end={date: endDateStr};
+  }
+  try{
+    if(editId){
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${editId}`,{method:'PATCH',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify(event)});
+    } else {
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`,{method:'POST',headers:{'Authorization':`Bearer ${oauthToken}`,'Content-Type':'application/json'},body:JSON.stringify(event)});
+    }
+    closeNewEvent();
+    loadCalendarEvents();
+  }catch(e){alert('Fehler!');}
+}
+
+// ── TODOS ──
+// ── TRAFFIC ──
+const TRAFFIC_CONFIG = {
+  MAPS_KEY: 'AIzaSyAJJDZCPITUdHBEI_XneYwE-ynlwRHXWgw',
+  ORIGIN: 'Fadackerstrasse 5, 8305 Dietlikon, Switzerland',
+  DEST: 'Industriestrasse 25, 8604 Volketswil, Switzerland',
+  ARRIVAL: '06:20',
+  SENSOR: 'sensor.google_travel_time',
+};
+
+async function loadTraffic() {
+  try {
+    const now = new Date();
+    // Read from Home Assistant's Google Maps Travel Time sensor (no CORS proxy needed)
+    const r = await fetch(`${CONFIG.HA_URL}/api/states/${TRAFFIC_CONFIG.SENSOR}`, {headers: HA_HEADERS});
+    if (!r.ok) throw new Error('HA ' + r.status);
+    const st = await r.json();
+    if (!st || st.state === 'unknown' || st.state === 'unavailable') throw new Error('No data');
+
+    const toMins = (v) => {
+      if (v === undefined || v === null) return null;
+      if (typeof v === 'number') return v;
+      const m = String(v).match(/[\d.]+/);
+      return m ? parseFloat(m[0]) : null;
+    };
+
+    const liveMins = toMins(st.attributes?.duration_in_traffic) ?? toMins(st.state);
+    const baseMins = toMins(st.attributes?.duration) ?? liveMins;
+    if (liveMins === null) throw new Error('No data');
+
+    const durationMins = Math.ceil(liveMins);
+    const normalMins = Math.ceil(baseMins);
+    const durationSecs = durationMins * 60;
+    const delay = durationMins - normalMins;
+
+    // Color status
+    let color, statusText;
+    if (delay <= 2) { color = 'var(--green)'; statusText = '🟢 Frei'; }
+    else if (delay <= 8) { color = 'var(--orange)'; statusText = '🟡 Mässig'; }
+    else { color = 'var(--red)'; statusText = '🔴 Stau'; }
+
+    // Calculate departure time to arrive by 06:20
+    const [arrH, arrM] = TRAFFIC_CONFIG.ARRIVAL.split(':').map(Number);
+    const arrivalDate = new Date();
+    arrivalDate.setHours(arrH, arrM, 0, 0);
+    const departDate = new Date(arrivalDate.getTime() - durationSecs * 1000);
+    const departStr = `${String(departDate.getHours()).padStart(2,'0')}:${String(departDate.getMinutes()).padStart(2,'0')}`;
+
+    // Check if late
+    const minsUntilDepart = Math.round((departDate - now) / 60000);
+    let departMsg;
+    if (minsUntilDepart < 0) {
+      departMsg = `⚠️ Zu spät für 06:20 Ankunft!`;
+      document.getElementById('traffic-depart').style.background = 'rgba(255,59,48,0.15)';
+      document.getElementById('traffic-depart').style.color = 'var(--red)';
+    } else if (minsUntilDepart < 15) {
+      departMsg = `🚨 Jetzt abfahren! (Abfahrt ${departStr})`;
+      document.getElementById('traffic-depart').style.background = 'rgba(255,149,0,0.15)';
+      document.getElementById('traffic-depart').style.color = 'var(--orange)';
+    } else {
+      departMsg = `🕐 Abfahrt ${departStr} (in ${minsUntilDepart} Min.)`;
+      document.getElementById('traffic-depart').style.background = 'var(--surface2)';
+      document.getElementById('traffic-depart').style.color = 'var(--text2)';
+    }
+
+    document.getElementById('traffic-duration').textContent = `${durationMins}`;
+    document.getElementById('traffic-duration').style.color = color;
+    document.getElementById('traffic-normal').textContent = `Min \u00b7 normal ${normalMins}`;
+    document.getElementById('traffic-status').textContent = statusText;
+    document.getElementById('traffic-status').style.background = delay <= 2 ? 'rgba(52,199,89,0.15)' : delay <= 8 ? 'rgba(255,149,0,0.15)' : 'rgba(255,59,48,0.15)';
+    document.getElementById('traffic-status').style.color = color;
+    document.getElementById('traffic-depart').textContent = departMsg;
+    document.getElementById('traffic-bar-fill').style.width = `${Math.min(100, (delay / 20) * 100)}%`;
+    document.getElementById('traffic-bar-fill').style.background = color;
+
+  } catch(e) {
+    document.getElementById('traffic-duration').textContent = '—';
+    document.getElementById('traffic-depart').textContent = 'Keine Verbindung';
+  }
+}
+
+// Load traffic on start and refresh every 5 minutes
+loadTraffic();
+setInterval(loadTraffic, 5 * 60 * 1000);
+
+// ── SPOTIFY ──
+const SP_CLIENT_ID = 'a599a2f8d8d74f9a84aeddd92f8bac68';
+const SP_CLIENT_SECRET = 'f2a34793976248c1872eef61186b685f';
+const SP_REDIRECT = 'https://cruz170699.github.io/home-dashboard/';
+const SP_SCOPES = 'user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative';
+const SP_ENTITY = 'media_player.spotify_spsrglo_cruz';
+
+let spotifyPlaying=false,spProgress=0,spDuration=0;
+let spToken=null,spRefreshToken=null,spShuffle=false,spRepeat='off';
+let spCurrentTab='queue';
+
+// ── Spotify OAuth ──
+function initSpotify() {
+  // Check URL for auth code
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('sp_code') || params.get('code');
+  const stored = localStorage.getItem('sp_token');
+  const storedRefresh = localStorage.getItem('sp_refresh');
+  if (stored) { spToken = stored; spRefreshToken = storedRefresh; }
+  if (code && !stored) { exchangeSpCode(code); }
+}
+
+function connectSpotify() {
+  const state = Math.random().toString(36).substring(2);
+  const url = `https://accounts.spotify.com/authorize?client_id=${SP_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(SP_REDIRECT)}&scope=${encodeURIComponent(SP_SCOPES)}&state=${state}`;
+  window.location.href = url;
+}
+
+async function exchangeSpCode(code) {
+  try {
+    const r = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Basic ' + btoa(SP_CLIENT_ID + ':' + SP_CLIENT_SECRET) },
+      body: new URLSearchParams({ grant_type: 'authorization_code', code, redirect_uri: SP_REDIRECT })
+    });
+    const d = await r.json();
+    if (d.access_token) {
+      spToken = d.access_token;
+      spRefreshToken = d.refresh_token;
+      localStorage.setItem('sp_token', spToken);
+      localStorage.setItem('sp_refresh', spRefreshToken);
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  } catch(e) {}
+}
+
+async function refreshSpToken() {
+  if (!spRefreshToken) return;
+  try {
+    const r = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Basic ' + btoa(SP_CLIENT_ID + ':' + SP_CLIENT_SECRET) },
+      body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: spRefreshToken })
+    });
+    const d = await r.json();
+    if (d.access_token) { spToken = d.access_token; localStorage.setItem('sp_token', spToken); }
+  } catch(e) {}
+}
+
+async function spFetch(url, opts={}) {
+  if (!spToken) return null;
+  let r = await fetch(url, { ...opts, headers: { 'Authorization': `Bearer ${spToken}`, 'Content-Type': 'application/json', ...(opts.headers||{}) } });
+  if (r.status === 401) { await refreshSpToken(); r = await fetch(url, { ...opts, headers: { 'Authorization': `Bearer ${spToken}`, 'Content-Type': 'application/json', ...(opts.headers||{}) } }); }
+  if (r.status === 204 || r.status === 202) return {};
+  if (!r.ok) return null;
+  try { return await r.json(); } catch(e) { return {}; }
+}
+
+// ── Playback state via Spotify API directly ──
+async function loadSpotify() {
+  if (!spToken) { return; }
+  try {
+    const d = await spFetch('https://api.spotify.com/v1/me/player');
+    if (!d || !d.item) return;
+    spotifyPlaying = d.is_playing;
+    spShuffle = d.shuffle_state || false;
+    spRepeat = d.repeat_state || 'off';
+    const track = d.item.name || 'Kein Titel';
+    const artist = d.item.artists?.map(a => a.name).join(', ') || '—';
+    const pic = d.item.album?.images?.[0]?.url || null;
+    spDuration = (d.item.duration_ms || 0) / 1000;
+    spProgress = (d.progress_ms || 0) / 1000;
+    // Mini card
+    document.getElementById('sp-track').textContent = track;
+    document.getElementById('sp-artist').textContent = artist;
+    document.getElementById('sp-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
+    document.getElementById('sp-status').textContent = spotifyPlaying ? 'Läuft' : 'Pausiert';
+    if (pic) document.getElementById('sp-art').innerHTML = `<img src="${pic}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`;
+    const spbg=document.getElementById('sp-bg'); if(spbg&&pic) spbg.style.backgroundImage=`url(${pic})`;
+    // Popup
+    document.getElementById('sp-popup-track').textContent = track;
+    document.getElementById('sp-popup-artist').textContent = artist;
+    document.getElementById('sp-popup-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
+    if (pic) document.getElementById('sp-popup-art').innerHTML = `<img src="${pic}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+    // Shuffle/Repeat
+    document.getElementById('sp-shuffle-btn').classList.toggle('active', spShuffle);
+    document.getElementById('sp-repeat-btn').classList.toggle('active', spRepeat !== 'off');
+    document.getElementById('sp-repeat-btn').textContent = spRepeat === 'track' ? '🔂' : '↻';
+  } catch(e) {
+    document.getElementById('sp-track').textContent = 'Spotify verbinden';
+  }
+}
+
+function fmt(s){return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+
+function updateSpProgress() {
+  if (spDuration > 0) {
+    const p = Math.min((spProgress/spDuration)*100, 100);
+    document.getElementById('sp-fill').style.width = p + '%';
+    document.getElementById('sp-elapsed').textContent = fmt(spProgress);
+    document.getElementById('sp-duration').textContent = fmt(spDuration);
+    document.getElementById('sp-popup-fill').style.width = p + '%';
+    document.getElementById('sp-popup-elapsed').textContent = fmt(spProgress);
+    document.getElementById('sp-popup-duration').textContent = fmt(spDuration);
+  }
+  if (spotifyPlaying) spProgress++;
+}
+setInterval(updateSpProgress, 1000);
+
+async function spotifyPlayPause() {
+  await spFetch(`https://api.spotify.com/v1/me/player/${spotifyPlaying?'pause':'play'}`, {method:'PUT'});
+  spotifyPlaying = !spotifyPlaying;
+  document.getElementById('sp-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
+  document.getElementById('sp-popup-play-btn').textContent = spotifyPlaying ? '⏸' : '▶';
+  setTimeout(loadSpotify, 500);
+}
+async function spotifyNext() {
+  await spFetch('https://api.spotify.com/v1/me/player/next', {method:'POST'});
+  setTimeout(loadSpotify, 600);
+}
+async function spotifyPrev() {
+  await spFetch('https://api.spotify.com/v1/me/player/previous', {method:'POST'});
+  setTimeout(loadSpotify, 600);
+}
+
+async function toggleShuffle() {
+  spShuffle = !spShuffle;
+  document.getElementById('sp-shuffle-btn').classList.toggle('active', spShuffle);
+  if (spToken) await spFetch(`https://api.spotify.com/v1/me/player/shuffle?state=${spShuffle}`, {method:'PUT'});
+  else await fetch(`${CONFIG.HA_URL}/api/services/media_player/shuffle_set`, {method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:SP_ENTITY,shuffle:spShuffle})});
+}
+
+async function toggleRepeat() {
+  const modes = ['off','track','context'];
+  const next = modes[(modes.indexOf(spRepeat)+1)%3];
+  spRepeat = next;
+  document.getElementById('sp-repeat-btn').classList.toggle('active', next !== 'off');
+  document.getElementById('sp-repeat-btn').textContent = next === 'track' ? '🔂' : '↻';
+  if (spToken) await spFetch(`https://api.spotify.com/v1/me/player/repeat?state=${next}`, {method:'PUT'});
+  else await fetch(`${CONFIG.HA_URL}/api/services/media_player/repeat_set`, {method:'POST',headers:HA_HEADERS,body:JSON.stringify({entity_id:SP_ENTITY,repeat:next})});
+}
+
+// ── Popup ──
+function openSPPopup() {
+  document.getElementById('sp-popup').classList.add('open');
+  renderSpTargetRow();
+  loadSpotify();
+  switchSPTab(spCurrentTab, document.querySelector(`.sp-popup-tab${spCurrentTab==='queue'?'':''}`));
+  loadSPTab(spCurrentTab);
+}
+function closeSPPopup() { document.getElementById('sp-popup').classList.remove('open'); }
+
+function switchSPTab(tab, btn) {
+  spCurrentTab = tab;
+  document.querySelectorAll('.sp-popup-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelectorAll('.sp-popup-tab')[['queue','playlists','devices'].indexOf(tab)]?.classList.add('active');
+  loadSPTab(tab);
+}
+
+async function loadSPTab(tab) {
+  const body = document.getElementById('sp-popup-body');
+  body.innerHTML = '<div class="sp-loading">Laden...</div>';
+  if (tab === 'queue') await loadSPQueue(body);
+  else if (tab === 'playlists') await loadSPPlaylists(body);
+  else if (tab === 'devices') await loadSPDevices(body);
+}
+
+async function loadSPQueue(body) {
+  if (!spToken) { body.innerHTML = spConnectHTML(); return; }
+  const d = await spFetch('https://api.spotify.com/v1/me/player/queue');
+  if (!d || !d.queue) { body.innerHTML = '<div class="sp-loading">Queue leer</div>'; return; }
+  body.innerHTML = '';
+  // Currently playing
+  if (d.currently_playing) {
+    const cur = d.currently_playing;
+    const el = document.createElement('div');
+    el.className = 'sp-item';
+    el.innerHTML = `<div class="sp-item-art">${cur.album?.images?.[0] ? `<img src="${cur.album.images[0].url}">` : '🎵'}</div><div class="sp-item-info"><div class="sp-item-name sp-item-active">▶ ${cur.name}</div><div class="sp-item-sub">${cur.artists?.map(a=>a.name).join(', ')}</div></div>`;
+    body.appendChild(el);
+  }
+  d.queue.slice(0,20).forEach(track => {
+    const el = document.createElement('div');
+    el.className = 'sp-item';
+    el.innerHTML = `<div class="sp-item-art">${track.album?.images?.[0] ? `<img src="${track.album.images[0].url}">` : '🎵'}</div><div class="sp-item-info"><div class="sp-item-name">${track.name}</div><div class="sp-item-sub">${track.artists?.map(a=>a.name).join(', ')}</div></div>`;
+    body.appendChild(el);
+  });
+}
+
+const MA_TARGETS = [
+  {id:'spotify', name:'Spotify', icon:'\ud83c\udfa7'},
+  {id:'media_player.living_room_speaker_2', name:'Living Room', icon:'\ud83d\udd0a'},
+  {id:'media_player.lights_display_2', name:'Nest Hub', icon:'\ud83d\udcfa'},
+];
+let spTarget = localStorage.getItem('sp_target') || 'spotify';
+
+function setSpTarget(id) {
+  spTarget = id;
+  localStorage.setItem('sp_target', id);
+  renderSpTargetRow();
+}
+
+function renderSpTargetRow(){
+  const row=document.getElementById('sp-target-row');
+  if(!row) return;
+  row.innerHTML = MA_TARGETS.map(t =>
+    `<button class="sp-target${spTarget===t.id?' on':''}" onclick="setSpTarget('${t.id}')">${t.name}</button>`
+  ).join('');
+  const txt=document.getElementById('sp-chip-text');
+  const cur=MA_TARGETS.find(t=>t.id===spTarget);
+  if(txt&&cur) txt.textContent = cur.id==='spotify' ? 'Spotify Connect' : cur.name;
+}
+
+async function loadSPPlaylists(body) {
+  if (!spToken) { body.innerHTML = spConnectHTML(); return; }
+  const d = await spFetch('https://api.spotify.com/v1/me/playlists?limit=40');
+  body.innerHTML = '';
+  if (!d || !d.items || !d.items.length) {
+    body.innerHTML = '<div class="sp-loading">Keine Playlists</div>';
+    return;
+  }
+  const grid = document.createElement('div');
+  grid.className = 'sp-grid';
+  d.items.forEach(pl => {
+    if(!pl) return;
+    const n = (pl.tracks && typeof pl.tracks.total === 'number') ? pl.tracks.total : null;
+    const el = document.createElement('div');
+    el.className = 'sp-tile';
+    const img = pl.images && pl.images[0] ? pl.images[0].url : null;
+    el.innerHTML =
+      `<div class="sp-tile-art">${img?`<img src="${img}" alt="">`:''}</div>` +
+      `<div class="sp-tile-info"><div class="sp-tile-n">${pl.name||''}</div>` +
+      `<div class="sp-tile-s">${n===null?'Playlist':(n+' Titel')}</div></div>`;
+    el.onclick = () => playPlaylist(pl.uri);
+    grid.appendChild(el);
+  });
+  body.appendChild(grid);
+}
+
+async function loadSPDevices(body) {
+  body.innerHTML = '';
+
+  // --- Spotify devices ---
+  if (spToken) {
+    const d = await spFetch('https://api.spotify.com/v1/me/player/devices');
+    const head = document.createElement('div');
+    head.style.cssText = 'font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);padding:4px 2px 8px;letter-spacing:0.5px;';
+    head.textContent = 'SPOTIFY';
+    body.appendChild(head);
+    if (d && d.devices && d.devices.length) {
+      const icons = {smartphone:'\ud83d\udcf1',computer:'\ud83d\udcbb',speaker:'\ud83d\udd0a',tv:'\ud83d\udcfa',tablet:'\ud83d\udcf1',game_console:'\ud83c\udfae'};
+      d.devices.forEach(dev => {
+        const btn = document.createElement('button');
+        btn.className = 'sp-device-btn' + (dev.is_active ? ' active-device' : '');
+        btn.innerHTML = `<span class="sp-device-icon">${icons[dev.type?.toLowerCase()]||'\ud83d\udd0a'}</span><div><div class="sp-device-name">${dev.name}${dev.is_active?' \u2713':''}</div><div class="sp-device-type">${dev.type} \u00b7 ${dev.volume_percent}%</div></div>`;
+        btn.onclick = () => transferPlayback(dev.id);
+        body.appendChild(btn);
+      });
+    } else {
+      const e = document.createElement('div');
+      e.className = 'sp-loading';
+      e.style.padding = '8px 2px';
+      e.textContent = 'Keine aktiven Spotify-Ger\u00e4te';
+      body.appendChild(e);
+    }
+  } else {
+    body.innerHTML = spConnectHTML();
+  }
+
+  // --- Google Cast speakers via HA ---
+  const head2 = document.createElement('div');
+  head2.style.cssText = 'font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);padding:14px 2px 8px;letter-spacing:0.5px;border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;';
+  head2.textContent = 'LAUTSPRECHER';
+  body.appendChild(head2);
+
+  for (const sp of CAST_SPEAKERS) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'padding:8px 2px 12px;';
+    let st = null;
+    try {
+      const r = await fetch(`${CONFIG.HA_URL}/api/states/${sp.id}`, {headers:HA_HEADERS});
+      if (r.ok) st = await r.json();
+    } catch(e) {}
+    if (!st) {
+      wrap.innerHTML = `<div style="font-size:13px;color:rgba(255,255,255,0.4);">${sp.icon} ${sp.name} \u2014 nicht erreichbar</div>`;
+      body.appendChild(wrap);
+      continue;
+    }
+    const state = st.state;
+    const off = (state === 'off' || state === 'unavailable' || state === 'standby');
+    const playing = (state === 'playing');
+    const vol = Math.round((st.attributes?.volume_level ?? 0) * 100);
+    const ctrl = (state === 'playing' || state === 'paused');
+    const title = st.attributes?.media_title || (off ? 'Aus' : 'Bereit');
+    wrap.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:18px;">${sp.icon}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sp.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title}</div>
+        </div>
+        ${ctrl
+          ? `<button onclick="castPlayPause('${sp.id}')" style="width:32px;height:32px;border-radius:50%;border:none;background:#1DB954;color:white;font-size:13px;cursor:pointer;flex-shrink:0;">${playing?'\u23f8':'\u25b6'}</button>`
+          : `<div title="Nichts wird abgespielt" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">\u25b6</div>`}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:rgba(255,255,255,0.4);width:26px;flex-shrink:0;">${vol}%</span>
+        <input type="range" min="0" max="100" value="${vol}" onchange="castVolume('${sp.id}',this.value)"
+          style="flex:1;height:4px;accent-color:#1DB954;cursor:pointer;">
+      </div>`;
+    body.appendChild(wrap);
+  }
+}
+
+async function castPlayPause(id) {
+  try {
+    await fetch(`${CONFIG.HA_URL}/api/services/media_player/media_play_pause`, {
+      method:'POST', headers:HA_HEADERS, body:JSON.stringify({entity_id:id})});
+  } catch(e) {}
+  setTimeout(() => loadSPDevices(document.getElementById('sp-popup-body')), 900);
+}
+
+async function castVolume(id, pct) {
+  try {
+    await fetch(`${CONFIG.HA_URL}/api/services/media_player/volume_set`, {
+      method:'POST', headers:HA_HEADERS, body:JSON.stringify({entity_id:id, volume_level: parseInt(pct)/100})});
+  } catch(e) {}
+}
+
+
+async function playPlaylist(uri) {
+  if (spTarget && spTarget !== 'spotify') {
+    try {
+      const r = await fetch(`${CONFIG.HA_URL}/api/services/media_player/play_media`, {
+        method:'POST', headers:HA_HEADERS,
+        body: JSON.stringify({entity_id: spTarget, media_content_id: uri, media_content_type: 'music'})
+      });
+      if (!r.ok) throw new Error('HA ' + r.status);
+    } catch(e) {
+      console.error('Music Assistant play error:', e);
+    }
+    setTimeout(() => loadSPTab('devices'), 1200);
+    return;
+  }
+  if (!spToken) return;
+  await spFetch('https://api.spotify.com/v1/me/player/play', {method:'PUT', body:JSON.stringify({context_uri: uri})});
+  setTimeout(() => { loadSpotify(); loadSPTab('queue'); }, 800);
+}
+
+async function transferPlayback(deviceId) {
+  if (!spToken) return;
+  await spFetch('https://api.spotify.com/v1/me/player', {method:'PUT', body:JSON.stringify({device_ids:[deviceId], play:true})});
+  setTimeout(() => loadSPDevices(document.getElementById('sp-popup-body')), 1000);
+}
+
+function spConnectHTML() {
+  return `<div style="text-align:center;padding:30px 20px;"><div style="font-size:40px;margin-bottom:12px;">🎵</div><div style="color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:16px;">Mit Spotify verbinden für<br>Playlists, Queue & Geräte</div><button class="sp-connect-btn" onclick="connectSpotify()">Mit Spotify verbinden</button></div>`;
+}
+
+initSpotify();
+loadSpotify();
+setInterval(loadSpotify, 10000);
+</script>
+<!-- SLEEP MODE -->
+<div id="sleep-mode" onclick="wakeUp()">
+  <div id="sleep-bg"></div>
+  <div class="sv-veil"></div>
+  <div class="sv-veil2"></div>
+
+  <div id="sleep-content">
+    <div class="sv-top">
+
+      <div class="sv-L">
+        <div id="sleep-time">00:00</div>
+        <div id="sleep-date">—</div>
+        <div class="sv-wrow">
+          <span id="sleep-weather-icon">⛅</span>
+          <div><div id="sleep-weather-temp">—°</div><div id="sleep-weather-desc">Dietlikon</div></div>
+          <div class="sv-pol" id="sleep-pollen"><span class="sv-pd"></span><span class="sv-pt">—</span></div>
+        </div>
+        <div class="sv-vers" id="sleep-bible">
+          <div class="sv-vl">Tagesvers</div>
+          <div id="sleep-verse-text">—</div>
+          <div id="sleep-verse-ref">—</div>
+        </div>
+      </div>
+
+      <div class="sv-R">
+        <div>
+          <div class="sv-bl" id="sleep-ev-label">Morgen</div>
+          <div id="sleep-events"></div>
+        </div>
+        <div>
+          <div class="sv-bl">Essen</div>
+          <div id="sleep-meals"></div>
+        </div>
+        <div id="sleep-spotify" style="display:none;">
+          <div class="sv-bl">Läuft gerade</div>
+          <div class="sv-np">
+            <div id="sleep-sp-art"></div>
+            <div id="sleep-sp-info">
+              <div id="sleep-sp-track">—</div>
+              <div id="sleep-sp-artist">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sv-tick">
+      <div class="sv-tick-l">Sport</div>
+      <div class="sv-tick-w"><div class="sv-tick-i" id="sleep-ticker-content"></div></div>
+    </div>
+
+    <div id="sleep-hint">TIPPEN ZUM AUFWACHEN</div>
+  </div>
+</div>
+</div>
+
+<script>
+// ── SLEEP MODE ──
+let sleepTimer = null;
+let sleepActive = false;
+let photoUrls = [];
+let photoIdx = 0;
+let photoTimer = null;
+
+const SLEEP_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+function resetSleepTimer() {
+  if (sleepActive) return;
+  clearTimeout(sleepTimer);
+  sleepTimer = setTimeout(enterSleep, SLEEP_TIMEOUT);
+}
+
+// Reset on any interaction
+['mousemove','mousedown','keydown','touchstart','scroll'].forEach(evt => {
+  document.addEventListener(evt, resetSleepTimer, { passive: true });
+});
+
+function enterSleep() {
+  sleepActive = true;
+  updateSleepContent();
+  loadPhotos();
+  loadSportsTicker();
+  document.getElementById('sleep-mode').classList.add('active');
+  startPhotoRotation();
+}
+
+function wakeUp() {
+  sleepActive = false;
+  document.getElementById('sleep-mode').classList.remove('active');
+  clearInterval(photoTimer);
+  clearTimeout(sleepTimer);
+  resetSleepTimer();
+}
+
+function updateSleepContent() {
+  // Clock
+  const now = new Date();
+  document.getElementById('sleep-time').textContent = now.toLocaleTimeString('de-CH', {hour:'2-digit', minute:'2-digit'});
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  document.getElementById('sleep-date').textContent = `${days[now.getDay()]}, ${now.getDate()}. ${months[now.getMonth()]}`;
+
+  // Weather — read the data directly, fall back to the header, then refetch
+  const wIco = document.getElementById('sleep-weather-icon');
+  const wTmp = document.getElementById('sleep-weather-temp');
+  const wDsc = document.getElementById('sleep-weather-desc');
+  const cw = weatherData && weatherData.current_weather;
+  if (cw && typeof cw.temperature === 'number') {
+    if (wIco) wIco.textContent = WX_ICONS[cw.weathercode] || '\ud83c\udf21';
+    if (wTmp) wTmp.textContent = `${Math.round(cw.temperature)}\u00b0`;
+    if (wDsc) wDsc.textContent = (WX_DESC && WX_DESC[cw.weathercode] ? WX_DESC[cw.weathercode] + ' \u00b7 ' : '') + 'Dietlikon';
+  } else {
+    const hIco = document.getElementById('weather-icon');
+    const hTmp = document.getElementById('weather-temp');
+    if (wIco && hIco) wIco.textContent = hIco.textContent;
+    if (wTmp && hTmp) wTmp.textContent = (hTmp.textContent || '').replace('C','');
+    if (!weatherData) loadWeather();
+  }
+
+  // Events — after 18:00 show tomorrow, otherwise the rest of today
+  const evening = now.getHours() >= 18;
+  const target = new Date(now);
+  if (evening) target.setDate(target.getDate() + 1);
+  const pad = (n) => String(n).padStart(2,'0');
+  const tStr = `${target.getFullYear()}-${pad(target.getMonth()+1)}-${pad(target.getDate())}`;
+  const lblEl = document.getElementById('sleep-ev-label');
+  if (lblEl) lblEl.textContent = evening ? 'Morgen' : 'Heute';
+
+  let evs = calEvents.filter(e => e.date === tStr);
+  if (!evening) {
+    const hhmm = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    evs = evs.filter(e => !e.time || e.time >= hhmm);
+  }
+  evs = evs.slice(0, 4);
+  const evEl = document.getElementById('sleep-events');
+  if (evs.length) {
+    evEl.innerHTML = evs.map(ev =>
+      `<div class="sv-row"><span class="sv-k">${ev.time || '\u2014'}</span>` +
+      `<span class="sv-v">${ev.rawTitle || ev.title}</span></div>`).join('');
+  } else {
+    evEl.innerHTML = `<div class="sv-empty">Nichts geplant</div>`;
+  }
+
+  // Meals for the same day
+  const meal = mealData.find(m => m.jsDay === target.getDay());
+  const mealsEl = document.getElementById('sleep-meals');
+  const lunch = meal && meal.lunch && meal.lunch !== '\u2014' ? meal.lunch : null;
+  const dinner = meal && meal.dinner && meal.dinner !== '\u2014' ? meal.dinner : null;
+  if (lunch || dinner) {
+    mealsEl.innerHTML =
+      (lunch ? `<div class="sv-row"><span class="sv-k">Mittag</span><span class="sv-v">${lunch}</span></div>` : '') +
+      (dinner ? `<div class="sv-row"><span class="sv-k">Abend</span><span class="sv-v">${dinner}</span></div>` : '');
+  } else {
+    mealsEl.innerHTML = `<div class="sv-empty">Nichts geplant</div>`;
+  }
+
+  // Pollen — mirror the header chip
+  const polSrc = document.getElementById('pollen-chip');
+  const polEl = document.getElementById('sleep-pollen');
+  if (polSrc && polEl) {
+    const t = polSrc.querySelector('.kp-t'), v = polSrc.querySelector('.kp-v');
+    const txt = polEl.querySelector('.sv-pt');
+    if (txt) txt.textContent = (t && v) ? `${t.textContent} ${v.textContent}` : '\u2014';
+    polEl.style.display = (t && t.textContent && t.textContent !== '\u2014') ? '' : 'none';
+  }
+
+  // Spotify
+  const spTrack = document.getElementById('sp-track').textContent;
+  const spArtist = document.getElementById('sp-artist').textContent;
+  const spStatus = document.getElementById('sp-status').textContent;
+  const spEl = document.getElementById('sleep-spotify');
+  if (spStatus === 'Läuft' && spTrack && spTrack !== 'Kein Titel') {
+    spEl.style.display = 'flex';
+    document.getElementById('sleep-sp-track').textContent = spTrack;
+    document.getElementById('sleep-sp-artist').textContent = spArtist;
+    const spArt = document.getElementById('sp-art').innerHTML;
+    document.getElementById('sleep-sp-art').innerHTML = spArt;
+  } else {
+    spEl.style.display = 'none';
+  }
+  // Bible verse
+  loadBibleVerse();
+}
+
+// Update clock every minute while sleeping
+setInterval(() => { if (sleepActive) updateSleepContent(); }, 30000);
+
+// ── GOOGLE DRIVE PHOTOS ──
+const DRIVE_FOLDER_ID = '1zQFta2120DvlzGGiWVefr_W5H_aQZQg4';
+
+async function loadPhotos() {
+  if (!oauthToken) return;
+  try {
+    const r = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q='${DRIVE_FOLDER_ID}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&pageSize=50`,
+      { headers: { 'Authorization': `Bearer ${oauthToken}` } }
+    );
+    const d = await r.json();
+    if (d.files && d.files.length > 0) {
+      // Shuffle photos
+      photoUrls = d.files
+        .sort(() => Math.random() - 0.5)
+        .map(f => `https://lh3.googleusercontent.com/d/${f.id}`);
+      if (photoUrls.length) setBackground(photoUrls[0]);
+    }
+  } catch(e) {
+    document.getElementById('sleep-bg').style.background = 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a0a 100%)';
+  }
+}
+
+function setBackground(url) {
+  const bg = document.getElementById('sleep-bg');
+  bg.style.opacity = '0';
+  setTimeout(() => {
+    bg.style.backgroundImage = `url(${url})`;
+    bg.style.opacity = '1';
+  }, 500);
+}
+
+function startPhotoRotation() {
+  clearInterval(photoTimer);
+  photoTimer = setInterval(() => {
+    if (!sleepActive || !photoUrls.length) return;
+    photoIdx = (photoIdx + 1) % photoUrls.length;
+    setBackground(photoUrls[photoIdx]);
+  }, 15000); // rotate every 15 seconds
+}
+
+// ── BIBLE VERSE OF THE DAY ──
+const BIBLE_VERSES = [
+  { text: "Denn also hat Gott die Welt geliebt, dass er seinen eingeborenen Sohn gab, damit jeder, der an ihn glaubt, nicht verloren geht, sondern ewiges Leben hat.", ref: "Johannes 3,16" },
+  { text: "Der HERR ist mein Hirte, mir wird nichts mangeln.", ref: "Psalm 23,1" },
+  { text: "Ich bin der Weg und die Wahrheit und das Leben; niemand kommt zum Vater als nur durch mich.", ref: "Johannes 14,6" },
+  { text: "Alle Dinge wirken denen, die Gott lieben, zum Besten, denen, die nach seinem Vorsatz berufen sind.", ref: "Römer 8,28" },
+  { text: "Ich vermag alles durch den, der mich stärkt.", ref: "Philipper 4,13" },
+  { text: "Vertrau auf den HERRN von ganzem Herzen und stütz dich nicht auf deinen Verstand.", ref: "Sprüche 3,5" },
+  { text: "Fürchte dich nicht, denn ich bin mit dir; sei nicht verzagt, denn ich bin dein Gott!", ref: "Jesaja 41,10" },
+  { text: "Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Weg.", ref: "Psalm 119,105" },
+  { text: "Kommt her zu mir, alle ihr Mühseligen und Beladenen! Ich werde euch Ruhe geben.", ref: "Matthäus 11,28" },
+  { text: "Gott aber ist treu, der euch nicht über eure Kraft versuchen lässt.", ref: "1. Korinther 10,13" },
+  { text: "Die auf den HERRN harren, gewinnen neue Kraft; sie fahren auf mit Flügeln wie Adler.", ref: "Jesaja 40,31" },
+  { text: "Sucht zuerst das Reich Gottes und seine Gerechtigkeit, so wird euch das alles hinzugefügt werden.", ref: "Matthäus 6,33" },
+  { text: "Ich bin die Auferstehung und das Leben. Wer an mich glaubt, wird leben, auch wenn er gestorben ist.", ref: "Johannes 11,25" },
+  { text: "Seid fröhlich in Hoffnung, geduldig in Bedrängnis, beharrlich im Gebet.", ref: "Römer 12,12" },
+  { text: "Der HERR segne dich und behüte dich; der HERR lasse sein Angesicht leuchten über dir.", ref: "4. Mose 6,24-25" },
+  { text: "Habt keine Angst, ihr seid mehr wert als viele Spatzen.", ref: "Matthäus 10,31" },
+  { text: "Wer in mir bleibt und ich in ihm, der bringt viel Frucht; denn ohne mich könnt ihr nichts tun.", ref: "Johannes 15,5" },
+  { text: "Der HERR ist nahe denen, die zerbrochenen Herzens sind.", ref: "Psalm 34,19" },
+  { text: "Auf Gott allein vertraut meine Seele in Stille; von ihm kommt meine Hilfe.", ref: "Psalm 62,2" },
+  { text: "Gnade und Wahrheit sind durch Jesus Christus geworden.", ref: "Johannes 1,17" },
+  { text: "Wir wandeln durch Glauben, nicht durch Schauen.", ref: "2. Korinther 5,7" },
+  { text: "Befiehl dem HERRN deine Wege und vertrau auf ihn, er wird es vollbringen.", ref: "Psalm 37,5" },
+  { text: "Gott ist unsere Zuflucht und Stärke, eine sehr zuverlässige Hilfe in Bedrängnissen.", ref: "Psalm 46,2" },
+  { text: "Die Gnade unseres Herrn Jesus Christus sei mit eurem Geist.", ref: "Galater 6,18" },
+  { text: "Denn ich bin überzeugt, dass weder Tod noch Leben... uns scheiden kann von der Liebe Gottes.", ref: "Römer 8,38-39" },
+  { text: "Einer ist euer Vater, der himmlische. Und ihr alle seid Brüder.", ref: "Matthäus 23,8-9" },
+  { text: "Der Friede Gottes, der allen Verstand übersteigt, wird eure Herzen und eure Gedanken bewahren.", ref: "Philipper 4,7" },
+  { text: "Christus ist gestorben für unsere Sünden nach der Schrift.", ref: "1. Korinther 15,3" },
+  { text: "So spricht der HERR: Ich kenne die Gedanken, die ich über euch habe — Gedanken des Friedens.", ref: "Jeremia 29,11" },
+  { text: "Liebt einander, wie ich euch geliebt habe. Daran werden alle erkennen, dass ihr meine Jünger seid.", ref: "Johannes 13,34-35" },
+];
+
+function getDailyVerse() {
+  const cached = localStorage.getItem('daily_verse_date');
+  const today = new Date().toDateString();
+  if (cached === today) {
+    const idx = parseInt(localStorage.getItem('daily_verse_idx') || '0');
+    return BIBLE_VERSES[idx % BIBLE_VERSES.length];
+  }
+  // New day — pick verse based on day of year for consistency
+  const start = new Date(new Date().getFullYear(), 0, 0);
+  const diff = new Date() - start;
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const idx = dayOfYear % BIBLE_VERSES.length;
+  localStorage.setItem('daily_verse_date', today);
+  localStorage.setItem('daily_verse_idx', idx.toString());
+  return BIBLE_VERSES[idx];
+}
+
+function loadBibleVerse() {
+  const verse = getDailyVerse();
+  document.getElementById('sleep-verse-text').textContent = `„${verse.text}"`;
+  document.getElementById('sleep-verse-ref').textContent = verse.ref;
+}
+
+// ── SPORT ──
+const ESPN = 'https://site.api.espn.com/apis/site/v2/sports/';
+const NBA_TEAMS = ['NYK','BOS','LAL','PHI'];
+const PT_CLUBS = ['sporting','benfica','porto','braga','guimar','santa clara','arouca','famalic',
+                  'estoril','rio ave','moreirense','casa pia','nacional','gil vicente','vit'];
+const EURO_COMPS=[['uefa.champions','UCL'],['uefa.europa','UEL'],['uefa.europa.conf','UECL']];
+const NT_COMPS=[['fifa.worldq.uefa','WM-Quali'],['fifa.world','WM'],['uefa.nations','Nations League'],
+                ['uefa.euroq','EM-Quali'],['uefa.euro','EM']];
+let SPORT = {nba:[], f1:{sessions:[],gp:'',standings:[]}, fb:{sporting:[],liga:[],euro:[],nt:[]}};
+
+function tkDates(back,fwd){
+  const f=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const a=new Date();a.setDate(a.getDate()-back);
+  const b=new Date();b.setDate(b.getDate()+fwd);
+  return `${f(a)}-${f(b)}`;
+}
+function tkDay(iso){
+  const d=new Date(iso), now=new Date(), days=['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const t=d.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});
+  return d.toDateString()===now.toDateString() ? t : `${days[d.getDay()]} ${t}`;
+}
+async function tkGet(p){ try{ const r=await fetch(ESPN+p); return r.ok?await r.json():null; }catch(e){ return null; } }
+function isPT(n){ const x=(n||'').toLowerCase(); return PT_CLUBS.some(c=>x.includes(c)); }
+
+async function loadNBA(){
+  const d=await tkGet(`basketball/nba/scoreboard?dates=${tkDates(3,6)}`);
+  const out=[];
+  (d?.events||[]).forEach(ev=>{
+    const c=ev.competitions?.[0]; if(!c) return;
+    const t=c.competitors||[];
+    const mine=t.find(x=>NBA_TEAMS.includes(x.team?.abbreviation));
+    if(!mine) return;
+    const opp=t.find(x=>x!==mine);
+    const st=ev.status?.type?.state;
+    out.push({name:mine.team?.shortDisplayName||mine.team?.abbreviation,
+              opp:opp?.team?.abbreviation||'', state:st,
+              a:parseInt(mine.score), b:parseInt(opp?.score), date:ev.date});
+  });
+  out.sort((x,y)=>new Date(y.date)-new Date(x.date));
+  SPORT.nba=out;
+  renderNBA();
+}
+
+async function loadF1(){
+  const d=await tkGet(`racing/f1/scoreboard?dates=${tkDates(2,9)}`);
+  const ev=(d?.events||[])[0];
+  const res={sessions:[],gp:'',standings:[]};
+  if(ev){
+    res.gp=(ev.shortName||ev.name||'').replace(/Grand Prix/i,'GP');
+    (ev.competitions||[]).forEach(c=>{
+      const ty=c.type?.text||c.type?.abbreviation||'';
+      const lbl=/practice|training/i.test(ty)?'Training':/qual|shootout/i.test(ty)?'Qualifying'
+               :/sprint/i.test(ty)?'Sprint':/race/i.test(ty)?'Rennen':ty;
+      if(!lbl||!c.date) return;
+      let winner=null;
+      if(c.status?.type?.state==='post'){
+        const w=(c.competitors||[]).find(x=>x.winner)||(c.competitors||[])[0];
+        winner=w?.athlete?.shortName||w?.athlete?.displayName||null;
+      }
+      res.sessions.push({lbl, date:c.date, winner, live:c.status?.type?.state==='in'});
+    });
+  }
+  const st=await tkGet('racing/f1/standings');
+  const entries = st?.standings?.[0]?.entries || st?.children?.[0]?.standings?.entries || [];
+  entries.slice(0,10).forEach((e,i)=>{
+    const nm=e.athlete?.shortName||e.athlete?.displayName||e.team?.displayName||'';
+    const pts=(e.stats||[]).find(x=>/points/i.test(x.name||x.type||''))?.displayValue||'';
+    if(nm) res.standings.push({pos:i+1,name:nm,pts});
+  });
+  SPORT.f1=res;
+  renderF1();
+}
+
+function fbMatch(ev, tag){
+  const c=ev.competitions?.[0]; if(!c) return null;
+  const t=c.competitors||[];
+  const h=t.find(x=>x.homeAway==='home')||t[0], a=t.find(x=>x.homeAway==='away')||t[1];
+  if(!h||!a) return null;
+  return {home:h.team?.shortDisplayName||h.team?.displayName||'',
+          away:a.team?.shortDisplayName||a.team?.displayName||'',
+          hs:h.score, as:a.score, state:ev.status?.type?.state, date:ev.date, tag};
+}
+async function loadFootball(){
+  const res={sporting:[],liga:[],euro:[],nt:[]};
+  const liga=await tkGet(`soccer/por.1/scoreboard?dates=${tkDates(4,10)}`);
+  (liga?.events||[]).forEach(ev=>{
+    const m=fbMatch(ev,'Liga');
+    if(!m) return;
+    if(/sporting/i.test(m.home)&&!/braga/i.test(m.home) || /sporting/i.test(m.away)&&!/braga/i.test(m.away))
+      res.sporting.push(m);
+  });
+  const tbl=await tkGet('soccer/por.1/standings');
+  const ent=tbl?.standings?.entries || tbl?.children?.[0]?.standings?.entries || [];
+  ent.slice(0,8).forEach((e,i)=>{
+    const nm=e.team?.shortDisplayName||e.team?.displayName||'';
+    const pts=(e.stats||[]).find(x=>x.name==='points')?.displayValue||'';
+    if(nm) res.liga.push({pos:i+1,name:nm,pts});
+  });
+  for(const [slug,tag] of EURO_COMPS){
+    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(3,12)}`);
+    (d?.events||[]).forEach(ev=>{
+      const m=fbMatch(ev,tag);
+      if(m && (isPT(m.home)||isPT(m.away))) res.euro.push(m);
+    });
+  }
+  for(const [slug,tag] of NT_COMPS){
+    const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(3,16)}`);
+    (d?.events||[]).forEach(ev=>{
+      const m=fbMatch(ev,tag);
+      if(m && (/^portugal$/i.test(m.home)||/^portugal$/i.test(m.away))) res.nt.push(m);
+    });
+  }
+  SPORT.fb=res;
+  renderFootball();
+}
+
+// ---- tile renderers ----
+function nbaRow(g){
+  if(g.state==='post'){
+    const cls=g.a>g.b?'win':'loss';
+    return `<div class="p2r"><span class="t"><b>${g.name}</b> vs ${g.opp}</span>`+
+           `<span class="res ${cls}">${g.a}\u2013${g.b}</span></div>`;
+  }
+  if(g.state==='in')
+    return `<div class="p2r"><span class="t"><b>${g.name}</b> vs ${g.opp}</span>`+
+           `<span class="res live">${g.a}\u2013${g.b}</span></div>`;
+  return `<div class="p2r"><span class="t"><b>${g.name}</b> vs ${g.opp}</span>`+
+         `<span class="w">${tkDay(g.date)}</span></div>`;
+}
+function renderNBA(){
+  const el=document.getElementById('nba-body'); if(!el) return;
+  el.innerHTML = SPORT.nba.length ? SPORT.nba.slice(0,5).map(nbaRow).join('')
+                                  : '<div class="p2empty">Keine Spiele</div>';
+}
+function fbRow(m){
+  const label=`${m.home} \u2013 ${m.away}`;
+  if(m.state==='post') return `<div class="p2r"><span class="t">${label}</span><span class="res">${m.hs}\u2013${m.as}</span></div>`;
+  if(m.state==='in')   return `<div class="p2r"><span class="t">${label}</span><span class="res live">${m.hs}\u2013${m.as}</span></div>`;
+  return `<div class="p2r"><span class="t">${label}</span><span class="w">${tkDay(m.date)}</span></div>`;
+}
+function renderFootball(){
+  const el=document.getElementById('fb-body'); if(!el) return;
+  const f=SPORT.fb;
+  const sp=f.liga.find(x=>/sporting/i.test(x.name));
+  let h='';
+  if(sp) h += `<div class="p2big" style="font-size:22px;">Sporting</div>`+
+              `<div class="p2sub" style="margin-bottom:9px;">${sp.pos}. Liga Portugal \u00b7 ${sp.pts} Pkt</div>`;
+  const rows=[...f.sporting.slice(0,2), ...f.euro.slice(0,2)];
+  h += rows.length ? rows.map(fbRow).join('') : '<div class="p2empty">Keine Spiele</div>';
+  el.innerHTML=h;
+}
+function renderF1(){
+  const el=document.getElementById('f1-body'); if(!el) return;
+  const f=SPORT.f1;
+  let h='';
+  if(f.gp){
+    const next=f.sessions.filter(x=>new Date(x.date)>=new Date()).slice(0,2);
+    h += `<div class="f1next"><div class="f1gp">${f.gp}</div><div class="f1ses">`+
+         (next.length? next.map(x=>`${x.lbl} ${tkDay(x.date)}`).join(' \u00b7 ') : 'Wochenende vorbei')+
+         `</div></div>`;
+  }
+  h += f.standings.length
+     ? f.standings.slice(0,3).map(x=>`<div class="p2st"><span class="pos">${x.pos}</span>`+
+        `<span class="nm">${x.name}</span><span class="pts">${x.pts}</span></div>`).join('')
+     : '<div class="p2empty">Keine Wertung</div>';
+  el.innerHTML=h;
+}
+
+async function loadSport(){
+  await Promise.all([loadNBA(), loadF1(), loadFootball()]);
+  renderTicker(sportTickerItems());
+}
+function sportTickerItems(){
+  const out=[];
+  SPORT.nba.slice(0,4).forEach(g=>{
+    if(g.state==='post') out.push(`<b>${g.name}</b> <span class="${g.a>g.b?'win':'loss'}">${g.a}\u2013${g.b}</span> vs ${g.opp}`);
+    else out.push(`<b>${g.name}</b> vs ${g.opp} \u00b7 ${tkDay(g.date)}`);
+  });
+  if(SPORT.f1.gp) SPORT.f1.sessions.slice(0,3).forEach(x=>
+    out.push(`<b>F1 ${SPORT.f1.gp}</b> ${x.lbl}${x.winner?': <span class="win">'+x.winner+'</span>':' \u00b7 '+tkDay(x.date)}`));
+  [...SPORT.fb.sporting, ...SPORT.fb.euro, ...SPORT.fb.nt].slice(0,5).forEach(m=>{
+    if(m.state==='post') out.push(`<b>${m.home} ${m.hs}\u2013${m.as} ${m.away}</b> \u00b7 ${m.tag}`);
+    else out.push(`<b>${m.home} \u2013 ${m.away}</b> \u00b7 ${m.tag} ${tkDay(m.date)}`);
+  });
+  return out;
+}
+function renderTicker(items){
+  const el=document.getElementById('sleep-ticker-content');
+  if(!el) return;
+  if(!items || !items.length){
+    el.style.animation='none';
+    el.innerHTML='<span class="sv-ti" style="opacity:0.45;">Keine Spiele</span>';
+    return;
+  }
+  el.style.animation='';
+  const sep='<span class="sv-sep">\u00b7</span>';
+  const html=items.map(i=>`<span class="sv-ti">${i}</span>`).join(sep)+sep;
+  el.innerHTML=html+html;
+  el.style.animationDuration=Math.max(30,Math.min(120,items.length*9))+'s';
+}
+function loadSportsTicker(){ loadSport(); }
+loadSport(); setInterval(loadSport, 20*60*1000);
 
 // ── ABFALL DIETLIKON ──
 const ABFALL_SPECIAL = [
