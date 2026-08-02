@@ -520,7 +520,37 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .kc-player .sp-controls{margin-bottom:2px;}
 .kc-player .sp-btn{width:38px;height:38px;border-radius:50%;font-size:13px;}
 .kc-player .sp-play{width:50px;height:50px;font-size:16px;}
+
+.pager{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  min-height:0;gap:0;scrollbar-width:none;-ms-overflow-style:none;}
+.pager::-webkit-scrollbar{display:none;}
+.pg{flex:0 0 100%;width:100%;scroll-snap-align:start;min-height:0;display:flex;flex-direction:column;}
+.pg > .bottom{flex:1;min-height:0;}
+.pgdots{display:flex;justify-content:center;gap:8px;padding:8px 0 2px;flex-shrink:0;}
+.pgd{width:7px;height:7px;border-radius:50%;background:#CFC5B4;cursor:pointer;transition:all .18s;}
+.pgd.on{background:var(--k-clay);width:20px;border-radius:4px;}
 .dashboard{grid-template-rows:62px 200px 1fr!important;}
+
+.kc-car .kc-head{margin-bottom:14px;}
+.car-body{display:flex;flex-direction:column;flex:1;min-height:0;}
+.car-empty{font-size:13px;color:var(--k-mute);font-style:italic;}
+.kc-car.soon{opacity:0.55;}
+.car-gauge{margin-bottom:16px;}
+.car-gtop{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
+.car-gv{font-size:34px;font-weight:600;letter-spacing:-1.2px;line-height:1;}
+.car-gl{font-size:12.5px;color:var(--k-mute);}
+.car-gbar{height:9px;border-radius:5px;background:var(--k-tile);overflow:hidden;}
+.car-gbar i{display:block;height:100%;border-radius:5px;background:var(--k-moss);transition:width .3s;}
+.car-gbar i.warn{background:var(--k-amber);}
+.car-gbar i.low{background:var(--k-clay);}
+.car-rows{margin-top:auto;}
+.car-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--k-line);font-size:13.5px;}
+.car-row:last-child{border-bottom:none;}
+.car-row span:first-child{color:var(--k-mute);}
+.car-lock{display:inline-flex;align-items:center;gap:7px;background:var(--k-sage);color:var(--k-moss);
+  border-radius:18px;padding:7px 13px;font-size:12.5px;font-weight:600;margin-top:12px;align-self:flex-start;}
+.car-lock.warn{background:var(--k-peach);color:#8A3A1D;}
+
 
 .sbb-times{align-items:stretch!important;justify-content:flex-start!important;gap:0!important;}
 .kdep{width:100%;}
@@ -959,6 +989,8 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
     <div class="cal-strip" id="cal-strip"></div>
   </div>
 
+  <div class="pager" id="pager">
+    <div class="pg">
   <div class="bottom">
 
     <div class="card kc-verkehr" id="traffic-card">
@@ -1029,6 +1061,29 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
     </div>
 
   </div>
+    </div>
+    <div class="pg">
+    <div class="bottom">
+      <div class="card kc-car" id="car-bmw">
+        <div class="kc-head"><span class="kc-label">BMW M235i</span><span class="kc-mini" id="car-bmw-age">—</span></div>
+        <div class="car-body" id="car-bmw-body"><div class="car-empty">Keine Daten</div></div>
+      </div>
+      <div class="card kc-car soon">
+        <div class="kc-head"><span class="kc-label">Alfa Romeo</span></div>
+        <div class="car-empty">Noch nicht verbunden</div>
+      </div>
+      <div class="card kc-car soon">
+        <div class="kc-head"><span class="kc-label">Škoda</span></div>
+        <div class="car-empty">Noch nicht verbunden</div>
+      </div>
+      <div class="card kc-car soon" style="grid-column:1 / -1;">
+        <div class="kc-head"><span class="kc-label">Platz für mehr</span></div>
+        <div class="car-empty">Weitere Kacheln kommen hierhin</div>
+      </div>
+    </div>
+    </div>
+  </div>
+  <div class="pgdots"><span class="pgd on" onclick="goPage(0)"></span><span class="pgd" onclick="goPage(1)"></span></div>
 </div>
 
 <div id="cal-month-popup" onclick="if(event.target===this)closeMonthPopup()">
@@ -1615,6 +1670,90 @@ async function loadPollen(){
 }
 loadPollen();setInterval(loadPollen,6*60*60*1000);
 
+
+
+// ── CARS ──
+const CAR_VIN = 'wba11al0207l51497';
+function goPage(i){
+  const p=document.getElementById('pager');
+  if(!p) return;
+  p.scrollTo({left: i*p.clientWidth, behavior:'smooth'});
+}
+function syncDots(){
+  const p=document.getElementById('pager');
+  if(!p) return;
+  const i=Math.round(p.scrollLeft/p.clientWidth);
+  document.querySelectorAll('.pgd').forEach((d,n)=>d.classList.toggle('on', n===i));
+}
+window.addEventListener('load',()=>{
+  const p=document.getElementById('pager');
+  if(p) p.addEventListener('scroll', syncDots, {passive:true});
+});
+
+function carNum(v){
+  const n=parseFloat(String(v).replace(',','.'));
+  return isNaN(n)?null:n;
+}
+async function loadCars(){
+  const body=document.getElementById('car-bmw-body');
+  if(!body) return;
+  try{
+    const r=await fetch(`${CONFIG.HA_URL}/api/states`,{headers:HA_HEADERS});
+    if(!r.ok) throw new Error('http '+r.status);
+    const all=await r.json();
+    const mine=all.filter(e=>e.entity_id.includes(CAR_VIN));
+    if(!mine.length){ body.innerHTML='<div class="car-empty">Keine Daten</div>'; return; }
+
+    const pick=(...frags)=>{
+      for(const f of frags){
+        const hit=mine.find(e=>e.entity_id.endsWith(f));
+        if(hit && hit.state && !['unknown','unavailable',''].includes(hit.state)) return hit;
+      }
+      return null;
+    };
+    const fuelPct = pick('range_tank_level_percent','tank_level_percent','_tank_level');
+    const range   = pick('range_total_range_last_sent','_total_range','range_tank_level');
+    const miles   = pick('vehicle_mileage');
+    const doors   = pick('doors_overall_state');
+    const tyres   = ['front_left','front_right','rear_left','rear_right']
+                      .map(p=>pick('tire_pressure_'+p)).filter(Boolean);
+
+    let html='';
+    const pctVal = fuelPct ? carNum(fuelPct.state) : null;
+    if(pctVal!==null && pctVal<=100){
+      const cls = pctVal<15 ? 'low' : (pctVal<30 ? 'warn' : '');
+      html += `<div class="car-gauge"><div class="car-gtop">`+
+              `<span class="car-gv">${Math.round(pctVal)} %</span>`+
+              `<span class="car-gl">${range?Math.round(carNum(range.state))+' km Reichweite':''}</span>`+
+              `</div><div class="car-gbar"><i class="${cls}" style="width:${Math.max(2,pctVal)}%"></i></div></div>`;
+    }
+    html += '<div class="car-rows">';
+    if(miles) html += `<div class="car-row"><span>Kilometerstand</span><span>${Math.round(carNum(miles.state)).toLocaleString('de-CH')} km</span></div>`;
+    if(tyres.length===4){
+      const vals=tyres.map(t=>carNum(t.state)).filter(v=>v!==null);
+      const ok = vals.length===4 && Math.max(...vals)-Math.min(...vals) < 40;
+      html += `<div class="car-row"><span>Reifendruck</span><span>${ok?'OK':'Pr\u00fcfen'}</span></div>`;
+    }
+    html += '</div>';
+    if(doors){
+      const shut = /closed|geschlossen|secured/i.test(doors.state);
+      html += `<span class="car-lock${shut?'':' warn'}">${shut?'Alles zu':'T\u00fcr offen'}</span>`;
+    }
+    body.innerHTML = html || '<div class="car-empty">Noch keine Werte</div>';
+
+    const stamps=mine.map(e=>new Date(e.last_updated)).filter(d=>!isNaN(d));
+    const age=document.getElementById('car-bmw-age');
+    if(age && stamps.length){
+      const newest=new Date(Math.max(...stamps));
+      const mins=Math.round((Date.now()-newest)/60000);
+      age.textContent = mins<1?'gerade eben' : mins<60?`vor ${mins} Min` : `vor ${Math.round(mins/60)} Std`;
+    }
+  }catch(e){
+    body.innerHTML='<div class="car-empty">Keine Verbindung</div>';
+    console.warn('cars:', e.message);
+  }
+}
+loadCars();setInterval(loadCars,10*60*1000);
 
 // ── PRESENCE ──
 const PRESENCE=[
