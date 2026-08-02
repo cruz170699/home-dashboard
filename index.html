@@ -529,11 +529,13 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .pgdots{display:flex;justify-content:center;gap:8px;padding:8px 0 2px;flex-shrink:0;}
 .pgd{width:7px;height:7px;border-radius:50%;background:#CFC5B4;cursor:pointer;transition:all .18s;}
 .pgd.on{background:var(--k-clay);width:20px;border-radius:4px;}
-.dashboard{grid-template-rows:62px 200px 1fr!important;}
+.dashboard{grid-template-rows:62px 200px 1fr auto!important;overflow:hidden;}
+.pager{min-height:0;height:100%;}
+.pg{min-width:0;}
 
 .kc-car .kc-head{margin-bottom:16px;}
 
-.cars-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;flex:1;min-height:0;}
+.cars-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;flex:1;min-height:0;}
 .kc-car{display:flex;flex-direction:column;overflow:hidden;}
 .kc-car.soon{opacity:0.6;}
 .car-pic{height:78px;border-radius:14px;background:var(--k-sage);color:var(--k-moss);
@@ -1081,12 +1083,6 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
         <div class="kc-head"><span class="kc-label">BMW M235i</span><span class="kc-mini" id="car-bmw-age">—</span></div>
         <div class="car-pic"><img class="car-img" src="car-bmw.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg style="display:none" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9"/><path d="M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
         <div class="car-body" id="car-bmw-body"><div class="car-empty">Keine Daten</div></div>
-      </div>
-      <div class="card kc-car soon">
-        <div class="kc-head"><span class="kc-label">Alfa Romeo</span></div>
-        <div class="car-pic dim"><img class="car-img" src="car-alfa.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg style="display:none" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9"/><path d="M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
-        <div class="car-big">—</div>
-        <div class="car-bigsub">Uconnect nicht verbunden</div>
       </div>
       <div class="card kc-car soon">
         <div class="kc-head"><span class="kc-label">Škoda</span></div>
