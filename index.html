@@ -531,25 +531,38 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .pgd.on{background:var(--k-clay);width:20px;border-radius:4px;}
 .dashboard{grid-template-rows:62px 200px 1fr!important;}
 
-.kc-car .kc-head{margin-bottom:14px;}
+.kc-car .kc-head{margin-bottom:16px;}
+
+.cars-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;flex:1;min-height:0;}
+.kc-car{display:flex;flex-direction:column;overflow:hidden;}
+.kc-car.soon{opacity:0.6;}
+.car-pic{height:78px;border-radius:14px;background:var(--k-sage);color:var(--k-moss);
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;flex-shrink:0;}
+.car-pic.dim{background:var(--k-tile);color:#C9C2B6;}
+
+.car-pic{position:relative;height:112px;padding:0;overflow:hidden;}
+.car-img{width:100%;height:100%;object-fit:cover;display:block;border-radius:14px;}
+.car-pic svg{width:118px;height:44px;}
+
+.car-big{font-size:42px;font-weight:600;letter-spacing:-1.8px;line-height:1;}
+.car-bigsub{font-size:12.5px;color:var(--k-mute);margin-top:5px;}
+.car-bar{height:10px;border-radius:6px;background:var(--k-tile);overflow:hidden;margin-top:14px;}
+.car-bar i{display:block;height:100%;border-radius:6px;background:var(--k-moss);transition:width .3s;}
+.car-bar i.warn{background:var(--k-amber);}
+.car-bar i.low{background:var(--k-clay);}
 .car-body{display:flex;flex-direction:column;flex:1;min-height:0;}
-.car-empty{font-size:13px;color:var(--k-mute);font-style:italic;}
-.kc-car.soon{opacity:0.55;}
-.car-gauge{margin-bottom:16px;}
-.car-gtop{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
-.car-gv{font-size:34px;font-weight:600;letter-spacing:-1.2px;line-height:1;}
-.car-gl{font-size:12.5px;color:var(--k-mute);}
-.car-gbar{height:9px;border-radius:5px;background:var(--k-tile);overflow:hidden;}
-.car-gbar i{display:block;height:100%;border-radius:5px;background:var(--k-moss);transition:width .3s;}
-.car-gbar i.warn{background:var(--k-amber);}
-.car-gbar i.low{background:var(--k-clay);}
 .car-rows{margin-top:auto;}
-.car-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--k-line);font-size:13.5px;}
+.car-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;
+  border-bottom:1px solid var(--k-line);font-size:14px;}
 .car-row:last-child{border-bottom:none;}
 .car-row span:first-child{color:var(--k-mute);}
-.car-lock{display:inline-flex;align-items:center;gap:7px;background:var(--k-sage);color:var(--k-moss);
-  border-radius:18px;padding:7px 13px;font-size:12.5px;font-weight:600;margin-top:12px;align-self:flex-start;}
-.car-lock.warn{background:var(--k-peach);color:#8A3A1D;}
+.car-tyres{display:flex;gap:6px;margin-top:12px;flex-shrink:0;}
+.car-ty{flex:1;height:38px;border-radius:10px;background:var(--k-tile);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;}
+.car-ty-v{font-size:14px;font-weight:600;line-height:1;}
+.car-ty-l{font-size:8.5px;color:var(--k-mute);margin-top:2px;letter-spacing:0.5px;}
+.car-empty{font-size:13px;color:var(--k-mute);font-style:italic;}
+
 
 
 .sbb-times{align-items:stretch!important;justify-content:flex-start!important;gap:0!important;}
@@ -1063,24 +1076,24 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
   </div>
     </div>
     <div class="pg">
-    <div class="bottom">
+    <div class="cars-grid">
       <div class="card kc-car" id="car-bmw">
         <div class="kc-head"><span class="kc-label">BMW M235i</span><span class="kc-mini" id="car-bmw-age">—</span></div>
+        <div class="car-pic"><img class="car-img" src="car-bmw.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg style="display:none" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9"/><path d="M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
         <div class="car-body" id="car-bmw-body"><div class="car-empty">Keine Daten</div></div>
       </div>
       <div class="card kc-car soon">
         <div class="kc-head"><span class="kc-label">Alfa Romeo</span></div>
-        <div class="car-empty">Noch nicht verbunden</div>
+        <div class="car-pic dim"><img class="car-img" src="car-alfa.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg style="display:none" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9"/><path d="M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
+        <div class="car-big">—</div>
+        <div class="car-bigsub">Uconnect nicht verbunden</div>
       </div>
       <div class="card kc-car soon">
         <div class="kc-head"><span class="kc-label">Škoda</span></div>
-        <div class="car-empty">Noch nicht verbunden</div>
+        <div class="car-pic dim"><img class="car-img" src="car-skoda.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><svg style="display:none" viewBox="0 0 120 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32h104M14 32c0-5 3-9 8-9h56c5 0 9 4 9 9"/><path d="M24 23l7-10h34l9 10"/><circle cx="32" cy="35" r="6"/><circle cx="88" cy="35" r="6"/></svg></div>
+        <div class="car-big">—</div>
+        <div class="car-bigsub">MySkoda nicht verbunden</div>
       </div>
-      <div class="card kc-car soon" style="grid-column:1 / -1;">
-        <div class="kc-head"><span class="kc-label">Platz für mehr</span></div>
-        <div class="car-empty">Weitere Kacheln kommen hierhin</div>
-      </div>
-    </div>
     </div>
   </div>
   <div class="pgdots"><span class="pgd on" onclick="goPage(0)"></span><span class="pgd" onclick="goPage(1)"></span></div>
@@ -1690,6 +1703,12 @@ window.addEventListener('load',()=>{
   if(p) p.addEventListener('scroll', syncDots, {passive:true});
 });
 
+function carState(v){
+  const m={CLOSED:'Geschlossen',OPEN:'Offen',SECURED:'Verriegelt',UNLOCKED:'Entriegelt',
+           LOCKED:'Verriegelt',TILTED:'Gekippt',INVALID:'\u2014',UNKNOWN:'\u2014'};
+  const k=String(v||'').toUpperCase();
+  return m[k] || String(v||'\u2014');
+}
 function carNum(v){
   const n=parseFloat(String(v).replace(',','.'));
   return isNaN(n)?null:n;
@@ -1722,22 +1741,31 @@ async function loadCars(){
     const pctVal = fuelPct ? carNum(fuelPct.state) : null;
     if(pctVal!==null && pctVal<=100){
       const cls = pctVal<15 ? 'low' : (pctVal<30 ? 'warn' : '');
-      html += `<div class="car-gauge"><div class="car-gtop">`+
-              `<span class="car-gv">${Math.round(pctVal)} %</span>`+
-              `<span class="car-gl">${range?Math.round(carNum(range.state))+' km Reichweite':''}</span>`+
-              `</div><div class="car-gbar"><i class="${cls}" style="width:${Math.max(2,pctVal)}%"></i></div></div>`;
+      html += `<div class="car-big">${Math.round(pctVal)} %</div>`+
+              `<div class="car-bigsub">${range?Math.round(carNum(range.state))+' km Reichweite':'Tank'}</div>`+
+              `<div class="car-bar"><i class="${cls}" style="width:${Math.max(2,pctVal)}%"></i></div>`;
     }
+
     html += '<div class="car-rows">';
-    if(miles) html += `<div class="car-row"><span>Kilometerstand</span><span>${Math.round(carNum(miles.state)).toLocaleString('de-CH')} km</span></div>`;
-    if(tyres.length===4){
-      const vals=tyres.map(t=>carNum(t.state)).filter(v=>v!==null);
-      const ok = vals.length===4 && Math.max(...vals)-Math.min(...vals) < 40;
-      html += `<div class="car-row"><span>Reifendruck</span><span>${ok?'OK':'Pr\u00fcfen'}</span></div>`;
-    }
-    html += '</div>';
+    if(miles) html += `<div class="car-row"><span>Kilometer</span><span>${Math.round(carNum(miles.state)).toLocaleString('de-CH')} km</span></div>`;
     if(doors){
-      const shut = /closed|geschlossen|secured/i.test(doors.state);
-      html += `<span class="car-lock${shut?'':' warn'}">${shut?'Alles zu':'T\u00fcr offen'}</span>`;
+      const shut = /closed|geschlossen|secured|locked/i.test(doors.state);
+      html += `<div class="car-row"><span>T\u00fcren</span>`+
+              `<span${shut?'':' style="color:var(--k-clay);font-weight:600;"'}>${shut?'Geschlossen':carState(doors.state)}</span></div>`;
+    }
+    const win = pick('windows_overall_state');
+    if(win) html += `<div class="car-row"><span>Fenster</span><span>${carState(win.state)}</span></div>`;
+    html += '</div>';
+
+    if(tyres.length){
+      const labels=['VL','VR','HL','HR'];
+      html += '<div class="car-tyres">';
+      tyres.forEach((t,i)=>{
+        const v=carNum(t.state);
+        html += `<div class="car-ty"><div class="car-ty-v">${v!==null?(v<10?v.toFixed(1):Math.round(v)):'\u2014'}</div>`+
+                `<div class="car-ty-l">${labels[i]}</div></div>`;
+      });
+      html += '</div>';
     }
     body.innerHTML = html || '<div class="car-empty">Noch keine Werte</div>';
 
