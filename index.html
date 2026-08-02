@@ -2965,6 +2965,7 @@ function loadBibleVerse() {
 
 // ── SPORT ──
 const ESPN = 'https://site.api.espn.com/apis/site/v2/sports/';
+const ESPN2 = 'https://site.api.espn.com/apis/v2/sports/';   // standings live here, not on site/v2
 const NBA_TEAMS = ['NYK','BOS','LAL','PHI'];
 const PT_CLUBS = ['sporting','benfica','porto','braga','guimar','santa clara','arouca','famalic',
                   'estoril','rio ave','moreirense','casa pia','nacional','gil vicente','vit'];
@@ -2985,30 +2986,75 @@ function tkDay(iso){
   return d.toDateString()===now.toDateString() ? t : `${days[d.getDay()]} ${t}`;
 }
 async function tkGet(p){ try{ const r=await fetch(ESPN+p); return r.ok?await r.json():null; }catch(e){ return null; } }
+async function tkStand(p){ try{ const r=await fetch(ESPN2+p); return r.ok?await r.json():null; }catch(e){ return null; } }
+function flatEntries(d){
+  // standings JSON nests differently per sport \u2014 collect every entries[] we find
+  const out=[];
+  (function walk(n,depth){
+    if(!n||typeof n!=='object'||depth>6) return;
+    if(Array.isArray(n.entries)) out.push(...n.entries);
+    Object.values(n).forEach(v=>{ if(v&&typeof v==='object') walk(v,depth+1); });
+  })(d,0);
+  return out;
+}
+function statVal(e,...names){
+  const st=e.stats||[];
+  for(const n of names){
+    const hit=st.find(x=>(x.name||'').toLowerCase()===n || (x.type||'').toLowerCase()===n
+                       || (x.abbreviation||'').toLowerCase()===n);
+    if(hit) return hit.displayValue ?? hit.value;
+  }
+  return '';
+}
 function isPT(n){ const x=(n||'').toLowerCase(); return PT_CLUBS.some(c=>x.includes(c)); }
 
 async function loadNBA(){
-  const d=await tkGet(`basketball/nba/scoreboard?dates=${tkDates(3,6)}`);
   const out=[];
+  const d=await tkGet(`basketball/nba/scoreboard?dates=${tkDates(5,21)}`);
   (d?.events||[]).forEach(ev=>{
     const c=ev.competitions?.[0]; if(!c) return;
     const t=c.competitors||[];
     const mine=t.find(x=>NBA_TEAMS.includes(x.team?.abbreviation));
     if(!mine) return;
     const opp=t.find(x=>x!==mine);
-    const st=ev.status?.type?.state;
     out.push({name:mine.team?.shortDisplayName||mine.team?.abbreviation,
-              opp:opp?.team?.abbreviation||'', state:st,
+              opp:opp?.team?.abbreviation||'', state:ev.status?.type?.state,
               a:parseInt(mine.score), b:parseInt(opp?.score), date:ev.date});
   });
+
+  // nothing in that window (off-season gap) -> read each team's schedule
+  if(!out.length){
+    for(const ab of NBA_TEAMS){
+      const t=await tkGet(`basketball/nba/teams/${ab}/schedule`);
+      const nm=t?.team?.shortDisplayName||ab;
+      (t?.events||[]).forEach(ev=>{
+        const c=ev.competitions?.[0]; if(!c) return;
+        const cs=c.competitors||[];
+        const me=cs.find(x=>x.team?.abbreviation===ab), op=cs.find(x=>x.team?.abbreviation!==ab);
+        if(!me||!op) return;
+        out.push({name:nm, opp:op.team?.abbreviation||'', state:ev.status?.type?.state,
+                  a:parseInt(me.score?.value ?? me.score), b:parseInt(op.score?.value ?? op.score), date:ev.date});
+      });
+    }
+    const now=Date.now();
+    out.sort((x,y)=>Math.abs(new Date(x.date)-now)-Math.abs(new Date(y.date)-now));
+    SPORT.nba=out.slice(0,12);
+    renderNBA();
+    return;
+  }
   out.sort((x,y)=>new Date(y.date)-new Date(x.date));
   SPORT.nba=out;
   renderNBA();
 }
 
 async function loadF1(){
-  const d=await tkGet(`racing/f1/scoreboard?dates=${tkDates(2,9)}`);
-  const ev=(d?.events||[])[0];
+  let d=await tkGet(`racing/f1/scoreboard?dates=${tkDates(3,10)}`);
+  let evs=d?.events||[];
+  if(!evs.length){ d=await tkGet(`racing/f1/scoreboard?dates=${tkDates(3,45)}`); evs=d?.events||[]; }
+  if(!evs.length){ d=await tkGet('racing/f1/scoreboard'); evs=d?.events||[]; }
+  const now=Date.now();
+  evs=[...evs].sort((a,b)=>Math.abs(new Date(a.date)-now)-Math.abs(new Date(b.date)-now));
+  const ev=evs[0];
   const res={sessions:[],gp:'',standings:[]};
   if(ev){
     res.gp=(ev.shortName||ev.name||'').replace(/Grand Prix/i,'GP');
@@ -3025,11 +3071,11 @@ async function loadF1(){
       res.sessions.push({lbl, date:c.date, winner, live:c.status?.type?.state==='in'});
     });
   }
-  const st=await tkGet('racing/f1/standings');
-  const entries = st?.standings?.[0]?.entries || st?.children?.[0]?.standings?.entries || [];
-  entries.slice(0,10).forEach((e,i)=>{
+  const st=await tkStand('racing/f1/standings');
+  const entries=flatEntries(st);
+  entries.slice(0,12).forEach((e,i)=>{
     const nm=e.athlete?.shortName||e.athlete?.displayName||e.team?.displayName||'';
-    const pts=(e.stats||[]).find(x=>/points/i.test(x.name||x.type||''))?.displayValue||'';
+    const pts=statVal(e,'points','championshippts','pts');
     if(nm) res.standings.push({pos:i+1,name:nm,pts});
   });
   SPORT.f1=res;
@@ -3054,13 +3100,14 @@ async function loadFootball(){
     if(/sporting/i.test(m.home)&&!/braga/i.test(m.home) || /sporting/i.test(m.away)&&!/braga/i.test(m.away))
       res.sporting.push(m);
   });
-  const tbl=await tkGet('soccer/por.1/standings');
-  const ent=tbl?.standings?.entries || tbl?.children?.[0]?.standings?.entries || [];
-  ent.slice(0,8).forEach((e,i)=>{
+  const tbl=await tkStand('soccer/por.1/standings');
+  const ent=flatEntries(tbl);
+  ent.slice(0,20).forEach((e,i)=>{
     const nm=e.team?.shortDisplayName||e.team?.displayName||'';
-    const pts=(e.stats||[]).find(x=>x.name==='points')?.displayValue||'';
-    if(nm) res.liga.push({pos:i+1,name:nm,pts});
+    const pts=statVal(e,'points','pts');
+    if(nm) res.liga.push({pos:Number(statVal(e,'rank'))||i+1, name:nm, pts});
   });
+  res.liga.sort((a,b)=>a.pos-b.pos);
   for(const [slug,tag] of EURO_COMPS){
     const d=await tkGet(`soccer/${slug}/scoreboard?dates=${tkDates(3,12)}`);
     (d?.events||[]).forEach(ev=>{
