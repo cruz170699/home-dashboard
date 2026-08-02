@@ -521,11 +521,20 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .kc-player .sp-btn{width:38px;height:38px;border-radius:50%;font-size:13px;}
 .kc-player .sp-play{width:50px;height:50px;font-size:16px;}
 
-.pager{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
-  min-height:0;gap:0;scrollbar-width:none;-ms-overflow-style:none;}
+.pager{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  min-height:0;min-width:0;gap:0;scrollbar-width:none;-ms-overflow-style:none;}
 .pager::-webkit-scrollbar{display:none;}
-.pg{flex:0 0 100%;width:100%;scroll-snap-align:start;min-height:0;display:flex;flex-direction:column;}
-.pg > .bottom{flex:1;min-height:0;}
+.pg{flex:0 0 100%;width:100%;max-width:100%;min-width:0;scroll-snap-align:start;
+  min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.pg > *{flex:1;min-height:0;}
+.cars-grid{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:1.25fr 1fr;gap:16px;min-height:0;overflow:hidden;}
+.kc-car{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.car-pic{flex:1;min-height:110px;border-radius:14px;background:var(--k-sage);color:var(--k-moss);
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative;overflow:hidden;padding:0;}
+.car-img{width:100%;height:100%;object-fit:cover;display:block;}
+.car-pic svg{width:118px;height:44px;}
+.car-rows{margin-top:14px;flex-shrink:0;}
+.car-body > .car-big,.car-body > .car-bigsub,.car-body > .car-bar{flex-shrink:0;}
 .pgdots{display:flex;justify-content:center;gap:8px;padding:8px 0 2px;flex-shrink:0;}
 .pgd{width:7px;height:7px;border-radius:50%;background:#CFC5B4;cursor:pointer;transition:all .18s;}
 .pgd.on{background:var(--k-clay);width:20px;border-radius:4px;}
@@ -535,15 +544,9 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 
 .kc-car .kc-head{margin-bottom:16px;}
 
-.cars-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;flex:1;min-height:0;}
-.kc-car{display:flex;flex-direction:column;overflow:hidden;}
 .kc-car.soon{opacity:0.6;}
-.car-pic{height:78px;border-radius:14px;background:var(--k-sage);color:var(--k-moss);
-  display:flex;align-items:center;justify-content:center;margin-bottom:16px;flex-shrink:0;}
 .car-pic.dim{background:var(--k-tile);color:#C9C2B6;}
 
-.car-pic{position:relative;height:112px;padding:0;overflow:hidden;}
-.car-img{width:100%;height:100%;object-fit:cover;display:block;border-radius:14px;}
 .car-pic svg{width:118px;height:44px;}
 
 .car-big{font-size:42px;font-weight:600;letter-spacing:-1.8px;line-height:1;}
@@ -553,7 +556,6 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .car-bar i.warn{background:var(--k-amber);}
 .car-bar i.low{background:var(--k-clay);}
 .car-body{display:flex;flex-direction:column;flex:1;min-height:0;}
-.car-rows{margin-top:auto;}
 .car-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;
   border-bottom:1px solid var(--k-line);font-size:14px;}
 .car-row:last-child{border-bottom:none;}
@@ -564,6 +566,22 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
 .car-ty-v{font-size:14px;font-weight:600;line-height:1;}
 .car-ty-l{font-size:8.5px;color:var(--k-mute);margin-top:2px;letter-spacing:0.5px;}
 .car-empty{font-size:13px;color:var(--k-mute);font-style:italic;}
+
+.ab-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--k-line);}
+.ab-row:last-child{border-bottom:none;}
+.ab-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.ab-n{font-size:14.5px;font-weight:500;flex:1;}
+.ab-w{font-size:12.5px;color:var(--k-mute);}
+.ab-w.soon{color:var(--k-clay);font-weight:600;}
+.sp-row{font-size:13px;padding:8px 0;border-bottom:1px solid var(--k-line);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sp-row:last-child{border-bottom:none;}
+.sp-row b{font-weight:600;}
+.sp-row .win{color:var(--k-moss);font-weight:600;}
+.sp-row .loss{color:var(--k-clay);font-weight:600;}
+.sp-row .live{color:var(--k-amber);font-weight:600;}
+#card-abfall,#card-sport{overflow-y:auto;}
+
 
 
 
@@ -1091,6 +1109,14 @@ html,body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;backg
         <div class="car-bigsub">MySkoda nicht verbunden</div>
       </div>
     </div>
+      <div class="card kc-car" id="card-abfall">
+        <div class="kc-head"><span class="kc-label">Abfall Dietlikon</span></div>
+        <div id="abfall-list"></div>
+      </div>
+      <div class="card kc-car" id="card-sport">
+        <div class="kc-head"><span class="kc-label">Sport</span><span class="kc-mini" onclick="loadSportsTicker()">↻</span></div>
+        <div id="sport-list"><div class="car-empty">Laden …</div></div>
+      </div>
     </div>
   </div>
   <div class="pgdots"><span class="pgd on" onclick="goPage(0)"></span><span class="pgd" onclick="goPage(1)"></span></div>
@@ -1681,6 +1707,62 @@ async function loadPollen(){
 loadPollen();setInterval(loadPollen,6*60*60*1000);
 
 
+
+
+// ── ABFALL DIETLIKON ──
+const ABFALL_SPECIAL = [
+  ['2026-03-20','Gratiskompost'],['2026-03-23','H\u00e4ckseldienst'],
+  ['2026-04-09','Altmetall'],['2026-04-13','H\u00e4ckseldienst'],
+  ['2026-04-17','Sonderabfallmobil'],['2026-09-28','H\u00e4ckseldienst'],
+  ['2026-10-19','H\u00e4ckseldienst'],['2026-10-22','Altmetall'],
+  ['2026-10-31','Sonderabfallmobil'],
+];
+function abfallNext(days){
+  const out=[];
+  const t=new Date(); t.setHours(0,0,0,0);
+  for(let i=0;i<days;i++){
+    const d=new Date(t); d.setDate(t.getDate()+i);
+    const dow=d.getDay(), dom=d.getDate(), mon=d.getMonth();
+    const iso=`${d.getFullYear()}-${String(mon+1).padStart(2,'0')}-${String(dom).padStart(2,'0')}`;
+    const hits=[];
+    if(dow===2) hits.push('Kehricht');
+    if(dow===3 && ![0,1,11].includes(mon)) hits.push('Gr\u00fcngut');
+    if(dow===5 && mon!==11){
+      const nth=Math.ceil(dom/7);
+      if(nth===2||nth===4) hits.push('Karton');
+    }
+    if(dow===6 && dom<=7 && ![0,3,4,7].includes(mon)) hits.push('Papier');
+    ABFALL_SPECIAL.forEach(([dt,name])=>{ if(dt===iso) hits.push(name); });
+    hits.forEach(h=>out.push({date:d, name:h}));
+  }
+  return out;
+}
+const ABFALL_COLOR={Kehricht:'#8C8378','Gr\u00fcngut':'#3B5129',Karton:'#B07B3C',Papier:'#37618E',
+  Altmetall:'#6B6B6B',Gratiskompost:'#3B5129','H\u00e4ckseldienst':'#3B5129',Sonderabfallmobil:'#D9603C'};
+function renderAbfall(){
+  const el=document.getElementById('abfall-list');
+  if(!el) return;
+  const items=abfallNext(21).slice(0,5);
+  if(!items.length){ el.innerHTML='<div class="car-empty">Nichts geplant</div>'; return; }
+  const days=['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const today=new Date(); today.setHours(0,0,0,0);
+  el.innerHTML = items.map(it=>{
+    const diff=Math.round((it.date-today)/86400000);
+    const when = diff===0?'Heute' : diff===1?'Morgen' : `${days[it.date.getDay()]} ${it.date.getDate()}.${it.date.getMonth()+1}.`;
+    const col=ABFALL_COLOR[it.name]||'#8C8378';
+    return `<div class="ab-row"><span class="ab-dot" style="background:${col}"></span>`+
+           `<span class="ab-n">${it.name}</span><span class="ab-w${diff<=1?' soon':''}">${when}</span></div>`;
+  }).join('');
+}
+renderAbfall(); setInterval(renderAbfall, 6*60*60*1000);
+
+// ── SPORT CARD ──
+function renderSportCard(items){
+  const el=document.getElementById('sport-list');
+  if(!el) return;
+  if(!items || !items.length){ el.innerHTML='<div class="car-empty">Keine Spiele</div>'; return; }
+  el.innerHTML = items.slice(0,6).map(i=>`<div class="sp-row">${i}</div>`).join('');
+}
 
 // ── CARS ──
 const CAR_VIN = 'wba11al0207l51497';
@@ -2878,6 +2960,7 @@ async function loadSportsTicker(){
 }
 
 function renderTicker(items){
+  renderSportCard(items);
   const el=document.getElementById('sleep-ticker-content');
   if(!el) return;
   if(!items || !items.length){
